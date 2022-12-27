@@ -1,0 +1,14 @@
+name: Lava
+
+services:
+  web:
+    container_name: web
+    build: ./www
+
+  nginx:
+    container_name: nginx
+    build: ./nginx
+    ports:
+      - "8080:80"
+    depends_on:
+      - web

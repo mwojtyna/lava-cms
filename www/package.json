@@ -1,0 +1,12 @@
+{
+	"name": "lava-cms",
+	"version": "0.0.1",
+	"scripts": {
+		"start": "turbo start",
+		"dev": "turbo dev",
+		"build": "turbo build"
+	},
+	"dependencies": {
+		"turbo": "^1.6.3"
+	}
+}
