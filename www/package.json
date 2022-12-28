@@ -1,6 +1,7 @@
 {
 	"name": "lava-cms",
 	"version": "0.0.1",
+	"packageManager": "yarn@3.3.1",
 	"scripts": {
 		"start": "turbo start",
 		"dev": "turbo dev",
@@ -8,5 +9,9 @@
 	},
 	"dependencies": {
 		"turbo": "^1.6.3"
-	}
+	},
+	"workspaces": [
+		"admin",
+		"frontend"
+	]
 }
