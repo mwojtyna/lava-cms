@@ -2,23 +2,26 @@ FROM node:18.12.1-slim
 
 WORKDIR /app
 
+# Required for prisma
 RUN apt-get update
 RUN apt-get install openssl -y
 
-COPY yarn.lock /app
-COPY .yarnrc.yml /app
-COPY .yarn /app/.yarn
-RUN yarn set version stable
-
+# Prepare turborepo
+RUN npm install -g pnpm
 COPY package.json /app
+COPY pnpm-*.yaml /app
+COPY .npmrc /app
+COPY turbo.json /app
+
+# Prepare workspaces
 RUN mkdir admin frontend
 COPY admin/package.json /app/admin
 COPY frontend/package.json /app/frontend
 
-RUN yarn install --immutable
+RUN pnpm install --frozen-lockfile
 
 COPY ./ /app
 ENV SKIP_ENV_VALIDATION=true
-RUN yarn build
+RUN pnpm build
 
-CMD [ "yarn", "start" ]
+CMD [ "pnpm", "start" ]

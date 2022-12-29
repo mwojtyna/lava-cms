@@ -6,5 +6,4 @@ RUN apt-get update
 RUN apt-get install openssl -y
 RUN apt-get install git -y
 
-RUN yarn set version stable
-EXPOSE 3000
+RUN npm install -g pnpm
