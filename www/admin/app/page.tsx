@@ -121,6 +121,13 @@ export default function Home() {
 						</h2>
 						<p className={inter.className}>One.</p>
 					</Link>
+
+					<Link href="/" className={styles.card}>
+						<h2 className={inter.className}>
+							Frontend <span>-&gt;</span>
+						</h2>
+						<p className={inter.className}>Frontend.</p>
+					</Link>
 				</div>
 			</main>
 		</>
