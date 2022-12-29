@@ -1,4 +1,4 @@
-name: Lava
+name: lava
 
 services:
   web:
