@@ -7,7 +7,6 @@
 		"dev": { "cache": false },
 		"build": {
 			"dependsOn": ["^build"],
-			"inputs": ["admin/**", "frontend/**"],
 			"outputs": ["dist/**", ".next/**"]
 		}
 	}
