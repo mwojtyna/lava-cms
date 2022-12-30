@@ -4,7 +4,7 @@
 	"private": true,
 	"main": "index.ts",
 	"scripts": {
-		"start": "nodemon --exec pnpm ts-node --transpile-only .",
+		"start": "ts-node --transpile-only .",
 		"dev": "nodemon --files"
 	},
 	"dependencies": {

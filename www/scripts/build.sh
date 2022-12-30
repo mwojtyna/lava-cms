@@ -4,7 +4,7 @@ pnpm start &
 sleep 3s
 
 cd ..
-pnpm build
+pnpm turbo build
 
 fuser -k 4000/tcp
 echo API process killed
