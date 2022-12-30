@@ -3,6 +3,8 @@ FROM node:18.12.1
 WORKDIR /
 
 # Setup system
+RUN apt-get update
+RUN apt-get install neovim -y
 RUN ln -sf /usr/share/zoneinfo/Europe/Warsaw /etc/localtime
 
 # Setup project tools
@@ -11,7 +13,6 @@ RUN npm install -g npm-upgrade
 RUN npm install -g git-open
 
 # Install zsh
-RUN apt-get update
 RUN apt-get install zsh -y
 RUN usermod --shell /bin/zsh node
 
