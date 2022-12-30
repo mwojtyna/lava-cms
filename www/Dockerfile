@@ -2,7 +2,7 @@ FROM node:18.12.1-slim
 
 WORKDIR /app
 
-# Required for prisma
+# Setup system
 RUN apt-get update
 RUN apt-get install openssl -y
 
@@ -14,9 +14,10 @@ COPY .npmrc /app
 COPY turbo.json /app
 
 # Prepare workspaces
-RUN mkdir admin frontend
+RUN mkdir admin frontend api
 COPY admin/package.json /app/admin
 COPY frontend/package.json /app/frontend
+COPY api/package.json /app/api
 
 RUN pnpm install --frozen-lockfile
 

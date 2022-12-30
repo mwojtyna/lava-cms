@@ -4,7 +4,9 @@ WORKDIR /
 
 # Setup system
 RUN apt-get update
-RUN apt-get install neovim less -y
+RUN apt-get install neovim -y
+RUN apt-get install less -y
+RUN apt-get install psmisc -y
 RUN ln -sf /usr/share/zoneinfo/Europe/Warsaw /etc/localtime
 
 # Setup project tools

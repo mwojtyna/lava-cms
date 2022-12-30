@@ -1,5 +1,4 @@
 {
 	"cSpell.words": ["Authed", "pnpm", "superjson", "tanstack", "trpc"],
-	"prettier.requireConfig": true,
-	"workbench.editor.labelFormat": "medium"
+	"prettier.requireConfig": true
 }
