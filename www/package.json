@@ -2,9 +2,9 @@
 	"name": "lava-cms",
 	"version": "0.0.1",
 	"scripts": {
-		"start": "turbo start",
-		"dev": "turbo dev",
-		"build": "turbo build"
+		"start": "FORCE_COLOR=1 turbo start",
+		"dev": "FORCE_COLOR=1 turbo dev",
+		"build": "FORCE_COLOR=1 turbo build"
 	},
 	"dependencies": {
 		"turbo": "^1.6.3"

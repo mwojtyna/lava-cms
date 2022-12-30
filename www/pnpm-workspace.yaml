@@ -1,4 +1,4 @@
 packages:
   - "admin"
   - "frontend"
-  - "middleware"
+  - "api"

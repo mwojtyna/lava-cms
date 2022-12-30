@@ -11,6 +11,7 @@
 		"astro": "astro"
 	},
 	"dependencies": {
+		"api": "workspace:*",
 		"astro": "^1.7.2",
 		"http-server": "^14.1.1"
 	},
