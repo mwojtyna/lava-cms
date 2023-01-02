@@ -1,4 +1,4 @@
-import { client } from "api/trpc/client";
+import { client } from "api/trpc";
 
 async function One() {
 	const { greeting } = await client.greeting.query({ name: "T3 App" });

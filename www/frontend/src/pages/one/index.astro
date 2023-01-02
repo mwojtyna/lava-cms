@@ -1,6 +1,6 @@
 ---
 import Layout from "../../layouts/Layout.astro";
-import { client } from "api/trpc/client";
+import { client } from "api/trpc";
 
 const { greeting } = await client.greeting.query({ name: "Astro" });
 ---
