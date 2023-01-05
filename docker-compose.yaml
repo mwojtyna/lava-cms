@@ -6,17 +6,6 @@ services:
     build: ./www
     restart: always
 
-  nginx:
-    container_name: nginx
-    build: ./nginx
-    ports:
-      - "8080:80"
-    depends_on:
-      - web
-      - postgres
-      - pgadmin
-    restart: always
-
   postgres:
     container_name: postgres
     image: postgres:15.1
@@ -32,8 +21,6 @@ services:
   pgadmin:
     container_name: pgadmin
     image: dpage/pgadmin4:6.18
-    ports:
-      - 5000:80
     environment:
       - PGADMIN_DEFAULT_EMAIL=admin@admin.com
       - PGADMIN_DEFAULT_PASSWORD=admin
@@ -41,6 +28,17 @@ services:
       - pgadmin:/var/lib/pgadmin
     depends_on:
       - postgres
+    restart: always
+
+  nginx:
+    container_name: nginx
+    build: ./nginx
+    ports:
+      - "8080:80"
+    depends_on:
+      - web
+      - postgres
+      - pgadmin
     restart: always
 
 volumes:
