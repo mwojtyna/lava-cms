@@ -1,10 +1,9 @@
 import * as trpcExpress from "@trpc/server/adapters/express";
 import express from "express";
 import { appRouter } from "./trpc/routers/_app";
-import dotenv from "dotenv";
 
-dotenv.config();
 const app = express();
+const PORT = 4000;
 
 app.use(
 	"/trpc",
@@ -12,4 +11,4 @@ app.use(
 		router: appRouter
 	})
 );
-app.listen(process.env.PORT, () => console.info(`Listening on port ${process.env.PORT}...`));
+app.listen(PORT, () => console.info(`Listening on port ${PORT}...`));
