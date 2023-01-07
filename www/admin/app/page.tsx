@@ -52,6 +52,12 @@ function Home() {
 						<h3 className="text-2xl font-bold">pgadmin →</h3>
 						<div className="text-lg">pgadmin.</div>
 					</Link>
+					<Link
+						className="flex max-w-xs flex-col gap-4 rounded-xl bg-white/10 p-4 text-white hover:bg-white/20"
+						href="/admin/api/auth/signout"
+					>
+						<h3 className="text-2xl font-bold">Sign out →</h3>
+					</Link>
 				</div>
 			</div>
 		</main>
@@ -59,4 +65,3 @@ function Home() {
 }
 
 export default Home;
-``;

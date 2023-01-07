@@ -1,8 +1,11 @@
+import { unstable_getServerSession } from "next-auth";
+import { authOptions } from "@/src/pages/api/auth/[...nextauth]";
 import { client } from "api/trpc";
 
 async function One() {
 	const { greeting } = await client.greeting.query({ name: "T3 App" });
 	const user = await client.getUser.query({ name: "szymuś" });
+	const session = await unstable_getServerSession(authOptions);
 
 	return (
 		<main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-[#2e026d] to-[#15162c]">
@@ -15,6 +18,9 @@ async function One() {
 						{user.name}
 					</span>
 				</h1>
+				<pre className="text-[hsl(280,100%,70%)]">
+					{JSON.stringify(session, null, 2)}
+				</pre>
 			</div>
 		</main>
 	);
