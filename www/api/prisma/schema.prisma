@@ -1,13 +1,17 @@
 generator client {
-    provider = "prisma-client-js"
+    provider        = "prisma-client-js"
+    previewFeatures = ["multiSchema"]
 }
 
 datasource db {
     provider = "postgresql"
-    url      = env("DB_URL")
+    url      = env("DATABASE_URL")
+    schemas  = ["admin", "frontend"]
 }
 
 model users {
     id   Int    @id @default(autoincrement())
-    name String @db.Text
+    name String
+
+    @@schema("admin")
 }
