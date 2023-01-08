@@ -26,6 +26,11 @@ export default withAuth(
 			url.pathname = "/auth/signin";
 			return NextResponse.redirect(url);
 		}
+		if (firstTime && url.pathname === "/auth/signin") {
+			// Redirect to sign up page if opening the sign in page when no user exists
+			url.pathname = "/auth/signup";
+			return NextResponse.redirect(url);
+		}
 
 		return NextResponse.next();
 	},
