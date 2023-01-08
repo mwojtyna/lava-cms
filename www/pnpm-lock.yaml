@@ -13,6 +13,7 @@ importers:
       '@babel/core': '>=7.0.0 <8.0.0'
       '@emotion/react': ^11.10.5
       '@emotion/server': ^11.10.0
+      '@heroicons/react': ^2.0.13
       '@mantine/core': ^5.10.0
       '@mantine/hooks': ^5.10.0
       '@mantine/next': ^5.10.0
@@ -40,6 +41,7 @@ importers:
     dependencies:
       '@emotion/react': 11.10.5_3grbeiqrb6djg67fiejiqngkdi
       '@emotion/server': 11.10.0
+      '@heroicons/react': 2.0.13_react@18.2.0
       '@mantine/core': 5.10.0_lbfixegkxal6rwioqxubxet6s4
       '@mantine/hooks': 5.10.0_react@18.2.0
       '@mantine/next': 5.10.0_d5xj5jipthoiwqd5a5nbaex2p4
@@ -645,6 +647,14 @@ packages:
       '@floating-ui/dom': 1.1.0
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
+    dev: false
+
+  /@heroicons/react/2.0.13_react@18.2.0:
+    resolution: {integrity: sha512-iSN5XwmagrnirWlYEWNPdCDj9aRYVD/lnK3JlsC9/+fqGF80k8C7rl+1HCvBX0dBoagKqOFBs6fMhJJ1hOg1EQ==}
+    peerDependencies:
+      react: '>= 16'
+    dependencies:
+      react: 18.2.0
     dev: false
 
   /@humanwhocodes/config-array/0.11.8:
