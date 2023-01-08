@@ -1,11 +1,18 @@
 "use client";
 
-import { Button, Group, TextInput, Title, UnstyledButton } from "@mantine/core";
+import {
+	Button,
+	Group,
+	Stack,
+	TextInput,
+	Title,
+	UnstyledButton,
+} from "@mantine/core";
 import { signIn } from "next-auth/react";
-import { type SubmitHandler, useForm } from "react-hook-form";
 import Link from "next/link";
+import { type SubmitHandler, useForm } from "react-hook-form";
 
-function SignInForm() {
+function SignUpForm() {
 	interface Inputs {
 		email: string;
 		password: string;
@@ -16,7 +23,6 @@ function SignInForm() {
 		handleSubmit,
 		formState: { errors },
 	} = useForm<Inputs>({ mode: "onTouched" });
-
 	const onSubmit: SubmitHandler<Inputs> = (data) => {
 		signIn("credentials", {
 			callbackUrl: "/admin/dashboard",
@@ -25,51 +31,51 @@ function SignInForm() {
 	};
 
 	return (
-		<form
-			onSubmit={handleSubmit(onSubmit)}
-			className="flex w-80 flex-col gap-4"
-		>
-			<Title order={1} variant="gradient">
-				Zaloguj się
-			</Title>
-
-			<TextInput
-				size="md"
-				type="email"
-				label="E-mail"
-				placeholder="user@domain.com"
-				{...register("email", {
-					required: true,
-					pattern:
-						/(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9]))\.){3}(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9])|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])/,
-				})}
-				error={errors.email && "Niepoprawny adres e-mail!"}
-			/>
-			<TextInput
-				size="md"
-				type="password"
-				label="Hasło"
-				{...register("password", {
-					required: true,
-				})}
-				error={!!errors.password}
-			/>
-
-			<Group position="apart">
-				<UnstyledButton className="px-1">
-					<Link
-						href="/admin/auth/signup"
-						className="text-inherit no-underline hover:underline"
-					>
-						Zarejestruj się
-					</Link>
-				</UnstyledButton>
-				<Button size="md" type="submit">
+		<form onSubmit={handleSubmit(onSubmit)}>
+			<Stack spacing="lg" className="w-96">
+				<Title order={1} size="3.5rem" variant="gradient">
 					Zaloguj się
-				</Button>
-			</Group>
+				</Title>
+
+				<TextInput
+					size="md"
+					type="email"
+					label="E-mail"
+					placeholder="user@domain.com"
+					{...register("email", {
+						required: true,
+						pattern:
+							/(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9]))\.){3}(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9])|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])/,
+					})}
+					error={errors.email && "Niepoprawny adres e-mail!"}
+				/>
+				<TextInput
+					size="md"
+					type="password"
+					label="Hasło"
+					{...register("password", {
+						required: true,
+					})}
+					error={errors.password && "Hasło jest wymagane!"}
+				/>
+
+				<Group position="right" spacing="lg">
+					<UnstyledButton>
+						<Link
+							href="/admin/auth/signup"
+							className="text-inherit no-underline hover:underline"
+						>
+							Nie mam konta
+						</Link>
+					</UnstyledButton>
+
+					<Button size="md" type="submit">
+						Zaloguj się
+					</Button>
+				</Group>
+			</Stack>
 		</form>
 	);
 }
 
-export default SignInForm;
+export default SignUpForm;

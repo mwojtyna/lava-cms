@@ -1,10 +1,13 @@
+"use client";
+
+import { Center } from "@mantine/core";
 import SignInForm from "./SignInForm";
 
 function SignIn() {
 	return (
-		<div className="flex h-[100vh] items-center justify-center">
+		<Center h="100vh">
 			<SignInForm />
-		</div>
+		</Center>
 	);
 }
 
