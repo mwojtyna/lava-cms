@@ -3,6 +3,7 @@
 import {
 	Button,
 	Group,
+	PasswordInput,
 	Stack,
 	TextInput,
 	Title,
@@ -77,9 +78,8 @@ function SignUpForm() {
 					/>
 				</Group>
 
-				<TextInput
+				<PasswordInput
 					size="md"
-					type="password"
 					label="Hasło"
 					{...register("password", {
 						required: true,
@@ -91,9 +91,8 @@ function SignUpForm() {
 						"Hasło musi mieć minimum 8 znaków, jedną wielką literę, oraz jedną cyfrę!"
 					}
 				/>
-				<TextInput
+				<PasswordInput
 					size="md"
-					type="password"
 					label="Powtórz hasło"
 					{...register("repeatPassword", {
 						required: true,

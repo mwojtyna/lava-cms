@@ -3,6 +3,7 @@
 import {
 	Button,
 	Group,
+	PasswordInput,
 	Stack,
 	TextInput,
 	Title,
@@ -49,9 +50,8 @@ function SignUpForm() {
 					})}
 					error={errors.email && "Niepoprawny adres e-mail!"}
 				/>
-				<TextInput
+				<PasswordInput
 					size="md"
-					type="password"
 					label="Hasło"
 					{...register("password", {
 						required: true,
