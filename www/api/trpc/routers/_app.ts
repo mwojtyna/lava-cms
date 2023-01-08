@@ -1,10 +1,12 @@
 import { router } from "../trpc";
 import { greeting } from "./greeting";
-import { getUser } from "./getUser";
+import { firstTime } from "./auth/firstTime";
 
 export const appRouter = router({
 	greeting,
-	getUser
+
+	// Auth
+	firstTime
 });
 
 export type AppRouter = typeof appRouter;

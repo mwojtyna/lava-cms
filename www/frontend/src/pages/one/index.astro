@@ -3,13 +3,11 @@ import Layout from "../../layouts/Layout.astro";
 import { client } from "api/trpc";
 
 const { greeting } = await client.greeting.query({ name: "Astro" });
-const user = await client.getUser.query({ name: "mati" });
 ---
 
 <Layout title="Welcome to Astro.">
 	<main>
 		<h1><span class="text-gradient">{greeting}!</span></h1>
-		<h1><span class="text-gradient">{user.name}</span></h1>
 	</main>
 </Layout>
 

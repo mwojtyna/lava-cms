@@ -1,3 +1,13 @@
 {
+	"compilerOptions": {
+		"baseUrl": ".",
+		"paths": {
+			"@/*": ["./*"]
+		}
+	},
+	"ts-node": {
+		"files": true,
+		"require": ["tsconfig-paths/register"]
+	},
 	"extends": "@tsconfig/node18/tsconfig.json"
 }

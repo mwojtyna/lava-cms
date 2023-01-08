@@ -81,6 +81,7 @@ importers:
       nodemon: ^2.0.20
       prisma: ^4.8.1
       ts-node: ^10.9.1
+      tsconfig-paths: ^4.1.2
       typescript: ^4.9.4
       zod: ^3.20.2
     dependencies:
@@ -96,6 +97,7 @@ importers:
       '@types/node': 18.11.18
       nodemon: 2.0.20
       prisma: 4.8.1
+      tsconfig-paths: 4.1.2
       typescript: 4.9.4
 
   frontend:
@@ -6134,6 +6136,15 @@ packages:
     dependencies:
       '@types/json5': 0.0.29
       json5: 1.0.1
+      minimist: 1.2.7
+      strip-bom: 3.0.0
+    dev: true
+
+  /tsconfig-paths/4.1.2:
+    resolution: {integrity: sha512-uhxiMgnXQp1IR622dUXI+9Ehnws7i/y6xvpZB9IbUVOPy0muvdvgXeZOn88UcGPiT98Vp3rJPTa8bFoalZ3Qhw==}
+    engines: {node: '>=6'}
+    dependencies:
+      json5: 2.2.2
       minimist: 1.2.7
       strip-bom: 3.0.0
     dev: true

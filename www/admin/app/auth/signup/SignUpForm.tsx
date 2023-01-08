@@ -12,10 +12,8 @@ import {
 	Stack,
 	TextInput,
 	Title,
-	UnstyledButton,
 } from "@mantine/core";
 import { signIn } from "next-auth/react";
-import Link from "next/link";
 import { type SubmitHandler, useForm } from "react-hook-form";
 
 function SignUpForm() {
@@ -110,16 +108,7 @@ function SignUpForm() {
 					icon={<LockClosedIcon className="w-5" />}
 				/>
 
-				<Group position="right" spacing="lg">
-					<UnstyledButton>
-						<Link
-							href="/admin/auth/signin"
-							className="text-inherit no-underline hover:underline"
-						>
-							Mam już konto
-						</Link>
-					</UnstyledButton>
-
+				<Group position="right">
 					<Button size="md" type="submit">
 						Zarejestruj się
 					</Button>

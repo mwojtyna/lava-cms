@@ -1,5 +1,5 @@
 {
-	"cSpell.words": ["Authed", "pgadmin", "pnpm", "superjson", "tanstack", "trpc"],
+	"cSpell.words": ["Authed", "pgadmin", "pnpm", "signin", "superjson", "tanstack", "trpc"],
 	"prettier.requireConfig": true,
 	"typescript.tsdk": "./node_modules/.pnpm/typescript@4.9.4/node_modules/typescript/lib",
 	"typescript.enablePromptUseWorkspaceTsdk": true

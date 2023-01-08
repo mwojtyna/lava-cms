@@ -13,6 +13,8 @@ const config = {
 	experimental: {
 		appDir: true,
 	},
+	transpilePackages: ["api"],
+
 	async redirects() {
 		return [
 			{
