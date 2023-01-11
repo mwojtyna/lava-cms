@@ -30,7 +30,9 @@ function SignUpForm() {
 	} = useForm<User & { repeatPassword: string }>({ mode: "onTouched" });
 	const onSubmit: SubmitHandler<User> = async (data) => {
 		await signUp(data);
-		router.push("/admin/dashboard");
+		router.push("/admin/dashboard", {
+			forceOptimisticNavigation: true,
+		});
 	};
 
 	return (
