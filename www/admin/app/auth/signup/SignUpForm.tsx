@@ -13,29 +13,24 @@ import {
 	TextInput,
 	Title,
 } from "@mantine/core";
-import { signIn } from "next-auth/react";
 import { type SubmitHandler, useForm } from "react-hook-form";
+import { useRouter } from "next/navigation";
+
+import { signUp } from "./signUp";
+import type { User } from "api/prisma/types";
 
 function SignUpForm() {
-	interface Inputs {
-		email: string;
-		name: string;
-		lastName: string;
-		password: string;
-		repeatPassword: string;
-	}
+	const router = useRouter();
 
 	const {
 		register,
 		handleSubmit,
 		formState: { errors },
 		watch,
-	} = useForm<Inputs>({ mode: "onTouched" });
-	const onSubmit: SubmitHandler<Inputs> = (data) => {
-		signIn("credentials", {
-			callbackUrl: "/admin/dashboard",
-			...data,
-		});
+	} = useForm<User & { repeatPassword: string }>({ mode: "onTouched" });
+	const onSubmit: SubmitHandler<User> = async (data) => {
+		await signUp(data);
+		router.push("/admin/dashboard");
 	};
 
 	return (
@@ -76,10 +71,10 @@ function SignUpForm() {
 						type="text"
 						label="Nazwisko"
 						placeholder="Kowalski"
-						{...register("lastName", {
+						{...register("last_name", {
 							required: true,
 						})}
-						error={!!errors.lastName}
+						error={!!errors.last_name}
 					/>
 				</Group>
 
