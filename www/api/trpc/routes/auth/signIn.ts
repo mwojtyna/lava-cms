@@ -7,8 +7,11 @@ import { SignInError } from "@api/prisma/types";
 const prisma = new PrismaClient();
 
 interface SignInResponse {
-	email?: string;
-	password?: string;
+	user?: {
+		id: number;
+		email: string;
+		password: string;
+	};
 	error?: SignInError;
 }
 
@@ -32,8 +35,11 @@ export const signIn = publicProcedure
 
 		if (user !== null && passwordsMatch) {
 			return {
-				email: user.email,
-				password: user.password
+				user: {
+					id: user.id,
+					email: user.email,
+					password: user.password
+				}
 			};
 		} else if (!user) {
 			return { error: "email" };

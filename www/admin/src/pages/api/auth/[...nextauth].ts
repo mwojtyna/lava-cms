@@ -18,22 +18,22 @@ export const authOptions: NextAuthOptions = {
 			},
 			authorize: async (credentials) => {
 				// Add logic here to look up the user from the credentials supplied
-				const user = await client.signIn.mutate({
+				const res = await client.signIn.mutate({
 					email: credentials!.email,
 					password: credentials!.password,
 				});
 
-				if (!user.error) {
+				if (!res.error && res.user) {
 					// Any object returned will be saved in `user` property of the JWT
 					return {
-						id: "1",
-						email: user.email,
-						password: user.password,
+						id: res.user.id.toString(),
+						email: res.user.email,
+						password: res.user.password,
 					} as typeof credentials & { id: string };
-				} else if (user.error !== "unknown") {
+				} else if (res.error !== "unknown") {
 					// You can also Reject this callback with an Error thus the user will be sent to the error page with the error message as a query parameter
 					// If you return null then an error will be displayed advising the user to check their details.
-					throw new Error(user.error);
+					throw new Error(res.error);
 				}
 
 				return null;
