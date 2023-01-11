@@ -18,6 +18,7 @@ import { useRouter } from "next/navigation";
 
 import { signUp } from "./signUp";
 import type { User } from "api/prisma/types";
+import { signIn } from "next-auth/react";
 
 function SignUpForm() {
 	const router = useRouter();
@@ -30,6 +31,12 @@ function SignUpForm() {
 	} = useForm<User & { repeatPassword: string }>({ mode: "onTouched" });
 	const onSubmit: SubmitHandler<User> = async (data) => {
 		await signUp(data);
+		await signIn("credentials", {
+			redirect: false,
+			email: data.email,
+			password: data.password,
+		});
+
 		router.push("/admin/dashboard", {
 			forceOptimisticNavigation: true,
 		});
