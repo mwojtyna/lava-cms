@@ -1,5 +1,5 @@
 import { unstable_getServerSession } from "next-auth";
-import { authOptions } from "@/src/pages/api/auth/[...nextauth]";
+import { authOptions } from "@admin/src/pages/api/auth/[...nextauth]";
 import { client } from "api/trpc";
 
 async function One() {

@@ -11,5 +11,6 @@ module.exports = {
 	extends: ["next/core-web-vitals", "plugin:@typescript-eslint/recommended"],
 	rules: {
 		"@typescript-eslint/consistent-type-imports": "warn",
+		"@typescript-eslint/no-non-null-assertion": "off",
 	},
 };

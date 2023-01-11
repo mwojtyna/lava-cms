@@ -1,4 +1,4 @@
-import { publicProcedure } from "../../trpc";
+import { publicProcedure } from "@api/trpc/trpc";
 import { PrismaClient } from "@prisma/client";
 import { z } from "zod";
 import bcrypt from "bcrypt";
