@@ -1,9 +1,7 @@
 import { publicProcedure } from "@api/trpc/trpc";
-import { PrismaClient } from "@prisma/client";
 import { z } from "zod";
 import bcrypt from "bcrypt";
-
-const prisma = new PrismaClient();
+import { prisma } from "@api/prisma/client";
 
 export const signUp = publicProcedure
 	.input(

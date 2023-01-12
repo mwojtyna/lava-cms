@@ -1,10 +1,8 @@
 import { publicProcedure } from "@api/trpc/trpc";
-import { PrismaClient } from "@prisma/client";
 import { z } from "zod";
 import bcrypt from "bcrypt";
 import { SignInError } from "@api/prisma/types";
-
-const prisma = new PrismaClient();
+import { prisma } from "@api/prisma/client";
 
 interface SignInResponse {
 	user?: {
