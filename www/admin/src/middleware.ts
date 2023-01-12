@@ -26,6 +26,15 @@ export default withAuth(
 			url.pathname = "/auth/signin";
 			return NextResponse.redirect(url);
 		}
+		if (
+			!firstTime &&
+			request.nextauth.token &&
+			url.pathname === "/auth/signin"
+		) {
+			// Redirect to dashboard if already signed in
+			url.pathname = "/dashboard";
+			return NextResponse.redirect(url);
+		}
 
 		return NextResponse.next();
 	},
