@@ -8,6 +8,7 @@ import {
 import {
 	Button,
 	Group,
+	Loader,
 	PasswordInput,
 	Stack,
 	TextInput,
@@ -26,9 +27,10 @@ function SignUpForm() {
 	const {
 		register,
 		handleSubmit,
-		formState: { errors },
+		formState: { errors, isSubmitting, isSubmitSuccessful },
 		watch,
 	} = useForm<User & { repeatPassword: string }>({ mode: "onTouched" });
+
 	const onSubmit: SubmitHandler<User> = async (data) => {
 		await signUp(data);
 		await signIn("credentials", {
@@ -119,7 +121,11 @@ function SignUpForm() {
 
 				<Group position="right">
 					<Button size="md" type="submit">
-						Zarejestruj się
+						{isSubmitting || isSubmitSuccessful ? (
+							<Loader variant="dots" color="#fff" />
+						) : (
+							<>Zarejestruj się</>
+						)}
 					</Button>
 				</Group>
 			</Stack>
