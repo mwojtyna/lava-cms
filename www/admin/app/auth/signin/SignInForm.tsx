@@ -4,6 +4,7 @@ import { LockClosedIcon, EnvelopeIcon } from "@heroicons/react/24/outline";
 import {
 	Button,
 	Group,
+	Loader,
 	PasswordInput,
 	Stack,
 	TextInput,
@@ -25,9 +26,10 @@ function SignUpForm() {
 	const {
 		register,
 		handleSubmit,
-		formState: { errors },
+		formState: { errors, isSubmitting, isSubmitSuccessful },
 		setError,
 	} = useForm<Inputs>({ mode: "onTouched" });
+
 	const onSubmit: SubmitHandler<Inputs> = async (data) => {
 		const res = await signIn("credentials", {
 			redirect: false,
@@ -85,7 +87,11 @@ function SignUpForm() {
 
 				<Group position="right" spacing="lg">
 					<Button size="md" type="submit">
-						Zaloguj się
+						{isSubmitting || isSubmitSuccessful ? (
+							<Loader variant="dots" color="#fff" />
+						) : (
+							<>Zaloguj się</>
+						)}
 					</Button>
 				</Group>
 			</Stack>
