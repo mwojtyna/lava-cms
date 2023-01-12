@@ -97,7 +97,7 @@ function SignUpForm() {
 					{...register("password", {
 						required: "Pole wymagane!",
 						pattern: {
-							value: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/,
+							value: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d\w\W]{8,}$/,
 							message:
 								"Hasło musi mieć minimum 8 znaków, jedną wielką literę, oraz jedną cyfrę!",
 						},
