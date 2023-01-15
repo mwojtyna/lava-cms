@@ -2,6 +2,9 @@ import * as trpcExpress from "@trpc/server/adapters/express";
 import express from "express";
 import cors from "cors";
 import { appRouter } from "./trpc/routes/_router";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 const app = express();
 const PORT = 4000;
