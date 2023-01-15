@@ -1,15 +1,7 @@
 "use client";
 
 import { LockClosedIcon, EnvelopeIcon } from "@heroicons/react/24/outline";
-import {
-	Button,
-	Group,
-	Loader,
-	PasswordInput,
-	Stack,
-	TextInput,
-	Title,
-} from "@mantine/core";
+import { Button, Group, Loader, PasswordInput, Stack, TextInput, Title } from "@mantine/core";
 import { signIn } from "next-auth/react";
 import { type SubmitHandler, useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";

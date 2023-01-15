@@ -9,7 +9,7 @@ export const signUp = publicProcedure
 			name: z.string(),
 			lastName: z.string(),
 			email: z.string(),
-			password: z.string()
+			password: z.string(),
 		})
 	)
 	.mutation(async ({ input }) => {
@@ -20,7 +20,7 @@ export const signUp = publicProcedure
 				name: input.name,
 				last_name: input.lastName,
 				email: input.email,
-				password: hashed
-			}
+				password: hashed,
+			},
 		});
 	});

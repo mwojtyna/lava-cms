@@ -17,16 +17,16 @@ export const signIn = publicProcedure
 	.input(
 		z.object({
 			email: z.string(),
-			password: z.string()
+			password: z.string(),
 		})
 	)
 	.mutation(async ({ input }): Promise<SignInResponse> => {
 		const user = await prisma.users.findFirst({
 			where: {
 				email: {
-					equals: input.email
-				}
-			}
+					equals: input.email,
+				},
+			},
 		});
 		// Compare even if user is null to prevent timing attacks
 		const passwordsMatch = await bcrypt.compare(input.password, user?.password ?? "");
@@ -36,8 +36,8 @@ export const signIn = publicProcedure
 				user: {
 					id: user.id,
 					email: user.email,
-					password: user.password
-				}
+					password: user.password,
+				},
 			};
 		} else if (!user) {
 			return { error: "email" };

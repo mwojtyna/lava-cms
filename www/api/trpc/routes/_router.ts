@@ -10,7 +10,7 @@ export const appRouter = router({
 	// Auth
 	firstTime,
 	signUp,
-	signIn
+	signIn,
 });
 
 export type AppRouter = typeof appRouter;

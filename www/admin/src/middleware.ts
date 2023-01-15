@@ -17,20 +17,12 @@ export default withAuth(
 			url.pathname = "/dashboard";
 			return NextResponse.redirect(url);
 		}
-		if (
-			!firstTime &&
-			!request.nextauth.token &&
-			url.pathname !== "/auth/signin"
-		) {
+		if (!firstTime && !request.nextauth.token && url.pathname !== "/auth/signin") {
 			// Redirect to sign in page if not signed in
 			url.pathname = "/auth/signin";
 			return NextResponse.redirect(url);
 		}
-		if (
-			!firstTime &&
-			request.nextauth.token &&
-			url.pathname === "/auth/signin"
-		) {
+		if (!firstTime && request.nextauth.token && url.pathname === "/auth/signin") {
 			// Redirect to dashboard if already signed in
 			url.pathname = "/dashboard";
 			return NextResponse.redirect(url);

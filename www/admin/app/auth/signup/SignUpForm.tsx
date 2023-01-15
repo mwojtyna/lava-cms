@@ -1,19 +1,7 @@
 "use client";
 
-import {
-	EnvelopeIcon,
-	LockClosedIcon,
-	UserIcon,
-} from "@heroicons/react/24/outline";
-import {
-	Button,
-	Group,
-	Loader,
-	PasswordInput,
-	Stack,
-	TextInput,
-	Title,
-} from "@mantine/core";
+import { EnvelopeIcon, LockClosedIcon, UserIcon } from "@heroicons/react/24/outline";
+import { Button, Group, Loader, PasswordInput, Stack, TextInput, Title } from "@mantine/core";
 import { type SubmitHandler, useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
 
@@ -111,9 +99,7 @@ function SignUpForm() {
 					{...register("repeatPassword", {
 						required: "Pole wymagane!",
 						validate: (value) =>
-							value === watch("password")
-								? true
-								: "Hasła nie są identyczne!",
+							value === watch("password") ? true : "Hasła nie są identyczne!",
 					})}
 					error={errors.repeatPassword?.message}
 					icon={<LockClosedIcon className="w-5" />}
