@@ -6,7 +6,7 @@ import { prisma } from "@api/prisma/client";
 
 interface SignInResponse {
 	user?: {
-		id: number;
+		id: string;
 		email: string;
 		password: string;
 	};
@@ -28,7 +28,6 @@ export const signIn = publicProcedure
 				},
 			},
 		});
-		// Compare even if user is null to prevent timing attacks
 		const passwordsMatch = await bcrypt.compare(input.password, user?.password ?? "");
 
 		if (user !== null && passwordsMatch) {

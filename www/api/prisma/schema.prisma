@@ -11,7 +11,7 @@ datasource db {
 
 // Admin schema
 model users {
-    id        Int    @id @default(autoincrement())
+    id        String @id @default(cuid())
     name      String
     last_name String
     email     String @unique
