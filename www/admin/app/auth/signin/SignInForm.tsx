@@ -5,7 +5,7 @@ import { Button, Group, Loader, PasswordInput, Stack, TextInput, Title } from "@
 import { signIn } from "next-auth/react";
 import { type SubmitHandler, useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
-import type { SignInError } from "api/prisma/types";
+import { type SignInError } from "api/trpc/routes/auth/signIn";
 
 function SignUpForm() {
 	const router = useRouter();

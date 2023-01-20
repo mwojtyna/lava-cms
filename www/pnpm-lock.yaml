@@ -17,6 +17,8 @@ importers:
       '@mantine/core': ^5.10.0
       '@mantine/hooks': ^5.10.0
       '@mantine/next': ^5.10.0
+      '@trpc/client': ^10.8.1
+      '@trpc/server': ^10.8.1
       '@types/node': ^18.11.18
       '@types/prettier': ^2.7.2
       '@types/react': ^18.0.26
@@ -45,6 +47,8 @@ importers:
       '@mantine/core': 5.10.0_lbfixegkxal6rwioqxubxet6s4
       '@mantine/hooks': 5.10.0_react@18.2.0
       '@mantine/next': 5.10.0_d5xj5jipthoiwqd5a5nbaex2p4
+      '@trpc/client': 10.8.1_@trpc+server@10.8.1
+      '@trpc/server': 10.8.1
       api: link:../api
       next: 13.1.1_7xlrwlvvs7cv2obrs6a5y6oxxq
       next-auth: 4.18.7_q76c2b4vyoegvsbrcwkfvimnai
@@ -72,7 +76,6 @@ importers:
   api:
     specifiers:
       '@prisma/client': ^4.8.1
-      '@trpc/client': ^10.8.1
       '@trpc/server': ^10.8.1
       '@tsconfig/node18': ^1.0.1
       '@types/bcrypt': ^5.0.0
@@ -91,7 +94,6 @@ importers:
       zod: ^3.20.2
     dependencies:
       '@prisma/client': 4.8.1_prisma@4.8.1
-      '@trpc/client': 10.8.1_@trpc+server@10.8.1
       '@trpc/server': 10.8.1
       '@tsconfig/node18': 1.0.1
       bcrypt: 5.1.0

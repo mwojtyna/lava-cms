@@ -1,17 +1,10 @@
 import { publicProcedure } from "@api/trpc/trpc";
 import { z } from "zod";
 import bcrypt from "bcrypt";
-import { SignInError } from "@api/prisma/types";
 import { prisma } from "@api/prisma/client";
+import { TRPCError } from "@trpc/server";
 
-interface SignInResponse {
-	user?: {
-		id: string;
-		email: string;
-		password: string;
-	};
-	error?: SignInError;
-}
+export type SignInError = "email" | "password";
 
 export const signIn = publicProcedure
 	.input(
@@ -20,7 +13,7 @@ export const signIn = publicProcedure
 			password: z.string(),
 		})
 	)
-	.mutation(async ({ input }): Promise<SignInResponse> => {
+	.mutation(async ({ input }): Promise<string> => {
 		const user = await prisma.users.findFirst({
 			where: {
 				email: {
@@ -31,18 +24,12 @@ export const signIn = publicProcedure
 		const passwordsMatch = await bcrypt.compare(input.password, user?.password ?? "");
 
 		if (user !== null && passwordsMatch) {
-			return {
-				user: {
-					id: user.id,
-					email: user.email,
-					password: user.password,
-				},
-			};
+			return user.id;
 		} else if (!user) {
-			return { error: "email" };
+			throw new TRPCError({ code: "UNAUTHORIZED", message: "email" });
 		} else if (!passwordsMatch) {
-			return { error: "password" };
+			throw new TRPCError({ code: "UNAUTHORIZED", message: "password" });
 		} else {
-			return { error: "unknown" };
+			throw new TRPCError({ code: "INTERNAL_SERVER_ERROR" });
 		}
 	});

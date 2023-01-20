@@ -5,9 +5,9 @@ import { Button, Group, Loader, PasswordInput, Stack, TextInput, Title } from "@
 import { type SubmitHandler, useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
 
-import { signUp } from "./signUp";
 import type { User } from "api/prisma/types";
 import { signIn } from "next-auth/react";
+import { trpc } from "@admin/src/utils/trpc";
 
 function SignUpForm() {
 	const router = useRouter();
@@ -20,7 +20,12 @@ function SignUpForm() {
 	} = useForm<User & { repeatPassword: string }>({ mode: "onTouched" });
 
 	const onSubmit: SubmitHandler<User> = async (data) => {
-		await signUp(data);
+		await trpc.signUp.mutate({
+			name: data.name,
+			lastName: data.last_name,
+			email: data.email,
+			password: data.password,
+		});
 		await signIn("credentials", {
 			redirect: false,
 			email: data.email,

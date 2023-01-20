@@ -10,7 +10,6 @@
 	},
 	"dependencies": {
 		"@prisma/client": "^4.8.1",
-		"@trpc/client": "^10.8.1",
 		"@trpc/server": "^10.8.1",
 		"@tsconfig/node18": "^1.0.1",
 		"bcrypt": "^5.1.0",

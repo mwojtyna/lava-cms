@@ -1,11 +1,11 @@
 import { NextResponse } from "next/server";
 import { withAuth } from "next-auth/middleware";
-import { client } from "api/trpc";
+import { trpc } from "@admin/src/utils/trpc";
 
 export default withAuth(
 	async (request) => {
 		const url = request.nextUrl.clone();
-		const firstTime = await client.firstTime.query();
+		const firstTime = await trpc.firstTime.query();
 
 		if (firstTime && url.pathname !== "/auth/signup") {
 			// Redirect to sign up page if opening the dashboard for the first time
