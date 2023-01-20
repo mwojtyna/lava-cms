@@ -8,6 +8,10 @@ export const authOptions: NextAuthOptions = {
 		signIn: "/admin/auth/signin",
 		signOut: "/admin/auth/signout",
 	},
+	session: {
+		strategy: "jwt",
+		maxAge: 7 * 24 * 60 * 60,
+	},
 	providers: [
 		CredentialsProvider({
 			credentials: {
