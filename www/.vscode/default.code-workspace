@@ -1,0 +1,20 @@
+{
+	"folders": [
+		{
+			"path": "../admin"
+		},
+		{
+			"path": "../api"
+		},
+		{
+			"path": "../frontend"
+		},
+		{
+			"path": ".."
+		}
+	],
+	"settings": {
+		"typescript.tsdk": "admin/node_modules/typescript/lib",
+		"typescript.enablePromptUseWorkspaceTsdk": true
+	}
+}
