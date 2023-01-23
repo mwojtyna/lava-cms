@@ -1,3 +1,9 @@
 {
+	"compilerOptions": {
+		"baseUrl": ".",
+		"paths": {
+			"@frontend/*": ["./*"]
+		}
+	},
 	"extends": "astro/tsconfigs/strict"
 }

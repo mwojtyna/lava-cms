@@ -1,8 +1,8 @@
 ---
-import Layout from "../../layouts/Layout.astro";
-import { client } from "api/trpc";
+import Layout from "@frontend/src/layouts/Layout.astro";
+import { trpc } from "@frontend/src/utils/trpc";
 
-const { greeting } = await client.greeting.query({ name: "Astro" });
+const { greeting } = await trpc.greeting.query({ name: "Astro" });
 ---
 
 <Layout title="Welcome to Astro.">
