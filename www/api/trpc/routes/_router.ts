@@ -4,13 +4,18 @@ import { firstTime } from "./auth/firstTime";
 import { signUp } from "./auth/signUp";
 import { signIn } from "./auth/signIn";
 
-export const appRouter = router({
-	greeting,
-
-	// Auth
+const auth = {
 	firstTime,
 	signUp,
+	/**
+	 * @returns The user's ID
+	 */
 	signIn,
+};
+
+export const appRouter = router({
+	greeting,
+	...auth,
 });
 
 export type AppRouter = typeof appRouter;

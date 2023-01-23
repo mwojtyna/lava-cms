@@ -5,6 +5,7 @@
 		"pgadmin",
 		"pnpm",
 		"signin",
+		"signout",
 		"superjson",
 		"tanstack",
 		"trpc"
