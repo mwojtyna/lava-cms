@@ -7,14 +7,16 @@ vi.mock("@api/prisma/client");
 
 describe("signIn", () => {
 	const ID = "123456789abcdef";
+	const NAME = "John";
+	const LAST_NAME = "Doe";
 	const EMAIL = "johndoe@domain.com";
 	const PASSWORD = "password";
 
 	it.concurrent("returns user's id if email and password are correct", async () => {
 		prisma.users.findFirst.mockResolvedValue({
 			id: ID,
-			name: "John",
-			last_name: "Doe",
+			name: NAME,
+			last_name: LAST_NAME,
 			email: EMAIL,
 			password: await bcrypt.hash(PASSWORD, 10),
 		});
@@ -32,8 +34,8 @@ describe("signIn", () => {
 	it.concurrent("throws an error if password is incorrect", async () => {
 		prisma.users.findFirst.mockResolvedValue({
 			id: ID,
-			name: "John",
-			last_name: "Doe",
+			name: NAME,
+			last_name: LAST_NAME,
 			email: EMAIL,
 			password: await bcrypt.hash(PASSWORD, 10),
 		});
