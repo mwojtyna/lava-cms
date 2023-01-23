@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from "vitest";
-import { caller } from "../_router";
+import { caller } from "@api/trpc/routes/_router";
 import { prisma } from "@api/prisma/__mocks__/client";
 
 vi.mock("@api/prisma/client");
