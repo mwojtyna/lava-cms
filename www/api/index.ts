@@ -12,7 +12,7 @@ const PORT = 4000;
 
 app.use(cors({ origin: "http://localhost:8080" }));
 app.use(
-	"/trpc",
+	"/",
 	trpcExpress.createExpressMiddleware({
 		router: appRouter,
 	})
