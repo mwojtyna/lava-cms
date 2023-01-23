@@ -13,6 +13,7 @@ const config = {
 	experimental: {
 		appDir: true,
 	},
+	// Fix for `import type` not working
 	transpilePackages: ["api"],
 
 	async redirects() {
