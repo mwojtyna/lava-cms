@@ -1,6 +1,7 @@
-FROM node:18.12.1
+FROM ubuntu:22.04
 
 WORKDIR /
+SHELL ["/bin/bash", "-c"]
 
 # Setup system
 RUN apt-get update
@@ -8,7 +9,25 @@ RUN apt-get install neovim -y
 RUN apt-get install less -y
 RUN apt-get install psmisc -y
 RUN apt-get install netcat -y
+RUN apt-get install man -y
+RUN apt-get install curl -y
+RUN apt-get install git -y
+
 RUN ln -sf /usr/share/zoneinfo/Europe/Warsaw /etc/localtime
+RUN useradd --create-home ubuntu
+RUN echo "root:root" | chpasswd
+
+# Install node
+ENV NODE_VERSION=18.13.0
+ENV NVM_DIR=/home/ubuntu/.nvm
+RUN mkdir -p ${NVM_DIR}
+
+RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.3/install.sh | bash
+RUN source ${NVM_DIR}/nvm.sh \
+	&& nvm install ${NODE_VERSION} \
+	&& nvm alias default ${NODE_VERSION} \
+	&& nvm use default
+ENV PATH ${NVM_DIR}/versions/node/v$NODE_VERSION/bin:$PATH
 
 # Setup project tools
 RUN npm install -g pnpm
@@ -17,13 +36,13 @@ RUN npm install -g git-open
 
 # Install zsh
 RUN apt-get install zsh -y
-RUN usermod --shell /bin/zsh node
+RUN usermod --shell /bin/zsh ubuntu
 
 # Install chezmoi
 RUN sh -c "$(curl -fsLS get.chezmoi.io)"
 
 # Install oh-my-zsh
-USER node
+USER ubuntu
 RUN sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 
 # Apply dotfiles from repo
@@ -38,5 +57,5 @@ RUN git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.
 RUN git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting
 
 # Setup volume mounts
-RUN mkdir /home/node/.vscode-server
-RUN mkdir /home/node/.pnpm-store
+RUN mkdir /home/ubuntu/.vscode-server
+RUN mkdir /home/ubuntu/.pnpm-store
