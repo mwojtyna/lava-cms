@@ -12,6 +12,7 @@ RUN apt-get install netcat -y
 RUN apt-get install man -y
 RUN apt-get install curl -y
 RUN apt-get install git -y
+RUN apt-get install openssl -y
 
 RUN ln -sf /usr/share/zoneinfo/Europe/Warsaw /etc/localtime
 RUN useradd --create-home ubuntu
