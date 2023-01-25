@@ -27,6 +27,7 @@
 			"tanstack",
 			"trpc"
 		],
-		"prettier.requireConfig": true
+		"prettier.requireConfig": true,
+		"testing.automaticallyOpenPeekView": "never"
 	}
 }
