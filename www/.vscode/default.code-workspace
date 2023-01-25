@@ -15,6 +15,18 @@
 	],
 	"settings": {
 		"typescript.tsdk": "admin/node_modules/typescript/lib",
-		"typescript.enablePromptUseWorkspaceTsdk": true
+		"typescript.enablePromptUseWorkspaceTsdk": true,
+		"cSpell.words": [
+			"Authed",
+			"nextauth",
+			"pgadmin",
+			"pnpm",
+			"signin",
+			"signout",
+			"superjson",
+			"tanstack",
+			"trpc"
+		],
+		"prettier.requireConfig": true
 	}
 }
