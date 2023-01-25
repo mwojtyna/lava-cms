@@ -2,9 +2,7 @@ import * as trpcExpress from "@trpc/server/adapters/express";
 import express from "express";
 import cors from "cors";
 import { appRouter } from "./trpc/routes/_router";
-import dotenv from "dotenv";
 
-dotenv.config();
 !process.env.SKIP_ENV_VALIDATION && import("./env/server");
 
 const app = express();

@@ -3,7 +3,9 @@
  * It has to be a `.mjs`-file to be imported there.
  */
 import { formatErrors, serverSchema } from "./schema";
+import dotenv from "dotenv";
 
+dotenv.config();
 const _serverEnv = serverSchema.safeParse(process.env);
 
 if (!_serverEnv.success) {
