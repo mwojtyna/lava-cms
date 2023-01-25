@@ -7,9 +7,9 @@
 		"start": "ts-node --transpile-only .",
 		"dev": "nodemon",
 		"build": "prisma generate",
-		"test": "vitest",
-		"test:ui": "vitest --ui",
-		"test:coverage": "vitest --coverage"
+		"test": "start-server-and-test 'pnpm start' 4000 'vitest'",
+		"test:ui": "start-server-and-test 'pnpm start' 4000 'vitest --ui'",
+		"test:coverage": "start-server-and-test 'pnpm start' 4000 'vitest --coverage'"
 	},
 	"dependencies": {
 		"@prisma/client": "^4.8.1",
@@ -31,6 +31,7 @@
 		"@vitest/ui": "^0.28.1",
 		"nodemon": "^2.0.20",
 		"prisma": "^4.8.1",
+		"start-server-and-test": "^1.15.3",
 		"tsconfig-paths": "^4.1.2",
 		"typescript": "^4.9.4",
 		"vitest": "^0.28.1",
