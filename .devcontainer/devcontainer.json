@@ -28,7 +28,7 @@
 	// "shutdownAction": "none",
 
 	// Uncomment the next line to run commands after the container is created.
-	"postCreateCommand": "pnpm install --frozen-lockfile && git config --global --add safe.directory /workspaces",
+	"postCreateCommand": "pnpm install --frozen-lockfile && cd api && pnpm prisma generate",
 	"postStartCommand": "git pull && pnpm install",
 
 	// Configure tool-specific properties.
