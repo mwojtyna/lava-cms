@@ -2,7 +2,7 @@
 import Layout from "@frontend/src/layouts/Layout.astro";
 import { trpc } from "@frontend/src/utils/trpc";
 
-const { greeting } = await trpc.greeting.query({ name: "Astro" });
+const { greeting } = await trpc.auth.greeting.query({ name: "Astro" });
 ---
 
 <Layout title="Welcome to Astro.">

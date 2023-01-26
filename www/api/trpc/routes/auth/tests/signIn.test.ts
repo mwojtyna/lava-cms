@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from "vitest";
 import { prisma } from "@api/prisma/__mocks__/client";
 import bcrypt from "bcrypt";
-import { caller } from "@api/trpc/routes/_router";
+import { caller } from "@api/trpc/routes/_app";
 
 vi.mock("@api/prisma/client");
 
@@ -20,7 +20,7 @@ describe("signIn", () => {
 			email: EMAIL,
 			password: await bcrypt.hash(PASSWORD, 10),
 		});
-		const userId = await caller.signIn({ email: EMAIL, password: PASSWORD });
+		const userId = await caller.auth.signIn({ email: EMAIL, password: PASSWORD });
 
 		expect(userId).toBe(ID);
 	});
@@ -28,7 +28,9 @@ describe("signIn", () => {
 	it.concurrent("throws an error if email is incorrect", async () => {
 		prisma.users.findFirst.mockResolvedValue(null);
 
-		await expect(caller.signIn({ email: EMAIL, password: PASSWORD })).rejects.toThrow("email");
+		await expect(caller.auth.signIn({ email: EMAIL, password: PASSWORD })).rejects.toThrow(
+			"email"
+		);
 	});
 
 	it.concurrent("throws an error if password is incorrect", async () => {
@@ -40,8 +42,8 @@ describe("signIn", () => {
 			password: await bcrypt.hash(PASSWORD, 10),
 		});
 
-		await expect(caller.signIn({ email: EMAIL, password: "wrong password" })).rejects.toThrow(
-			"password"
-		);
+		await expect(
+			caller.auth.signIn({ email: EMAIL, password: "wrong password" })
+		).rejects.toThrow("password");
 	});
 });

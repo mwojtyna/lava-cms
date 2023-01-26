@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from "vitest";
-import { caller } from "@api/trpc/routes/_router";
+import { caller } from "@api/trpc/routes/_app";
 import { prisma } from "@api/prisma/__mocks__/client";
 
 vi.mock("@api/prisma/client");
@@ -8,7 +8,7 @@ describe("firstTime", () => {
 	it("returns true if no users exist", async () => {
 		prisma.users.findFirst.mockResolvedValue(null);
 
-		const result = await caller.firstTime();
+		const result = await caller.auth.firstTime();
 
 		expect(result).toBe(true);
 	});
@@ -22,7 +22,7 @@ describe("firstTime", () => {
 			password: "password",
 		});
 
-		const result = await caller.firstTime();
+		const result = await caller.auth.firstTime();
 
 		expect(result).toBe(false);
 	});

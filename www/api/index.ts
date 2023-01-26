@@ -1,7 +1,7 @@
 import * as trpcExpress from "@trpc/server/adapters/express";
 import express from "express";
 import cors from "cors";
-import { appRouter } from "./trpc/routes/_router";
+import { appRouter } from "@api/trpc/routes/_app";
 
 !process.env.SKIP_ENV_VALIDATION && import("./env/server");
 

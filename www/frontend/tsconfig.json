@@ -2,8 +2,10 @@
 	"compilerOptions": {
 		"baseUrl": ".",
 		"paths": {
-			"@frontend/*": ["./*"]
-		}
+			"@frontend/*": ["./*"],
+			"@api/*": ["../api/*"]
+		},
+		"noEmit": true
 	},
 	"extends": "astro/tsconfigs/strict"
 }

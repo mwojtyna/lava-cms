@@ -4,8 +4,12 @@ importers:
 
   .:
     specifiers:
+      '@trpc/client': ^10.8.1
+      '@trpc/server': ^10.8.1
       turbo: ^1.6.3
     dependencies:
+      '@trpc/client': 10.9.0_@trpc+server@10.9.0
+      '@trpc/server': 10.9.0
       turbo: 1.6.3
 
   admin:
@@ -18,8 +22,6 @@ importers:
       '@mantine/hooks': ^5.10.0
       '@mantine/next': ^5.10.0
       '@playwright/test': ^1.30.0
-      '@trpc/client': ^10.8.1
-      '@trpc/server': ^10.8.1
       '@types/node': ^18.11.18
       '@types/prettier': ^2.7.2
       '@types/react': ^18.0.26
@@ -50,8 +52,6 @@ importers:
       '@mantine/core': 5.10.0_lbfixegkxal6rwioqxubxet6s4
       '@mantine/hooks': 5.10.0_react@18.2.0
       '@mantine/next': 5.10.0_d5xj5jipthoiwqd5a5nbaex2p4
-      '@trpc/client': 10.8.1_@trpc+server@10.8.1
-      '@trpc/server': 10.8.1
       api: link:../api
       dotenv: 16.0.3
       next: 13.1.1_7xlrwlvvs7cv2obrs6a5y6oxxq
@@ -82,7 +82,6 @@ importers:
   api:
     specifiers:
       '@prisma/client': ^4.8.1
-      '@trpc/server': ^10.8.1
       '@tsconfig/node18': ^1.0.1
       '@types/bcrypt': ^5.0.0
       '@types/cors': ^2.8.13
@@ -105,7 +104,6 @@ importers:
       zod: ^3.20.2
     dependencies:
       '@prisma/client': 4.8.1_prisma@4.8.1
-      '@trpc/server': 10.8.1
       '@tsconfig/node18': 1.0.1
       bcrypt: 5.1.0
       cors: 2.8.5
@@ -130,20 +128,18 @@ importers:
 
   frontend:
     specifiers:
-      '@trpc/client': ^10.8.1
-      '@trpc/server': ^10.8.1
       api: workspace:*
       astro: ^1.9.1
       http-server: ^14.1.1
       prettier: ^2.8.1
+      typescript: ^4.9.4
     dependencies:
-      '@trpc/client': 10.8.1_@trpc+server@10.8.1
-      '@trpc/server': 10.8.1
       api: link:../api
       astro: 1.9.1
       http-server: 14.1.1
     devDependencies:
       prettier: 2.8.1
+      typescript: 4.9.4
 
 packages:
 
@@ -1218,16 +1214,16 @@ packages:
       tslib: 2.4.1
     dev: false
 
-  /@trpc/client/10.8.1_@trpc+server@10.8.1:
-    resolution: {integrity: sha512-DQ+Y3ek/rjCYaI8ifeeVPVW/KIO6ryye32Xdm9VAkdhd1humYD/4rN2CQ7K1zPTeNpbIpuckEAMEadeB4ItcMQ==}
+  /@trpc/client/10.9.0_@trpc+server@10.9.0:
+    resolution: {integrity: sha512-id6318qpgqllNOuBp7nuciXFPXCe+zae5d4r1hze6Eyp5fFFNO58TqA+4Q44KIcHgpfWyW2egs6iPeql3PrdKA==}
     peerDependencies:
-      '@trpc/server': 10.8.1
+      '@trpc/server': 10.9.0
     dependencies:
-      '@trpc/server': 10.8.1
+      '@trpc/server': 10.9.0
     dev: false
 
-  /@trpc/server/10.8.1:
-    resolution: {integrity: sha512-oSNYgFNJbjki4jBByJ/SKHasB/X7kTsEbVGaONNH1DHMz638xlYXPQucV+2bWbhCm5HlXhQTaVN7Or0lsCuUUQ==}
+  /@trpc/server/10.9.0:
+    resolution: {integrity: sha512-5psyZgbvy29pJND32hwkWTMbv6s86IbsPOeDopsgNF0VegZT6Dsijmb7Ub/TDhuJVQVq5u4u5briMXi3SxmBkw==}
     dev: false
 
   /@tsconfig/node10/1.0.9:

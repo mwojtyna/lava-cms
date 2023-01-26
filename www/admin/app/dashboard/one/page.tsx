@@ -3,7 +3,7 @@ import { authOptions } from "@admin/src/pages/api/auth/[...nextauth]";
 import { trpc } from "@admin/src/utils/trpc";
 
 async function One() {
-	const { greeting } = await trpc.greeting.query({ name: "T3 App" });
+	const { greeting } = await trpc.auth.greeting.query({ name: "T3 App" });
 	const session = await unstable_getServerSession(authOptions);
 
 	return (

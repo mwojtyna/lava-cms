@@ -4,9 +4,12 @@
 	"scripts": {
 		"start": "FORCE_COLOR=1 NODE_ENV=production turbo start",
 		"dev": "FORCE_COLOR=1 NODE_ENV=development turbo dev",
-		"build": "scripts/build.sh"
+		"build": "scripts/build.sh",
+		"lint": "FORCE_COLOR=1 turbo lint"
 	},
 	"dependencies": {
+		"@trpc/client": "^10.8.1",
+		"@trpc/server": "^10.8.1",
 		"turbo": "^1.6.3"
 	}
 }

@@ -20,7 +20,7 @@ function SignUpForm() {
 	} = useForm<User & { repeatPassword: string }>({ mode: "onTouched" });
 
 	const onSubmit: SubmitHandler<User> = async (data) => {
-		await trpc.signUp.mutate({
+		await trpc.auth.signUp.mutate({
 			name: data.name,
 			lastName: data.last_name,
 			email: data.email,

@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from "vitest";
 import { prisma } from "@api/prisma/__mocks__/client";
-import { caller } from "@api/trpc/routes/_router";
+import { caller } from "@api/trpc/routes/_app";
 
 vi.mock("@api/prisma/client");
 
@@ -11,7 +11,7 @@ describe("signIn", () => {
 	const PASSWORD = "password";
 
 	it("creates a user", async () => {
-		await caller.signUp({
+		await caller.auth.signUp({
 			name: NAME,
 			lastName: LAST_NAME,
 			email: EMAIL,

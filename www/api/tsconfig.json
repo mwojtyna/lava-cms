@@ -3,7 +3,8 @@
 		"baseUrl": ".",
 		"paths": {
 			"@api/*": ["./*"]
-		}
+		},
+		"noEmit": true
 	},
 	"ts-node": {
 		"files": true,

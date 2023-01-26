@@ -7,17 +7,17 @@
 		"start": "http-server -p 3000 ./dist",
 		"dev": "astro dev --port 3000",
 		"build": "astro build",
+		"lint": "tsc && astro check",
 		"preview": "astro preview",
 		"astro": "astro"
 	},
 	"dependencies": {
-		"@trpc/client": "^10.8.1",
-		"@trpc/server": "^10.8.1",
 		"api": "workspace:*",
 		"astro": "^1.9.1",
 		"http-server": "^14.1.1"
 	},
 	"devDependencies": {
-		"prettier": "^2.8.1"
+		"prettier": "^2.8.1",
+		"typescript": "^4.9.4"
 	}
 }
