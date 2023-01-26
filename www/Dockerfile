@@ -1,4 +1,4 @@
-FROM node:18.12.1-slim
+FROM node:18.13.0-slim
 
 WORKDIR /app
 
@@ -10,6 +10,7 @@ RUN npm install -g pnpm
 # Install dependencies
 COPY ./ /app
 RUN pnpm install --frozen-lockfile
+RUN cd api && pnpm prisma generate
 
 RUN pnpm build
 CMD [ "pnpm", "start" ]

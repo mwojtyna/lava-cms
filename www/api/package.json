@@ -6,7 +6,6 @@
 	"scripts": {
 		"start": "ts-node --transpile-only .",
 		"dev": "nodemon",
-		"build": "prisma generate",
 		"lint": "tsc",
 		"test": "start-server-and-test 'pnpm start' 4000 'vitest'",
 		"test:dev": "vitest",
