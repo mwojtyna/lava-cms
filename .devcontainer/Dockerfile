@@ -1,18 +1,17 @@
-FROM ubuntu:22.04
+FROM mcr.microsoft.com/playwright:v1.30.0
 
 WORKDIR /
 SHELL ["/bin/bash", "-c"]
 
 # Setup system
 RUN apt-get update
-RUN apt-get install neovim -y
-RUN apt-get install less -y
-RUN apt-get install psmisc -y
-RUN apt-get install netcat -y
-RUN apt-get install man -y
-RUN apt-get install curl -y
-RUN apt-get install git -y
-RUN apt-get install openssl -y
+RUN apt-get install -y neovim
+RUN apt-get install -y less
+RUN apt-get install -y psmisc
+RUN apt-get install -y netcat
+RUN apt-get install -y git
+RUN apt-get install -y openssl
+RUN apt-get install -y sudo
 
 RUN ln -sf /usr/share/zoneinfo/Europe/Warsaw /etc/localtime
 RUN useradd --create-home ubuntu
@@ -36,7 +35,7 @@ RUN npm install -g npm-upgrade
 RUN npm install -g git-open
 
 # Install zsh
-RUN apt-get install zsh -y
+RUN apt-get install -y zsh
 RUN usermod --shell /bin/zsh ubuntu
 
 # Install chezmoi
