@@ -7,9 +7,9 @@ vi.mock("@api/prisma/client");
 it("returns true if no users exist", async () => {
 	prisma.users.findFirst.mockResolvedValue(null);
 
-	const result = await caller.auth.firstTime();
+	const { firstTime } = await caller.auth.firstTime();
 
-	expect(result).toBe(true);
+	expect(firstTime).toBe(true);
 });
 
 it("returns false if users exist", async () => {
@@ -21,7 +21,7 @@ it("returns false if users exist", async () => {
 		password: "password",
 	});
 
-	const result = await caller.auth.firstTime();
+	const { firstTime } = await caller.auth.firstTime();
 
-	expect(result).toBe(false);
+	expect(firstTime).toBe(false);
 });

@@ -5,7 +5,7 @@ import { trpc } from "@admin/src/utils/trpc";
 export default withAuth(
 	async (request) => {
 		const url = request.nextUrl.clone();
-		const firstTime = await trpc.auth.firstTime.query();
+		const { firstTime } = await trpc.auth.firstTime.query();
 
 		if (firstTime && url.pathname !== "/auth/signup") {
 			// Redirect to sign up page if opening the dashboard for the first time

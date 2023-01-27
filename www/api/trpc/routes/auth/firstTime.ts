@@ -3,5 +3,5 @@ import { prisma } from "@api/prisma/client";
 
 export const firstTime = publicProcedure.query(async () => {
 	const user = await prisma.users.findFirst();
-	return user === null;
+	return { firstTime: user === null };
 });
