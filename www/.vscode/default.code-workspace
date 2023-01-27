@@ -25,7 +25,8 @@
 			"signout",
 			"superjson",
 			"tanstack",
-			"trpc"
+			"trpc",
+			"trpcadmin"
 		],
 		"prettier.requireConfig": true,
 		"testing.automaticallyOpenPeekView": "never"
