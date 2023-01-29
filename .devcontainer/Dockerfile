@@ -29,10 +29,11 @@ RUN source ${NVM_DIR}/nvm.sh \
 	&& nvm use default
 ENV PATH ${NVM_DIR}/versions/node/v$NODE_VERSION/bin:$PATH
 
-# Setup project tools
+# Setup project
 RUN npm install -g pnpm
 RUN npm install -g npm-upgrade
 RUN npm install -g git-open
+RUN git config --global --add safe.directory /workspaces
 
 # Install zsh
 RUN apt-get install -y zsh
@@ -40,6 +41,11 @@ RUN usermod --shell /bin/zsh ubuntu
 
 # Install chezmoi
 RUN sh -c "$(curl -fsLS get.chezmoi.io)"
+
+# Setup volume mounts
+RUN mkdir -p /workspaces/lava-cms/
+RUN mkdir /home/ubuntu/.vscode-server
+RUN mkdir /home/ubuntu/.pnpm-store
 
 # Install oh-my-zsh
 USER ubuntu
@@ -55,7 +61,3 @@ RUN	chezmoi apply
 RUN git clone --depth=1 https://github.com/romkatv/powerlevel10k.git ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/themes/powerlevel10k
 RUN git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
 RUN git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting
-
-# Setup volume mounts
-RUN mkdir /home/ubuntu/.vscode-server
-RUN mkdir /home/ubuntu/.pnpm-store
