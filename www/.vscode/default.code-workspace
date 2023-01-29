@@ -26,7 +26,8 @@
 			"superjson",
 			"tanstack",
 			"trpc",
-			"trpcadmin"
+			"trpcadmin",
+			"unstub"
 		],
 		"prettier.requireConfig": true,
 		"testing.automaticallyOpenPeekView": "never"

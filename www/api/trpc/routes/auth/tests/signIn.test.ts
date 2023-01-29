@@ -1,4 +1,4 @@
-import { describe, expect, it, vi } from "vitest";
+import { expect, it, vi } from "vitest";
 import { prisma } from "@api/prisma/__mocks__/client";
 import bcrypt from "bcrypt";
 import { caller } from "@api/trpc/routes/_app";

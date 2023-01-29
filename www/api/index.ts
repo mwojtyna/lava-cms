@@ -1,25 +1,9 @@
-import * as trpcExpress from "@trpc/server/adapters/express";
-import express from "express";
-import cors from "cors";
-import { renderTrpcPanel } from "trpc-panel";
-import { appRouter } from "@api/trpc/routes/_app";
-import { env } from "@api/env/server";
+import { App, init, PORT } from "./server";
 
-const app = express();
-const PORT = 4000;
+let server: ReturnType<App["listen"]>;
 
-app.use(cors({ origin: "http://localhost:8080" }));
-app.use(
-	"/trpc",
-	trpcExpress.createExpressMiddleware({
-		router: appRouter,
-	})
-);
-
-if (env.NODE_ENV === "development") {
-	app.get("/trpcadmin", (_, res) =>
-		res.send(renderTrpcPanel(appRouter, { url: "http://localhost:4000/trpc" }))
-	);
+async function start() {
+	const app = await init();
+	server = app.listen(PORT, () => console.log(`Listening on port ${PORT}...`));
 }
-
-app.listen(PORT, () => console.info(`Listening on port ${PORT}...`));
+start();

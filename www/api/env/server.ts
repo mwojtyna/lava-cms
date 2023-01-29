@@ -5,23 +5,28 @@
 import { formatErrors, serverSchema } from "./schema";
 import dotenv from "dotenv";
 
-dotenv.config();
-const _serverEnv = serverSchema.safeParse(process.env);
+export let env: ReturnType<typeof serverSchema.parse>;
 
-if (!_serverEnv.success) {
-	console.error(
-		"❌ Invalid environment variables:\n",
-		...formatErrors(_serverEnv.error.format())
-	);
-	throw new Error("Invalid environment variables");
-}
+export function reload() {
+	dotenv.config();
+	const _serverEnv = serverSchema.safeParse(process.env);
 
-for (let key of Object.keys(_serverEnv.data)) {
-	if (key.startsWith("NEXT_PUBLIC_")) {
-		console.warn("❌ You are exposing a server-side env-variable:", key);
-
-		throw new Error("You are exposing a server-side env-variable");
+	if (!_serverEnv.success) {
+		console.error(
+			"❌ Invalid environment variables:\n",
+			...formatErrors(_serverEnv.error.format())
+		);
+		throw new Error("Invalid environment variables");
 	}
-}
 
-export const env = { ..._serverEnv.data };
+	for (let key of Object.keys(_serverEnv.data)) {
+		if (key.startsWith("NEXT_PUBLIC_")) {
+			console.warn("❌ You are exposing a server-side env-variable:", key);
+
+			throw new Error("You are exposing a server-side env-variable");
+		}
+	}
+
+	env = { ..._serverEnv.data };
+}
+reload();
