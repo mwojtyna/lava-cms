@@ -16,6 +16,7 @@ RUN apt-get install -y sudo
 RUN ln -sf /usr/share/zoneinfo/Europe/Warsaw /etc/localtime
 RUN useradd --create-home ubuntu
 RUN echo "root:root" | chpasswd
+RUN git config --global --add safe.directory /workspaces/lava-cms/
 
 # Install node
 ENV NODE_VERSION=18.13.0
@@ -33,7 +34,6 @@ ENV PATH ${NVM_DIR}/versions/node/v$NODE_VERSION/bin:$PATH
 RUN npm install -g pnpm
 RUN npm install -g npm-upgrade
 RUN npm install -g git-open
-RUN git config --global --add safe.directory /workspaces
 
 # Install zsh
 RUN apt-get install -y zsh

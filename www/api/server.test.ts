@@ -1,6 +1,6 @@
 import { it, expect, vi, describe, afterEach } from "vitest";
 import request from "supertest";
-import { init, App, PORT } from "@api/server";
+import { init, App } from "@api/server";
 import { env, reload } from "@api/env/server";
 
 describe("/trpcadmin", async () => {
@@ -10,7 +10,7 @@ describe("/trpcadmin", async () => {
 	async function start() {
 		app = await init();
 		return new Promise<void>((resolve) => {
-			server = app!.listen(PORT, () => {
+			server = app!.listen(0, () => {
 				resolve();
 			});
 		});
