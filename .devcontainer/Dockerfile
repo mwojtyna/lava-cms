@@ -32,7 +32,6 @@ ENV PATH ${NVM_DIR}/versions/node/v$NODE_VERSION/bin:$PATH
 
 # Setup project
 RUN npm install -g pnpm
-RUN npm install -g npm-upgrade
 RUN npm install -g git-open
 
 # Install zsh
