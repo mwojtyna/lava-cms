@@ -4,8 +4,8 @@
 	"private": true,
 	"main": "index.ts",
 	"scripts": {
-		"start": "ts-node --transpile-only .",
-		"dev": "nodemon",
+		"start": "NODE_ENV=production ts-node --transpile-only .",
+		"dev": "NODE_ENV=development nodemon",
 		"lint": "tsc",
 		"test": "vitest",
 		"test:ui": "vitest --ui",
