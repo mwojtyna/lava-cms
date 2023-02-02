@@ -7,7 +7,7 @@
 		"dev": "next dev -p 3001",
 		"build": "next build",
 		"lint": "tsc && next lint",
-		"test": "start-server-and-test 'cd .. && pnpm start' http://localhost:3001/admin/dashboard 'playwright test'",
+		"test": "start-server-and-test 'pnpm dev' http://localhost:3001/admin/api/health 'playwright test && playwright show-report'",
 		"test:dev": "playwright test && playwright show-report",
 		"test:report": "playwright show-report"
 	},
@@ -37,6 +37,8 @@
 		"autoprefixer": "^10.4.13",
 		"eslint": "^8.31.0",
 		"eslint-config-next": "13.1.1",
+		"msw": "^0.49.3",
+		"msw-trpc": "^1.1.1",
 		"postcss": "^8.4.21",
 		"prettier": "^2.8.1",
 		"prettier-plugin-tailwindcss": "^0.2.1",

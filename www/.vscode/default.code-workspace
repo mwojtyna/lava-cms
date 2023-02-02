@@ -18,6 +18,7 @@
 		"typescript.enablePromptUseWorkspaceTsdk": true,
 		"cSpell.words": [
 			"Authed",
+			"mswjs",
 			"nextauth",
 			"pgadmin",
 			"pnpm",
