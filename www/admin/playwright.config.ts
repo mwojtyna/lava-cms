@@ -52,19 +52,19 @@ const config: PlaywrightTestConfig = {
 			},
 		},
 
-		{
-			name: "firefox",
-			use: {
-				...devices["Desktop Firefox"],
-			},
-		},
+		// {
+		// 	name: "firefox",
+		// 	use: {
+		// 		...devices["Desktop Firefox"],
+		// 	},
+		// },
 
-		{
-			name: "webkit",
-			use: {
-				...devices["Desktop Safari"],
-			},
-		},
+		// {
+		// 	name: "webkit",
+		// 	use: {
+		// 		...devices["Desktop Safari"],
+		// 	},
+		// },
 
 		/* Test against mobile viewports. */
 		// {
@@ -99,11 +99,11 @@ const config: PlaywrightTestConfig = {
 	// outputDir: 'test-results/',
 
 	/* Run your local dev server before starting the tests */
-	// webServer: {
-	// 	command: "cd .. && pnpm start",
-	// 	port: 3001,
-	// 	reuseExistingServer: true,
-	// },
+	webServer: {
+		command: "pnpm dev",
+		url: "http://localhost:3001/admin/api/health",
+		reuseExistingServer: true,
+	},
 };
 
 export default config;

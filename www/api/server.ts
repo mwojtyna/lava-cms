@@ -6,11 +6,13 @@ import { appRouter } from "@api/trpc/routes/_app";
 import { env } from "@api/env/server";
 import { mock } from "@api/mockServer";
 
-export const app = express();
+export let app: ReturnType<typeof express>;
 export type App = ReturnType<typeof init> extends Promise<infer T> ? T : never;
 export const PORT = 4000;
 
 export async function init(mockHandlers?: any) {
+	app = express();
+
 	if (mockHandlers) {
 		mock(mockHandlers, app);
 	}

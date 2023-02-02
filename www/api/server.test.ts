@@ -9,7 +9,7 @@ describe("/trpcadmin", async () => {
 
 	async function start() {
 		app = await init();
-		return new Promise<void>((resolve) => {
+		await new Promise<void>((resolve) => {
 			server = app!.listen(0, () => {
 				resolve();
 			});
