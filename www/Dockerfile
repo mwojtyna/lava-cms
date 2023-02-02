@@ -1,5 +1,4 @@
 FROM node:18.13.0-slim
-
 WORKDIR /app
 
 # Setup system
@@ -11,6 +10,6 @@ RUN npm install -g pnpm
 COPY ./ /app
 RUN pnpm install --frozen-lockfile
 RUN cd api && pnpm prisma generate
-
 RUN pnpm build
+
 CMD [ "pnpm", "start" ]
