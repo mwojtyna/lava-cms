@@ -29,9 +29,7 @@ function SignUpForm() {
 		});
 
 		if (res?.ok) {
-			router.push("/admin/dashboard", {
-				forceOptimisticNavigation: true,
-			});
+			router.push("/admin/dashboard");
 		} else if ((res?.error as SignInError) === "email") {
 			setError("email", {
 				type: "manual",

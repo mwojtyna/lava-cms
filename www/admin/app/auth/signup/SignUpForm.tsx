@@ -32,9 +32,7 @@ function SignUpForm() {
 			password: data.password,
 		});
 
-		router.push("/admin/dashboard", {
-			forceOptimisticNavigation: true,
-		});
+		router.push("/admin/dashboard");
 	};
 
 	return (
