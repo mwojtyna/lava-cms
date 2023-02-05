@@ -26,9 +26,9 @@ export const signIn = publicProcedure
 		if (user !== null && passwordsMatch) {
 			return user.id;
 		} else if (!user) {
-			throw new TRPCError({ code: "UNAUTHORIZED", message: "email" });
+			throw new TRPCError({ code: "UNAUTHORIZED", message: "email" as SignInError });
 		} else if (!passwordsMatch) {
-			throw new TRPCError({ code: "UNAUTHORIZED", message: "password" });
+			throw new TRPCError({ code: "UNAUTHORIZED", message: "password" as SignInError });
 		} else {
 			throw new TRPCError({ code: "INTERNAL_SERVER_ERROR" });
 		}

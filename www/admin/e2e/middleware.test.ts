@@ -19,17 +19,20 @@ async function start(app: App) {
 		});
 	});
 }
-async function stop() {
-	await server!.terminate();
-	console.log("Mocking stopped");
 
-	server = null;
-}
-
-test.describe.configure({ mode: "serial" });
 test.afterEach(async () => {
-	await stop();
+	await server?.terminate();
+	console.log("Mocking stopped");
 	server = null;
+});
+
+test("shows error overlay when trpc fails", async ({ page }) => {
+	await page.goto("http://localhost:3001/admin/dashboard");
+	const errorOverlay = await page.waitForSelector("div[data-nextjs-dialog-content='true']", {
+		timeout: 5000,
+	});
+
+	expect(await errorOverlay.isVisible()).toBe(true);
 });
 
 test("redirects to sign up page when no user in database", async ({ page }) => {
@@ -40,9 +43,10 @@ test("redirects to sign up page when no user in database", async ({ page }) => {
 	);
 	await start(app);
 
-	await page.goto("http://localhost:3001/admin");
+	await page.goto("/admin");
 	expect(page.url()).toMatch(/\/auth\/signup/);
 });
+
 test("redirects to sign in page when user is not signed in", async ({ page }) => {
 	const app = await init(
 		trpcMsw.auth.firstTime.query((_, res, ctx) => {
@@ -51,6 +55,6 @@ test("redirects to sign in page when user is not signed in", async ({ page }) =>
 	);
 	await start(app);
 
-	await page.goto("http://localhost:3001/admin");
+	await page.goto("/admin");
 	expect(page.url()).toMatch(/\/auth\/signin/);
 });

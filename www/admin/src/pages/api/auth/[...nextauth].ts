@@ -1,8 +1,6 @@
 import NextAuth, { type NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { trpc } from "@admin/src/utils/trpc";
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { type TRPCError } from "@trpc/server";
 
 export const authOptions: NextAuthOptions = {
 	pages: {
@@ -34,7 +32,7 @@ export const authOptions: NextAuthOptions = {
 					return {
 						id: userId,
 					};
-				} catch (error: TRPCError | unknown) {
+				} catch (error) {
 					throw error;
 				}
 			},
