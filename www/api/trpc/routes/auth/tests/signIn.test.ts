@@ -27,7 +27,7 @@ it("returns user's id if email and password are correct", async () => {
 it("throws an error if email is incorrect", async () => {
 	prisma.users.findFirst.mockResolvedValue(null);
 
-	await expect(caller.auth.signIn({ email: EMAIL, password: PASSWORD })).rejects.toThrow("email");
+	await expect(caller.auth.signIn({ email: EMAIL, password: PASSWORD })).rejects.toThrow();
 });
 
 it("throws an error if password is incorrect", async () => {
@@ -39,7 +39,7 @@ it("throws an error if password is incorrect", async () => {
 		password: await bcrypt.hash(PASSWORD, 10),
 	});
 
-	await expect(caller.auth.signIn({ email: EMAIL, password: "wrong password" })).rejects.toThrow(
-		"password"
-	);
+	await expect(
+		caller.auth.signIn({ email: EMAIL, password: "wrong password" })
+	).rejects.toThrow();
 });

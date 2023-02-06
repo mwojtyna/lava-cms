@@ -5,7 +5,6 @@ import { getSignedInPage } from "@admin/e2e/mocks/auth";
 
 test.afterEach(async () => {
 	await stop();
-	console.log("Mocking stopped");
 });
 
 test("shows error overlay when trpc fails", async ({ page }) => {
@@ -18,11 +17,11 @@ test("shows error overlay when trpc fails", async ({ page }) => {
 });
 
 test("redirects to sign up page when no user in database", async ({ page }) => {
-	const app = await init(
+	const app = await init([
 		trpcMsw.auth.firstTime.query((_, res, ctx) => {
 			return res(ctx.data({ firstTime: true }));
-		})
-	);
+		}),
+	]);
 	await start(app);
 
 	await page.goto("/admin");
@@ -30,11 +29,11 @@ test("redirects to sign up page when no user in database", async ({ page }) => {
 });
 
 test("redirects to sign in page when user is not signed in", async ({ page }) => {
-	const app = await init(
+	const app = await init([
 		trpcMsw.auth.firstTime.query((_, res, ctx) => {
 			return res(ctx.data({ firstTime: false }));
-		})
-	);
+		}),
+	]);
 	await start(app);
 
 	await page.goto("/admin");

@@ -14,7 +14,7 @@ dotenv.config();
 const config: PlaywrightTestConfig = {
 	testDir: "./e2e",
 	/* Maximum time one test can run for. */
-	timeout: 30 * 1000,
+	timeout: 30000,
 	expect: {
 		/**
 		 * Maximum time expect() should wait for the condition to be met.
@@ -36,6 +36,7 @@ const config: PlaywrightTestConfig = {
 	use: {
 		/* Maximum time each action such as `click()` can take. Defaults to 0 (no limit). */
 		actionTimeout: 0,
+		navigationTimeout: 10000,
 		/* Base URL to use in actions like `await page.goto('/')`. */
 		baseURL: "http://localhost:3001",
 

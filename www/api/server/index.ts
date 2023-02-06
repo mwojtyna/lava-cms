@@ -7,14 +7,14 @@ import { env } from "@api/env/server";
 import { mock } from "@api/server/mock";
 
 export let app: ReturnType<typeof express>;
-export type App = ReturnType<typeof init> extends Promise<infer T> ? T : never;
+export type App = Awaited<ReturnType<typeof init>>;
 export const PORT = 4000;
 
-export async function init(mockHandlers?: any) {
+export async function init(mockHandlers?: any[]) {
 	app = express();
 
 	if (mockHandlers) {
-		mock(mockHandlers, app);
+		mock(app, ...mockHandlers);
 	}
 
 	app.use(cors({ origin: "http://localhost:8080" }));

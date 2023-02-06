@@ -1,6 +1,8 @@
 import { type App } from "@api/server";
 import { createMiddleware } from "@mswjs/http-middleware";
 
-export function mock(handlers: Parameters<typeof createMiddleware>[0], app: App) {
-	app.use(createMiddleware(handlers));
+type MockHandler = Parameters<typeof createMiddleware>[0];
+
+export function mock(app: App, ...handlers: MockHandler[]) {
+	app.use(createMiddleware(...handlers));
 }

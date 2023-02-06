@@ -8,11 +8,11 @@ const STORAGE_STATE_PATH = "./e2e/storageState.json";
  * Saves storage state to ./storageState.json
  */
 export async function saveSignedInState() {
-	const app = await init(
+	const app = await init([
 		trpcMsw.auth.signIn.mutation((_, res, ctx) => {
 			return res(ctx.data({ userId: "id" }));
-		})
-	);
+		}),
+	]);
 	await start(app);
 
 	const browser = await chromium.launch();

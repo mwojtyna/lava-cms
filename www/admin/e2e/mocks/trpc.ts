@@ -21,6 +21,9 @@ export async function start(app: App) {
 	});
 }
 export async function stop() {
-	await server?.terminate();
-	server = null;
+	if (server) {
+		await server.terminate();
+		server = null;
+		console.log("Mocking stopped");
+	}
 }
