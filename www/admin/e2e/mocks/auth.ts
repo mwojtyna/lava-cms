@@ -8,7 +8,7 @@ import { type Browser, chromium } from "playwright";
 export async function saveSignedInState() {
 	const app = await init(
 		trpcMsw.auth.signIn.mutation((_, res, ctx) => {
-			return res(ctx.data("id"));
+			return res(ctx.data({ userId: "id" }));
 		})
 	);
 	await start(app);
@@ -22,7 +22,7 @@ export async function saveSignedInState() {
 	await page.locator("button[type='submit']").click();
 	await page.waitForURL(/\/admin\/dashboard/);
 
-	await page.context().storageState({ path: "./storageState.json" });
+	await page.context().storageState({ path: "./e2e/storageState.json" });
 	await browser.close();
 	await stop();
 }

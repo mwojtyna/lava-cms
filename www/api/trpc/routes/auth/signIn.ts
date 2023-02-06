@@ -13,7 +13,7 @@ export const signIn = publicProcedure
 			password: z.string(),
 		})
 	)
-	.mutation(async ({ input }): Promise<string> => {
+	.mutation(async ({ input }) => {
 		const user = await prisma.users.findFirst({
 			where: {
 				email: {
@@ -24,7 +24,7 @@ export const signIn = publicProcedure
 		const passwordsMatch = await bcrypt.compare(input.password, user?.password ?? "");
 
 		if (user !== null && passwordsMatch) {
-			return user.id;
+			return { userId: user.id };
 		} else if (!user) {
 			throw new TRPCError({ code: "UNAUTHORIZED", message: "email" as SignInError });
 		} else if (!passwordsMatch) {

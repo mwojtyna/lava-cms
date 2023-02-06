@@ -23,7 +23,7 @@ export const authOptions: NextAuthOptions = {
 			authorize: async (credentials) => {
 				// Add logic here to look up the user from the credentials supplied
 				try {
-					const userId = await trpc.auth.signIn.mutate({
+					const { userId } = await trpc.auth.signIn.mutate({
 						email: credentials!.email,
 						password: credentials!.password,
 					});

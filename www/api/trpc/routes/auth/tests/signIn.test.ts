@@ -11,7 +11,7 @@ const LAST_NAME = "Doe";
 const EMAIL = "johndoe@domain.com";
 const PASSWORD = "password";
 
-it.concurrent("returns user's id if email and password are correct", async () => {
+it("returns user's id if email and password are correct", async () => {
 	prisma.users.findFirst.mockResolvedValue({
 		id: ID,
 		name: NAME,
@@ -19,18 +19,18 @@ it.concurrent("returns user's id if email and password are correct", async () =>
 		email: EMAIL,
 		password: await bcrypt.hash(PASSWORD, 10),
 	});
-	const userId = await caller.auth.signIn({ email: EMAIL, password: PASSWORD });
+	const { userId } = await caller.auth.signIn({ email: EMAIL, password: PASSWORD });
 
 	expect(userId).toBe(ID);
 });
 
-it.concurrent("throws an error if email is incorrect", async () => {
+it("throws an error if email is incorrect", async () => {
 	prisma.users.findFirst.mockResolvedValue(null);
 
 	await expect(caller.auth.signIn({ email: EMAIL, password: PASSWORD })).rejects.toThrow("email");
 });
 
-it.concurrent("throws an error if password is incorrect", async () => {
+it("throws an error if password is incorrect", async () => {
 	prisma.users.findFirst.mockResolvedValue({
 		id: ID,
 		name: NAME,
