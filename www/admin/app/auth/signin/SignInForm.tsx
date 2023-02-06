@@ -56,7 +56,11 @@ function SignUpForm() {
 				</Title>
 
 				{signInError && (
-					<Alert color="red" variant="filled" icon={<ExclamationCircleIcon />}>
+					<Alert
+						color="red"
+						variant="filled"
+						icon={<ExclamationCircleIcon className="w-5" />}
+					>
 						{signInError}
 					</Alert>
 				)}
