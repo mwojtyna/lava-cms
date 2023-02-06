@@ -1,5 +1,6 @@
 import NextAuth, { type NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
+import { type TRPCError } from "@trpc/server";
 import { trpc } from "@admin/src/utils/trpc";
 
 export const authOptions: NextAuthOptions = {
@@ -21,8 +22,8 @@ export const authOptions: NextAuthOptions = {
 				password: { label: "Password", type: "password" },
 			},
 			authorize: async (credentials) => {
-				// Add logic here to look up the user from the credentials supplied
 				try {
+					// Add logic here to look up the user from the credentials supplied
 					const { userId } = await trpc.auth.signIn.mutate({
 						email: credentials!.email,
 						password: credentials!.password,
@@ -32,8 +33,16 @@ export const authOptions: NextAuthOptions = {
 					return {
 						id: userId,
 					};
-				} catch (error) {
-					throw error;
+				} catch (error: unknown | TRPCError) {
+					const trpcError = error as TRPCError;
+
+					// For some reason the error code is in the `message` property
+					if ((trpcError.message as typeof trpcError.code) === "UNAUTHORIZED") {
+						// If you return null then an error will be displayed advising the user to check their details.
+						return null;
+					} else {
+						throw error;
+					}
 				}
 			},
 		}),

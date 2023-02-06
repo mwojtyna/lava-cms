@@ -1,14 +1,24 @@
 "use client";
 
-import { LockClosedIcon, EnvelopeIcon } from "@heroicons/react/24/outline";
-import { Button, Group, Loader, PasswordInput, Stack, TextInput, Title } from "@mantine/core";
+import { useState } from "react";
+import { LockClosedIcon, EnvelopeIcon, ExclamationCircleIcon } from "@heroicons/react/24/outline";
+import {
+	Alert,
+	Button,
+	Group,
+	Loader,
+	PasswordInput,
+	Stack,
+	TextInput,
+	Title,
+} from "@mantine/core";
 import { signIn } from "next-auth/react";
 import { type SubmitHandler, useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
-import { type SignInError } from "api/trpc/routes/auth/signIn";
 
 function SignUpForm() {
 	const router = useRouter();
+	const [signInError, setSignInError] = useState<string | null>(null);
 
 	interface Inputs {
 		email: string;
@@ -19,10 +29,10 @@ function SignUpForm() {
 		register,
 		handleSubmit,
 		formState: { errors, isSubmitting, isSubmitSuccessful },
-		setError,
-	} = useForm<Inputs>({ mode: "onTouched" });
+	} = useForm<Inputs>({ mode: "onChange" });
 
 	const onSubmit: SubmitHandler<Inputs> = async (data) => {
+		setSignInError(null);
 		const res = await signIn("credentials", {
 			redirect: false,
 			...data,
@@ -30,16 +40,11 @@ function SignUpForm() {
 
 		if (res?.ok) {
 			router.push("/admin/dashboard");
-		} else if ((res?.error as SignInError) === "email") {
-			setError("email", {
-				type: "manual",
-				message: "Nie znaleziono użytkownika o takim adresie e-mail!",
-			});
-		} else if ((res?.error as SignInError) === "password") {
-			setError("password", {
-				type: "manual",
-				message: "Niepoprawne hasło!",
-			});
+		} else if (res?.error === "CredentialsSignin") {
+			// "CredentialsSignin" is the error message when the user inputs wrong credentials
+			setSignInError("Niepoprawne dane!");
+		} else {
+			setSignInError("Nieznany błąd. Spróbuj ponownie później.");
 		}
 	};
 
@@ -49,6 +54,12 @@ function SignUpForm() {
 				<Title order={1} size="3.5rem" variant="gradient">
 					Zaloguj się
 				</Title>
+
+				{signInError && (
+					<Alert color="red" variant="filled" icon={<ExclamationCircleIcon />}>
+						{signInError}
+					</Alert>
+				)}
 
 				<TextInput
 					size="md"
@@ -64,6 +75,7 @@ function SignUpForm() {
 					})}
 					error={errors.email?.message}
 					icon={<EnvelopeIcon className="w-5" />}
+					autoFocus
 				/>
 				<PasswordInput
 					size="md"
@@ -77,7 +89,7 @@ function SignUpForm() {
 
 				<Group position="right" spacing="lg">
 					<Button size="md" type="submit">
-						{isSubmitting || isSubmitSuccessful ? (
+						{isSubmitting || (isSubmitSuccessful && !signInError) ? (
 							<Loader variant="dots" color="#fff" />
 						) : (
 							<>Zaloguj się</>

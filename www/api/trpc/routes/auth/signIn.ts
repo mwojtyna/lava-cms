@@ -4,8 +4,6 @@ import bcrypt from "bcrypt";
 import { prisma } from "@api/prisma/client";
 import { TRPCError } from "@trpc/server";
 
-export type SignInError = "email" | "password";
-
 export const signIn = publicProcedure
 	.input(
 		z.object({
@@ -25,11 +23,7 @@ export const signIn = publicProcedure
 
 		if (user !== null && passwordsMatch) {
 			return { userId: user.id };
-		} else if (!user) {
-			throw new TRPCError({ code: "UNAUTHORIZED", message: "email" as SignInError });
-		} else if (!passwordsMatch) {
-			throw new TRPCError({ code: "UNAUTHORIZED", message: "password" as SignInError });
-		} else {
-			throw new TRPCError({ code: "INTERNAL_SERVER_ERROR" });
+		} else if (!user || !passwordsMatch) {
+			throw new TRPCError({ code: "UNAUTHORIZED" });
 		}
 	});
