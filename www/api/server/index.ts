@@ -4,7 +4,7 @@ import { createExpressMiddleware } from "@trpc/server/adapters/express";
 import { renderTrpcPanel } from "trpc-panel";
 import { appRouter } from "@api/trpc/routes/_app";
 import { env } from "@api/env/server";
-import { mock } from "@api/mockServer";
+import { mock } from "@api/server/mock";
 
 export let app: ReturnType<typeof express>;
 export type App = ReturnType<typeof init> extends Promise<infer T> ? T : never;
