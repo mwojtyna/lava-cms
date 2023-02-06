@@ -2,6 +2,8 @@ import { start, stop, trpcMsw } from "@admin/e2e/mocks/trpc";
 import { init } from "api/server";
 import { type Browser, chromium } from "playwright";
 
+const STORAGE_STATE_PATH = "./e2e/storageState.json";
+
 /**
  * Saves storage state to ./storageState.json
  */
@@ -22,14 +24,14 @@ export async function saveSignedInState() {
 	await page.locator("button[type='submit']").click();
 	await page.waitForURL(/\/admin\/dashboard/);
 
-	await page.context().storageState({ path: "./e2e/storageState.json" });
+	await page.context().storageState({ path: STORAGE_STATE_PATH });
 	await browser.close();
 	await stop();
 }
 
 export async function getSignedInPage(browser: Browser) {
 	const context = await browser.newContext({
-		storageState: "./storageState.json",
+		storageState: STORAGE_STATE_PATH,
 	});
 	return await context.newPage();
 }
