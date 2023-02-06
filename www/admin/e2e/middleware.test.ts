@@ -1,33 +1,15 @@
 import { expect, test } from "@playwright/test";
-import { trpcMsw } from "@admin/e2e/mocks/trpcMsw";
-import { createHttpTerminator } from "http-terminator";
-import { type App, init, PORT } from "api/server";
-
-let server: ReturnType<typeof createHttpTerminator> | null = null;
-
-async function start(app: App) {
-	if (server) {
-		throw new Error("Server already started!");
-	}
-
-	return new Promise<void>((resolve) => {
-		server = createHttpTerminator({
-			server: app.listen(PORT, () => {
-				console.log(`Mocking on port ${PORT}...`);
-				resolve();
-			}),
-		});
-	});
-}
+import { start, stop, trpcMsw } from "@admin/e2e/mocks/trpc";
+import { init } from "api/server";
+import { getSignedInPage } from "@admin/e2e/mocks/auth";
 
 test.afterEach(async () => {
-	await server?.terminate();
+	await stop();
 	console.log("Mocking stopped");
-	server = null;
 });
 
 test("shows error overlay when trpc fails", async ({ page }) => {
-	await page.goto("http://localhost:3001/admin/dashboard");
+	await page.goto("/admin/dashboard");
 	const errorOverlay = await page.waitForSelector("div[data-nextjs-dialog-content='true']", {
 		timeout: 5000,
 	});
@@ -57,4 +39,15 @@ test("redirects to sign in page when user is not signed in", async ({ page }) =>
 
 	await page.goto("/admin");
 	expect(page.url()).toMatch(/\/auth\/signin/);
+});
+
+test("redirects to dashboard when user is signed in", async ({ browser }) => {
+	const app = await init();
+	await start(app);
+
+	const page = await getSignedInPage(browser);
+	await page.goto("/admin");
+
+	expect(page.url()).toMatch(/\/admin\/dashboard/);
+	await expect(page.locator("h1").first()).toContainText("Create T3 App");
 });
