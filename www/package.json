@@ -5,6 +5,7 @@
 		"start": "FORCE_COLOR=1 turbo start",
 		"dev": "FORCE_COLOR=1 turbo dev",
 		"build": "scripts/build.sh",
+		"test": "FORCE_COLOR=1 turbo test",
 		"lint": "FORCE_COLOR=1 turbo lint"
 	},
 	"dependencies": {
