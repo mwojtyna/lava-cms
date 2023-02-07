@@ -7,8 +7,8 @@
 		"dev": "next dev -p 3001",
 		"build": "next build",
 		"lint": "tsc && next lint",
-		"test": "playwright test && playwright show-report",
-		"test:headed": "playwright test --project=chromium --headed && playwright show-report",
+		"test": "playwright test",
+		"test:headed": "playwright test --project=chromium --headed",
 		"test:report": "playwright show-report"
 	},
 	"dependencies": {

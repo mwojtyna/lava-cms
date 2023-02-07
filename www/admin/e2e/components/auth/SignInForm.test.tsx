@@ -22,6 +22,20 @@ test("visual comparison", async ({ page }) => {
 	await expect(page).toHaveScreenshot();
 });
 
+test("shows 'field required' errors", async ({ page }) => {
+	const app = await init([
+		trpcMsw.auth.firstTime.query((_, res, ctx) => {
+			return res(ctx.data({ firstTime: false }));
+		}),
+	]);
+	await start(app);
+
+	await page.goto("/admin/auth/signin");
+	await page.click("button[type=submit]");
+	expect(await page.locator("text=Pole wymagane!").count()).toBe(2);
+	await expect(page).toHaveScreenshot();
+});
+
 test("shows error when invalid credentials", async ({ page }) => {
 	const app = await init([
 		trpcMsw.auth.firstTime.query((_, res, ctx) => {
@@ -56,6 +70,20 @@ test("shows error when server error", async ({ page }) => {
 
 	await expect(page.getByRole("alert")).toContainText("Nieznany błąd. Spróbuj ponownie później.");
 	await expect(page).toHaveScreenshot();
+});
+
+test("shows error when email invalid", async ({ page }) => {
+	const app = await init([
+		trpcMsw.auth.firstTime.query((_, res, ctx) => {
+			return res(ctx.data({ firstTime: false }));
+		}),
+	]);
+	await start(app);
+
+	await page.goto("/admin/auth/signin");
+	await page.locator("input[name='email']").type("invalid@domain");
+
+	await expect(page.locator("text=Niepoprawny adres e-mail!")).toBeVisible();
 });
 
 test("signs in when credentials are valid", async ({ page }) => {
