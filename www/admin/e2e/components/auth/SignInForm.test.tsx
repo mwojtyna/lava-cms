@@ -45,8 +45,8 @@ test("shows error when invalid credentials", async ({ page }) => {
 	await start(app);
 
 	await page.goto("/admin/auth/signin");
-	await page.locator("input[name='email']").fill(EMAIL);
-	await page.locator("input[name='password']").fill(PASSWORD);
+	await page.locator("input[type='email']").fill(EMAIL);
+	await page.locator("input[type='password']").fill(PASSWORD);
 	await page.locator("button[type='submit']").click();
 	await page.waitForResponse(/\/api\/auth\/callback\/credentials/);
 
@@ -63,8 +63,8 @@ test("shows error when server error", async ({ page }) => {
 	await start(app);
 
 	await page.goto("/admin/auth/signin");
-	await page.locator("input[name='email']").fill(EMAIL);
-	await page.locator("input[name='password']").fill(PASSWORD);
+	await page.locator("input[type='email']").fill(EMAIL);
+	await page.locator("input[type='password']").fill(PASSWORD);
 	await stop();
 	await page.locator("button[type='submit']").click();
 
@@ -81,7 +81,7 @@ test("shows error when email invalid", async ({ page }) => {
 	await start(app);
 
 	await page.goto("/admin/auth/signin");
-	await page.locator("input[name='email']").type("invalid@domain");
+	await page.locator("input[type='email']").fill("invalid@domain");
 
 	await expect(page.locator("text=Niepoprawny adres e-mail!")).toBeVisible();
 });
@@ -98,8 +98,8 @@ test("signs in when credentials are valid", async ({ page }) => {
 	await start(app);
 
 	await page.goto("/admin/auth/signin");
-	await page.locator("input[name='email']").fill(EMAIL);
-	await page.locator("input[name='password']").fill(PASSWORD);
+	await page.locator("input[type='email']").fill(EMAIL);
+	await page.locator("input[type='password']").fill(PASSWORD);
 	await page.locator("button[type='submit']").click();
 	await page.waitForURL(/\/admin\/dashboard/);
 });

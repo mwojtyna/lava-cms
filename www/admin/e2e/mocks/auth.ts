@@ -10,7 +10,7 @@ const STORAGE_STATE_PATH = "./e2e/storageState.json";
 export async function saveSignedInState() {
 	const app = await init([
 		trpcMsw.auth.signIn.mutation((_, res, ctx) => {
-			return res(ctx.data({ userId: "id" }));
+			return res(ctx.data({ userId: "123" }));
 		}),
 	]);
 	await start(app);

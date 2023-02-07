@@ -41,7 +41,11 @@ test("redirects to sign in page when user is not signed in", async ({ page }) =>
 });
 
 test("redirects to dashboard when user is signed in", async ({ browser }) => {
-	const app = await init();
+	const app = await init([
+		trpcMsw.auth.firstTime.query((_, res, ctx) => {
+			return res(ctx.data({ firstTime: false }));
+		}),
+	]);
 	await start(app);
 
 	const page = await getSignedInPage(browser);

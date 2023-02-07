@@ -4,9 +4,9 @@ import { EnvelopeIcon, LockClosedIcon, UserIcon } from "@heroicons/react/24/outl
 import { Button, Group, Loader, PasswordInput, Stack, TextInput, Title } from "@mantine/core";
 import { type SubmitHandler, useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
+import { signIn } from "next-auth/react";
 
 import type { User } from "api/prisma/types";
-import { signIn } from "next-auth/react";
 import { trpc } from "@admin/src/utils/trpc";
 
 function SignUpForm() {

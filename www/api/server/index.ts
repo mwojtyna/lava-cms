@@ -19,7 +19,9 @@ export async function init(mockHandlers?: any[]) {
 		mock(app, ...mockHandlers);
 	}
 
-	app.use(cors({ origin: "http://localhost:8080" }));
+	if (mockHandlers) app.use(cors({ origin: "http://localhost:3001" }));
+	else app.use(cors({ origin: "http://localhost:8080" }));
+
 	app.use(
 		"/trpc",
 		createExpressMiddleware({
