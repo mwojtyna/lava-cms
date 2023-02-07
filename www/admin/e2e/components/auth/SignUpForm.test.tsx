@@ -71,7 +71,7 @@ test("shows error when password invalid", async ({ page }) => {
 	).toBeVisible();
 });
 
-test("shows error when password don't match", async ({ page }) => {
+test("shows error when passwords don't match", async ({ page }) => {
 	const app = await init([
 		trpcMsw.auth.firstTime.query((_, res, ctx) => {
 			return res(ctx.data({ firstTime: true }));
