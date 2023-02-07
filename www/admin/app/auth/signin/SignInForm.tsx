@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import { LockClosedIcon, EnvelopeIcon, ExclamationCircleIcon } from "@heroicons/react/24/outline";
 import {
 	Alert,
@@ -18,7 +17,6 @@ import { useRouter } from "next/navigation";
 
 function SignUpForm() {
 	const router = useRouter();
-	const [signInError, setSignInError] = useState<string | null>(null);
 
 	interface Inputs {
 		email: string;
@@ -29,10 +27,10 @@ function SignUpForm() {
 		register,
 		handleSubmit,
 		formState: { errors, isSubmitting, isSubmitSuccessful },
+		setError,
 	} = useForm<Inputs>({ mode: "onChange" });
 
 	const onSubmit: SubmitHandler<Inputs> = async (data) => {
-		setSignInError(null);
 		const res = await signIn("credentials", {
 			redirect: false,
 			...data,
@@ -42,9 +40,13 @@ function SignUpForm() {
 			router.push("/admin/dashboard");
 		} else if (res?.error === "CredentialsSignin") {
 			// "CredentialsSignin" is the error message when the user inputs wrong credentials
-			setSignInError("Niepoprawne dane!");
+			setError("root.invalidCredentials", {
+				message: "Niepoprawne dane!",
+			});
 		} else {
-			setSignInError("Nieznany błąd. Spróbuj ponownie później.");
+			setError("root.invalidCredentials", {
+				message: "Nieznany błąd. Spróbuj ponownie później.",
+			});
 		}
 	};
 
@@ -55,13 +57,13 @@ function SignUpForm() {
 					Zaloguj się
 				</Title>
 
-				{signInError && (
+				{errors.root?.invalidCredentials && (
 					<Alert
 						color="red"
 						variant="filled"
 						icon={<ExclamationCircleIcon className="w-5" />}
 					>
-						{signInError}
+						{errors.root?.invalidCredentials.message}
 					</Alert>
 				)}
 
@@ -93,7 +95,8 @@ function SignUpForm() {
 
 				<Group position="right" spacing="lg">
 					<Button size="md" type="submit">
-						{isSubmitting || (isSubmitSuccessful && !signInError) ? (
+						{isSubmitting ||
+						(isSubmitSuccessful && !errors.root?.invalidCredentials) ? (
 							<Loader variant="dots" color="#fff" />
 						) : (
 							<>Zaloguj się</>
