@@ -149,8 +149,11 @@ importers:
 
   frontend:
     specifiers:
+      '@typescript-eslint/eslint-plugin': ^5.51.0
+      '@typescript-eslint/parser': ^5.51.0
       api: workspace:*
       astro: ^1.9.1
+      eslint: ^8.31.0
       http-server: ^14.1.1
       prettier: ^2.8.1
       typescript: ^4.9.4
@@ -159,6 +162,9 @@ importers:
       astro: 1.9.1
       http-server: 14.1.1
     devDependencies:
+      '@typescript-eslint/eslint-plugin': 5.51.0_tvvpcdj5dkkmlnvokscae7twnm
+      '@typescript-eslint/parser': 5.51.0_iukboom6ndih5an6iafl45j2fe
+      eslint: 8.31.0
       prettier: 2.8.1
       typescript: 4.9.4
 
