@@ -19,7 +19,7 @@ it("returns user's id if email and password are correct", async () => {
 		email: EMAIL,
 		password: await bcrypt.hash(PASSWORD, 10),
 	});
-	const { userId } = await caller.auth.signIn({ email: EMAIL, password: PASSWORD });
+	const { userId } = (await caller.auth.signIn({ email: EMAIL, password: PASSWORD })) ?? {};
 
 	expect(userId).toBe(ID);
 });

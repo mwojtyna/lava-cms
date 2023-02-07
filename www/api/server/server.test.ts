@@ -1,6 +1,6 @@
 import { it, expect, vi, describe, afterEach } from "vitest";
 import request from "supertest";
-import { init, App } from "@api/server";
+import { init, type App } from "@api/server";
 import { env, reload } from "@api/env/server";
 
 describe("/trpcadmin", async () => {

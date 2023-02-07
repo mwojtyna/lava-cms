@@ -5,12 +5,13 @@ import { renderTrpcPanel } from "trpc-panel";
 import { appRouter } from "@api/trpc/routes/_app";
 import { env } from "@api/env/server";
 import { mock } from "@api/server/mock";
-import { Express } from "express";
+import type { Express } from "express";
 
 export type App = Express;
 export let app: App;
 export const PORT = 4000;
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export async function init(mockHandlers?: any[]) {
 	app = express();
 
