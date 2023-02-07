@@ -1,11 +1,11 @@
 import { createTRPCMsw } from "msw-trpc";
 import type { AppRouter } from "api/trpc/routes/_app";
-import { createHttpTerminator } from "http-terminator";
+import { createHttpTerminator, type HttpTerminator } from "http-terminator";
 import { type App, PORT } from "api/server";
 
 export const trpcMsw = createTRPCMsw<AppRouter>();
 
-let server: ReturnType<typeof createHttpTerminator> | null = null;
+let server: HttpTerminator | null = null;
 export async function start(app: App) {
 	if (server) {
 		throw new Error("Server already started!");
