@@ -4,15 +4,14 @@ import { createExpressMiddleware } from "@trpc/server/adapters/express";
 import { renderTrpcPanel } from "trpc-panel";
 import { appRouter } from "@api/trpc/routes/_app";
 import { env } from "@api/env/server";
-import { mock } from "@api/server/mock";
+import { mock, type MockHandler } from "@api/server/mock";
 import type { Express } from "express";
 
 export type App = Express;
 export let app: App;
 export const PORT = 4000;
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export async function init(mockHandlers?: any[]) {
+export async function init(mockHandlers?: MockHandler[]) {
 	app = express();
 
 	if (mockHandlers) {

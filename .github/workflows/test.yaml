@@ -15,8 +15,8 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3.3.0
 
-      # - name: Swap Dockerfiles
-      #   run: mv .devcontainer/Dockerfile www/Dockerfile
+      - name: Swap Dockerfiles
+        run: mv .github/workflows/Dockerfile www/Dockerfile
 
       - name: Env files
         run: |
@@ -32,13 +32,8 @@ jobs:
       - name: Run
         run: docker compose up -d
 
-      # - name: Wait for admin
-      #   run: wget -qO- https://raw.githubusercontent.com/eficode/wait-for/$WAIT_FOR_VERSION/wait-for | sh -s -- http://localhost:3001/admin/api/health -t 0 -- echo "Admin is up and running"
-      #   env:
-      #     WAIT_FOR_VERSION: 4df3f9262d84cab0039c07bf861045fbb3c20ab7 # v2.2.3
-
       - name: Wait for admin
-        run: sleep 60s
+        run: sleep 5s
 
       - name: Test
-        run: docker exec -w admin web pnpm test -- --project=chromium
+        run: docker exec -w /app/admin web pnpm test -- --project=chromium
