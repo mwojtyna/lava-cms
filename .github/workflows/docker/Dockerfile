@@ -5,11 +5,13 @@ WORKDIR /app
 RUN apt-get update
 RUN apt-get install openssl -y
 RUN npm install -g pnpm
+ENV CI=true
 
 # Install dependencies
 COPY ./ /app
 RUN pnpm install --frozen-lockfile
 RUN cd api && pnpm prisma generate
+RUN cd admin && pnpm playwright install-deps
 RUN pnpm build
 
-CMD [ "pnpm", "start" ]
+CMD [ "tail", "-F", "/dev/null" ]

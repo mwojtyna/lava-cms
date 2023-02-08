@@ -13,18 +13,27 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v3.3.0
+        uses: actions/checkout@v3
 
-      - name: Swap Dockerfiles
-        run: mv .github/workflows/Dockerfile www/Dockerfile
+      - name: Swap Docker configs
+        run: |
+          mv .github/workflows/docker/Dockerfile www/Dockerfile
+          mv .github/workflows/docker/docker-compose.yaml ./docker-compose.yaml
 
       - name: Env files
         run: |
           echo "${{ secrets.ENV_ADMIN }}" > www/admin/.env
           echo "${{ secrets.ENV_API }}" > www/api/.env
 
-      - name: Docker Layer Caching
-        uses: satackey/action-docker-layer-caching@v0.0.11
+      - name: storageState.json
+        uses: jsdaniell/create-json@v1
+        with:
+          name: storageState.json
+          json: "${{ secrets.STORAGE_STATE }}"
+          dir: www/admin/e2e
+
+      - name: Pull
+        run: docker compose pull
 
       - name: Build
         run: docker compose build
@@ -32,8 +41,13 @@ jobs:
       - name: Run
         run: docker compose up -d
 
-      - name: Wait for admin
-        run: sleep 5s
-
       - name: Test
         run: docker exec -w /app/admin web pnpm test -- --project=chromium
+
+      - name: Upload report
+        uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: playwright-report
+          path: /artifacts/playwright-report/
+          retention-days: 30

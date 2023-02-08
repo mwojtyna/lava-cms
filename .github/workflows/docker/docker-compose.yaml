@@ -1,0 +1,48 @@
+name: lava
+
+services:
+  web:
+    container_name: web
+    build: ./www
+    restart: always
+    volumes:
+      - /artifacts/playwright-report/:/app/admin/playwright-report/
+
+  postgres:
+    container_name: postgres
+    image: postgres:15.1
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=admin
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    depends_on:
+      - web
+    restart: always
+
+  pgadmin:
+    container_name: pgadmin
+    image: dpage/pgadmin4:6.18
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=admin@admin.com
+      - PGADMIN_DEFAULT_PASSWORD=admin
+    volumes:
+      - pgadmin:/var/lib/pgadmin
+    depends_on:
+      - postgres
+    restart: always
+
+  nginx:
+    container_name: nginx
+    build: ./nginx
+    ports:
+      - "8080:80"
+    depends_on:
+      - web
+      - postgres
+      - pgadmin
+    restart: always
+
+volumes:
+  pgdata:
+  pgadmin:

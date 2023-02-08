@@ -30,11 +30,10 @@ const config: PlaywrightTestConfig = {
 	/* Opt out of parallel tests. */
 	workers: 1,
 	/* Reporter to use. See https://playwright.dev/docs/test-reporters */
-	reporter: "html",
+	reporter: [["html", { open: process.env.CI ? "never" : "on-failure" }]],
 	/* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
 	use: {
-		actionTimeout: 5000,
-		navigationTimeout: 15000,
+		actionTimeout: process.env.CI ? 30000 : 15000,
 		baseURL: "http://localhost:3001",
 		trace: "retain-on-failure",
 	},
