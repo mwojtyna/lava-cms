@@ -33,7 +33,7 @@ const config: PlaywrightTestConfig = {
 	reporter: [["html", { open: process.env.CI ? "never" : "on-failure" }]],
 	/* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
 	use: {
-		actionTimeout: process.env.CI ? 30000 : 15000,
+		actionTimeout: 15000,
 		baseURL: "http://localhost:3001",
 		trace: "retain-on-failure",
 	},
@@ -95,7 +95,7 @@ const config: PlaywrightTestConfig = {
 
 	/* Run your local dev server before starting the tests */
 	webServer: {
-		command: "pnpm dev",
+		command: process.env.CI ? "pnpm start" : "pnpm dev",
 		url: "http://localhost:3001/admin/api/health",
 		reuseExistingServer: true,
 	},
