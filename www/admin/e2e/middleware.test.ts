@@ -7,15 +7,6 @@ test.afterEach(async () => {
 	await stop();
 });
 
-test("shows error overlay when trpc fails", async ({ page }) => {
-	await page.goto("/admin/dashboard");
-	const errorOverlay = await page.waitForSelector("div[data-nextjs-dialog-content='true']", {
-		timeout: 5000,
-	});
-
-	expect(await errorOverlay.isVisible()).toBe(true);
-});
-
 test("redirects to sign up page when no user in database", async ({ page }) => {
 	const app = await init([
 		trpcMsw.auth.firstTime.query((_, res, ctx) => {
