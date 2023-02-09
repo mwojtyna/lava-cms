@@ -1,4 +1,4 @@
-import { router } from "@api/trpc/trpc";
+import { router } from "@api/trpc";
 import { greeting } from "../greeting";
 import { firstTime } from "./firstTime";
 import { signUp } from "./signUp";
