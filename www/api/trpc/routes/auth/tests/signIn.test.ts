@@ -24,13 +24,13 @@ it("returns user's id if email and password are correct", async () => {
 	expect(userId).toBe(ID);
 });
 
-it("throws an error if email is incorrect", async () => {
+it("returns null if email is incorrect", async () => {
 	prisma.users.findFirst.mockResolvedValue(null);
 
-	await expect(caller.auth.signIn({ email: EMAIL, password: PASSWORD })).rejects.toThrow();
+	expect(await caller.auth.signIn({ email: "wrong@email.com", password: PASSWORD })).toBeNull();
 });
 
-it("throws an error if password is incorrect", async () => {
+it("returns null if password is incorrect", async () => {
 	prisma.users.findFirst.mockResolvedValue({
 		id: ID,
 		name: NAME,
@@ -39,7 +39,5 @@ it("throws an error if password is incorrect", async () => {
 		password: await bcrypt.hash(PASSWORD, 10),
 	});
 
-	await expect(
-		caller.auth.signIn({ email: EMAIL, password: "wrong password" })
-	).rejects.toThrow();
+	expect(await caller.auth.signIn({ email: EMAIL, password: "wrong-password" })).toBeNull();
 });

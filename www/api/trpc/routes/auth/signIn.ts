@@ -2,7 +2,6 @@ import { publicProcedure } from "@api/trpc/trpc";
 import { z } from "zod";
 import bcrypt from "bcrypt";
 import { prisma } from "@api/prisma/client";
-import { TRPCError } from "@trpc/server";
 
 export const signIn = publicProcedure
 	.input(
@@ -24,6 +23,6 @@ export const signIn = publicProcedure
 		if (user !== null && passwordsMatch) {
 			return { userId: user.id };
 		} else if (!user || !passwordsMatch) {
-			throw new TRPCError({ code: "UNAUTHORIZED" });
+			return null;
 		}
 	});
