@@ -17,8 +17,7 @@ test.beforeAll(async () => {
 		},
 	});
 
-	const app = await init();
-	await start(app);
+	await start(await init());
 });
 test.afterAll(async () => {
 	await stop();

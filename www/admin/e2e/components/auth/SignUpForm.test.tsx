@@ -1,37 +1,28 @@
 import { expect, test } from "@playwright/test";
-import { start, stop, trpcMsw } from "@admin/e2e/mocks/trpc";
+import { start, stop } from "@admin/e2e/mocks/trpc";
 import { init } from "api/server";
+import { prisma } from "api/prisma/client";
 
 const NAME = "John";
 const LAST_NAME = "Doe";
 const EMAIL = "johndoe@domain.com";
 const PASSWORD = "Zaq1@wsx";
 
-test.afterEach(async () => {
+test.beforeAll(async () => {
+	await prisma.users.deleteMany();
+	await start(await init());
+});
+test.afterAll(async () => {
 	await stop();
 });
 
 test("visual comparison", async ({ page }) => {
-	const app = await init([
-		trpcMsw.auth.firstTime.query((_, res, ctx) => {
-			return res(ctx.data({ firstTime: true }));
-		}),
-	]);
-	await start(app);
-
 	await page.goto("/admin/auth/signin");
 	await page.waitForURL(/\/admin\/auth\/signup/);
 	await expect(page).toHaveScreenshot();
 });
 
 test("shows 'field required' errors", async ({ page }) => {
-	const app = await init([
-		trpcMsw.auth.firstTime.query((_, res, ctx) => {
-			return res(ctx.data({ firstTime: true }));
-		}),
-	]);
-	await start(app);
-
 	await page.goto("/admin/auth/signin");
 	await page.waitForURL(/\/admin\/auth\/signup/);
 	await page.click("button[type=submit]");
@@ -40,13 +31,6 @@ test("shows 'field required' errors", async ({ page }) => {
 });
 
 test("shows error when email invalid", async ({ page }) => {
-	const app = await init([
-		trpcMsw.auth.firstTime.query((_, res, ctx) => {
-			return res(ctx.data({ firstTime: true }));
-		}),
-	]);
-	await start(app);
-
 	await page.goto("/admin/auth/signin");
 	await page.locator("input[type='email']").fill("invalid@domain");
 
@@ -54,13 +38,6 @@ test("shows error when email invalid", async ({ page }) => {
 });
 
 test("shows error when password invalid", async ({ page }) => {
-	const app = await init([
-		trpcMsw.auth.firstTime.query((_, res, ctx) => {
-			return res(ctx.data({ firstTime: true }));
-		}),
-	]);
-	await start(app);
-
 	await page.goto("/admin/auth/signin");
 	await page.locator("input[type='password']").first().fill("password");
 
@@ -72,13 +49,6 @@ test("shows error when password invalid", async ({ page }) => {
 });
 
 test("shows error when passwords don't match", async ({ page }) => {
-	const app = await init([
-		trpcMsw.auth.firstTime.query((_, res, ctx) => {
-			return res(ctx.data({ firstTime: true }));
-		}),
-	]);
-	await start(app);
-
 	await page.goto("/admin/auth/signin");
 	await page.locator("input[type='password']").nth(1).fill("password");
 
@@ -86,30 +56,8 @@ test("shows error when passwords don't match", async ({ page }) => {
 });
 
 test("signs up when info is valid", async ({ page }) => {
-	let app = await init([
-		trpcMsw.auth.firstTime.query((_, res, ctx) => {
-			return res(ctx.data({ firstTime: true }));
-		}),
-	]);
-	await start(app);
-
 	await page.goto("/admin/auth/signup");
 	await page.waitForURL(/\/admin\/auth\/signup/);
-	await stop();
-
-	app = await init([
-		trpcMsw.auth.firstTime.query((_, res, ctx) => {
-			return res(ctx.data({ firstTime: false }));
-		}),
-		trpcMsw.auth.signUp.mutation((_, res, ctx) => {
-			// This request is sent client-side, so we need to setup cors headers manually
-			return res(ctx.set("Access-Control-Allow-Origin", "http://localhost:3001"), ctx.data());
-		}),
-		trpcMsw.auth.signIn.mutation((_, res, ctx) => {
-			return res(ctx.data({ userId: "123" }));
-		}),
-	]);
-	await start(app);
 
 	await page.locator("input[type='email']").fill(EMAIL);
 	await page.locator("input[type='text']").first().fill(NAME);
@@ -119,4 +67,5 @@ test("signs up when info is valid", async ({ page }) => {
 	await page.locator("button[type=submit]").click();
 
 	await page.waitForURL(/\/admin\/dashboard/);
+	expect(page.url()).toMatch(/\/admin\/dashboard/);
 });
