@@ -1,35 +1,41 @@
 import { expect, test } from "@playwright/test";
-import { start, stop, trpcMsw } from "@admin/e2e/mocks/trpc";
+import bcrypt from "bcrypt";
+import { start, stop } from "@admin/e2e/mocks/trpc";
 import { init } from "api/server";
+import { prisma } from "api/prisma/client";
 
 const EMAIL = "johndoe@domain.com";
 const PASSWORD = "password";
 
-test.afterEach(async () => {
+test.beforeAll(async () => {
+	await prisma.users.create({
+		data: {
+			name: "John",
+			last_name: "Doe",
+			email: EMAIL,
+			password: await bcrypt.hash(PASSWORD, 10),
+		},
+	});
+
+	const app = await init();
+	await start(app);
+});
+test.afterAll(async () => {
 	await stop();
+	await prisma.users.delete({
+		where: {
+			email: EMAIL,
+		},
+	});
 });
 
 test("visual comparison", async ({ page }) => {
-	const app = await init([
-		trpcMsw.auth.firstTime.query((_, res, ctx) => {
-			return res(ctx.data({ firstTime: false }));
-		}),
-	]);
-	await start(app);
-
 	await page.goto("/admin/auth/signin");
 	await page.waitForURL(/\/admin\/auth\/signin/);
 	await expect(page).toHaveScreenshot();
 });
 
 test("shows 'field required' errors", async ({ page }) => {
-	const app = await init([
-		trpcMsw.auth.firstTime.query((_, res, ctx) => {
-			return res(ctx.data({ firstTime: false }));
-		}),
-	]);
-	await start(app);
-
 	await page.goto("/admin/auth/signin");
 	await page.click("button[type=submit]");
 	expect(await page.locator("text=Pole wymagane!").count()).toBe(2);
@@ -37,31 +43,33 @@ test("shows 'field required' errors", async ({ page }) => {
 });
 
 test("shows error when invalid credentials", async ({ page }) => {
-	const app = await init([
-		trpcMsw.auth.firstTime.query((_, res, ctx) => {
-			return res(ctx.data({ firstTime: false }));
-		}),
-	]);
-	await start(app);
-
 	await page.goto("/admin/auth/signin");
-	await page.locator("input[type='email']").fill(EMAIL);
+
+	// Wrong email
+	await page.locator("input[type='email']").fill("wrong@email.com");
 	await page.locator("input[type='password']").fill(PASSWORD);
 	await page.locator("button[type='submit']").click();
 	await page.waitForResponse(/\/api\/auth\/callback\/credentials/);
-
 	await expect(page.getByRole("alert")).toContainText("Niepoprawne dane!");
+
+	// Wrong password
+	await page.locator("input[type='email']").fill(EMAIL);
+	await page.locator("input[type='password']").fill("wrongpassword");
+	await page.locator("button[type='submit']").click();
+	await page.waitForResponse(/\/api\/auth\/callback\/credentials/);
+	await expect(page.getByRole("alert")).toContainText("Niepoprawne dane!");
+
+	// Both wrong
+	await page.locator("input[type='email']").fill("wrong@email.com");
+	await page.locator("input[type='password']").fill("wrongpassword");
+	await page.locator("button[type='submit']").click();
+	await page.waitForResponse(/\/api\/auth\/callback\/credentials/);
+	await expect(page.getByRole("alert")).toContainText("Niepoprawne dane!");
+
 	await expect(page).toHaveScreenshot();
 });
 
 test("shows error when server error", async ({ page }) => {
-	const app = await init([
-		trpcMsw.auth.firstTime.query((_, res, ctx) => {
-			return res(ctx.data({ firstTime: false }));
-		}),
-	]);
-	await start(app);
-
 	await page.goto("/admin/auth/signin");
 	await page.locator("input[type='email']").fill(EMAIL);
 	await page.locator("input[type='password']").fill(PASSWORD);
@@ -73,13 +81,6 @@ test("shows error when server error", async ({ page }) => {
 });
 
 test("shows error when email invalid", async ({ page }) => {
-	const app = await init([
-		trpcMsw.auth.firstTime.query((_, res, ctx) => {
-			return res(ctx.data({ firstTime: false }));
-		}),
-	]);
-	await start(app);
-
 	await page.goto("/admin/auth/signin");
 	await page.locator("input[type='email']").fill("invalid@domain");
 
@@ -87,16 +88,6 @@ test("shows error when email invalid", async ({ page }) => {
 });
 
 test("signs in when credentials are valid", async ({ page }) => {
-	const app = await init([
-		trpcMsw.auth.firstTime.query((_, res, ctx) => {
-			return res(ctx.data({ firstTime: false }));
-		}),
-		trpcMsw.auth.signIn.mutation((_, res, ctx) => {
-			return res(ctx.data({ userId: "123" }));
-		}),
-	]);
-	await start(app);
-
 	await page.goto("/admin/auth/signin");
 	await page.locator("input[type='email']").fill(EMAIL);
 	await page.locator("input[type='password']").fill(PASSWORD);

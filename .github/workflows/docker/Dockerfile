@@ -11,7 +11,7 @@ ENV CI=true
 COPY ./ /app
 RUN pnpm install --frozen-lockfile
 RUN cd admin && pnpm playwright install-deps
-RUN cd api && pnpm prisma generate && pnpm prisma db push
+RUN cd api && pnpm prisma generate
 RUN pnpm build
 
 CMD [ "tail", "-F", "/dev/null" ]
