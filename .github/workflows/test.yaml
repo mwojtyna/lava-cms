@@ -17,7 +17,7 @@ jobs:
 
       - name: Swap Docker configs
         run: |
-          mv .github/workflows/docker/Dockerfile www/Dockerfile
+          mv .github/workflows/docker/Dockerfile.e2e www/Dockerfile
           mv .github/workflows/docker/docker-compose.yaml ./docker-compose.yaml
 
       - name: Env files
@@ -50,7 +50,7 @@ jobs:
         uses: actions/upload-artifact@v3.1.2
         if: always()
         with:
-          name: playwright-report
+          name: playwright-chromium-report
           path: /artifacts/playwright-report/
           retention-days: 30
 
@@ -64,7 +64,7 @@ jobs:
 
       - name: Swap Docker configs
         run: |
-          mv .github/workflows/docker/Dockerfile www/Dockerfile
+          mv .github/workflows/docker/Dockerfile.e2e www/Dockerfile
           mv .github/workflows/docker/docker-compose.yaml ./docker-compose.yaml
 
       - name: Env files
@@ -97,7 +97,7 @@ jobs:
         uses: actions/upload-artifact@v3.1.2
         if: always()
         with:
-          name: playwright-report
+          name: playwright-firefox-report
           path: /artifacts/playwright-report/
           retention-days: 30
 
@@ -111,7 +111,7 @@ jobs:
 
       - name: Swap Docker configs
         run: |
-          mv .github/workflows/docker/Dockerfile www/Dockerfile
+          mv .github/workflows/docker/Dockerfile.e2e www/Dockerfile
           mv .github/workflows/docker/docker-compose.yaml ./docker-compose.yaml
 
       - name: Env files
@@ -144,7 +144,7 @@ jobs:
         uses: actions/upload-artifact@v3.1.2
         if: always()
         with:
-          name: playwright-report
+          name: playwright-webkit-report
           path: /artifacts/playwright-report/
           retention-days: 30
 
@@ -158,7 +158,7 @@ jobs:
 
       - name: Swap Docker configs
         run: |
-          mv .github/workflows/docker/Dockerfile www/Dockerfile
+          mv .github/workflows/docker/Dockerfile.api www/Dockerfile
           mv .github/workflows/docker/docker-compose.yaml ./docker-compose.yaml
 
       - name: Env files
@@ -177,13 +177,12 @@ jobs:
 
       - name: Test
         run: |
-          docker exec -w /app/api web pnpm prisma db push
           docker exec -w /app/api web pnpm test
 
       - name: Upload report
         uses: actions/upload-artifact@v3.1.2
         if: always()
         with:
-          name: vitest-report
-          path: /artifacts/vitest-report/
+          name: api-report
+          path: /artifacts/api-report/
           retention-days: 30

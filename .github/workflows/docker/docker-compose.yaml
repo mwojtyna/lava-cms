@@ -7,7 +7,7 @@ services:
     restart: always
     volumes:
       - /artifacts/playwright-report/:/app/admin/playwright-report/
-      - /artifacts/vitest-report/:/app/api/html/
+      - /artifacts/api-report/:/app/api/html/
 
   postgres:
     container_name: postgres
