@@ -56,6 +56,7 @@ function SignUpForm() {
 					})}
 					error={errors.email?.message}
 					icon={<EnvelopeIcon className="w-5" />}
+					autoFocus
 				/>
 
 				<Group position="center" align="flex-start" grow>

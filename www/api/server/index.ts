@@ -18,8 +18,20 @@ export async function init(mockHandlers?: MockHandler[]) {
 		mock(app, ...mockHandlers);
 	}
 
-	if (mockHandlers) app.use(cors({ origin: "http://localhost:3001" }));
-	else app.use(cors({ origin: "http://localhost:8080" }));
+	const whiteList = ["http://localhost:8080", "http://localhost:3001", "http://localhost:3000"];
+	app.use(
+		cors({
+			origin(requestOrigin, callback) {
+				if (!requestOrigin) return callback(null, true);
+
+				if (whiteList.includes(requestOrigin)) {
+					callback(null, true);
+				} else {
+					callback(new Error("Not allowed by CORS"));
+				}
+			},
+		})
+	);
 
 	app.use(
 		"/trpc",
