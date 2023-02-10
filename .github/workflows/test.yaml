@@ -22,8 +22,8 @@ jobs:
 
       - name: Env files
         run: |
-          echo "${{ secrets.ENV_ADMIN }}" > www/admin/.env
-          echo "${{ secrets.ENV_API }}" > www/api/.env
+          mv www/admin/.env.test www/admin/.env
+          mv www/api/.env.test www/api/.env
 
       - name: storageState.json
         uses: jsdaniell/create-json@v1.2.2

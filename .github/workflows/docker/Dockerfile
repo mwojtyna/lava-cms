@@ -10,8 +10,8 @@ ENV CI=true
 # Install dependencies
 COPY ./ /app
 RUN pnpm install --frozen-lockfile
-RUN cd api && pnpm prisma generate
 RUN cd admin && pnpm playwright install-deps
+RUN cd api && pnpm prisma generate && pnpm prisma db push
 RUN pnpm build
 
 CMD [ "tail", "-F", "/dev/null" ]
