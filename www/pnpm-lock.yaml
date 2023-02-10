@@ -105,6 +105,7 @@ importers:
       bcrypt: ^5.1.0
       cors: ^2.8.5
       dotenv: ^16.0.3
+      dotenv-cli: ^7.0.0
       eslint: ^8.33.0
       express: ^4.18.2
       headers-polyfill: ^3.1.2
@@ -144,6 +145,7 @@ importers:
       '@typescript-eslint/parser': 5.51.0_4vsywjlpuriuw3tl5oq6zy5a64
       '@vitest/coverage-c8': 0.28.3_@vitest+ui@0.28.3
       '@vitest/ui': 0.28.3
+      dotenv-cli: 7.0.0
       eslint: 8.33.0
       headers-polyfill: 3.1.2
       nodemon: 2.0.20
@@ -2926,10 +2928,24 @@ packages:
       esutils: 2.0.3
     dev: true
 
+  /dotenv-cli/7.0.0:
+    resolution: {integrity: sha512-XfMzVdpdDTRnlcgvFLg3lSyiLXqFxS4tH7RbK5IxkC4XIUuxPyrGoDufkfLjy/dA28EILzEu+mros6h8aQmyGg==}
+    hasBin: true
+    dependencies:
+      cross-spawn: 7.0.3
+      dotenv: 16.0.3
+      dotenv-expand: 10.0.0
+      minimist: 1.2.7
+    dev: true
+
+  /dotenv-expand/10.0.0:
+    resolution: {integrity: sha512-GopVGCpVS1UKH75VKHGuQFqS1Gusej0z4FyQkPdwjil2gNIv+LNsqBlboOzpJFZKVT95GkCyWJbBSdFEFUWI2A==}
+    engines: {node: '>=12'}
+    dev: true
+
   /dotenv/16.0.3:
     resolution: {integrity: sha512-7GO6HghkA5fYG9TYnNxi14/7K9f5occMlp3zXAuSxn7CKCxt9xbNWG7yF8hTCSUchlfWSe3uLmlPfigevRItzQ==}
     engines: {node: '>=12'}
-    dev: false
 
   /dset/3.1.2:
     resolution: {integrity: sha512-g/M9sqy3oHe477Ar4voQxWtaPIFw1jTdKZuomOjhCcBx9nHUNn0pu6NopuFFrTh/TRZIKEj+76vLWFu9BNKk+Q==}

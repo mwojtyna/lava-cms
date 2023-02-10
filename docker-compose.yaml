@@ -10,7 +10,7 @@ services:
     container_name: postgres
     image: postgres:15.1
     environment:
-      - POSTGRES_USER=postgres
+      - POSTGRES_USER=admin
       - POSTGRES_PASSWORD=admin
     volumes:
       - pgdata:/var/lib/postgresql/data

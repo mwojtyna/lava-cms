@@ -7,6 +7,7 @@ import dotenv from "dotenv";
  * https://github.com/motdotla/dotenv
  */
 dotenv.config();
+dotenv.config({ path: "../api/.env.test" });
 
 /**
  * See https://playwright.dev/docs/test-configuration.

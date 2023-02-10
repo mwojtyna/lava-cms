@@ -1,4 +1,4 @@
-name: Playwright Tests
+name: Tests
 on:
   push:
     branches: [main, development]
@@ -22,8 +22,8 @@ jobs:
 
       - name: Env files
         run: |
-          mv www/admin/.env.test www/admin/.env
-          mv www/api/.env.test www/api/.env
+          cp www/admin/.env.test www/admin/.env
+          cp www/api/.env.test www/api/.env
 
       - name: storageState.json
         uses: jsdaniell/create-json@v1.2.2

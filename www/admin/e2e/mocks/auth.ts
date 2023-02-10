@@ -19,8 +19,8 @@ export async function saveSignedInState() {
 	const page = await browser.newPage();
 
 	await page.goto("/admin");
-	await page.locator("input[name='email']").fill("testuser@domain.com");
-	await page.locator("input[name='password']").fill("password");
+	await page.locator("input[name='email']").type("testuser@domain.com");
+	await page.locator("input[name='password']").type("password");
 	await page.locator("button[type='submit']").click();
 	await page.waitForURL(/\/admin\/dashboard/);
 

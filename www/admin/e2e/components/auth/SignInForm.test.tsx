@@ -21,11 +21,7 @@ test.beforeAll(async () => {
 });
 test.afterAll(async () => {
 	await stop();
-	await prisma.users.delete({
-		where: {
-			email: EMAIL,
-		},
-	});
+	await prisma.users.deleteMany();
 });
 
 test("visual comparison", async ({ page }) => {
@@ -43,35 +39,45 @@ test("shows 'field required' errors", async ({ page }) => {
 
 test("shows error when invalid credentials", async ({ page }) => {
 	await page.goto("/admin/auth/signin");
+	const emailInput = page.locator("input[type='email']");
+	const passwordInput = page.locator("input[type='password']");
+	const submitButton = page.locator("button[type='submit']");
 
 	// Wrong email
-	await page.locator("input[type='email']").fill("wrong@email.com");
-	await page.locator("input[type='password']").fill(PASSWORD);
-	await page.locator("button[type='submit']").click();
+	await emailInput.type("wrong@email.com");
+	await passwordInput.type(PASSWORD);
+	await submitButton.click();
 	await page.waitForResponse(/\/api\/auth\/callback\/credentials/);
 	await expect(page.getByRole("alert")).toContainText("Niepoprawne dane!");
+	await clearInputs();
 
 	// Wrong password
-	await page.locator("input[type='email']").fill(EMAIL);
-	await page.locator("input[type='password']").fill("wrongpassword");
-	await page.locator("button[type='submit']").click();
+	await emailInput.type(EMAIL);
+	await passwordInput.type("wrongpassword");
+	await submitButton.click();
 	await page.waitForResponse(/\/api\/auth\/callback\/credentials/);
 	await expect(page.getByRole("alert")).toContainText("Niepoprawne dane!");
+	await clearInputs();
 
 	// Both wrong
-	await page.locator("input[type='email']").fill("wrong@email.com");
-	await page.locator("input[type='password']").fill("wrongpassword");
-	await page.locator("button[type='submit']").click();
+	await emailInput.type("wrong@email.com");
+	await passwordInput.type("wrongpassword");
+	await submitButton.click();
 	await page.waitForResponse(/\/api\/auth\/callback\/credentials/);
 	await expect(page.getByRole("alert")).toContainText("Niepoprawne dane!");
 
 	await expect(page).toHaveScreenshot();
+
+	async function clearInputs() {
+		await emailInput.fill("");
+		await passwordInput.fill("");
+	}
 });
 
 test("shows error when server error", async ({ page }) => {
 	await page.goto("/admin/auth/signin");
-	await page.locator("input[type='email']").fill(EMAIL);
-	await page.locator("input[type='password']").fill(PASSWORD);
+	await page.locator("input[type='email']").type(EMAIL);
+	await page.locator("input[type='password']").type(PASSWORD);
 	await stop();
 	await page.locator("button[type='submit']").click();
 
@@ -81,15 +87,15 @@ test("shows error when server error", async ({ page }) => {
 
 test("shows error when email invalid", async ({ page }) => {
 	await page.goto("/admin/auth/signin");
-	await page.locator("input[type='email']").fill("invalid@domain");
+	await page.locator("input[type='email']").type("invalid@domain");
 
 	await expect(page.locator("text=Niepoprawny adres e-mail!")).toBeVisible();
 });
 
 test("signs in when credentials are valid", async ({ page }) => {
 	await page.goto("/admin/auth/signin");
-	await page.locator("input[type='email']").fill(EMAIL);
-	await page.locator("input[type='password']").fill(PASSWORD);
+	await page.locator("input[type='email']").type(EMAIL);
+	await page.locator("input[type='password']").type(PASSWORD);
 	await page.locator("button[type='submit']").click();
 	await page.waitForURL(/\/admin\/dashboard/);
 });
