@@ -16,12 +16,16 @@ test.beforeAll(async () => {
 			password: await bcrypt.hash(PASSWORD, 10),
 		},
 	});
-
-	await start(await init());
 });
 test.afterAll(async () => {
-	await stop();
 	await prisma.users.deleteMany();
+});
+
+test.beforeEach(async () => {
+	await start(await init());
+});
+test.afterEach(async () => {
+	await stop();
 });
 
 test("visual comparison", async ({ page }) => {
