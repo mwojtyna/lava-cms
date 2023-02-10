@@ -6,7 +6,7 @@ import dotenv from "dotenv";
  * Read environment variables from file.
  * https://github.com/motdotla/dotenv
  */
-dotenv.config();
+dotenv.config({ path: ".env.test" });
 dotenv.config({ path: "../api/.env.test" });
 
 /**
@@ -34,7 +34,6 @@ const config: PlaywrightTestConfig = {
 	reporter: [["html", { open: process.env.CI ? "never" : "on-failure" }]],
 	/* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
 	use: {
-		actionTimeout: 15000,
 		baseURL: "http://localhost:3001",
 		trace: "retain-on-failure",
 	},

@@ -102,4 +102,7 @@ test("signs in when credentials are valid", async ({ page }) => {
 	await page.locator("input[type='password']").type(PASSWORD);
 	await page.locator("button[type='submit']").click();
 	await page.waitForURL(/\/admin\/dashboard/);
+
+	expect(page.url()).toMatch(/\/admin\/dashboard/);
+	await expect(page.locator("h1").first()).toContainText("Create T3 App");
 });
