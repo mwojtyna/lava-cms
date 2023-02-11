@@ -1,16 +1,13 @@
 ---
-import Layout from '../../layouts/Layout.astro';
-import Card from '../../components/Card.astro';
+import Layout from "@frontend/src/layouts/Layout.astro";
+import { trpc } from "@frontend/src/utils/trpc";
+
+const { greeting } = await trpc.auth.greeting.query({ name: "Astro" });
 ---
 
-<Layout title="Welcome to Astro 1.">
+<Layout title="Welcome to Astro.">
 	<main>
-		<h1>Welcome to <span class="text-gradient">Astro</span></h1>
-		<p class="instructions">
-			To get started, open the directory <code>src/pages</code> in your project.<br />
-			<strong>Code Challenge:</strong> Tweak the "Welcome to Astro" message above.
-		</p>
-
+		<h1><span class="text-gradient">{greeting}!</span></h1>
 	</main>
 </Layout>
 

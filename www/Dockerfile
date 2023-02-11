@@ -1,23 +1,31 @@
-FROM node:18.12.1-slim
-
+FROM node:18.13.0-slim as builder
 WORKDIR /app
 
+# Setup system
 RUN apt-get update
 RUN apt-get install openssl -y
-
-COPY package.json /app
-COPY pnpm-* /app
-COPY turbo.json /app
-
-RUN mkdir admin frontend
-COPY admin/package.json /app/admin
-COPY frontend/package.json /app/frontend
-
 RUN npm install -g pnpm
-RUN pnpm install --frozen-lockfile
 
+# Install dependencies
 COPY ./ /app
-ENV SKIP_ENV_VALIDATION=true
+RUN pnpm install --frozen-lockfile
+RUN cd api && pnpm prisma generate
 RUN pnpm build
+
+FROM node:18.13.0-slim as runner
+WORKDIR /app
+
+# Setup system
+RUN apt-get update
+RUN apt-get install openssl -y
+RUN npm install -g pnpm
+
+# Install dependencies
+COPY ./ /app
+COPY --from=builder /app/admin/.next /app/admin/.next
+COPY --from=builder /app/frontend/dist /app/frontend/dist
+
+RUN pnpm install --frozen-lockfile --prod
+RUN cd api && pnpx prisma generate
 
 CMD [ "pnpm", "start" ]

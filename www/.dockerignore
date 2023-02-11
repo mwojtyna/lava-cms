@@ -1,3 +1,5 @@
-**/node_modules/
-**/.next/
-**/.turbo/
+**/node_modules
+**/.next
+**/.turbo
+**/dist
+**/.DS_Store

@@ -2,11 +2,18 @@
 	"name": "lava-cms",
 	"version": "0.0.1",
 	"scripts": {
-		"start": "turbo start",
-		"dev": "turbo dev",
-		"build": "turbo build"
+		"start": "FORCE_COLOR=1 turbo start",
+		"dev": "FORCE_COLOR=1 turbo dev",
+		"build": "scripts/build.sh",
+		"test": "FORCE_COLOR=1 turbo test",
+		"lint": "FORCE_COLOR=1 turbo lint"
 	},
 	"dependencies": {
-		"turbo": "^1.6.3"
+		"@trpc/client": "^10.10.0",
+		"@trpc/server": "^10.10.0",
+		"turbo": "^1.7.3"
+	},
+	"devDependencies": {
+		"depcheck": "^1.4.3"
 	}
 }

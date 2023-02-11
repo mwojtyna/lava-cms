@@ -1,0 +1,187 @@
+name: Tests
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  admin-chromium:
+    runs-on: ubuntu-22.04
+    name: Test admin (Chromium)
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3.3.0
+
+      - name: Swap Docker configs
+        run: |
+          mv .github/workflows/docker/Dockerfile.e2e www/Dockerfile
+          mv .github/workflows/docker/docker-compose.yaml ./docker-compose.yaml
+
+      - name: Env files
+        run: |
+          cp www/admin/.env.test www/admin/.env
+          cp www/api/.env.test www/api/.env
+
+      - name: storageState.json
+        uses: jsdaniell/create-json@v1.2.2
+        with:
+          name: storageState.json
+          json: "${{ secrets.STORAGE_STATE }}"
+          dir: www/admin/e2e
+
+      - name: Pull
+        run: docker compose pull
+
+      - name: Build
+        run: docker compose build
+
+      - name: Run
+        run: docker compose up -d
+
+      - name: Test
+        run: |
+          docker exec -w /app/api web pnpm prisma db push
+          docker exec -w /app/admin web pnpm test -- --project=chromium
+
+      - name: Upload report
+        uses: actions/upload-artifact@v3.1.2
+        if: always()
+        with:
+          name: playwright-chromium-report
+          path: /artifacts/playwright-report/
+          retention-days: 30
+
+  admin-firefox:
+    runs-on: ubuntu-22.04
+    name: Test admin (Firefox)
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3.3.0
+
+      - name: Swap Docker configs
+        run: |
+          mv .github/workflows/docker/Dockerfile.e2e www/Dockerfile
+          mv .github/workflows/docker/docker-compose.yaml ./docker-compose.yaml
+
+      - name: Env files
+        run: |
+          cp www/admin/.env.test www/admin/.env
+          cp www/api/.env.test www/api/.env
+
+      - name: storageState.json
+        uses: jsdaniell/create-json@v1.2.2
+        with:
+          name: storageState.json
+          json: "${{ secrets.STORAGE_STATE }}"
+          dir: www/admin/e2e
+
+      - name: Pull
+        run: docker compose pull
+
+      - name: Build
+        run: docker compose build
+
+      - name: Run
+        run: docker compose up -d
+
+      - name: Test
+        run: |
+          docker exec -w /app/api web pnpm prisma db push
+          docker exec -w /app/admin web pnpm test -- --project=firefox
+
+      - name: Upload report
+        uses: actions/upload-artifact@v3.1.2
+        if: always()
+        with:
+          name: playwright-firefox-report
+          path: /artifacts/playwright-report/
+          retention-days: 30
+
+  admin-webkit:
+    runs-on: ubuntu-22.04
+    name: Test admin (Webkit)
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3.3.0
+
+      - name: Swap Docker configs
+        run: |
+          mv .github/workflows/docker/Dockerfile.e2e www/Dockerfile
+          mv .github/workflows/docker/docker-compose.yaml ./docker-compose.yaml
+
+      - name: Env files
+        run: |
+          cp www/admin/.env.test www/admin/.env
+          cp www/api/.env.test www/api/.env
+
+      - name: storageState.json
+        uses: jsdaniell/create-json@v1.2.2
+        with:
+          name: storageState.json
+          json: "${{ secrets.STORAGE_STATE }}"
+          dir: www/admin/e2e
+
+      - name: Pull
+        run: docker compose pull
+
+      - name: Build
+        run: docker compose build
+
+      - name: Run
+        run: docker compose up -d
+
+      - name: Test
+        run: |
+          docker exec -w /app/api web pnpm prisma db push
+          docker exec -w /app/admin web pnpm test -- --project=webkit
+
+      - name: Upload report
+        uses: actions/upload-artifact@v3.1.2
+        if: always()
+        with:
+          name: playwright-webkit-report
+          path: /artifacts/playwright-report/
+          retention-days: 30
+
+  api:
+    runs-on: ubuntu-22.04
+    name: Test api
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3.3.0
+
+      - name: Swap Docker configs
+        run: |
+          mv .github/workflows/docker/Dockerfile.api www/Dockerfile
+          mv .github/workflows/docker/docker-compose.yaml ./docker-compose.yaml
+
+      - name: Env files
+        run: |
+          cp www/admin/.env.test www/admin/.env
+          cp www/api/.env.test www/api/.env
+
+      - name: Pull
+        run: docker compose pull
+
+      - name: Build
+        run: docker compose build
+
+      - name: Run
+        run: docker compose up -d
+
+      - name: Test
+        run: docker exec -w /app/api web pnpm test
+
+      - name: Upload report
+        uses: actions/upload-artifact@v3.1.2
+        if: always()
+        with:
+          name: api-report
+          path: /artifacts/api-report/
+          retention-days: 30

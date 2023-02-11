@@ -1,0 +1,21 @@
+generator client {
+    provider        = "prisma-client-js"
+    previewFeatures = ["multiSchema"]
+}
+
+datasource db {
+    provider = "postgresql"
+    url      = env("DATABASE_URL")
+    schemas  = ["admin", "frontend"]
+}
+
+// Admin schema
+model users {
+    id        String @id @default(cuid())
+    name      String
+    last_name String
+    email     String @unique
+    password  String
+
+    @@schema("admin")
+}

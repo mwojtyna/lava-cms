@@ -6,8 +6,9 @@
 		},
 		"dev": { "cache": false },
 		"build": {
-			"dependsOn": ["^build"],
-			"outputs": ["dist/**", ".next/**"]
-		}
+			"outputs": [".next/**", "dist/**"]
+		},
+		"test": {},
+		"lint": {}
 	}
 }

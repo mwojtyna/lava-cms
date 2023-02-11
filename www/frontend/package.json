@@ -4,18 +4,23 @@
 	"version": "0.0.1",
 	"private": true,
 	"scripts": {
-		"start": "http-server -p 5000 ./dist",
-		"dev": "astro dev",
+		"start": "NODE_ENV=production http-server -p 3000 ./dist",
+		"dev": "NODE_ENV=development astro dev --port 3000",
 		"build": "astro build",
+		"lint": "tsc && eslint . && astro check",
 		"preview": "astro preview",
 		"astro": "astro"
 	},
 	"dependencies": {
-		"admin": "workspace:*",
-		"astro": "^1.7.2",
+		"api": "workspace:*",
+		"astro": "^2.0.7",
 		"http-server": "^14.1.1"
 	},
 	"devDependencies": {
-		"prettier": "^2.8.1"
+		"@typescript-eslint/eslint-plugin": "^5.51.0",
+		"@typescript-eslint/parser": "^5.51.0",
+		"eslint": "^8.33.0",
+		"prettier": "^2.8.3",
+		"typescript": "^4.9.5"
 	}
 }

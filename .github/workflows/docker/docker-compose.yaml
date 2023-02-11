@@ -1,0 +1,20 @@
+name: lava
+
+services:
+  web:
+    container_name: web
+    build: ./www
+    restart: always
+    volumes:
+      - /artifacts/playwright-report/:/app/admin/playwright-report/
+      - /artifacts/api-report/:/app/api/html/
+
+  postgres:
+    container_name: postgres
+    image: postgres:15.1
+    environment:
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=admin
+    depends_on:
+      - web
+    restart: always

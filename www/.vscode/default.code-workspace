@@ -1,0 +1,37 @@
+{
+	"folders": [
+		{
+			"path": "../admin"
+		},
+		{
+			"path": "../api"
+		},
+		{
+			"path": "../frontend"
+		},
+		{
+			"path": ".."
+		}
+	],
+	"settings": {
+		"typescript.tsdk": "admin/node_modules/typescript/lib",
+		"typescript.enablePromptUseWorkspaceTsdk": true,
+		"cSpell.words": [
+			"Authed",
+			"mswjs",
+			"nextauth",
+			"pgadmin",
+			"pnpm",
+			"signin",
+			"signout",
+			"signup",
+			"superjson",
+			"tanstack",
+			"trpc",
+			"trpcadmin",
+			"unstub"
+		],
+		"prettier.requireConfig": true,
+		"testing.automaticallyOpenPeekView": "never"
+	}
+}

@@ -7,6 +7,8 @@
 
 # testing
 /coverage
+/playwright*report
+storageState.json
 
 # database
 /prisma/db.sqlite
@@ -23,6 +25,7 @@ next-env.d.ts
 # misc
 .DS_Store
 *.pem
+.vscode/
 
 # debug
 npm-debug.log*
@@ -41,5 +44,7 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 
-.vscode
-.turbo
+# playwright
+/test-results/
+/playwright-report/
+/playwright/.cache/
