@@ -16,12 +16,20 @@ const config = {
 	// Fix for `import type` not working
 	transpilePackages: ["api"],
 
-	async redirects() {
+	redirects: async () => {
 		return [
 			{
 				source: "/",
 				destination: "/dashboard",
 				permanent: true,
+			},
+		];
+	},
+	rewrites: async () => {
+		return [
+			{
+				source: "/api/trpc/:path*",
+				destination: "http://localhost:4000/trpc/:path*",
 			},
 		];
 	},
