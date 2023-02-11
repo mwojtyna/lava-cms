@@ -32,7 +32,7 @@ export default withAuth(
 			// Return 401 if not signed in, there is a user in the db
 			// and trying to access the api
 			if (!request.nextauth.token && !firstTime) {
-				return new NextResponse(undefined, { status: 401 });
+				return new NextResponse("Unauthorized", { status: 401 });
 			}
 		}
 
