@@ -4,10 +4,10 @@ services:
   web:
     container_name: web
     build: ./www
-    restart: always
     volumes:
       - /artifacts/playwright-report/:/app/admin/playwright-report/
       - /artifacts/api-report/:/app/api/html/
+    restart: always
 
   postgres:
     container_name: postgres
