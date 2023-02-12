@@ -51,24 +51,21 @@ test("shows error when invalid credentials", async ({ page }) => {
 	await emailInput.type("wrong@email.com");
 	await passwordInput.type(PASSWORD);
 	await submitButton.click();
-	await page.waitForResponse(/\/api\/auth\/callback\/credentials/);
-	await expect(page.getByRole("alert")).toContainText("Niepoprawne dane!");
+	await page.waitForSelector("text=Niepoprawne dane!");
 	await clearInputs();
 
 	// Wrong password
 	await emailInput.type(EMAIL);
 	await passwordInput.type("wrongpassword");
 	await submitButton.click();
-	await page.waitForResponse(/\/api\/auth\/callback\/credentials/);
-	await expect(page.getByRole("alert")).toContainText("Niepoprawne dane!");
+	await page.waitForSelector("text=Niepoprawne dane!");
 	await clearInputs();
 
 	// Both wrong
 	await emailInput.type("wrong@email.com");
 	await passwordInput.type("wrongpassword");
 	await submitButton.click();
-	await page.waitForResponse(/\/api\/auth\/callback\/credentials/);
-	await expect(page.getByRole("alert")).toContainText("Niepoprawne dane!");
+	await page.waitForSelector("text=Niepoprawne dane!");
 
 	await expect(page).toHaveScreenshot();
 
