@@ -1,5 +1,6 @@
 import React from "react";
 import RootStyleRegistry from "./emotion";
+import TrpcProvider from "./trpcProvider";
 import "@admin/src/styles/globals.css";
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -7,7 +8,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 		<html>
 			<head />
 			<body>
-				<RootStyleRegistry>{children}</RootStyleRegistry>
+				<TrpcProvider>
+					<RootStyleRegistry>{children}</RootStyleRegistry>
+				</TrpcProvider>
 			</body>
 		</html>
 	);

@@ -24,7 +24,6 @@ importers:
       '@mantine/hooks': ^5.10.3
       '@playwright/test': ^1.30.0
       '@tanstack/react-query': ^4.24.4
-      '@trpc/next': ^10.11.0
       '@trpc/react-query': ^10.11.0
       '@types/bcrypt': ^5.0.0
       '@types/node': ^18.13.0
@@ -61,7 +60,6 @@ importers:
       '@mantine/core': 5.10.3_ylq7zkqz7uvrjy7wd5cseqyxu4
       '@mantine/hooks': 5.10.3_react@18.2.0
       '@tanstack/react-query': 4.24.4_biqbaboplfbrettd7655fr4n2y
-      '@trpc/next': 10.11.0_nh2f2qhn3n7be2dyu4vjgd5k5e
       '@trpc/react-query': 10.11.0_pkeil6ml7pq7xvil3imldjs2sa
       api: link:../api
       dotenv: 16.0.3
@@ -1383,25 +1381,6 @@ packages:
       '@trpc/server': 10.10.0
     dependencies:
       '@trpc/server': 10.10.0
-    dev: false
-
-  /@trpc/next/10.11.0_nh2f2qhn3n7be2dyu4vjgd5k5e:
-    resolution: {integrity: sha512-BOKqJw7hq/QFMzWaMxK9nhov0+DYdBJJ9fkPWvQZNz1f4hiGsgl0BHygFg2pd2xWzjz1bgdHh//NJT9l7wbLyA==}
-    peerDependencies:
-      '@tanstack/react-query': ^4.3.8
-      '@trpc/client': 10.11.0
-      '@trpc/react-query': ^10.8.0
-      '@trpc/server': 10.11.0
-      next: '*'
-      react: '>=16.8.0'
-      react-dom: '>=16.8.0'
-    dependencies:
-      '@tanstack/react-query': 4.24.4_biqbaboplfbrettd7655fr4n2y
-      '@trpc/react-query': 10.11.0_pkeil6ml7pq7xvil3imldjs2sa
-      next: 13.1.6_pjwopsidmaokadturxaafygjp4
-      react: 18.2.0
-      react-dom: 18.2.0_react@18.2.0
-      react-ssr-prepass: 1.5.0_react@18.2.0
     dev: false
 
   /@trpc/react-query/10.11.0_pkeil6ml7pq7xvil3imldjs2sa:
@@ -6128,14 +6107,6 @@ packages:
   /react-is/17.0.2:
     resolution: {integrity: sha512-w2GsyukL62IJnlaff/nRegPQR94C/XXamvMWmSHRJ4y7Ts/4ocGRmTHvOs8PSE6pB3dWOrD/nueuU5sduBsQ4w==}
     dev: true
-
-  /react-ssr-prepass/1.5.0_react@18.2.0:
-    resolution: {integrity: sha512-yFNHrlVEReVYKsLI5lF05tZoHveA5pGzjFbFJY/3pOqqjGOmMmqx83N4hIjN2n6E1AOa+eQEUxs3CgRnPmT0RQ==}
-    peerDependencies:
-      react: ^16.8.0 || ^17.0.0 || ^18.0.0
-    dependencies:
-      react: 18.2.0
-    dev: false
 
   /react-textarea-autosize/8.3.4_3stiutgnnbnfnf3uowm5cip22i:
     resolution: {integrity: sha512-CdtmP8Dc19xL8/R6sWvtknD/eCXkQr30dtvC4VmGInhRsfF8X/ihXCq6+9l9qbxmKRiq407/7z5fxE7cVWQNgQ==}
