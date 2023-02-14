@@ -8,7 +8,7 @@ const EMAIL = "johndoe@domain.com";
 const PASSWORD = "password";
 
 test.beforeAll(async () => {
-	await prisma.users.create({
+	await prisma.user.create({
 		data: {
 			name: "John",
 			last_name: "Doe",
@@ -18,7 +18,7 @@ test.beforeAll(async () => {
 	});
 });
 test.afterAll(async () => {
-	await prisma.users.deleteMany();
+	await prisma.user.deleteMany();
 });
 
 test.beforeEach(async () => {

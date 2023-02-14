@@ -9,12 +9,12 @@ const EMAIL = "johndoe@domain.com";
 const PASSWORD = "Zaq1@wsx";
 
 test.beforeAll(async () => {
-	await prisma.users.deleteMany();
+	await prisma.user.deleteMany();
 	await start(await init());
 });
 test.afterAll(async () => {
 	await stop();
-	await prisma.users.deleteMany();
+	await prisma.user.deleteMany();
 });
 
 test("visual comparison", async ({ page }) => {
