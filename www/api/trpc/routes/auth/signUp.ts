@@ -15,7 +15,7 @@ export const signUp = publicProcedure
 	.mutation(async ({ input }) => {
 		const hashed = await bcrypt.hash(input.password, 10);
 
-		await prisma.users.create({
+		await prisma.user.create({
 			data: {
 				name: input.name,
 				last_name: input.lastName,

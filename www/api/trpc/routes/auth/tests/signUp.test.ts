@@ -17,8 +17,8 @@ it("creates a user", async () => {
 		password: PASSWORD,
 	});
 
-	expect(prisma.users.create).toHaveBeenCalled();
-	expect(prisma.users.create.mock.calls[0][0].data).toMatchObject({
+	expect(prisma.user.create).toHaveBeenCalled();
+	expect(prisma.user.create.mock.calls[0][0].data).toMatchObject({
 		name: NAME,
 		last_name: LAST_NAME,
 		email: EMAIL,

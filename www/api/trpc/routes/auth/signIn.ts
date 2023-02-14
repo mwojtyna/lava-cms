@@ -11,7 +11,7 @@ export const signIn = publicProcedure
 		})
 	)
 	.mutation(async ({ input }) => {
-		const user = await prisma.users.findFirst({
+		const user = await prisma.user.findFirst({
 			where: {
 				email: {
 					equals: input.email,
