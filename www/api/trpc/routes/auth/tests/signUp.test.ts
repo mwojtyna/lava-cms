@@ -7,7 +7,7 @@ vi.mock("@api/prisma/client");
 const NAME = "John";
 const LAST_NAME = "Doe";
 const EMAIL = "johndoe@domain.com";
-const PASSWORD = "password";
+const PASSWORD = "Password1";
 
 it("creates a user", async () => {
 	await caller.auth.signUp({
