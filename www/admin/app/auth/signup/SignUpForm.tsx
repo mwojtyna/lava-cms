@@ -3,26 +3,47 @@
 import { EnvelopeIcon, LockClosedIcon, UserIcon } from "@heroicons/react/24/outline";
 import { Button, Group, Loader, PasswordInput, Stack, TextInput, Title } from "@mantine/core";
 import { type SubmitHandler, useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { signIn } from "next-auth/react";
-
-import type { User } from "api/prisma/types";
+import { z } from "zod";
 import { trpc } from "@admin/src/utils/trpc";
 
 function SignUpForm() {
 	const router = useRouter();
 
+	const inputSchema = z
+		.object({
+			name: z.string().min(1, { message: "Imię jest wymagane" }),
+			lastName: z.string().min(1, { message: "Nazwisko jest wymagane" }),
+			email: z
+				.string()
+				.min(1, { message: "E-mail jest wymagany" })
+				.email({ message: "Niepoprawny adres e-mail" }),
+			password: z
+				.string()
+				.min(8, { message: "Hasło musi mieć przynajmniej 8 znaków" })
+				.regex(/[a-z]/, { message: "Hasło musi zawierać przynajmniej jedną małą literę" })
+				.regex(/[A-Z]/, { message: "Hasło musi zawierać przynajmniej jedną dużą literę" })
+				.regex(/[0-9]/, { message: "Hasło musi zawierać przynajmniej jedną cyfrę" }),
+			repeatPassword: z.string().min(1, { message: "Wymagane jest powtórzenie hasła" }),
+		})
+		.refine((data) => data.password === data.repeatPassword, {
+			path: ["repeatPassword"],
+			message: "Hasła nie są takie same",
+		});
+	type Inputs = z.infer<typeof inputSchema>;
+
 	const {
 		register,
 		handleSubmit,
 		formState: { errors, isSubmitting, isSubmitSuccessful },
-		watch,
-	} = useForm<User & { repeatPassword: string }>({ mode: "onChange" });
+	} = useForm<Inputs>({ mode: "onSubmit", resolver: zodResolver(inputSchema) });
 
-	const onSubmit: SubmitHandler<User> = async (data) => {
+	const onSubmit: SubmitHandler<Inputs> = async (data) => {
 		await trpc.auth.signUp.mutate({
 			name: data.name,
-			lastName: data.last_name,
+			lastName: data.lastName,
 			email: data.email,
 			password: data.password,
 		});
@@ -47,13 +68,7 @@ function SignUpForm() {
 					type="email"
 					label="E-mail"
 					placeholder="user@domain.com"
-					{...register("email", {
-						required: "Pole wymagane!",
-						pattern: {
-							value: /(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9]))\.){3}(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9])|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])/,
-							message: "Niepoprawny adres e-mail!",
-						},
-					})}
+					{...register("email")}
 					error={errors.email?.message}
 					icon={<EnvelopeIcon className="w-5" />}
 					autoFocus
@@ -65,9 +80,7 @@ function SignUpForm() {
 						type="text"
 						label="Imię"
 						placeholder="Jan"
-						{...register("name", {
-							required: "Pole wymagane!",
-						})}
+						{...register("name")}
 						error={errors.name?.message}
 						icon={<UserIcon className="w-5" />}
 					/>
@@ -76,35 +89,22 @@ function SignUpForm() {
 						type="text"
 						label="Nazwisko"
 						placeholder="Kowalski"
-						{...register("last_name", {
-							required: "Pole wymagane!",
-						})}
-						error={errors.last_name?.message}
+						{...register("lastName")}
+						error={errors.lastName?.message}
 					/>
 				</Group>
 
 				<PasswordInput
 					size="md"
 					label="Hasło"
-					{...register("password", {
-						required: "Pole wymagane!",
-						pattern: {
-							value: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d\w\W]{8,}$/,
-							message:
-								"Hasło musi mieć minimum 8 znaków, jedną wielką literę, oraz jedną cyfrę!",
-						},
-					})}
+					{...register("password")}
 					error={errors.password?.message}
 					icon={<LockClosedIcon className="w-5" />}
 				/>
 				<PasswordInput
 					size="md"
 					label="Powtórz hasło"
-					{...register("repeatPassword", {
-						required: "Pole wymagane!",
-						validate: (value) =>
-							value === watch("password") ? true : "Hasła nie są identyczne!",
-					})}
+					{...register("repeatPassword")}
 					error={errors.repeatPassword?.message}
 					icon={<LockClosedIcon className="w-5" />}
 				/>

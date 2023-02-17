@@ -4,7 +4,7 @@
 	"private": true,
 	"scripts": {
 		"start": "next start -p 3001",
-		"dev": "nodemon --watch next.config.mjs --exec next dev -p 3001",
+		"dev": "nodemon --watch next.config.mjs --exec 'next dev -p 3001 || touch next.config.mjs'",
 		"build": "next build",
 		"lint": "tsc && next lint",
 		"test": "playwright test",
@@ -14,6 +14,7 @@
 	"dependencies": {
 		"@emotion/react": "^11.10.5",
 		"@heroicons/react": "^2.0.14",
+		"@hookform/resolvers": "^2.9.11",
 		"@mantine/core": "^5.10.3",
 		"@mantine/hooks": "^5.10.3",
 		"@tanstack/react-query": "^4.24.4",

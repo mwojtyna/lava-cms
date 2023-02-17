@@ -20,6 +20,7 @@ importers:
       '@babel/core': ^7.20.12
       '@emotion/react': ^11.10.5
       '@heroicons/react': ^2.0.14
+      '@hookform/resolvers': ^2.9.11
       '@mantine/core': ^5.10.3
       '@mantine/hooks': ^5.10.3
       '@playwright/test': ^1.30.0
@@ -57,6 +58,7 @@ importers:
     dependencies:
       '@emotion/react': 11.10.5_yxdp3dl3eazy3vwpbmv4fq727a
       '@heroicons/react': 2.0.14_react@18.2.0
+      '@hookform/resolvers': 2.9.11_react-hook-form@7.43.1
       '@mantine/core': 5.10.3_ylq7zkqz7uvrjy7wd5cseqyxu4
       '@mantine/hooks': 5.10.3_react@18.2.0
       '@tanstack/react-query': 4.24.4_biqbaboplfbrettd7655fr4n2y
@@ -861,6 +863,14 @@ packages:
       react: '>= 16'
     dependencies:
       react: 18.2.0
+    dev: false
+
+  /@hookform/resolvers/2.9.11_react-hook-form@7.43.1:
+    resolution: {integrity: sha512-bA3aZ79UgcHj7tFV7RlgThzwSSHZgvfbt2wprldRkYBcMopdMvHyO17Wwp/twcJasNFischFfS7oz8Katz8DdQ==}
+    peerDependencies:
+      react-hook-form: ^7.0.0
+    dependencies:
+      react-hook-form: 7.43.1_react@18.2.0
     dev: false
 
   /@humanwhocodes/config-array/0.11.8:

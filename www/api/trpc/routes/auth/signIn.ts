@@ -6,7 +6,7 @@ import { prisma } from "@api/prisma/client";
 export const signIn = publicProcedure
 	.input(
 		z.object({
-			email: z.string(),
+			email: z.string().email(),
 			password: z.string(),
 		})
 	)

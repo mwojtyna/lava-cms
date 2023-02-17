@@ -13,22 +13,28 @@ import {
 } from "@mantine/core";
 import { signIn } from "next-auth/react";
 import { type SubmitHandler, useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
+import { z } from "zod";
 
 function SignUpForm() {
 	const router = useRouter();
 
-	interface Inputs {
-		email: string;
-		password: string;
-	}
+	const inputSchema = z.object({
+		email: z
+			.string()
+			.min(1, { message: "E-mail jest wymagany" })
+			.email({ message: "Niepoprawny adres e-mail" }),
+		password: z.string().min(1, { message: "Hasło jest wymagane" }),
+	});
+	type Inputs = z.infer<typeof inputSchema>;
 
 	const {
 		register,
 		handleSubmit,
 		formState: { errors, isSubmitting, isSubmitSuccessful },
 		setError,
-	} = useForm<Inputs>({ mode: "onChange" });
+	} = useForm<Inputs>({ mode: "onSubmit", resolver: zodResolver(inputSchema) });
 
 	const onSubmit: SubmitHandler<Inputs> = async (data) => {
 		const res = await signIn("credentials", {
@@ -72,13 +78,7 @@ function SignUpForm() {
 					type="email"
 					label="E-mail"
 					placeholder="user@domain.com"
-					{...register("email", {
-						required: "Pole wymagane!",
-						pattern: {
-							value: /(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9]))\.){3}(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9])|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])/,
-							message: "Niepoprawny adres e-mail!",
-						},
-					})}
+					{...register("email")}
 					error={errors.email?.message}
 					icon={<EnvelopeIcon className="w-5" />}
 					autoFocus
@@ -86,9 +86,7 @@ function SignUpForm() {
 				<PasswordInput
 					size="md"
 					label="Hasło"
-					{...register("password", {
-						required: "Pole wymagane!",
-					})}
+					{...register("password")}
 					error={errors.password?.message}
 					icon={<LockClosedIcon className="w-5" />}
 				/>

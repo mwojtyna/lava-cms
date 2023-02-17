@@ -8,8 +8,8 @@ export const signUp = publicProcedure
 		z.object({
 			name: z.string(),
 			lastName: z.string(),
-			email: z.string(),
-			password: z.string(),
+			email: z.string().email(),
+			password: z.string().min(8).regex(/[a-z]/).regex(/[A-Z]/).regex(/[0-9]/),
 		})
 	)
 	.mutation(async ({ input }) => {
