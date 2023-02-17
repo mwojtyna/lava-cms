@@ -22,11 +22,12 @@ function SignUpForm() {
 				.email({ message: "Niepoprawny adres e-mail" }),
 			password: z
 				.string()
-				.min(8, { message: "Hasło musi mieć przynajmniej 8 znaków" })
+				.min(1, { message: "Hasło jest wymagane" })
+				.min(8, { message: "Hasło musi zawierać przynajmniej 8 znaków" })
 				.regex(/[a-z]/, { message: "Hasło musi zawierać przynajmniej jedną małą literę" })
 				.regex(/[A-Z]/, { message: "Hasło musi zawierać przynajmniej jedną dużą literę" })
 				.regex(/[0-9]/, { message: "Hasło musi zawierać przynajmniej jedną cyfrę" }),
-			repeatPassword: z.string().min(1, { message: "Wymagane jest powtórzenie hasła" }),
+			repeatPassword: z.string().min(1, { message: "Powtórzenie hasła jest wymagane" }),
 		})
 		.refine((data) => data.password === data.repeatPassword, {
 			path: ["repeatPassword"],

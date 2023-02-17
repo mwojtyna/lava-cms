@@ -27,33 +27,50 @@ test("shows 'field required' errors", async ({ page }) => {
 	await page.goto("/admin/auth/signup");
 	await page.waitForURL(/\/admin\/auth\/signup/);
 	await page.click("button[type=submit]");
-	expect(await page.locator("text=Pole wymagane!").count()).toBe(5);
 	await expect(page).toHaveScreenshot();
 });
 
 test("shows error when email invalid", async ({ page }) => {
 	await page.goto("/admin/auth/signup");
 	await page.locator("input[type='email']").type("invalid@domain");
+	await page.locator("button[type=submit]").click();
 
-	await expect(page.locator("text=Niepoprawny adres e-mail!")).toBeVisible();
+	await expect(page.locator("text=Niepoprawny adres e-mail")).toBeVisible();
 });
 
 test("shows error when password invalid", async ({ page }) => {
 	await page.goto("/admin/auth/signup");
-	await page.locator("input[type='password']").first().type("password");
 
+	await page.locator("button[type=submit]").click();
+	const passwordField = page.locator("input[type='password']").first();
+
+	passwordField.first().type("pass");
+	await expect(page.locator("text=Hasło musi zawierać przynajmniej 8 znaków")).toBeVisible();
+	passwordField.clear();
+
+	passwordField.first().type("12345678");
 	await expect(
-		page.locator(
-			"text=Hasło musi mieć minimum 8 znaków, jedną wielką literę, oraz jedną cyfrę!"
-		)
+		page.locator("text=Hasło musi zawierać przynajmniej jedną małą literę")
 	).toBeVisible();
+	passwordField.clear();
+
+	passwordField.first().type("password");
+	await expect(
+		page.locator("text=Hasło musi zawierać przynajmniej jedną dużą literę")
+	).toBeVisible();
+	passwordField.clear();
+
+	passwordField.first().type("Password");
+	await expect(page.locator("text=Hasło musi zawierać przynajmniej jedną cyfrę")).toBeVisible();
 });
 
 test("shows error when passwords don't match", async ({ page }) => {
 	await page.goto("/admin/auth/signup");
+
+	await page.locator("button[type=submit]").click();
 	await page.locator("input[type='password']").nth(1).type("password");
 
-	await expect(page.locator("text=Hasła nie są identyczne!")).toBeVisible();
+	await expect(page.locator("text=Hasła nie są takie same")).toBeVisible();
 });
 
 test("signs up when info is valid", async ({ page }) => {

@@ -37,7 +37,6 @@ test("visual comparison", async ({ page }) => {
 test("shows 'field required' errors", async ({ page }) => {
 	await page.goto("/admin/auth/signin");
 	await page.click("button[type=submit]");
-	expect(await page.locator("text=Pole wymagane!").count()).toBe(2);
 	await expect(page).toHaveScreenshot();
 });
 
@@ -90,7 +89,7 @@ test("shows error when email invalid", async ({ page }) => {
 	await page.goto("/admin/auth/signin");
 	await page.locator("input[type='email']").type("invalid@domain");
 
-	await expect(page.locator("text=Niepoprawny adres e-mail!")).toBeVisible();
+	await expect(page.locator("text=Niepoprawny adres e-mail")).toBeVisible();
 });
 
 test("signs in when credentials are valid", async ({ page }) => {
