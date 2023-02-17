@@ -87,6 +87,7 @@ test("shows error when server error", async ({ page }) => {
 
 test("shows error when email invalid", async ({ page }) => {
 	await page.goto("/admin/auth/signin");
+	await page.click("button[type=submit]");
 	await page.locator("input[type='email']").type("invalid@domain");
 
 	await expect(page.locator("text=Niepoprawny adres e-mail")).toBeVisible();

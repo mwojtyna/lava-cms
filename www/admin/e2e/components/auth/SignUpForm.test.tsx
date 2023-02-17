@@ -44,23 +44,20 @@ test("shows error when password invalid", async ({ page }) => {
 	await page.locator("button[type=submit]").click();
 	const passwordField = page.locator("input[type='password']").first();
 
-	passwordField.first().type("pass");
+	passwordField.first().fill("pass");
 	await expect(page.locator("text=Hasło musi zawierać przynajmniej 8 znaków")).toBeVisible();
-	passwordField.clear();
 
-	passwordField.first().type("12345678");
+	passwordField.first().fill("12345678");
 	await expect(
 		page.locator("text=Hasło musi zawierać przynajmniej jedną małą literę")
 	).toBeVisible();
-	passwordField.clear();
 
-	passwordField.first().type("password");
+	passwordField.first().fill("password");
 	await expect(
 		page.locator("text=Hasło musi zawierać przynajmniej jedną dużą literę")
 	).toBeVisible();
-	passwordField.clear();
 
-	passwordField.first().type("Password");
+	passwordField.first().fill("Password");
 	await expect(page.locator("text=Hasło musi zawierać przynajmniej jedną cyfrę")).toBeVisible();
 });
 
