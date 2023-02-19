@@ -1,0 +1,30 @@
+version: 2
+updates:
+  # /docker-compose.yaml
+  - package-ecosystem: docker
+    directory: "/"
+    schedule:
+      interval: "daily"
+
+  # /nginx/Dockerfile
+  - package-ecosystem: docker
+    directory: "/nginx"
+    schedule:
+      interval: "daily"
+
+  # /www/Dockerfile
+  - package-ecosystem: docker
+    directory: "/www"
+    schedule:
+      interval: "daily"
+
+  # /.github/workflows/docker/*
+  - package-ecosystem: docker
+    directory: "/.github/workflows/docker"
+    schedule:
+      interval: "daily"
+
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "daily"
