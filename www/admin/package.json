@@ -4,7 +4,7 @@
 	"private": true,
 	"scripts": {
 		"start": "next start -p 3001",
-		"dev": "nodemon --watch next.config.mjs --exec next dev -p 3001",
+		"dev": "nodemon --watch next.config.mjs --exec 'next dev -p 3001 || touch next.config.mjs'",
 		"build": "next build",
 		"lint": "tsc && next lint",
 		"test": "playwright test",
@@ -14,6 +14,7 @@
 	"dependencies": {
 		"@emotion/react": "^11.10.5",
 		"@heroicons/react": "^2.0.14",
+		"@hookform/resolvers": "^2.9.11",
 		"@mantine/core": "^5.10.3",
 		"@mantine/hooks": "^5.10.3",
 		"@tanstack/react-query": "^4.24.4",
@@ -42,8 +43,8 @@
 		"eslint": "^8.33.0",
 		"eslint-config-next": "^13.1.6",
 		"http-terminator": "^3.2.0",
-		"msw": "^0.49.3",
-		"msw-trpc": "^1.1.2",
+		"msw": "^1.0.1",
+		"msw-trpc": "^1.2.0",
 		"nodemon": "^2.0.20",
 		"playwright": "^1.30.0",
 		"postcss": "^8.4.21",

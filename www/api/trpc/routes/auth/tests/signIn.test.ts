@@ -12,7 +12,7 @@ const EMAIL = "johndoe@domain.com";
 const PASSWORD = "password";
 
 it("returns user's id if email and password are correct", async () => {
-	prisma.users.findFirst.mockResolvedValue({
+	prisma.user.findFirst.mockResolvedValue({
 		id: ID,
 		name: NAME,
 		last_name: LAST_NAME,
@@ -25,13 +25,13 @@ it("returns user's id if email and password are correct", async () => {
 });
 
 it("returns null if email is incorrect", async () => {
-	prisma.users.findFirst.mockResolvedValue(null);
+	prisma.user.findFirst.mockResolvedValue(null);
 
 	expect(await caller.auth.signIn({ email: "wrong@email.com", password: PASSWORD })).toBeNull();
 });
 
 it("returns null if password is incorrect", async () => {
-	prisma.users.findFirst.mockResolvedValue({
+	prisma.user.findFirst.mockResolvedValue({
 		id: ID,
 		name: NAME,
 		last_name: LAST_NAME,

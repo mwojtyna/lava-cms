@@ -6,12 +6,12 @@ import { prisma } from "@api/prisma/client";
 export const signIn = publicProcedure
 	.input(
 		z.object({
-			email: z.string(),
+			email: z.string().email(),
 			password: z.string(),
 		})
 	)
 	.mutation(async ({ input }) => {
-		const user = await prisma.users.findFirst({
+		const user = await prisma.user.findFirst({
 			where: {
 				email: {
 					equals: input.email,
