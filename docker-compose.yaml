@@ -9,9 +9,8 @@ services:
   postgres:
     container_name: postgres
     image: postgres:15.1
-    environment:
-      - POSTGRES_USER=admin
-      - POSTGRES_PASSWORD=admin
+    env_file:
+      - .env
     volumes:
       - pgdata:/var/lib/postgresql/data
     depends_on:
@@ -21,9 +20,8 @@ services:
   pgadmin:
     container_name: pgadmin
     image: dpage/pgadmin4:6.18
-    environment:
-      - PGADMIN_DEFAULT_EMAIL=admin@admin.com
-      - PGADMIN_DEFAULT_PASSWORD=admin
+    env_file:
+      - .env
     volumes:
       - pgadmin:/var/lib/pgadmin
     depends_on:

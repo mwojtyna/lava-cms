@@ -32,6 +32,7 @@
 			"unstub"
 		],
 		"prettier.requireConfig": true,
-		"testing.automaticallyOpenPeekView": "never"
+		"testing.automaticallyOpenPeekView": "never",
+		"sarif-viewer.connectToGithubCodeScanning": "on"
 	}
 }
