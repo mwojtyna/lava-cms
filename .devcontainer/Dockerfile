@@ -14,13 +14,12 @@ RUN apt-get install -y openssl
 RUN apt-get install -y sudo
 
 RUN ln -sf /usr/share/zoneinfo/Europe/Warsaw /etc/localtime
-RUN useradd --create-home ubuntu
 RUN echo "root:root" | chpasswd
 RUN git config --global --add safe.directory /workspaces/lava-cms/
 
 # Install node
-ENV NODE_VERSION=18.13.0
-ENV NVM_DIR=/home/ubuntu/.nvm
+ENV NODE_VERSION=18.14.1
+ENV NVM_DIR=/home/pwuser/.nvm
 RUN mkdir -p ${NVM_DIR}
 
 RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.3/install.sh | bash
@@ -36,20 +35,22 @@ RUN npm install -g git-open
 
 # Install zsh
 RUN apt-get install -y zsh
-RUN usermod --shell /bin/zsh ubuntu
+RUN usermod --shell /bin/zsh pwuser
 
 # Install chezmoi
 RUN sh -c "$(curl -fsLS get.chezmoi.io)"
 
 # Setup volume mounts
 RUN mkdir -p /workspaces/lava-cms/
-RUN mkdir /home/ubuntu/.vscode-server
-RUN mkdir /home/ubuntu/.pnpm-store
-RUN chown -R ubuntu:ubuntu /home/ubuntu/.vscode-server
-RUN chown -R ubuntu:ubuntu /home/ubuntu/.pnpm-store
+RUN mkdir /home/pwuser/.vscode-server
+RUN mkdir /home/pwuser/.pnpm-store
+
+RUN chown -R pwuser:pwuser /workspaces/lava-cms/
+RUN chown -R pwuser:pwuser /home/pwuser/.vscode-server
+RUN chown -R pwuser:pwuser /home/pwuser/.pnpm-store
 
 # Install oh-my-zsh
-USER ubuntu
+USER pwuser
 RUN sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 
 # Apply dotfiles from repo
