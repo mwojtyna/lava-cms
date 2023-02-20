@@ -18,6 +18,12 @@ updates:
     schedule:
       interval: daily
 
+  # /.devcontainer/Dockerfile
+  - package-ecosystem: docker
+    directory: "/.devcontainer"
+    schedule:
+      interval: daily
+
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
