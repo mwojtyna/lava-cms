@@ -45,6 +45,8 @@ RUN sh -c "$(curl -fsLS get.chezmoi.io)"
 RUN mkdir -p /workspaces/lava-cms/
 RUN mkdir /home/ubuntu/.vscode-server
 RUN mkdir /home/ubuntu/.pnpm-store
+RUN chown -R ubuntu:ubuntu /home/ubuntu/.vscode-server
+RUN chown -R ubuntu:ubuntu /home/ubuntu/.pnpm-store
 
 # Install oh-my-zsh
 USER ubuntu
