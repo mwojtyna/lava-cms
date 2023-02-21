@@ -1,4 +1,4 @@
-name: lava
+name: lava-cms
 
 services:
   web:
