@@ -1,7 +1,6 @@
 {
 	"name": "frontend",
 	"type": "module",
-	"version": "0.0.1",
 	"private": true,
 	"scripts": {
 		"start": "NODE_ENV=production http-server -p 3000 ./dist",

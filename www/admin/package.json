@@ -1,6 +1,5 @@
 {
 	"name": "admin",
-	"version": "0.0.1",
 	"private": true,
 	"scripts": {
 		"start": "next start -p 3001",
@@ -21,7 +20,7 @@
 		"@trpc/react-query": "^10.11.0",
 		"api": "workspace:*",
 		"dotenv": "^16.0.3",
-		"next": "^13.1.6",
+		"next": "^13.2.1",
 		"next-auth": "^4.19.2",
 		"react": "^18.2.0",
 		"react-dom": "^18.2.0",

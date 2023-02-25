@@ -54,7 +54,7 @@ function SignUpForm() {
 			password: data.password,
 		});
 
-		router.push("/admin/dashboard");
+		router.push("/dashboard");
 	};
 
 	return (
