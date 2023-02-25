@@ -43,7 +43,7 @@ function SignUpForm() {
 		});
 
 		if (res?.ok) {
-			router.push("/admin/dashboard");
+			router.push("/dashboard");
 		} else if (res?.error === "CredentialsSignin") {
 			// "CredentialsSignin" is the error message when the user inputs wrong credentials
 			setError("root.invalidCredentials", {
