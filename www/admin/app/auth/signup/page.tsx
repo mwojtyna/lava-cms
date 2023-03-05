@@ -1,13 +1,15 @@
-"use client";
-
-import { Center } from "@mantine/core";
+import type { Metadata } from "next";
 import SignUpForm from "./SignUpForm";
+
+export const metadata: Metadata = {
+	title: "Lava CMS - Zarejestruj się",
+};
 
 function SignIn() {
 	return (
-		<Center h="100vh">
+		<div className="grid h-[100vh] place-items-center">
 			<SignUpForm />
-		</Center>
+		</div>
 	);
 }
 

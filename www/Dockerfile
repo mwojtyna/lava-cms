@@ -1,4 +1,4 @@
-FROM node:18.14.1-slim as builder
+FROM node:18.14.2-slim as builder
 WORKDIR /app
 
 # Setup system
@@ -12,7 +12,7 @@ RUN pnpm install --frozen-lockfile
 RUN cd api && pnpm prisma generate
 RUN pnpm build
 
-FROM node:18.14.1-slim as runner
+FROM node:18.14.2-slim as runner
 WORKDIR /app
 
 # Setup system

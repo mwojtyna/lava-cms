@@ -1,12 +1,17 @@
 import React from "react";
+import type { Metadata } from "next";
 import RootStyleRegistry from "./emotion";
 import TrpcProvider from "./trpcProvider";
 import "@admin/src/styles/globals.css";
 
+export const metadata: Metadata = {
+	title: "Lava CMS - Panel administracyjny",
+	icons: ["/admin/favicon.ico"],
+};
+
 export default function RootLayout({ children }: { children: React.ReactNode }) {
 	return (
 		<html>
-			<head />
 			<body>
 				<TrpcProvider>
 					<RootStyleRegistry>{children}</RootStyleRegistry>
