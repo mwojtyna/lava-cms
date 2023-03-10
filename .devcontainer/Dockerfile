@@ -18,7 +18,7 @@ RUN echo "root:root" | chpasswd
 RUN git config --global --add safe.directory /workspaces/lava-cms/
 
 # Install node
-ENV NODE_VERSION=18.14.1
+ENV NODE_VERSION=18.15.0
 ENV NVM_DIR=/home/pwuser/.nvm
 RUN mkdir -p ${NVM_DIR}
 
