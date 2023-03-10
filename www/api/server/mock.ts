@@ -1,4 +1,4 @@
-import { type App } from "@api/server";
+import type { App } from "@api/server";
 import { createMiddleware } from "@mswjs/http-middleware";
 
 export type MockHandler = Parameters<typeof createMiddleware>[0];
