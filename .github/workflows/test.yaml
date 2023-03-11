@@ -23,13 +23,6 @@ jobs:
           cp www/admin/.env.test www/admin/.env
           cp www/api/.env.test www/api/.env
 
-      - name: storageState.json
-        uses: jsdaniell/create-json@v1.2.2
-        with:
-          name: storageState.json
-          json: "${{ secrets.STORAGE_STATE }}"
-          dir: www/admin/e2e
-
       - name: Pull
         run: docker compose pull
 
@@ -70,13 +63,6 @@ jobs:
           cp www/admin/.env.test www/admin/.env
           cp www/api/.env.test www/api/.env
 
-      - name: storageState.json
-        uses: jsdaniell/create-json@v1.2.2
-        with:
-          name: storageState.json
-          json: "${{ secrets.STORAGE_STATE }}"
-          dir: www/admin/e2e
-
       - name: Pull
         run: docker compose pull
 
@@ -116,13 +102,6 @@ jobs:
         run: |
           cp www/admin/.env.test www/admin/.env
           cp www/api/.env.test www/api/.env
-
-      - name: storageState.json
-        uses: jsdaniell/create-json@v1.2.2
-        with:
-          name: storageState.json
-          json: "${{ secrets.STORAGE_STATE }}"
-          dir: www/admin/e2e
 
       - name: Pull
         run: docker compose pull

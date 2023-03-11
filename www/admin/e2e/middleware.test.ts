@@ -1,7 +1,7 @@
-import { expect, test } from "@playwright/test";
+import { expect } from "@playwright/test";
 import { start, stop, trpcMsw } from "@admin/e2e/mocks/trpc";
 import { init } from "api/server";
-import { getSignedInPage } from "@admin/e2e/mocks/auth";
+import { test } from "./fixtures";
 
 test.afterEach(async () => {
 	await stop();
@@ -31,7 +31,7 @@ test("redirects to sign in page when user is not signed in", async ({ page }) =>
 	expect(page.url()).toMatch(/\/auth\/signin/);
 });
 
-test("redirects to dashboard when user is signed in", async ({ browser }) => {
+test("redirects to dashboard when user is signed in", async ({ authedPage }) => {
 	const app = await init([
 		trpcMsw.auth.firstTime.query((_, res, ctx) => {
 			return res(ctx.data({ firstTime: false }));
@@ -39,11 +39,10 @@ test("redirects to dashboard when user is signed in", async ({ browser }) => {
 	]);
 	await start(app);
 
-	const page = await getSignedInPage(browser);
-	await page.goto("/admin");
+	await authedPage.goto("/admin");
 
-	expect(page.url()).toMatch(/\/admin\/dashboard/);
-	await expect(page.locator("h1").first()).toContainText("Create T3 App");
+	expect(authedPage.url()).toMatch(/\/admin\/dashboard/);
+	await expect(authedPage.locator("h1").first()).toContainText("Create T3 App");
 });
 
 test("returns 401 when trying to access /api/trpc when not signed in", async ({ page }) => {
@@ -61,7 +60,7 @@ test("returns 401 when trying to access /api/trpc when not signed in", async ({ 
 	expect(await res?.text()).toBe("Unauthorized");
 });
 
-test("returns json when trying to access /api/trpc when signed in", async ({ browser }) => {
+test("returns json when trying to access /api/trpc when signed in", async ({ authedPage }) => {
 	const app = await init([
 		trpcMsw.auth.firstTime.query((_, res, ctx) => {
 			return res(ctx.data({ firstTime: false }));
@@ -69,9 +68,8 @@ test("returns json when trying to access /api/trpc when signed in", async ({ bro
 	]);
 	await start(app);
 
-	const page = await getSignedInPage(browser);
-	const res = await page.goto("/admin/api/trpc");
-	expect(page.url()).toMatch(/\/admin\/api\/trpc/);
+	const res = await authedPage.goto("/admin/api/trpc");
+	expect(authedPage.url()).toMatch(/\/admin\/api\/trpc/);
 	expect(await res?.headerValue("content-type")).toMatch(/application\/json/);
 	expect(await res?.json()).toBeTruthy();
 });

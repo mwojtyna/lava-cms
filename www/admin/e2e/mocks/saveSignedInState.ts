@@ -1,21 +1,23 @@
 import { start, stop, trpcMsw } from "@admin/e2e/mocks/trpc";
 import { init } from "api/server";
-import { type Browser, chromium } from "playwright";
+import type { Browser } from "playwright";
 
-const STORAGE_STATE_PATH = "./e2e/storageState.json";
+export const STORAGE_STATE_PATH = "./e2e/storageState.json";
 
 /**
- * Saves storage state to ./storageState.json
+ * Saves storage state to storageState.json
  */
-export async function saveSignedInState() {
+export async function saveSignedInState(browser: Browser) {
 	const app = await init([
+		trpcMsw.auth.firstTime.query((_, res, ctx) => {
+			return res(ctx.data({ firstTime: false }));
+		}),
 		trpcMsw.auth.signIn.mutation((_, res, ctx) => {
 			return res(ctx.data({ userId: "123" }));
 		}),
 	]);
 	await start(app);
 
-	const browser = await chromium.launch();
 	const page = await browser.newPage();
 
 	await page.goto("/admin");
@@ -25,13 +27,6 @@ export async function saveSignedInState() {
 	await page.waitForURL(/\/admin\/dashboard/);
 
 	await page.context().storageState({ path: STORAGE_STATE_PATH });
-	await browser.close();
+	await page.close();
 	await stop();
-}
-
-export async function getSignedInPage(browser: Browser) {
-	const context = await browser.newContext({
-		storageState: STORAGE_STATE_PATH,
-	});
-	return await context.newPage();
 }
