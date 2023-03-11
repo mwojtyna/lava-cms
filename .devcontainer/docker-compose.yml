@@ -12,9 +12,6 @@ services:
       context: .
       dockerfile: .devcontainer/Dockerfile
 
-    environment:
-      - DISPLAY=localhost:0
-
     volumes:
       # Update this to wherever you want VS Code to mount the folder of your project
       - ./:/workspaces/lava-cms:cached
