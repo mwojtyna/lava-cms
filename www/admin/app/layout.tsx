@@ -1,4 +1,4 @@
-import React from "react";
+import type React from "react";
 import type { Metadata } from "next";
 import RootStyleRegistry from "./emotion";
 import TrpcProvider from "./trpcProvider";

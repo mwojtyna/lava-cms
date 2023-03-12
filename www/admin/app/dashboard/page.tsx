@@ -37,13 +37,13 @@ function Home() {
 						<h3 className="text-2xl font-bold">One →</h3>
 						<div className="text-lg">One.</div>
 					</Link>
-					<Link
+					<a
 						className="flex max-w-xs flex-col gap-4 rounded-xl bg-white/10 p-4 text-white hover:bg-white/20"
 						href="/"
 					>
 						<h3 className="text-2xl font-bold">Frontend →</h3>
 						<div className="text-lg">Frontend.</div>
-					</Link>
+					</a>
 					<a
 						className="flex max-w-xs flex-col gap-4 rounded-xl bg-white/10 p-4 text-white hover:bg-white/20"
 						href="/pgadmin"
