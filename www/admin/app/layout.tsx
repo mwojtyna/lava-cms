@@ -5,7 +5,6 @@ import TrpcProvider from "./trpcProvider";
 import "@admin/src/styles/globals.css";
 
 export const metadata: Metadata = {
-	title: "Lava CMS - Panel administracyjny",
 	icons: ["/admin/favicon.ico"],
 };
 
