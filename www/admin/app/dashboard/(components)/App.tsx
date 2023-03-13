@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import {
 	AppShell,
 	Navbar,
@@ -12,10 +11,11 @@ import {
 	useMantineTheme,
 	Drawer,
 } from "@mantine/core";
+import { useDisclosure } from "@mantine/hooks";
 
 export default function App() {
 	const theme = useMantineTheme();
-	const [opened, setOpened] = useState(false);
+	const [opened, handlers] = useDisclosure(false);
 
 	const navbarContent = (
 		<>
@@ -46,7 +46,7 @@ export default function App() {
 					</MediaQuery>
 
 					<MediaQuery largerThan={"sm"} styles={{ display: "none" }}>
-						<Drawer opened={opened} onClose={() => setOpened(false)} size={300}>
+						<Drawer opened={opened} onClose={() => handlers.close()} size={300}>
 							<Navbar p="md" hiddenBreakpoint="sm" hidden={!opened}>
 								{navbarContent}
 							</Navbar>
@@ -60,12 +60,12 @@ export default function App() {
 				</Footer>
 			}
 			header={
-				<Header height={{ base: 50, md: 70 }} p="md">
+				<Header height={{ base: 50, lg: 70 }} p="md">
 					<div style={{ display: "flex", alignItems: "center", height: "100%" }}>
 						<MediaQuery largerThan="sm" styles={{ display: "none" }}>
 							<Burger
 								opened={opened}
-								onClick={() => setOpened((o) => !o)}
+								onClick={() => handlers.open()}
 								size="sm"
 								color={theme.colors.gray[6]}
 								mr="xl"

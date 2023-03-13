@@ -19,7 +19,7 @@ importers:
     specifiers:
       '@babel/core': ^7.20.12
       '@emotion/react': ^11.10.6
-      '@heroicons/react': ^2.0.14
+      '@heroicons/react': ^2.0.16
       '@hookform/resolvers': ^2.9.11
       '@mantine/core': ^6.0.1
       '@mantine/hooks': ^6.0.1
@@ -57,7 +57,7 @@ importers:
       zod: ^3.20.2
     dependencies:
       '@emotion/react': 11.10.6_3stiutgnnbnfnf3uowm5cip22i
-      '@heroicons/react': 2.0.14_react@18.2.0
+      '@heroicons/react': 2.0.16_react@18.2.0
       '@hookform/resolvers': 2.9.11_react-hook-form@7.43.1
       '@mantine/core': 6.0.1_xt3elt3fjufkypkvrqbd6q6n7a
       '@mantine/hooks': 6.0.1_react@18.2.0
@@ -1072,8 +1072,8 @@ packages:
       - '@types/react'
     dev: false
 
-  /@heroicons/react/2.0.14_react@18.2.0:
-    resolution: {integrity: sha512-eFL4if6L7woL1fUvk/jjXx4z9NxVESHHrQnEd2qKVelTFTIr/3VLGWdPb0biia9ZVe26P0JSs/xmOlRNur3SrQ==}
+  /@heroicons/react/2.0.16_react@18.2.0:
+    resolution: {integrity: sha512-x89rFxH3SRdYaA+JCXwfe+RkE1SFTo9GcOkZettHer71Y3T7V+ogKmfw5CjTazgS3d0ClJ7p1NA+SP7VQLQcLw==}
     peerDependencies:
       react: '>= 16'
     dependencies:
