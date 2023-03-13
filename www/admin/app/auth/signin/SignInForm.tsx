@@ -17,7 +17,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { z } from "zod";
 
-function SignUpForm() {
+function SignInForm() {
 	const router = useRouter();
 
 	const inputSchema = z.object({
@@ -106,4 +106,4 @@ function SignUpForm() {
 	);
 }
 
-export default SignUpForm;
+export default SignInForm;
