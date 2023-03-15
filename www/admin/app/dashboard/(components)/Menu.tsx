@@ -53,8 +53,8 @@ function Menu({ version }: { version: string }) {
 					<Code
 						bg={
 							theme.colorScheme === "light"
-								? theme.colors.gray[1]
-								: theme.colors.dark[5]
+								? theme.colors.gray[2]
+								: theme.colors.dark[4]
 						}
 					>
 						v{version}

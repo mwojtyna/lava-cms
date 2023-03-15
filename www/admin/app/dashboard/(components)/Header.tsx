@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import {
 	Breadcrumbs,
 	Burger,
@@ -11,7 +12,7 @@ import {
 	useMantineTheme,
 	Anchor,
 } from "@mantine/core";
-import { usePathname } from "next/navigation";
+import { HomeIcon } from "@heroicons/react/24/solid";
 import { useMenuStore } from "@admin/src/stores/dashboard";
 import { getCardBgColor } from "@admin/app/mantine";
 import ThemeToggle from "@admin/app/(components)/ThemeToggle";
@@ -21,25 +22,34 @@ const useStyles = createStyles((theme) => ({
 		color: theme.colorScheme === "dark" ? theme.colors.dark[0] : theme.colors.dark[5],
 		fontSize: theme.fontSizes.xl,
 		fontWeight: "bold",
+		transition: "opacity 100ms ease-in-out",
+
+		"&:hover": {
+			opacity: 0.8,
+			textDecoration: "none",
+		},
 	},
 	separator: {
 		color: theme.colorScheme === "dark" ? theme.colors.gray[7] : theme.colors.gray[5],
 		fontSize: theme.fontSizes.xl,
+		margin: "0 0.75rem",
 	},
 }));
 
-function Header({ serverUrl }: { serverUrl: string | null }) {
+export default function Header({ serverUrl }: { serverUrl: string | null }) {
 	const theme = useMantineTheme();
 	const { classes } = useStyles();
 	const menuStore = useMenuStore();
 
 	interface Breadcrumb {
 		path: string;
-		name: string;
+		name: React.ReactNode;
 	}
 	const getBreadcrumbsFromPath = useCallback((path: string) => {
-		const segments = path.split("/").slice(path.startsWith("http") ? 4 : 2);
-		const result: Breadcrumb[] = [];
+		const segments = path.split("/").slice(path.startsWith("http") ? 5 : 3);
+		const result: Breadcrumb[] = [
+			{ path: "/dashboard", name: <HomeIcon className="mt-1 w-6" /> },
+		];
 
 		for (let i = 0; i < segments.length; i++) {
 			let previousSegments = "";
@@ -100,5 +110,3 @@ function Header({ serverUrl }: { serverUrl: string | null }) {
 		</header>
 	);
 }
-
-export default Header;
