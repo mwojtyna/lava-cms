@@ -1,5 +1,6 @@
 "use client";
 
+import { useServerInsertedHTML } from "next/navigation";
 import {
 	useEmotionCache,
 	MantineProvider,
@@ -7,8 +8,9 @@ import {
 	ColorSchemeProvider,
 	type ColorScheme,
 } from "@mantine/core";
-import { useLocalStorage } from "@mantine/hooks";
-import { useServerInsertedHTML } from "next/navigation";
+import { useColorScheme } from "@mantine/hooks";
+import { useEffect, useState } from "react";
+import { setCookie } from "cookies-next";
 
 export function getCardBgColor(theme: MantineTheme) {
 	return theme.colorScheme === "dark" ? theme.colors.dark[6] : theme.colors.gray[0];
@@ -17,7 +19,11 @@ export function getBackgroundColor(theme: MantineTheme) {
 	return theme.colorScheme === "dark" ? theme.colors.dark[7] : theme.colors.gray[2];
 }
 
-export default function RootStyleRegistry({ children }: { children: React.ReactNode }) {
+interface Props {
+	children: React.ReactNode;
+	colorScheme?: ColorScheme;
+}
+export default function Mantine(props: Props) {
 	const cache = useEmotionCache();
 	cache.compat = true;
 
@@ -30,12 +36,24 @@ export default function RootStyleRegistry({ children }: { children: React.ReactN
 		/>
 	));
 
-	const [colorScheme, setColorScheme] = useLocalStorage<ColorScheme>({
-		key: "color-scheme",
-		defaultValue: "light",
-		getInitialValueInEffect: true,
-	});
-	const toggleColorScheme = () => setColorScheme(colorScheme === "dark" ? "light" : "dark");
+	const preferred = useColorScheme();
+	const [colorScheme, setColorScheme] = useState<ColorScheme>(props.colorScheme ?? preferred);
+
+	useEffect(() => {
+		// Preferred color scheme is always 'light' the first time because of SSR
+		// so we have to wait until the client takes over and only then set the theme automatically
+		if (!props.colorScheme) {
+			setColorScheme(preferred);
+			setCookie("color-scheme", preferred);
+		}
+	}, [preferred, props.colorScheme]);
+
+	const toggleColorScheme = () => {
+		const newColor = colorScheme === "dark" ? "light" : "dark";
+
+		setCookie("color-scheme", newColor);
+		setColorScheme(newColor);
+	};
 
 	return (
 		<ColorSchemeProvider colorScheme={colorScheme} toggleColorScheme={toggleColorScheme}>
@@ -54,7 +72,7 @@ export default function RootStyleRegistry({ children }: { children: React.ReactN
 					}),
 				}}
 			>
-				{children}
+				{props.children}
 			</MantineProvider>
 		</ColorSchemeProvider>
 	);

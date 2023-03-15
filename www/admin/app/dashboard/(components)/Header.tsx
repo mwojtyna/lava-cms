@@ -10,6 +10,7 @@ import {
 	MediaQuery,
 	useMantineTheme,
 	Anchor,
+	Skeleton,
 } from "@mantine/core";
 import { usePathname } from "next/navigation";
 import { useMenuStore } from "@admin/src/stores/dashboard";
@@ -54,7 +55,6 @@ function Header() {
 			result.push({ name: segments[i]!, path: `${previousSegments}/${segments[i]}` });
 		}
 
-		console.log(result);
 		setBreadcrumbs(result);
 	}, [path]);
 
@@ -70,24 +70,25 @@ function Header() {
 						/>
 					</MediaQuery>
 
-					{/* // TODO: Implement loading state */}
-					<Breadcrumbs
-						classNames={{
-							breadcrumb: classes.breadcrumb,
-							separator: classes.separator,
-						}}
-					>
-						{breadcrumbs.map((breadcrumb, i) => (
-							<Anchor
-								key={i}
-								component={Link}
-								href={breadcrumb.path}
-								underline={false}
-							>
-								{breadcrumb.name}
-							</Anchor>
-						))}
-					</Breadcrumbs>
+					<Skeleton width={200} height={20} visible={breadcrumbs.length === 0}>
+						<Breadcrumbs
+							classNames={{
+								breadcrumb: classes.breadcrumb,
+								separator: classes.separator,
+							}}
+						>
+							{breadcrumbs.map((breadcrumb, i) => (
+								<Anchor
+									key={i}
+									component={Link}
+									href={breadcrumb.path}
+									underline={false}
+								>
+									{breadcrumb.name}
+								</Anchor>
+							))}
+						</Breadcrumbs>
+					</Skeleton>
 				</Group>
 
 				<ThemeToggle />

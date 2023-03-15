@@ -36,6 +36,7 @@ importers:
       api: workspace:*
       autoprefixer: ^10.4.13
       bcrypt: ^5.1.0
+      cookies-next: ^2.1.1
       dotenv: ^16.0.3
       eslint: ^8.33.0
       eslint-config-next: ^13.1.6
@@ -65,6 +66,7 @@ importers:
       '@tanstack/react-query': 4.24.4_biqbaboplfbrettd7655fr4n2y
       '@trpc/react-query': 10.11.0_pkeil6ml7pq7xvil3imldjs2sa
       api: link:../api
+      cookies-next: 2.1.1
       dotenv: 16.0.3
       next: 13.2.4_pjwopsidmaokadturxaafygjp4
       next-auth: 4.19.2_ld2jel3hspngo3u5lti2kgl2sq
@@ -1773,6 +1775,10 @@ packages:
       '@types/unist': 2.0.6
     dev: false
 
+  /@types/node/16.18.16:
+    resolution: {integrity: sha512-ZOzvDRWp8dCVBmgnkIqYCArgdFOO9YzocZp8Ra25N/RStKiWvMOXHMz+GjSeVNe5TstaTmTWPucGJkDw0XXJWA==}
+    dev: false
+
   /@types/node/18.13.0:
     resolution: {integrity: sha512-gC3TazRzGoOnoKAhUx+Q0t8S9Tzs74z7m0ipwGpSqQrleP14hKxP4/JUeEQcD3W1/aIpnWl8pHowI7WokuZpXg==}
 
@@ -2895,6 +2901,14 @@ packages:
   /cookiejar/2.1.4:
     resolution: {integrity: sha512-LDx6oHrK+PhzLKJU9j5S7/Y3jM/mUHvD/DeI1WQmJn652iPC5Y4TBzC9l+5OMOXlyTTA+SmVUPm0HQUwpD5Jqw==}
     dev: true
+
+  /cookies-next/2.1.1:
+    resolution: {integrity: sha512-AZGZPdL1hU3jCjN2UMJTGhLOYzNUN9Gm+v8BdptYIHUdwz397Et1p+sZRfvAl8pKnnmMdX2Pk9xDRKCGBum6GA==}
+    dependencies:
+      '@types/cookie': 0.4.1
+      '@types/node': 16.18.16
+      cookie: 0.4.2
+    dev: false
 
   /core-js-pure/3.27.0:
     resolution: {integrity: sha512-fJml7FM6v1HI3Gkg5/Ifc/7Y2qXcJxaDwSROeZGAZfNykSTvUk94WT55TYzJ2lFHK0voSr/d4nOVChLuNCWNpA==}
