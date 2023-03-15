@@ -4,7 +4,6 @@ import Link from "next/link";
 import Image from "next/image";
 import {
 	Navbar,
-	Header,
 	Text,
 	Flex,
 	Code,
@@ -33,34 +32,50 @@ function Menu({ version }: { version: string }) {
 	const navbarContent = (
 		<>
 			<Navbar.Section>
-				<Header height={100}>
-					<Flex
-						justify={"center"}
-						align={"center"}
-						gap={"md"}
-						h={"100%"}
-						bg={getCardBgColor(theme)}
+				<Flex
+					justify={"center"}
+					align={"center"}
+					py={"xl"}
+					gap={"md"}
+					h={"100%"}
+					bg={getCardBgColor(theme)}
+					sx={{
+						borderBottom: `1px solid ${
+							theme.colorScheme === "light"
+								? theme.colors.gray[2]
+								: theme.colors.dark[5]
+						}`,
+					}}
+				>
+					<Link href={"/"}>
+						<Image className={classes.logo} src={logo} alt={"logo"} width={150} />
+					</Link>
+					<Code
+						bg={
+							theme.colorScheme === "light"
+								? theme.colors.gray[1]
+								: theme.colors.dark[5]
+						}
 					>
-						<Link href={"/"}>
-							<Image className={classes.logo} src={logo} alt={"logo"} width={150} />
-						</Link>
-						<Code
-							bg={
-								theme.colorScheme === "light"
-									? theme.colors.gray[1]
-									: theme.colors.dark[5]
-							}
-						>
-							v{version}
-						</Code>
-					</Flex>
-				</Header>
+						v{version}
+					</Code>
+				</Flex>
 			</Navbar.Section>
 
-			<Navbar.Section p={"md"} bg={getCardBgColor(theme)}>
+			<Navbar.Section p={"md"} bg={getCardBgColor(theme)} grow>
 				<Anchor component={Link} href={"/dashboard/one"} onClick={() => menuStore.toggle()}>
 					One
 				</Anchor>
+				<Text>Links here...</Text>
+				<Text>Links here...</Text>
+				<Text>Links here...</Text>
+				<Text>Links here...</Text>
+				<Text>Links here...</Text>
+				<Text>Links here...</Text>
+				<Text>Links here...</Text>
+				<Text>Links here...</Text>
+				<Text>Links here...</Text>
+				<Text>Links here...</Text>
 				<Text>Links here...</Text>
 				<Text>Links here...</Text>
 				<Text>Links here...</Text>

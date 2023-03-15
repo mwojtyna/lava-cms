@@ -25,7 +25,7 @@ const useStyles = createStyles((theme) => ({
 	separator: {
 		color: theme.colorScheme === "dark" ? theme.colors.gray[7] : theme.colors.gray[5],
 		fontSize: theme.fontSizes.lg,
-		marginBottom: "2px",
+		// marginBottom: "2px",
 	},
 }));
 
@@ -44,7 +44,7 @@ function Header() {
 
 	return (
 		<header className="sticky top-0 shadow-md">
-			<Group bg={getCardBgColor(theme)} position={"apart"} p={"lg"}>
+			<Group bg={getCardBgColor(theme)} align={"center"} position={"apart"} p={"lg"}>
 				<Group>
 					<MediaQuery largerThan={"md"} styles={{ display: "none" }}>
 						<Burger
