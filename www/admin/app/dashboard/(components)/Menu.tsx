@@ -66,7 +66,14 @@ function Menu({ version }: { version: string }) {
 				<Anchor component={Link} href={"/dashboard/one"} onClick={() => menuStore.toggle()}>
 					One
 				</Anchor>
-				<Text>Links here...</Text>
+				<br />
+				<Anchor
+					component={Link}
+					href={"/dashboard/one/two"}
+					onClick={() => menuStore.toggle()}
+				>
+					Two
+				</Anchor>
 				<Text>Links here...</Text>
 				<Text>Links here...</Text>
 				<Text>Links here...</Text>

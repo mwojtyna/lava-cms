@@ -24,8 +24,7 @@ const useStyles = createStyles((theme) => ({
 	},
 	separator: {
 		color: theme.colorScheme === "dark" ? theme.colors.gray[7] : theme.colors.gray[5],
-		fontSize: theme.fontSizes.lg,
-		// marginBottom: "2px",
+		fontSize: theme.fontSizes.xl,
 	},
 }));
 
@@ -35,11 +34,28 @@ function Header() {
 	const { classes } = useStyles();
 	const menuStore = useMenuStore();
 
+	interface Breadcrumb {
+		path: string;
+		name: string;
+	}
 	const path = usePathname()!;
-	const [breadcrumbs, setBreadcrumbs] = useState<string[]>([]);
+	const [breadcrumbs, setBreadcrumbs] = useState<Breadcrumb[]>([]);
 
 	useEffect(() => {
-		setBreadcrumbs(path.split("/").slice(2));
+		const segments = path.split("/").slice(2);
+		const result: Breadcrumb[] = [];
+
+		for (let i = 0; i < segments.length; i++) {
+			let previousSegments = "";
+			for (let j = 0; j < i; j++) {
+				previousSegments += "/" + segments[j];
+			}
+
+			result.push({ name: segments[i]!, path: `${previousSegments}/${segments[i]}` });
+		}
+
+		console.log(result);
+		setBreadcrumbs(result);
 	}, [path]);
 
 	return (
@@ -65,10 +81,10 @@ function Header() {
 							<Anchor
 								key={i}
 								component={Link}
-								href={"/" + breadcrumb}
+								href={breadcrumb.path}
 								underline={false}
 							>
-								{breadcrumb}
+								{breadcrumb.name}
 							</Anchor>
 						))}
 					</Breadcrumbs>

@@ -17,11 +17,11 @@ export default function ThemeToggle() {
 	return (
 		<Switch
 			classNames={{ track: classes.track }}
-			size="md"
+			size="lg"
 			color={theme.colorScheme === "dark" ? "gray" : "dark"}
 			checked={colorScheme === "dark"}
-			onLabel={<MoonIcon className="w-4" color={theme.colors.blue[6]} />}
-			offLabel={<SunIcon className="w-4" color={theme.colors.yellow[4]} />}
+			onLabel={<MoonIcon className="w-5" color={theme.colors.blue[6]} />}
+			offLabel={<SunIcon className="w-5" color={theme.colors.yellow[4]} />}
 			onChange={() => toggleColorScheme()}
 		/>
 	);
