@@ -1,4 +1,4 @@
-#! /bin/bash
+#!/bin/bash
 cd api/
 pnpm start &
 sleep 3s

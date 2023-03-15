@@ -3,7 +3,7 @@
 	"private": true,
 	"scripts": {
 		"start": "next start -p 3001",
-		"dev": "nodemon --watch next.config.mjs --exec 'next dev -p 3001 || touch next.config.mjs'",
+		"dev": "nodemon --watch next.config.mjs --exec 'next dev -p 3001'",
 		"build": "next build",
 		"lint": "tsc && next lint",
 		"test": "playwright test",
