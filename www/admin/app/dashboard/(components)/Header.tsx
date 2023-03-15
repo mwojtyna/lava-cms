@@ -61,7 +61,7 @@ function Header() {
 	return (
 		<header className="sticky top-0 shadow-md">
 			<Group bg={getCardBgColor(theme)} align={"center"} position={"apart"} p={"lg"}>
-				<Group>
+				<Group noWrap>
 					<MediaQuery largerThan={"md"} styles={{ display: "none" }}>
 						<Burger
 							size={"md"}
