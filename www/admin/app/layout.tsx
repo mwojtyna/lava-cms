@@ -1,6 +1,5 @@
-import type React from "react";
 import type { Metadata } from "next";
-import RootStyleRegistry from "./emotion";
+import RootStyleRegistry from "./mantine";
 import TrpcProvider from "./trpcProvider";
 import "@admin/src/styles/globals.css";
 

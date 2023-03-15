@@ -1,7 +1,7 @@
 function Dashboard() {
 	return (
 		<>
-			Dashboard
+			One
 			<br />
 			<br />
 			<br />
