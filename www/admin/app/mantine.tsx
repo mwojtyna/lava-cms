@@ -51,7 +51,7 @@ export default function Mantine(props: Props) {
 	const toggleColorScheme = () => {
 		const newColor = colorScheme === "dark" ? "light" : "dark";
 
-		setCookie("color-scheme", preferred, { sameSite: "lax" });
+		setCookie("color-scheme", newColor, { sameSite: "lax" });
 		setColorScheme(newColor);
 	};
 
