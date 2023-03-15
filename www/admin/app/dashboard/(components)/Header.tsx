@@ -52,7 +52,7 @@ export default function Header({ serverUrl }: { serverUrl: string | null }) {
 		];
 
 		for (let i = 0; i < segments.length; i++) {
-			let previousSegments = "";
+			let previousSegments = "/dashboard";
 			for (let j = 0; j < i; j++) {
 				previousSegments += "/" + segments[j];
 			}
