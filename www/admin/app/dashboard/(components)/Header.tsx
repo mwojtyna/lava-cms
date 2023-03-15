@@ -14,6 +14,7 @@ import {
 import { usePathname } from "next/navigation";
 import { useMenuStore } from "@admin/src/stores/dashboard";
 import { getCardBgColor } from "@admin/app/mantine";
+import ThemeToggle from "@admin/app/(components)/ThemeToggle";
 
 const useStyles = createStyles((theme) => ({
 	breadcrumb: {
@@ -43,27 +44,37 @@ function Header() {
 
 	return (
 		<header className="sticky top-0 shadow-md">
-			<Group bg={getCardBgColor(theme)} p={"lg"}>
-				<MediaQuery largerThan={"md"} styles={{ display: "none" }}>
-					<Burger
-						size={"md"}
-						opened={menuStore.isOpen}
-						onClick={() => menuStore.toggle()}
-					/>
-				</MediaQuery>
-				{/* // TODO: Implement loading state */}
-				<Breadcrumbs
-					classNames={{
-						breadcrumb: classes.breadcrumb,
-						separator: classes.separator,
-					}}
-				>
-					{breadcrumbs.map((breadcrumb, i) => (
-						<Anchor key={i} component={Link} href={"/" + breadcrumb} underline={false}>
-							{breadcrumb}
-						</Anchor>
-					))}
-				</Breadcrumbs>
+			<Group bg={getCardBgColor(theme)} position={"apart"} p={"lg"}>
+				<Group>
+					<MediaQuery largerThan={"md"} styles={{ display: "none" }}>
+						<Burger
+							size={"md"}
+							opened={menuStore.isOpen}
+							onClick={() => menuStore.toggle()}
+						/>
+					</MediaQuery>
+
+					{/* // TODO: Implement loading state */}
+					<Breadcrumbs
+						classNames={{
+							breadcrumb: classes.breadcrumb,
+							separator: classes.separator,
+						}}
+					>
+						{breadcrumbs.map((breadcrumb, i) => (
+							<Anchor
+								key={i}
+								component={Link}
+								href={"/" + breadcrumb}
+								underline={false}
+							>
+								{breadcrumb}
+							</Anchor>
+						))}
+					</Breadcrumbs>
+				</Group>
+
+				<ThemeToggle />
 			</Group>
 		</header>
 	);

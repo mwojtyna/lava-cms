@@ -1,7 +1,13 @@
 "use client";
 
-import { CacheProvider } from "@emotion/react";
-import { useEmotionCache, MantineProvider, type MantineTheme } from "@mantine/core";
+import {
+	useEmotionCache,
+	MantineProvider,
+	type MantineTheme,
+	ColorSchemeProvider,
+	type ColorScheme,
+} from "@mantine/core";
+import { useLocalStorage } from "@mantine/hooks";
 import { useServerInsertedHTML } from "next/navigation";
 
 export function getCardBgColor(theme: MantineTheme) {
@@ -24,13 +30,21 @@ export default function RootStyleRegistry({ children }: { children: React.ReactN
 		/>
 	));
 
+	const [colorScheme, setColorScheme] = useLocalStorage<ColorScheme>({
+		key: "color-scheme",
+		defaultValue: "light",
+		getInitialValueInEffect: true,
+	});
+	const toggleColorScheme = () => setColorScheme(colorScheme === "dark" ? "light" : "dark");
+
 	return (
-		<CacheProvider value={cache}>
+		<ColorSchemeProvider colorScheme={colorScheme} toggleColorScheme={toggleColorScheme}>
 			<MantineProvider
 				withGlobalStyles
 				withNormalizeCSS
+				emotionCache={cache}
 				theme={{
-					colorScheme: "light",
+					colorScheme: colorScheme,
 					globalStyles: (theme) => ({
 						"#content": {
 							backgroundColor: getBackgroundColor(theme),
@@ -42,6 +56,6 @@ export default function RootStyleRegistry({ children }: { children: React.ReactN
 			>
 				{children}
 			</MantineProvider>
-		</CacheProvider>
+		</ColorSchemeProvider>
 	);
 }

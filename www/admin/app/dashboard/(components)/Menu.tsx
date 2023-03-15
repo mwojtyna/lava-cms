@@ -109,8 +109,7 @@ function Menu({ version }: { version: string }) {
 
 			<MediaQuery smallerThan={"md"} styles={{ display: "none" }}>
 				<Navbar
-					className="h-screen overflow-auto"
-					// sx={{ height: "100vh", overflow: "auto" }}
+					sx={{ height: "100vh", overflow: "auto" }}
 					width={{
 						base: 300,
 					}}
