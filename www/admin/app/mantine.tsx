@@ -34,6 +34,8 @@ export default function RootStyleRegistry({ children }: { children: React.ReactN
 					globalStyles: (theme) => ({
 						"#content": {
 							backgroundColor: getBackgroundColor(theme),
+							display: "flex",
+							height: "100vh",
 						},
 					}),
 				}}

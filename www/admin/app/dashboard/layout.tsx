@@ -11,7 +11,7 @@ async function Dashboard({ children }: { children: React.ReactNode }) {
 	const version = (await import("@admin/../package.json")).version;
 
 	return (
-		<div className="flex" id="content">
+		<div id="content">
 			<Menu version={version} />
 
 			<div className="flex max-h-screen flex-grow flex-col gap-4 overflow-visible md:overflow-auto">
