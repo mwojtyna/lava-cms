@@ -21,7 +21,7 @@ export default function ThemeSwitch() {
 			color={theme.colorScheme === "dark" ? "gray" : "dark"}
 			checked={colorScheme === "dark"}
 			onLabel={<MoonIcon className="w-5" color={theme.colors.blue[6]} />}
-			offLabel={<SunIcon className="w-5" color={theme.colors.yellow[4]} />}
+			offLabel={<SunIcon className="w-5" color={theme.colors.yellow[6]} />}
 			onChange={() => toggleColorScheme()}
 		/>
 	);
