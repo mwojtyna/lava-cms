@@ -16,6 +16,7 @@ import { type SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { z } from "zod";
+import ThemeSwitch from "@admin/app/(components)/ThemeSwitch";
 
 function SignInForm() {
 	const router = useRouter();
@@ -91,7 +92,8 @@ function SignInForm() {
 					icon={<LockClosedIcon className="w-5" />}
 				/>
 
-				<Group position="right" spacing="lg">
+				<Group position="apart" spacing="lg">
+					<ThemeSwitch />
 					<Button size="md" type="submit">
 						{isSubmitting ||
 						(isSubmitSuccessful && !errors.root?.invalidCredentials) ? (

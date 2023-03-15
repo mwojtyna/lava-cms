@@ -15,7 +15,7 @@ import {
 import { HomeIcon } from "@heroicons/react/24/solid";
 import { useMenuStore } from "@admin/src/stores/dashboard";
 import { getCardBgColor } from "@admin/app/mantine";
-import ThemeToggle from "@admin/app/(components)/ThemeToggle";
+import ThemeSwitch from "@admin/app/(components)/ThemeSwitch";
 
 const useStyles = createStyles((theme) => ({
 	breadcrumb: {
@@ -105,7 +105,7 @@ export default function Header({ serverUrl }: { serverUrl: string | null }) {
 					</Breadcrumbs>
 				</Group>
 
-				<ThemeToggle />
+				<ThemeSwitch />
 			</Group>
 		</header>
 	);

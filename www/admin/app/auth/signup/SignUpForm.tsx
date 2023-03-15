@@ -8,6 +8,7 @@ import { useRouter } from "next/navigation";
 import { signIn } from "next-auth/react";
 import { z } from "zod";
 import { trpc } from "@admin/src/utils/trpc";
+import ThemeSwitch from "@admin/app/(components)/ThemeSwitch";
 
 function SignUpForm() {
 	const router = useRouter();
@@ -110,7 +111,8 @@ function SignUpForm() {
 					icon={<LockClosedIcon className="w-5" />}
 				/>
 
-				<Group position="right">
+				<Group position="apart">
+					<ThemeSwitch />
 					<Button size="md" type="submit">
 						{isSubmitting || isSubmitSuccessful ? (
 							<Loader variant="dots" color="#fff" />

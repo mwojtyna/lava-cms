@@ -9,7 +9,7 @@ const useStyles = createStyles(() => ({
 	},
 }));
 
-export default function ThemeToggle() {
+export default function ThemeSwitch() {
 	const { colorScheme, toggleColorScheme } = useMantineColorScheme();
 	const theme = useMantineTheme();
 	const { classes } = useStyles();
