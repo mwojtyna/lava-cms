@@ -1,5 +1,6 @@
 import React from "react";
 import type { Metadata } from "next";
+import { headers } from "next/headers";
 import Menu from "./(components)/Menu";
 import Header from "./(components)/Header";
 
@@ -9,13 +10,14 @@ export const metadata: Metadata = {
 
 async function Dashboard({ children }: { children: React.ReactNode }) {
 	const version = (await import("@admin/../package.json")).version;
+	const url = headers().get("x-url");
 
 	return (
 		<div id="content">
 			<Menu version={version} />
 
 			<div className="flex max-h-screen flex-grow flex-col gap-4 overflow-visible md:overflow-auto">
-				<Header />
+				<Header serverUrl={url} />
 
 				<main>
 					{React.Children.map(children, (child, i) => {

@@ -36,7 +36,16 @@ export default withAuth(
 			}
 		}
 
-		return NextResponse.next();
+		// Add the url to the request headers
+		// so it can be used in server components
+		const headers = new Headers(request.headers);
+		headers.set("x-url", request.url);
+
+		return NextResponse.next({
+			request: {
+				headers: headers,
+			},
+		});
 	},
 
 	// Required for the `withAuth` middleware to work

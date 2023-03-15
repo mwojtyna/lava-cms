@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import {
 	Breadcrumbs,
@@ -10,7 +10,6 @@ import {
 	MediaQuery,
 	useMantineTheme,
 	Anchor,
-	Skeleton,
 } from "@mantine/core";
 import { usePathname } from "next/navigation";
 import { useMenuStore } from "@admin/src/stores/dashboard";
@@ -29,9 +28,8 @@ const useStyles = createStyles((theme) => ({
 	},
 }));
 
-function Header() {
+function Header({ serverUrl }: { serverUrl: string | null }) {
 	const theme = useMantineTheme();
-
 	const { classes } = useStyles();
 	const menuStore = useMenuStore();
 
@@ -39,11 +37,8 @@ function Header() {
 		path: string;
 		name: string;
 	}
-	const path = usePathname()!;
-	const [breadcrumbs, setBreadcrumbs] = useState<Breadcrumb[]>([]);
-
-	useEffect(() => {
-		const segments = path.split("/").slice(2);
+	const getBreadcrumbsFromPath = useCallback((path: string) => {
+		const segments = path.split("/").slice(path.startsWith("http") ? 4 : 2);
 		const result: Breadcrumb[] = [];
 
 		for (let i = 0; i < segments.length; i++) {
@@ -55,8 +50,19 @@ function Header() {
 			result.push({ name: segments[i]!, path: `${previousSegments}/${segments[i]}` });
 		}
 
+		return result;
+	}, []);
+	const clientUrl = usePathname();
+	const [breadcrumbs, setBreadcrumbs] = useState<Breadcrumb[]>(
+		getBreadcrumbsFromPath(serverUrl!)
+	);
+
+	useEffect(() => {
+		// This is a workaround for the fact that usePathname() doesn't immediately return the url
+		// We do this instead of displaying a loading state for the breadcrumbs
+		const result = getBreadcrumbsFromPath(clientUrl ?? serverUrl!);
 		setBreadcrumbs(result);
-	}, [path]);
+	}, [serverUrl, clientUrl, getBreadcrumbsFromPath]);
 
 	return (
 		<header className="sticky top-0 shadow-md">
@@ -70,25 +76,23 @@ function Header() {
 						/>
 					</MediaQuery>
 
-					<Skeleton width={200} height={20} visible={breadcrumbs.length === 0}>
-						<Breadcrumbs
-							classNames={{
-								breadcrumb: classes.breadcrumb,
-								separator: classes.separator,
-							}}
-						>
-							{breadcrumbs.map((breadcrumb, i) => (
-								<Anchor
-									key={i}
-									component={Link}
-									href={breadcrumb.path}
-									underline={false}
-								>
-									{breadcrumb.name}
-								</Anchor>
-							))}
-						</Breadcrumbs>
-					</Skeleton>
+					<Breadcrumbs
+						classNames={{
+							breadcrumb: classes.breadcrumb,
+							separator: classes.separator,
+						}}
+					>
+						{breadcrumbs.map((breadcrumb, i) => (
+							<Anchor
+								key={i}
+								component={Link}
+								href={breadcrumb.path}
+								underline={false}
+							>
+								{breadcrumb.name}
+							</Anchor>
+						))}
+					</Breadcrumbs>
 				</Group>
 
 				<ThemeToggle />
