@@ -1,6 +1,7 @@
 "use client";
 
 import { useServerInsertedHTML } from "next/navigation";
+import { Poppins } from "next/font/google";
 import {
 	useEmotionCache,
 	MantineProvider,
@@ -19,6 +20,8 @@ export function getBackgroundColor(theme: MantineTheme) {
 	return theme.colorScheme === "dark" ? theme.colors.dark[7] : theme.colors.gray[2];
 }
 
+const poppins = Poppins({ weight: "700", subsets: ["latin"] });
+
 interface Props {
 	children: React.ReactNode;
 	colorScheme?: ColorScheme;
@@ -26,7 +29,6 @@ interface Props {
 export default function Mantine(props: Props) {
 	const cache = useEmotionCache();
 	cache.compat = true;
-
 	useServerInsertedHTML(() => (
 		<style
 			data-emotion={`${cache.key} ${Object.keys(cache.inserted).join(" ")}`}
@@ -63,6 +65,9 @@ export default function Mantine(props: Props) {
 				emotionCache={cache}
 				theme={{
 					colorScheme: colorScheme,
+					headings: {
+						fontFamily: poppins.style.fontFamily,
+					},
 					globalStyles: (theme) => ({
 						"#content": {
 							backgroundColor: getBackgroundColor(theme),

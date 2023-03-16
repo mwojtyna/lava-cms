@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { Poppins } from "next/font/google";
 import {
 	Breadcrumbs,
 	Burger,
@@ -17,11 +18,14 @@ import { useMenuStore } from "@admin/src/stores/dashboard";
 import { getCardBgColor } from "@admin/app/mantine";
 import ThemeSwitch from "@admin/app/(components)/ThemeSwitch";
 
+const poppins = Poppins({ weight: "700", subsets: ["latin"] });
+
 const useStyles = createStyles((theme) => ({
 	breadcrumb: {
-		color: theme.colorScheme === "dark" ? theme.colors.dark[0] : theme.colors.dark[5],
-		fontSize: theme.fontSizes.xl,
-		fontWeight: "bold",
+		color: theme.colorScheme === "dark" ? theme.colors.dark[0] : theme.colors.dark[4],
+		fontFamily: poppins.style.fontFamily,
+		fontSize: theme.fontSizes.lg,
+		fontWeight: 700,
 		transition: "opacity 100ms ease-in-out",
 
 		"&:hover": {
@@ -31,7 +35,9 @@ const useStyles = createStyles((theme) => ({
 	},
 	separator: {
 		color: theme.colorScheme === "dark" ? theme.colors.gray[7] : theme.colors.gray[5],
-		fontSize: theme.fontSizes.xl,
+		fontFamily: poppins.style.fontFamily,
+		fontSize: theme.fontSizes.lg,
+		fontWeight: 700,
 		margin: "0 0.75rem",
 	},
 }));
@@ -47,9 +53,7 @@ export default function Header({ serverUrl }: { serverUrl: string | null }) {
 	}
 	const getBreadcrumbsFromPath = useCallback((path: string) => {
 		const segments = path.split("/").slice(path.startsWith("http") ? 5 : 3);
-		const result: Breadcrumb[] = [
-			{ path: "/dashboard", name: <HomeIcon className="mt-1 w-6" /> },
-		];
+		const result: Breadcrumb[] = [{ path: "/dashboard", name: <HomeIcon className="w-6" /> }];
 
 		for (let i = 0; i < segments.length; i++) {
 			let previousSegments = "/dashboard";
@@ -70,8 +74,7 @@ export default function Header({ serverUrl }: { serverUrl: string | null }) {
 	useEffect(() => {
 		// This is a workaround for the fact that usePathname() doesn't immediately return the url
 		// We do this instead of displaying a loading state for the breadcrumbs
-		const result = getBreadcrumbsFromPath(clientUrl ?? serverUrl!);
-		setBreadcrumbs(result);
+		setBreadcrumbs(getBreadcrumbsFromPath(clientUrl ?? serverUrl!));
 	}, [serverUrl, clientUrl, getBreadcrumbsFromPath]);
 
 	return (
