@@ -63,15 +63,11 @@ function Menu({ version }: { version: string }) {
 			</Navbar.Section>
 
 			<Navbar.Section p={"md"} bg={getCardBgColor(theme)} grow>
-				<Anchor component={Link} href={"/dashboard/one"} onClick={() => menuStore.toggle()}>
+				<Anchor component={Link} href={"/dashboard/one"} onClick={menuStore.toggle}>
 					One
 				</Anchor>
 				<br />
-				<Anchor
-					component={Link}
-					href={"/dashboard/one/two"}
-					onClick={() => menuStore.toggle()}
-				>
+				<Anchor component={Link} href={"/dashboard/one/two"} onClick={menuStore.toggle}>
 					Two
 				</Anchor>
 				<Text>Links here...</Text>
@@ -130,12 +126,7 @@ function Menu({ version }: { version: string }) {
 			</MediaQuery>
 
 			<MediaQuery smallerThan={"md"} styles={{ display: "none" }}>
-				<Navbar
-					sx={{ height: "100vh", overflow: "auto" }}
-					width={{
-						base: 300,
-					}}
-				>
+				<Navbar sx={{ width: 300, flexShrink: 0, height: "100vh", overflow: "auto" }}>
 					{navbarContent}
 				</Navbar>
 			</MediaQuery>
