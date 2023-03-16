@@ -6,7 +6,7 @@ import type { User } from "@api/prisma/types";
 export const getUser = publicProcedure
 	.input(
 		z.object({
-			id: z.string(),
+			id: z.string().cuid(),
 		})
 	)
 	.query(async ({ input }): Promise<{ user: Omit<User, User["password"]> | null }> => {

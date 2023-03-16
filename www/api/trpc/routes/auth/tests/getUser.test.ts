@@ -4,7 +4,7 @@ import { prisma } from "@api/prisma/__mocks__/client";
 
 vi.mock("@api/prisma/client");
 
-const ID = "123456789abcdef";
+const ID = "clfa3cd3l0012qvjzym4lrha3";
 const NAME = "John";
 const LAST_NAME = "Doe";
 const EMAIL = "johndoe@domain.com";
