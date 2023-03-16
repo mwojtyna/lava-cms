@@ -9,7 +9,7 @@ export const getUser = publicProcedure
 			id: z.string().cuid(),
 		})
 	)
-	.query(async ({ input }): Promise<{ user: Omit<User, User["password"]> | null }> => {
+	.query(async ({ input }): Promise<{ user: Omit<User, "password"> | null }> => {
 		const user = await prisma.user.findFirst({
 			where: {
 				id: {

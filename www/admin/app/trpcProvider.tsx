@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { httpBatchLink, httpLink, loggerLink } from "@trpc/client";
+import { SessionProvider } from "next-auth/react";
 import { trpcReact } from "@admin/src/utils/trpcReact";
 import { env } from "@admin/src/env/client.mjs";
 
@@ -27,9 +28,11 @@ function TrpcProvider(props: { children: React.ReactNode }) {
 		})
 	);
 	return (
-		<trpcReact.Provider client={trpcClient} queryClient={queryClient}>
-			<QueryClientProvider client={queryClient}>{props.children}</QueryClientProvider>
-		</trpcReact.Provider>
+		<SessionProvider basePath="/admin/api/auth" refetchOnWindowFocus={false}>
+			<trpcReact.Provider client={trpcClient} queryClient={queryClient}>
+				<QueryClientProvider client={queryClient}>{props.children}</QueryClientProvider>
+			</trpcReact.Provider>
+		</SessionProvider>
 	);
 }
 

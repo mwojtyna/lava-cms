@@ -44,7 +44,7 @@ const useStyles = createStyles((theme) => ({
 
 interface Props {
 	serverUrl: string | null;
-	user: Omit<User, User["password"]> | null;
+	user: Omit<User, "password"> | null;
 }
 
 export default function Header(props: Props) {

@@ -1,5 +1,7 @@
 "use client";
 
+import { useEffect, useState } from "react";
+import { signOut } from "next-auth/react";
 import {
 	Avatar,
 	Group,
@@ -10,13 +12,12 @@ import {
 	useMantineColorScheme,
 } from "@mantine/core";
 import { useDisclosure, useElementSize } from "@mantine/hooks";
-import { ChevronRightIcon } from "@heroicons/react/24/solid";
+import { ChevronRightIcon, ArrowLeftOnRectangleIcon } from "@heroicons/react/24/solid";
 import ThemeSwitch from "@admin/app/(components)/ThemeSwitch";
-import { useEffect, useState } from "react";
 import { getCardBgColor } from "@admin/app/mantine";
 import type { User } from "api/prisma/types";
 
-export default function UserMenu({ user }: { user: Omit<User, User["password"]> | null }) {
+export default function UserMenu({ user }: { user: Omit<User, "password"> | null }) {
 	const [isOpen, { toggle }] = useDisclosure(false);
 	const { toggleColorScheme } = useMantineColorScheme();
 
@@ -38,6 +39,8 @@ export default function UserMenu({ user }: { user: Omit<User, User["password"]> 
 			styles={(theme) => ({
 				item: {
 					backgroundColor: getCardBgColor(theme),
+					borderRadius: theme.radius.sm,
+					height: "2.5rem",
 				},
 			})}
 		>
@@ -86,12 +89,22 @@ export default function UserMenu({ user }: { user: Omit<User, User["password"]> 
 				</UnstyledButton>
 			</Menu.Target>
 
-			<Menu.Dropdown p={0}>
+			<Menu.Dropdown>
 				<Menu.Item onClick={() => toggleColorScheme()}>
 					<Flex justify={"space-between"} align={"center"}>
 						Color scheme
 						<ThemeSwitch size="md" />
 					</Flex>
+				</Menu.Item>
+
+				<Menu.Divider />
+
+				<Menu.Item
+					color={"red"}
+					icon={<ArrowLeftOnRectangleIcon className="w-4" />}
+					onClick={() => signOut({ callbackUrl: "/admin/dashboard" })}
+				>
+					Sign out
 				</Menu.Item>
 			</Menu.Dropdown>
 		</Menu>
