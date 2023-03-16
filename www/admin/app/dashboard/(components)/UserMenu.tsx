@@ -14,7 +14,7 @@ import {
 import { useClickOutside, useDisclosure, useElementSize, useHotkeys } from "@mantine/hooks";
 import { ChevronRightIcon, ArrowLeftOnRectangleIcon } from "@heroicons/react/24/solid";
 import ThemeSwitch from "@admin/app/(components)/ThemeSwitch";
-import { getCardBgColor } from "@admin/app/mantine";
+import { getBorderColor, getCardBgColor } from "@admin/app/mantine";
 import type { User } from "api/prisma/types";
 
 export default function UserMenu({ user }: { user: Omit<User, "password"> | null }) {
@@ -52,11 +52,7 @@ export default function UserMenu({ user }: { user: Omit<User, "password"> | null
 						ref={button}
 						p="md"
 						sx={(theme) => ({
-							borderLeft: `1px solid ${
-								theme.colorScheme === "dark"
-									? theme.colors.dark[4]
-									: theme.colors.gray[2]
-							}`,
+							borderLeft: `1px solid ${getBorderColor(theme)}`,
 							borderRight: 0,
 							"&:hover": {
 								transition: "background-color 150ms ease-in-out",

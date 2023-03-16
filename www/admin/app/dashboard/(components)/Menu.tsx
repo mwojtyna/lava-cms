@@ -15,7 +15,7 @@ import {
 } from "@mantine/core";
 import logo from "@admin/public/img/logo.svg";
 import { useMenuStore } from "@admin/src/stores/dashboard";
-import { getCardBgColor } from "@admin/app/mantine";
+import { getBorderColor, getCardBgColor } from "@admin/app/mantine";
 
 const useStyles = createStyles((theme) => ({
 	logo: {
@@ -40,25 +40,13 @@ export default function Menu({ version }: { version: string }) {
 					h={"100%"}
 					bg={getCardBgColor(theme)}
 					sx={{
-						borderBottom: `1px solid ${
-							theme.colorScheme === "light"
-								? theme.colors.gray[2]
-								: theme.colors.dark[5]
-						}`,
+						borderBottom: `1px solid ${getBorderColor(theme)}`,
 					}}
 				>
 					<Link href={"/"}>
 						<Image className={classes.logo} src={logo} alt={"logo"} width={150} />
 					</Link>
-					<Code
-						bg={
-							theme.colorScheme === "light"
-								? theme.colors.gray[2]
-								: theme.colors.dark[4]
-						}
-					>
-						v{version}
-					</Code>
+					<Code bg={getBorderColor(theme)}>v{version}</Code>
 				</Flex>
 			</Navbar.Section>
 

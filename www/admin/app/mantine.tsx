@@ -19,6 +19,9 @@ export function getCardBgColor(theme: MantineTheme) {
 export function getBackgroundColor(theme: MantineTheme) {
 	return theme.colorScheme === "dark" ? theme.colors.dark[7] : theme.colors.gray[2];
 }
+export function getBorderColor(theme: MantineTheme) {
+	return theme.colorScheme === "dark" ? theme.colors.dark[4] : theme.colors.gray[2];
+}
 
 const poppins = Poppins({ weight: "700", subsets: ["latin"] });
 const inter = Inter({ weight: "400", subsets: ["latin"] });
