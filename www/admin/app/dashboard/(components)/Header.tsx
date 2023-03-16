@@ -16,17 +16,17 @@ import {
 import { HomeIcon } from "@heroicons/react/24/solid";
 import { useMenuStore } from "@admin/src/stores/dashboard";
 import { getCardBgColor } from "@admin/app/mantine";
-import ThemeSwitch from "@admin/app/(components)/ThemeSwitch";
+import UserMenu from "./UserMenu";
+import type { User } from "api/prisma/types";
 
 const poppins = Poppins({ weight: "700", subsets: ["latin"] });
-
 const useStyles = createStyles((theme) => ({
 	breadcrumb: {
 		color: theme.colorScheme === "dark" ? theme.colors.dark[0] : theme.colors.dark[4],
 		fontFamily: poppins.style.fontFamily,
 		fontSize: theme.fontSizes.lg,
 		fontWeight: 700,
-		transition: "opacity 100ms ease-in-out",
+		transition: "opacity 150ms ease-in-out",
 
 		"&:hover": {
 			opacity: 0.8,
@@ -42,7 +42,12 @@ const useStyles = createStyles((theme) => ({
 	},
 }));
 
-export default function Header({ serverUrl }: { serverUrl: string | null }) {
+interface Props {
+	serverUrl: string | null;
+	user: Omit<User, User["password"]> | null;
+}
+
+export default function Header(props: Props) {
 	const theme = useMantineTheme();
 	const { classes } = useStyles();
 	const menuStore = useMenuStore();
@@ -68,25 +73,21 @@ export default function Header({ serverUrl }: { serverUrl: string | null }) {
 	}, []);
 	const clientUrl = usePathname();
 	const [breadcrumbs, setBreadcrumbs] = useState<Breadcrumb[]>(
-		getBreadcrumbsFromPath(serverUrl!)
+		getBreadcrumbsFromPath(props.serverUrl!)
 	);
 
 	useEffect(() => {
 		// This is a workaround for the fact that usePathname() doesn't immediately return the url
 		// We do this instead of displaying a loading state for the breadcrumbs
-		setBreadcrumbs(getBreadcrumbsFromPath(clientUrl ?? serverUrl!));
-	}, [serverUrl, clientUrl, getBreadcrumbsFromPath]);
+		setBreadcrumbs(getBreadcrumbsFromPath(clientUrl ?? props.serverUrl!));
+	}, [props.serverUrl, clientUrl, getBreadcrumbsFromPath]);
 
 	return (
 		<header className="sticky top-0 shadow-md">
-			<Group bg={getCardBgColor(theme)} align={"center"} position={"apart"} p={"lg"}>
-				<Group noWrap>
+			<Group bg={getCardBgColor(theme)} align={"center"} position={"apart"}>
+				<Group noWrap p="lg">
 					<MediaQuery largerThan={"md"} styles={{ display: "none" }}>
-						<Burger
-							size={"md"}
-							opened={menuStore.isOpen}
-							onClick={() => menuStore.toggle()}
-						/>
+						<Burger size={"md"} opened={menuStore.isOpen} onClick={menuStore.toggle} />
 					</MediaQuery>
 
 					<Breadcrumbs
@@ -108,7 +109,7 @@ export default function Header({ serverUrl }: { serverUrl: string | null }) {
 					</Breadcrumbs>
 				</Group>
 
-				<ThemeSwitch />
+				<UserMenu user={props.user} />
 			</Group>
 		</header>
 	);

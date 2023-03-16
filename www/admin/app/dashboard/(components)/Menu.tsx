@@ -24,7 +24,7 @@ const useStyles = createStyles((theme) => ({
 	},
 }));
 
-function Menu({ version }: { version: string }) {
+export default function Menu({ version }: { version: string }) {
 	const menuStore = useMenuStore();
 	const theme = useMantineTheme();
 	const { classes } = useStyles();
@@ -133,5 +133,3 @@ function Menu({ version }: { version: string }) {
 		</>
 	);
 }
-
-export default Menu;

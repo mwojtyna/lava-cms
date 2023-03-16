@@ -1,27 +1,24 @@
 "use client";
 
-import { createStyles, Switch, useMantineColorScheme, useMantineTheme } from "@mantine/core";
+import { Switch, useMantineColorScheme, useMantineTheme } from "@mantine/core";
 import { SunIcon, MoonIcon } from "@heroicons/react/24/outline";
 
-const useStyles = createStyles(() => ({
-	track: {
-		cursor: "pointer",
-	},
-}));
-
-export default function ThemeSwitch() {
+export default function ThemeSwitch({ size = "lg" }: { size?: "md" | "lg" }) {
 	const { colorScheme, toggleColorScheme } = useMantineColorScheme();
 	const theme = useMantineTheme();
-	const { classes } = useStyles();
 
 	return (
 		<Switch
-			classNames={{ track: classes.track }}
-			size="lg"
+			styles={{ track: { cursor: "pointer" } }}
+			size={size}
 			color={theme.colorScheme === "dark" ? "gray" : "dark"}
 			checked={colorScheme === "dark"}
-			onLabel={<MoonIcon className="w-5" color={theme.colors.blue[6]} />}
-			offLabel={<SunIcon className="w-5" color={theme.colors.yellow[6]} />}
+			onLabel={
+				<MoonIcon className={`w-${size === "md" ? 4 : 5}`} color={theme.colors.blue[6]} />
+			}
+			offLabel={
+				<SunIcon className={`w-${size === "md" ? 4 : 5}`} color={theme.colors.yellow[6]} />
+			}
 			onChange={() => toggleColorScheme()}
 		/>
 	);
