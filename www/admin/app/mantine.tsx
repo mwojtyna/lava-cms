@@ -14,7 +14,7 @@ import { useEffect, useState } from "react";
 import { setCookie } from "cookies-next";
 
 export function getCardBgColor(theme: MantineTheme) {
-	return theme.colorScheme === "dark" ? theme.colors.dark[6] : theme.colors.gray[0];
+	return theme.colorScheme === "dark" ? theme.colors.dark[6] : "white";
 }
 export function getBackgroundColor(theme: MantineTheme) {
 	return theme.colorScheme === "dark" ? theme.colors.dark[7] : theme.colors.gray[2];
