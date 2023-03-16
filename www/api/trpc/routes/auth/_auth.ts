@@ -1,19 +1,17 @@
 import { router } from "@api/trpc";
-import { greeting } from "../greeting";
 import { firstTime } from "./firstTime";
 import { signUp } from "./signUp";
 import { signIn } from "./signIn";
+import { getUser } from "./getUser";
 
 export const authRouter = router({
-	// TODO: Remove this when implementing admin dashboard
-	greeting,
-
 	firstTime,
 	signUp,
 	/**
 	 * @returns The user's ID
 	 */
 	signIn,
+	getUser,
 });
 
 export type AuthRouter = typeof authRouter;
