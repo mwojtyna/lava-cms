@@ -42,7 +42,7 @@ test("redirects to dashboard when user is signed in", async ({ authedPage }) => 
 	await authedPage.goto("/admin");
 
 	expect(authedPage.url()).toMatch(/\/admin\/dashboard/);
-	await expect(authedPage.locator("h1").first()).toContainText("Create T3 App");
+	await expect(authedPage.locator("#content").first()).toBeVisible();
 });
 
 test("returns 401 when trying to access /api/trpc when not signed in", async ({ page }) => {

@@ -3,15 +3,13 @@ import bcrypt from "bcrypt";
 import { start, stop } from "@admin/e2e/mocks/trpc";
 import { init } from "api/server";
 import { prisma } from "api/prisma/client";
-
-const EMAIL = "johndoe@domain.com";
-const PASSWORD = "password";
+import { EMAIL, LAST_NAME, NAME, PASSWORD } from "@admin/e2e/fixtures/authedPage";
 
 test.beforeAll(async () => {
 	await prisma.user.create({
 		data: {
-			name: "John",
-			last_name: "Doe",
+			name: NAME,
+			last_name: LAST_NAME,
 			email: EMAIL,
 			password: await bcrypt.hash(PASSWORD, 10),
 		},
