@@ -102,7 +102,7 @@ export default function UserMenu({ user }: { user: Omit<User, "password"> | null
 					<Menu.Item
 						color={"red"}
 						icon={<ArrowLeftOnRectangleIcon className="w-4" />}
-						onClick={() => signOut({ callbackUrl: "/admin/dashboard" })}
+						onClick={() => signOut()}
 					>
 						Sign out
 					</Menu.Item>
