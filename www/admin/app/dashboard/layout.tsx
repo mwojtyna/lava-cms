@@ -8,7 +8,7 @@ import { authOptions } from "@admin/src/pages/api/auth/[...nextauth]";
 import { trpc } from "@admin/src/utils/trpc";
 
 export const metadata: Metadata = {
-	title: "Lava CMS - Panel administracyjny",
+	title: "Lava CMS - Admin dashboard",
 };
 
 export default async function Dashboard({ children }: { children: React.ReactNode }) {

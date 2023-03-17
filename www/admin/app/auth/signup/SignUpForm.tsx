@@ -1,6 +1,6 @@
 "use client";
 
-import { EnvelopeIcon, LockClosedIcon, UserIcon } from "@heroicons/react/24/outline";
+import { EnvelopeIcon, LockClosedIcon, UserIcon, UserPlusIcon } from "@heroicons/react/24/outline";
 import { Button, Group, Loader, PasswordInput, Stack, TextInput, Title } from "@mantine/core";
 import { type SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -15,24 +15,28 @@ function SignUpForm() {
 
 	const inputSchema = z
 		.object({
-			name: z.string().min(1, { message: "Imię jest wymagane" }),
-			lastName: z.string().min(1, { message: "Nazwisko jest wymagane" }),
+			name: z.string().min(1, { message: "Please enter your name." }),
+			lastName: z.string().min(1, { message: "Please enter your last name." }),
 			email: z
 				.string()
-				.min(1, { message: "E-mail jest wymagany" })
-				.email({ message: "Niepoprawny adres e-mail" }),
+				.min(1, { message: "Please enter your e-mail address." })
+				.email({ message: "The e-mail you provided is invalid." }),
 			password: z
 				.string()
-				.min(1, { message: "Hasło jest wymagane" })
-				.min(8, { message: "Hasło musi zawierać przynajmniej 8 znaków" })
-				.regex(/[a-z]/, { message: "Hasło musi zawierać przynajmniej jedną małą literę" })
-				.regex(/[A-Z]/, { message: "Hasło musi zawierać przynajmniej jedną dużą literę" })
-				.regex(/[0-9]/, { message: "Hasło musi zawierać przynajmniej jedną cyfrę" }),
-			repeatPassword: z.string().min(1, { message: "Powtórzenie hasła jest wymagane" }),
+				.min(1, { message: "Please enter your password." })
+				.min(8, { message: "The password must be at least 8 characters long." })
+				.regex(/[a-z]/, {
+					message: "The password must contain at least one lowercase letter.",
+				})
+				.regex(/[A-Z]/, {
+					message: "The password must contain at least one uppercase letter.",
+				})
+				.regex(/[0-9]/, { message: "The password must contain at least one digit." }),
+			repeatPassword: z.string().min(1, { message: "Please repeat your password." }),
 		})
 		.refine((data) => data.password === data.repeatPassword, {
 			path: ["repeatPassword"],
-			message: "Hasła nie są takie same",
+			message: "The passwords do not match.",
 		});
 	type Inputs = z.infer<typeof inputSchema>;
 
@@ -59,10 +63,10 @@ function SignUpForm() {
 	};
 
 	return (
-		<form onSubmit={handleSubmit(onSubmit)}>
-			<Stack spacing="lg" className="w-96">
+		<form onSubmit={handleSubmit(onSubmit)} className="w-full max-w-lg px-10">
+			<Stack spacing="lg">
 				<Title order={1} size="3.5rem" variant="gradient">
-					Zarejestruj się
+					Sign up
 				</Title>
 
 				<TextInput
@@ -80,7 +84,7 @@ function SignUpForm() {
 					<TextInput
 						size="md"
 						type="text"
-						label="Imię"
+						label="Name"
 						placeholder="Jan"
 						{...register("name")}
 						error={errors.name?.message}
@@ -89,7 +93,7 @@ function SignUpForm() {
 					<TextInput
 						size="md"
 						type="text"
-						label="Nazwisko"
+						label="Last name"
 						placeholder="Kowalski"
 						{...register("lastName")}
 						error={errors.lastName?.message}
@@ -98,14 +102,14 @@ function SignUpForm() {
 
 				<PasswordInput
 					size="md"
-					label="Hasło"
+					label="Password"
 					{...register("password")}
 					error={errors.password?.message}
 					icon={<LockClosedIcon className="w-5" />}
 				/>
 				<PasswordInput
 					size="md"
-					label="Powtórz hasło"
+					label="Repeat password"
 					{...register("repeatPassword")}
 					error={errors.repeatPassword?.message}
 					icon={<LockClosedIcon className="w-5" />}
@@ -113,11 +117,17 @@ function SignUpForm() {
 
 				<Group position="apart">
 					<ThemeSwitch />
-					<Button size="md" type="submit">
+					<Button
+						size="md"
+						type="submit"
+						leftIcon={
+							!isSubmitting && !isSubmitSuccessful && <UserPlusIcon className="w-5" />
+						}
+					>
 						{isSubmitting || isSubmitSuccessful ? (
 							<Loader variant="dots" color="#fff" />
 						) : (
-							<>Zarejestruj się</>
+							<>Sign up</>
 						)}
 					</Button>
 				</Group>

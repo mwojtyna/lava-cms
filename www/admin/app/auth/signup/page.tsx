@@ -2,14 +2,14 @@ import type { Metadata } from "next";
 import SignUpForm from "./SignUpForm";
 
 export const metadata: Metadata = {
-	title: "Lava CMS - Zarejestruj się",
+	title: "Lava CMS - Sign up",
 };
 
 function SignIn() {
 	return (
-		<div className="grid h-[100vh] place-items-center">
+		<main className="grid h-[100svh] place-items-center">
 			<SignUpForm />
-		</div>
+		</main>
 	);
 }
 
