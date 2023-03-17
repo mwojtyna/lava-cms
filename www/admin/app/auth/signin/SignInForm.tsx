@@ -5,6 +5,8 @@ import {
 	EnvelopeIcon,
 	ExclamationCircleIcon,
 	ArrowRightOnRectangleIcon,
+	EyeIcon,
+	EyeSlashIcon,
 } from "@heroicons/react/24/outline";
 import {
 	Alert,
@@ -95,6 +97,13 @@ function SignInForm() {
 					{...register("password")}
 					error={errors.password?.message}
 					icon={<LockClosedIcon className="w-5" />}
+					visibilityToggleIcon={({ reveal, size }) =>
+						reveal ? (
+							<EyeSlashIcon style={{ width: size }} />
+						) : (
+							<EyeIcon style={{ width: size }} />
+						)
+					}
 				/>
 
 				<Group position="apart" spacing="lg">

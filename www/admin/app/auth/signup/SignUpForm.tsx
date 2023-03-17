@@ -1,6 +1,13 @@
 "use client";
 
-import { EnvelopeIcon, LockClosedIcon, UserIcon, UserPlusIcon } from "@heroicons/react/24/outline";
+import {
+	EnvelopeIcon,
+	EyeIcon,
+	EyeSlashIcon,
+	LockClosedIcon,
+	UserIcon,
+	UserPlusIcon,
+} from "@heroicons/react/24/outline";
 import { Button, Group, Loader, PasswordInput, Stack, TextInput, Title } from "@mantine/core";
 import { type SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -106,6 +113,13 @@ function SignUpForm() {
 					{...register("password")}
 					error={errors.password?.message}
 					icon={<LockClosedIcon className="w-5" />}
+					visibilityToggleIcon={({ reveal, size }) =>
+						reveal ? (
+							<EyeSlashIcon style={{ width: size }} />
+						) : (
+							<EyeIcon style={{ width: size }} />
+						)
+					}
 				/>
 				<PasswordInput
 					size="md"
@@ -113,6 +127,13 @@ function SignUpForm() {
 					{...register("repeatPassword")}
 					error={errors.repeatPassword?.message}
 					icon={<LockClosedIcon className="w-5" />}
+					visibilityToggleIcon={({ reveal, size }) =>
+						reveal ? (
+							<EyeSlashIcon style={{ width: size }} />
+						) : (
+							<EyeIcon style={{ width: size }} />
+						)
+					}
 				/>
 
 				<Group position="apart">
