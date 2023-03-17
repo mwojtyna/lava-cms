@@ -98,7 +98,9 @@ export default function UserMenu({ user }: { user: Omit<User, "password"> | null
 							<ThemeSwitch size="md" />
 						</Flex>
 					</Menu.Item>
+
 					<Menu.Divider />
+
 					<Menu.Item
 						color={"red"}
 						icon={<ArrowLeftOnRectangleIcon className="w-4" />}
