@@ -50,21 +50,21 @@ test("shows error when invalid credentials", async ({ page }) => {
 	await emailInput.type("wrong@email.com");
 	await passwordInput.type(PASSWORD);
 	await submitButton.click();
-	await page.waitForSelector("text=Niepoprawne dane!");
+	await page.waitForSelector("text=The credentials are invalid.");
 	await clearInputs();
 
 	// Wrong password
 	await emailInput.type(EMAIL);
 	await passwordInput.type("wrongpassword");
 	await submitButton.click();
-	await page.waitForSelector("text=Niepoprawne dane!");
+	await page.waitForSelector("text=The credentials are invalid.");
 	await clearInputs();
 
 	// Both wrong
 	await emailInput.type("wrong@email.com");
 	await passwordInput.type("wrongpassword");
 	await submitButton.click();
-	await page.waitForSelector("text=Niepoprawne dane!");
+	await page.waitForSelector("text=The credentials are invalid.");
 
 	await expect(page).toHaveScreenshot();
 
@@ -81,7 +81,7 @@ test("shows error when server error", async ({ page }) => {
 	await stop();
 	await page.locator("button[type='submit']").click();
 
-	await expect(page.getByRole("alert")).toContainText("Nieznany błąd. Spróbuj ponownie później.");
+	await expect(page.getByRole("alert")).toContainText("Something went wrong. Try again later.");
 	await expect(page).toHaveScreenshot();
 });
 
@@ -90,7 +90,7 @@ test("shows error when email invalid", async ({ page }) => {
 	await page.click("button[type=submit]");
 	await page.locator("input[type='email']").type("invalid@domain");
 
-	await expect(page.locator("text=Niepoprawny adres e-mail")).toBeVisible();
+	await expect(page.locator("text=The e-mail you provided is invalid.")).toBeVisible();
 });
 
 test("signs in when credentials are valid", async ({ page }) => {
@@ -101,5 +101,5 @@ test("signs in when credentials are valid", async ({ page }) => {
 	await page.waitForURL(/\/admin\/dashboard/);
 
 	expect(page.url()).toMatch(/\/admin\/dashboard/);
-	await expect(page.locator("h1").first()).toContainText("Create T3 App");
+	await expect(page.locator("#content").first()).toBeVisible();
 });
