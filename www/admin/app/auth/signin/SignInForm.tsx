@@ -1,6 +1,11 @@
 "use client";
 
-import { LockClosedIcon, EnvelopeIcon, ExclamationCircleIcon } from "@heroicons/react/24/outline";
+import {
+	LockClosedIcon,
+	EnvelopeIcon,
+	ExclamationCircleIcon,
+	ArrowRightOnRectangleIcon,
+} from "@heroicons/react/24/outline";
 import {
 	Alert,
 	Button,
@@ -24,9 +29,9 @@ function SignInForm() {
 	const inputSchema = z.object({
 		email: z
 			.string()
-			.min(1, { message: "E-mail jest wymagany" })
-			.email({ message: "Niepoprawny adres e-mail" }),
-		password: z.string().min(1, { message: "Hasło jest wymagane" }),
+			.min(1, { message: "Please enter your e-mail address." })
+			.email({ message: "The e-mail you provided is invalid." }),
+		password: z.string().min(1, { message: "Please enter your password." }),
 	});
 	type Inputs = z.infer<typeof inputSchema>;
 
@@ -48,20 +53,20 @@ function SignInForm() {
 		} else if (res?.error === "CredentialsSignin") {
 			// "CredentialsSignin" is the error message when the user inputs wrong credentials
 			setError("root.invalidCredentials", {
-				message: "Niepoprawne dane!",
+				message: "The credentials are invalid.",
 			});
 		} else {
 			setError("root.invalidCredentials", {
-				message: "Nieznany błąd. Spróbuj ponownie później.",
+				message: "Something went wrong. Try again later.",
 			});
 		}
 	};
 
 	return (
-		<form onSubmit={handleSubmit(onSubmit)}>
-			<Stack spacing="lg" className="w-96">
+		<form onSubmit={handleSubmit(onSubmit)} className="w-full max-w-md px-10">
+			<Stack spacing="lg">
 				<Title order={1} size="3.5rem" variant="gradient">
-					Zaloguj się
+					Sign in
 				</Title>
 
 				{errors.root?.invalidCredentials && (
@@ -86,7 +91,7 @@ function SignInForm() {
 				/>
 				<PasswordInput
 					size="md"
-					label="Hasło"
+					label="Password"
 					{...register("password")}
 					error={errors.password?.message}
 					icon={<LockClosedIcon className="w-5" />}
@@ -94,12 +99,19 @@ function SignInForm() {
 
 				<Group position="apart" spacing="lg">
 					<ThemeSwitch />
-					<Button size="md" type="submit">
+					<Button
+						size="md"
+						type="submit"
+						leftIcon={
+							!isSubmitting &&
+							!isSubmitSuccessful && <ArrowRightOnRectangleIcon className="w-5" />
+						}
+					>
 						{isSubmitting ||
 						(isSubmitSuccessful && !errors.root?.invalidCredentials) ? (
 							<Loader variant="dots" color="#fff" />
 						) : (
-							<>Zaloguj się</>
+							<>Sign in</>
 						)}
 					</Button>
 				</Group>
