@@ -2,19 +2,11 @@
 
 import { useEffect, useState } from "react";
 import { signOut } from "next-auth/react";
-import {
-	Avatar,
-	Group,
-	UnstyledButton,
-	Text,
-	Menu,
-	Flex,
-	useMantineColorScheme,
-} from "@mantine/core";
+import { Avatar, Group, UnstyledButton, Text, Menu, useMantineColorScheme } from "@mantine/core";
 import { useClickOutside, useDisclosure, useElementSize, useHotkeys } from "@mantine/hooks";
 import { ChevronRightIcon, ArrowLeftOnRectangleIcon } from "@heroicons/react/24/solid";
 import ThemeSwitch from "@admin/app/(components)/ThemeSwitch";
-import { getBorderColor, getCardBgColor } from "@admin/app/mantine";
+import { getBorderColor, getCardBgColor, getHoverColor } from "@admin/app/mantine";
 import type { User } from "api/prisma/types";
 
 export default function UserMenu({ user }: { user: Omit<User, "password"> | null }) {
@@ -55,11 +47,7 @@ export default function UserMenu({ user }: { user: Omit<User, "password"> | null
 							borderLeft: `1px solid ${getBorderColor(theme)}`,
 							borderRight: 0,
 							"&:hover": {
-								transition: "background-color 150ms ease-in-out",
-								backgroundColor:
-									theme.colorScheme === "dark"
-										? theme.colors.dark[7]
-										: theme.colors.gray[2],
+								backgroundColor: getHoverColor(theme),
 							},
 						})}
 						onClick={toggle}
@@ -93,10 +81,10 @@ export default function UserMenu({ user }: { user: Omit<User, "password"> | null
 					})}
 				>
 					<Menu.Item onClick={() => toggleColorScheme()}>
-						<Flex justify={"space-between"} align={"center"}>
+						<Group position="apart">
 							Color scheme
 							<ThemeSwitch size="md" />
-						</Flex>
+						</Group>
 					</Menu.Item>
 
 					<Menu.Divider />

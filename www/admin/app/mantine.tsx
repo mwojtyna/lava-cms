@@ -22,6 +22,9 @@ export function getBackgroundColor(theme: MantineTheme) {
 export function getBorderColor(theme: MantineTheme) {
 	return theme.colorScheme === "dark" ? theme.colors.dark[4] : theme.colors.gray[2];
 }
+export function getHoverColor(theme: MantineTheme) {
+	return theme.colorScheme === "dark" ? theme.colors.dark[5] : theme.colors.gray[2];
+}
 
 const poppins = Poppins({ weight: "700", subsets: ["latin"] });
 const inter = Inter({ weight: "400", subsets: ["latin"] });

@@ -5,13 +5,13 @@ import Image from "next/image";
 import {
 	Navbar,
 	Text,
-	Flex,
 	Code,
 	Drawer,
 	MediaQuery,
 	useMantineTheme,
 	createStyles,
 	Anchor,
+	Group,
 } from "@mantine/core";
 import logo from "@admin/public/img/logo.svg";
 import { useMenuStore } from "@admin/src/stores/dashboard";
@@ -32,12 +32,9 @@ export default function Menu({ version }: { version: string }) {
 	const navbarContent = (
 		<>
 			<Navbar.Section>
-				<Flex
-					justify={"center"}
-					align={"center"}
+				<Group
+					position="center"
 					py={"xl"}
-					gap={"md"}
-					h={"100%"}
 					bg={getCardBgColor(theme)}
 					sx={{
 						borderBottom: `1px solid ${getBorderColor(theme)}`,
@@ -47,7 +44,7 @@ export default function Menu({ version }: { version: string }) {
 						<Image className={classes.logo} src={logo} alt={"logo"} width={150} />
 					</Link>
 					<Code bg={getBorderColor(theme)}>v{version}</Code>
-				</Flex>
+				</Group>
 			</Navbar.Section>
 
 			<Navbar.Section p={"md"} bg={getCardBgColor(theme)} grow>
