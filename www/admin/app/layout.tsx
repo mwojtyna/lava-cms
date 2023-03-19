@@ -7,6 +7,10 @@ import "@admin/src/styles/globals.css";
 
 export const metadata: Metadata = {
 	icons: ["/admin/favicon.ico"],
+	robots: {
+		index: false,
+		follow: false,
+	},
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
