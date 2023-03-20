@@ -18,7 +18,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 		?.value as ColorScheme;
 
 	return (
-		<html>
+		<html lang="en-US">
 			<body>
 				<TrpcProvider>
 					<Mantine colorScheme={colorScheme}>{children}</Mantine>
