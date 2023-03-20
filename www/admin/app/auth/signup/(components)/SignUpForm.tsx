@@ -67,7 +67,7 @@ export default function SignUpForm({ onSignUp }: { onSignUp?: () => void }) {
 	};
 
 	return (
-		<form onSubmit={handleSubmit(onSubmit)} className="w-full max-w-lg">
+		<form onSubmit={handleSubmit(onSubmit)} className="w-full max-w-md">
 			<Stack spacing="lg">
 				<Title order={1} size="3.5rem" variant="gradient">
 					Sign up
