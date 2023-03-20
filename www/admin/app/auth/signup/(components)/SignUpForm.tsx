@@ -11,15 +11,12 @@ import {
 import { Button, Group, Loader, PasswordInput, Stack, TextInput, Title } from "@mantine/core";
 import { type SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useRouter } from "next/navigation";
 import { signIn } from "next-auth/react";
 import { z } from "zod";
 import { trpc } from "@admin/src/utils/trpc";
 import ThemeSwitch from "@admin/app/(components)/ThemeSwitch";
 
-function SignUpForm() {
-	const router = useRouter();
-
+export default function SignUpForm({ onSignUp }: { onSignUp?: () => void }) {
 	const inputSchema = z
 		.object({
 			name: z.string().min(1, { message: "Please enter your name." }),
@@ -66,11 +63,11 @@ function SignUpForm() {
 			password: data.password,
 		});
 
-		router.push("/dashboard");
+		onSignUp?.();
 	};
 
 	return (
-		<form onSubmit={handleSubmit(onSubmit)} className="w-full max-w-lg px-10">
+		<form onSubmit={handleSubmit(onSubmit)} className="w-full max-w-lg">
 			<Stack spacing="lg">
 				<Title order={1} size="3.5rem" variant="gradient">
 					Sign up
@@ -156,5 +153,3 @@ function SignUpForm() {
 		</form>
 	);
 }
-
-export default SignUpForm;

@@ -1,16 +1,14 @@
 import type { Metadata } from "next";
-import SignUpForm from "./SignUpForm";
+import Content from "./(components)/Content";
 
 export const metadata: Metadata = {
 	title: "Lava CMS - Sign up",
 };
 
-function SignIn() {
+export default function SignIn() {
 	return (
-		<main className="grid h-[100svh] place-items-center">
-			<SignUpForm />
+		<main className="flex h-screen justify-center p-10">
+			<Content />
 		</main>
 	);
 }
-
-export default SignIn;
