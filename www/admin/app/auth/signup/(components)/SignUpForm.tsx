@@ -19,15 +19,14 @@ import ThemeSwitch from "@admin/app/(components)/ThemeSwitch";
 export default function SignUpForm({ onSignUp }: { onSignUp?: () => void }) {
 	const inputSchema = z
 		.object({
-			name: z.string().min(1, { message: "Please enter your name." }),
-			lastName: z.string().min(1, { message: "Please enter your last name." }),
+			name: z.string().min(1),
+			lastName: z.string().min(1),
 			email: z
 				.string()
-				.min(1, { message: "Please enter your e-mail address." })
+				.min(1, { message: " " })
 				.email({ message: "The e-mail you provided is invalid." }),
 			password: z
 				.string()
-				.min(1, { message: "Please enter your password." })
 				.min(8, { message: "The password must be at least 8 characters long." })
 				.regex(/[a-z]/, {
 					message: "The password must contain at least one lowercase letter.",
@@ -35,10 +34,10 @@ export default function SignUpForm({ onSignUp }: { onSignUp?: () => void }) {
 				.regex(/[A-Z]/, {
 					message: "The password must contain at least one uppercase letter.",
 				})
-				.regex(/[0-9]/, { message: "The password must contain at least one digit." }),
-			repeatPassword: z.string().min(1, { message: "Please repeat your password." }),
+				.regex(/[0-9]/),
+			repeatPassword: z.string(),
 		})
-		.refine((data) => data.password === data.repeatPassword, {
+		.refine((data) => data.password === data.repeatPassword && data.password !== "", {
 			path: ["repeatPassword"],
 			message: "The passwords do not match.",
 		});
@@ -91,7 +90,7 @@ export default function SignUpForm({ onSignUp }: { onSignUp?: () => void }) {
 						label="Name"
 						placeholder="Jan"
 						{...register("name")}
-						error={errors.name?.message}
+						error={!!errors.name}
 						icon={<UserIcon className="w-5" />}
 					/>
 					<TextInput
@@ -100,7 +99,7 @@ export default function SignUpForm({ onSignUp }: { onSignUp?: () => void }) {
 						label="Last name"
 						placeholder="Kowalski"
 						{...register("lastName")}
-						error={errors.lastName?.message}
+						error={!!errors.lastName}
 					/>
 				</Group>
 
