@@ -31,9 +31,9 @@ function SignInForm() {
 	const inputSchema = z.object({
 		email: z
 			.string()
-			.min(1, { message: "Please enter your e-mail address." })
+			.min(1, { message: " " })
 			.email({ message: "The e-mail you provided is invalid." }),
-		password: z.string().min(1, { message: "Please enter your password." }),
+		password: z.string().min(1),
 	});
 	type Inputs = z.infer<typeof inputSchema>;
 
@@ -95,7 +95,7 @@ function SignInForm() {
 					size="md"
 					label="Password"
 					{...register("password")}
-					error={errors.password?.message}
+					error={!!errors.password}
 					icon={<LockClosedIcon className="w-5" />}
 					visibilityToggleIcon={({ reveal, size }) =>
 						reveal ? (
