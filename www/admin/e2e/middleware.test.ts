@@ -7,10 +7,10 @@ test.afterEach(async () => {
 	await stop();
 });
 
-test("redirects to sign up page when no user in database", async ({ page }) => {
+test("redirects to sign up page when no setup is required", async ({ page }) => {
 	const app = await init([
-		trpcMsw.auth.firstTime.query((_, res, ctx) => {
-			return res(ctx.data({ firstTime: true }));
+		trpcMsw.auth.setupRequired.query((_, res, ctx) => {
+			return res(ctx.data({ setupRequired: true }));
 		}),
 	]);
 	await start(app);
@@ -21,8 +21,8 @@ test("redirects to sign up page when no user in database", async ({ page }) => {
 
 test("redirects to sign in page when user is not signed in", async ({ page }) => {
 	const app = await init([
-		trpcMsw.auth.firstTime.query((_, res, ctx) => {
-			return res(ctx.data({ firstTime: false }));
+		trpcMsw.auth.setupRequired.query((_, res, ctx) => {
+			return res(ctx.data({ setupRequired: false }));
 		}),
 	]);
 	await start(app);
@@ -33,8 +33,8 @@ test("redirects to sign in page when user is not signed in", async ({ page }) =>
 
 test("redirects to dashboard when user is signed in", async ({ authedPage }) => {
 	const app = await init([
-		trpcMsw.auth.firstTime.query((_, res, ctx) => {
-			return res(ctx.data({ firstTime: false }));
+		trpcMsw.auth.setupRequired.query((_, res, ctx) => {
+			return res(ctx.data({ setupRequired: false }));
 		}),
 	]);
 	await start(app);
@@ -47,8 +47,8 @@ test("redirects to dashboard when user is signed in", async ({ authedPage }) => 
 
 test("returns 401 when trying to access /api/trpc when not signed in", async ({ page }) => {
 	const app = await init([
-		trpcMsw.auth.firstTime.query((_, res, ctx) => {
-			return res(ctx.data({ firstTime: false }));
+		trpcMsw.auth.setupRequired.query((_, res, ctx) => {
+			return res(ctx.data({ setupRequired: false }));
 		}),
 	]);
 	await start(app);
@@ -62,8 +62,8 @@ test("returns 401 when trying to access /api/trpc when not signed in", async ({ 
 
 test("returns json when trying to access /api/trpc when signed in", async ({ authedPage }) => {
 	const app = await init([
-		trpcMsw.auth.firstTime.query((_, res, ctx) => {
-			return res(ctx.data({ firstTime: false }));
+		trpcMsw.auth.setupRequired.query((_, res, ctx) => {
+			return res(ctx.data({ setupRequired: false }));
 		}),
 	]);
 	await start(app);

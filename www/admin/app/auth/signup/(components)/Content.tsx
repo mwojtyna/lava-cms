@@ -5,8 +5,8 @@ import { Stepper } from "@mantine/core";
 import SignUpForm from "./SignUpForm";
 import SetupForm from "./SetupForm";
 
-export default function Content() {
-	const [active, setActive] = useState(0);
+export default function Content({ stage }: { stage: number }) {
+	const [active, setActive] = useState(stage);
 
 	return (
 		<Stepper

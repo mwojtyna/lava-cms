@@ -1,11 +1,11 @@
 import { router } from "@api/trpc";
-import { firstTime } from "./firstTime";
+import { setupRequired } from "./setupRequired";
 import { signUp } from "./signUp";
 import { signIn } from "./signIn";
 import { getUser } from "./getUser";
 
 export const authRouter = router({
-	firstTime,
+	setupRequired,
 	signUp,
 	/**
 	 * @returns The user's ID

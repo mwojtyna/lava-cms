@@ -5,10 +5,10 @@ import { trpc } from "@admin/src/utils/trpc";
 export default withAuth(
 	async (request) => {
 		const url = request.nextUrl.clone();
-		const { firstTime } = await trpc.auth.firstTime.query();
+		const { setupRequired } = await trpc.auth.setupRequired.query();
 
 		if (!url.pathname.startsWith("/api/trpc")) {
-			if (firstTime) {
+			if (setupRequired) {
 				if (url.pathname !== "/auth/signup") {
 					// Redirect to sign up page if opening the dashboard for the first time
 					url.pathname = "/auth/signup";
@@ -34,7 +34,7 @@ export default withAuth(
 		} else {
 			// Return 401 if not signed in, there is a user in the db
 			// and trying to access the api
-			if (!request.nextauth.token && !firstTime) {
+			if (!request.nextauth.token && !setupRequired) {
 				return new NextResponse("Unauthorized", { status: 401 });
 			}
 		}
