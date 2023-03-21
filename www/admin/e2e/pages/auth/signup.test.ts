@@ -133,6 +133,11 @@ test.describe("setup website step", () => {
 	});
 
 	test("go to dashboard when info is valid", async ({ authedPage }) => {
+		// authedPage fixture automatically creates a config
+		// we don't want that for this test because if it exists
+		// then it will redirect to /dashboard
+		await prisma.config.deleteMany();
+
 		await authedPage.goto("/admin/auth/signup");
 		await authedPage.locator("input[type='text']").first().type("My website");
 		await authedPage.locator("input[type='text']").nth(1).type("en");

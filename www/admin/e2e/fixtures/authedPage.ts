@@ -29,6 +29,16 @@ export const authedPage = async (
 			},
 		}));
 
+	if (!(await prisma.config.findFirst())) {
+		await prisma.config.create({
+			data: {
+				title: "My website",
+				description: "My website description",
+				language: "en",
+			},
+		});
+	}
+
 	if (!fs.existsSync(STORAGE_STATE_PATH)) {
 		await saveSignedInState(browser);
 		console.log("Saved signed in state");
@@ -61,10 +71,13 @@ export const authedPage = async (
 	// Run test
 	await use(authedPage);
 
-	// We have to check if the user exists because a test
+	// We have to check if a user exists because a test
 	// might delete an already created user
 	if (await prisma.user.findFirst()) {
 		await prisma.user.delete({ where: { id: id } });
+	}
+	if (await prisma.config.findFirst()) {
+		await prisma.config.deleteMany();
 	}
 };
 
