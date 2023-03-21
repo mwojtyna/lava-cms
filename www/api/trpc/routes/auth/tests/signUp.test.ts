@@ -18,7 +18,7 @@ it("creates a user", async () => {
 	});
 
 	const call = prisma.user.create.mock.calls[0];
-	expect(call).toBeTruthy();
+	expect(call).toBeDefined();
 
 	expect(prisma.user.create).toHaveBeenCalled();
 	expect(call![0].data).toMatchObject({

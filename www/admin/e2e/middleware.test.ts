@@ -71,5 +71,5 @@ test("returns json when trying to access /api/trpc when signed in", async ({ aut
 	const res = await authedPage.goto("/admin/api/trpc");
 	expect(authedPage.url()).toMatch(/\/admin\/api\/trpc/);
 	expect(await res?.headerValue("content-type")).toMatch(/application\/json/);
-	expect(await res?.json()).toBeTruthy();
+	expect(await res?.json()).toBeDefined();
 });

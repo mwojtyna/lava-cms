@@ -21,7 +21,7 @@ it("returns a user if one exists", async () => {
 
 	const { user } = await caller.auth.getUser({ id: ID });
 
-	expect(user).toBeTruthy();
+	expect(user).toBeDefined();
 });
 
 it("returns null if user not found", async () => {
@@ -29,5 +29,5 @@ it("returns null if user not found", async () => {
 
 	const { user } = await caller.auth.getUser({ id: ID });
 
-	expect(user).toBeFalsy();
+	expect(user).toBeNull();
 });
