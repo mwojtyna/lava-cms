@@ -14,9 +14,17 @@ test.beforeAll(async () => {
 			password: await bcrypt.hash(PASSWORD, 10),
 		},
 	});
+	await prisma.config.create({
+		data: {
+			title: "My website",
+			description: "My website description",
+			language: "en",
+		},
+	});
 });
 test.afterAll(async () => {
 	await prisma.user.deleteMany();
+	await prisma.config.deleteMany();
 });
 
 test.beforeEach(async () => {
