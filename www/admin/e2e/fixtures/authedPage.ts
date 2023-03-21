@@ -16,14 +16,18 @@ export const authedPage = async (
 	{ browser }: { browser: Browser },
 	use: (r: Page) => Promise<void>
 ) => {
-	const { id } = await prisma.user.create({
-		data: {
-			name: NAME,
-			last_name: LAST_NAME,
-			email: EMAIL,
-			password: await bcrypt.hash(PASSWORD, 10),
-		},
-	});
+	// We have to check if the user exists because a test might create one
+	const existingUser = await prisma.user.findFirst();
+	const { id } =
+		existingUser ??
+		(await prisma.user.create({
+			data: {
+				name: NAME,
+				last_name: LAST_NAME,
+				email: EMAIL,
+				password: await bcrypt.hash(PASSWORD, 10),
+			},
+		}));
 
 	if (!fs.existsSync(STORAGE_STATE_PATH)) {
 		await saveSignedInState(browser);
@@ -57,8 +61,11 @@ export const authedPage = async (
 	// Run test
 	await use(authedPage);
 
-	// Post test cleanup
-	await prisma.user.delete({ where: { id: id } });
+	// We have to check if the user exists because a test
+	// might delete an already created user
+	if (await prisma.user.findFirst()) {
+		await prisma.user.delete({ where: { id: id } });
+	}
 };
 
 async function saveSignedInState(browser: Browser) {

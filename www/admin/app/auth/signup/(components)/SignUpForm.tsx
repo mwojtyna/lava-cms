@@ -34,7 +34,9 @@ export default function SignUpForm({ onSignUp }: { onSignUp?: () => void }) {
 				.regex(/[A-Z]/, {
 					message: "The password must contain at least one uppercase letter.",
 				})
-				.regex(/[0-9]/),
+				.regex(/[0-9]/, {
+					message: "The password must contain at least one digit.",
+				}),
 			repeatPassword: z.string(),
 		})
 		.refine((data) => data.password === data.repeatPassword && data.password !== "", {
