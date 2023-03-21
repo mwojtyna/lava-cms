@@ -28,7 +28,7 @@
 	// "shutdownAction": "none",
 
 	// Uncomment the next line to run commands after the container is created.
-	"postCreateCommand": "rm -rf /workspaces/lava-cms/www/node_modules/.pnpm/http-server@14.1.1 && rm -rf /workspaces/lava-cms/www/node_modules/.pnpm/vite@4.1.1_@types+node@18.13.0 && pnpm install --frozen-lockfile && cd api && pnpm prisma db push && pnpm dotenv -e .env.test -- pnpm prisma db push",
+	"postCreateCommand": "rm -rf /workspaces/lava-cms/www/node_modules/.pnpm/http-server@14.1.1 && rm -rf /workspaces/lava-cms/www/node_modules/.pnpm/vite@4.1.1_@types+node@18.13.0 && pnpm install --frozen-lockfile && cd api && pnpm prisma db push && pnpm test:db",
 	"postStartCommand": "git pull && pnpm install",
 
 	// Configure tool-specific properties.
