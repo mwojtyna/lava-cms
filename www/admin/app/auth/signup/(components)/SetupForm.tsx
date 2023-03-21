@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { type SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -7,8 +8,11 @@ import { Button, Group, Loader, Stack, Textarea, TextInput, Title } from "@manti
 import { ArrowDownOnSquareIcon } from "@heroicons/react/24/outline";
 import { check } from "language-tags";
 import ThemeSwitch from "@admin/app/(components)/ThemeSwitch";
+import { trpc } from "@admin/src/utils/trpc";
 
 export default function SetupForm() {
+	const router = useRouter();
+
 	const inputSchema = z
 		.object({
 			title: z.string().min(1),
@@ -26,7 +30,10 @@ export default function SetupForm() {
 		formState: { errors, isSubmitting, isSubmitSuccessful },
 	} = useForm<Inputs>({ mode: "onChange", resolver: zodResolver(inputSchema) });
 	const onSubmit: SubmitHandler<Inputs> = async (data) => {
-		console.log(data);
+		await trpc.config.setConfig.mutate({
+			...data,
+		});
+		router.push("/dashboard");
 	};
 
 	return (
