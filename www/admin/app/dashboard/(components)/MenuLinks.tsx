@@ -4,10 +4,9 @@ import Link from "next/link";
 import Image from "next/image";
 import { Navbar, useMantineTheme, NavLink, Group, Code, createStyles } from "@mantine/core";
 import { getBorderColor, getCardBgColor, getHoverColor } from "@admin/app/mantine";
-import { ChartBarIcon, Cog6ToothIcon } from "@heroicons/react/24/solid";
 import { useUrl } from "@admin/src/hooks/useUrl";
 import logo from "@admin/public/img/logo.svg";
-import { routes } from "@admin/src/data/routes";
+import { rootRoutes } from "@admin/src/data/routes";
 
 const useStyles = createStyles((theme) => ({
 	logo: {
@@ -40,7 +39,7 @@ export default function MenuLinks({ version }: { version: string }) {
 			</Navbar.Section>
 
 			<Navbar.Section bg={getCardBgColor(theme)} grow>
-				{routes.map((item, index) => (
+				{rootRoutes.map((item, index) => (
 					<NavLink
 						key={index}
 						component={Link}
@@ -49,16 +48,15 @@ export default function MenuLinks({ version }: { version: string }) {
 						href={item.path}
 						label={item.label}
 						icon={item.icon}
-						active={url.includes(item.path)}
+						active={
+							(item.startingRoute && url === item.path) ||
+							(!item.startingRoute && url.startsWith(item.path))
+						}
 						variant="filled"
 						styles={(theme) => ({
 							root: {
 								"&:hover": {
 									backgroundColor: getHoverColor(theme),
-
-									"&[data-active=true]": {
-										filter: "brightness(125%)",
-									},
 								},
 							},
 						})}

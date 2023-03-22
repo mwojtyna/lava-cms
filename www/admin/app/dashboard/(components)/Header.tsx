@@ -18,6 +18,7 @@ import { getCardBgColor } from "@admin/app/mantine";
 import UserMenu from "./UserMenu";
 import type { User } from "api/prisma/types";
 import { useUrl } from "@admin/src/hooks/useUrl";
+import { rootRoutes } from "@admin/src/data/routes";
 
 const poppins = Poppins({ weight: "700", subsets: ["latin"] });
 const useStyles = createStyles((theme) => ({
@@ -46,7 +47,7 @@ export default function Header({ user }: { user: Omit<User, "password"> | null }
 	const theme = useMantineTheme();
 	const { classes } = useStyles();
 	const menuStore = useMenuStore();
-	const url = useUrl().split("/dashboard")[1]!;
+	const url = useUrl();
 
 	interface Breadcrumb {
 		path: string;
@@ -54,15 +55,36 @@ export default function Header({ user }: { user: Omit<User, "password"> | null }
 	}
 	const getBreadcrumbsFromPath = useCallback((path: string) => {
 		const segments = path.split("/").filter((segment) => segment !== "");
-		const result: Breadcrumb[] = [{ path: "/dashboard", name: <HomeIcon className="w-6" /> }];
+		const result: Breadcrumb[] = [];
 
 		for (let i = 0; i < segments.length; i++) {
-			let previousSegments = "/dashboard";
+			let previousSegments = "";
 			for (let j = 0; j < i; j++) {
 				previousSegments += "/" + segments[j];
 			}
 
-			result.push({ name: segments[i]!, path: `${previousSegments}/${segments[i]}` });
+			const route = rootRoutes.find(
+				(route) => route.path === `${previousSegments}/${segments[i]}`
+			);
+			if (route) {
+				// If the route is a starting (/dashboard) route, only show it if it's the only segment
+				if (
+					(!route.startingRoute && segments.length >= 1) ||
+					(route.startingRoute && segments.length === 1)
+				) {
+					result.push({
+						name: (
+							<Group spacing={"xs"}>
+								{route.icon}
+								{route.label}
+							</Group>
+						),
+						path: route.path,
+					});
+				}
+			} else {
+				result.push({ name: segments[i]!, path: `${previousSegments}/${segments[i]}` });
+			}
 		}
 
 		return result;

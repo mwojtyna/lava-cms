@@ -1,21 +1,22 @@
-import { Cog6ToothIcon } from "@heroicons/react/24/outline";
-import { HomeIcon } from "@heroicons/react/24/solid";
+import { HomeIcon, Cog6ToothIcon } from "@heroicons/react/24/solid";
 
 interface Route {
 	label: string;
 	path: string;
 	icon?: React.ReactNode;
 	children?: Route[];
+	startingRoute?: boolean;
 }
-export const routes: Route[] = [
+export const rootRoutes: Route[] = [
 	{
-		label: "Dashboard",
+		label: "Start",
 		path: "/dashboard",
 		icon: <HomeIcon className="w-5" />,
+		startingRoute: true,
 	},
 	{
 		label: "Settings",
-		path: "/settings",
+		path: "/dashboard/settings",
 		icon: <Cog6ToothIcon className="w-5" />,
 	},
 ];
