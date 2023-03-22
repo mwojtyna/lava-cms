@@ -4,10 +4,10 @@ interface Route {
 	label: string;
 	path: string;
 	icon?: React.ReactNode;
-	children?: Route[];
 	startingRoute?: boolean;
 }
-export const rootRoutes: Route[] = [
+
+export const menuRoutes: Route[] = [
 	{
 		label: "Start",
 		path: "/dashboard",

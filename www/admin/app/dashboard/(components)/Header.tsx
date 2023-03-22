@@ -12,13 +12,12 @@ import {
 	useMantineTheme,
 	Anchor,
 } from "@mantine/core";
-import { HomeIcon } from "@heroicons/react/24/solid";
 import { useMenuStore } from "@admin/src/data/stores/dashboard";
 import { getCardBgColor } from "@admin/app/mantine";
 import UserMenu from "./UserMenu";
 import type { User } from "api/prisma/types";
 import { useUrl } from "@admin/src/hooks/useUrl";
-import { rootRoutes } from "@admin/src/data/routes";
+import { menuRoutes } from "@admin/src/data/routes";
 
 const poppins = Poppins({ weight: "700", subsets: ["latin"] });
 const useStyles = createStyles((theme) => ({
@@ -63,7 +62,7 @@ export default function Header({ user }: { user: Omit<User, "password"> | null }
 				previousSegments += "/" + segments[j];
 			}
 
-			const route = rootRoutes.find(
+			const route = menuRoutes.find(
 				(route) => route.path === `${previousSegments}/${segments[i]}`
 			);
 			if (route) {
@@ -99,7 +98,7 @@ export default function Header({ user }: { user: Omit<User, "password"> | null }
 
 	return (
 		<header className="sticky top-0 shadow-md">
-			<Group bg={getCardBgColor(theme)} align={"center"} position={"apart"}>
+			<Group bg={getCardBgColor(theme)} align={"center"} position={"apart"} spacing={0}>
 				<Group noWrap p="lg">
 					<MediaQuery largerThan={"md"} styles={{ display: "none" }}>
 						<Burger size={"md"} opened={menuStore.isOpen} onClick={menuStore.toggle} />
