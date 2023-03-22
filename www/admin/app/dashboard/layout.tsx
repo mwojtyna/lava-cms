@@ -6,6 +6,8 @@ import Header from "./(components)/Header";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@admin/src/pages/api/auth/[...nextauth]";
 import { trpc } from "@admin/src/utils/trpc";
+import { useServerUrlStore } from "@admin/src/stores/dashboard";
+import ZustandInitializer from "../zustandInitializer";
 
 export const metadata: Metadata = {
 	title: "Lava CMS - Admin dashboard",
@@ -21,6 +23,8 @@ export default async function Dashboard({ children }: { children: React.ReactNod
 
 	return (
 		<div id="content">
+			<ZustandInitializer serverUrl={url} />
+
 			<Menu version={version} serverUrl={url} />
 
 			<div className="flex max-h-screen flex-grow flex-col gap-4 overflow-visible md:overflow-auto">
