@@ -4,11 +4,31 @@ import { useRouter } from "next/navigation";
 import { type SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { Button, Group, Loader, Stack, Textarea, TextInput, Title } from "@mantine/core";
+import {
+	Button,
+	Code,
+	createStyles,
+	Group,
+	Loader,
+	Stack,
+	Textarea,
+	TextInput,
+	Title,
+	Tooltip,
+	useMantineTheme,
+} from "@mantine/core";
 import { ArrowDownOnSquareIcon } from "@heroicons/react/24/outline";
+import { QuestionMarkCircleIcon } from "@heroicons/react/20/solid";
 import { check } from "language-tags";
 import ThemeSwitch from "@admin/app/(components)/ThemeSwitch";
 import { trpc } from "@admin/src/utils/trpc";
+
+const useStyles = createStyles(() => ({
+	label: {
+		display: "flex",
+		gap: "0.25rem",
+	},
+}));
 
 export default function SetupForm() {
 	const router = useRouter();
@@ -36,6 +56,8 @@ export default function SetupForm() {
 		router.push("/dashboard");
 	};
 
+	const { classes } = useStyles();
+
 	return (
 		<form onSubmit={handleSubmit(onSubmit)} className="w-full max-w-md">
 			<Stack spacing={"lg"}>
@@ -45,7 +67,6 @@ export default function SetupForm() {
 
 				<TextInput
 					size="md"
-					type="text"
 					label="Title"
 					placeholder="My Awesome Website"
 					{...register("title")}
@@ -54,15 +75,38 @@ export default function SetupForm() {
 					withAsterisk
 				/>
 				<Textarea
+					classNames={{ label: classes.label }}
 					size="md"
-					label="Description"
+					label={
+						<>
+							Description
+							<Tooltip label="Used for SEO and social media previews" withArrow>
+								<QuestionMarkCircleIcon className="w-4" />
+							</Tooltip>
+						</>
+					}
 					placeholder="This website is very awesome and fun!"
 					{...register("description")}
 				/>
 				<TextInput
+					classNames={{ label: classes.label }}
 					size="md"
-					type="text"
-					label="Language"
+					label={
+						<>
+							Language
+							<Tooltip
+								label={
+									<>
+										Used in the <Code>lang</Code> attribute of the{" "}
+										<Code>&lt;html&gt;</Code> tag
+									</>
+								}
+								withArrow
+							>
+								<QuestionMarkCircleIcon className="w-4" />
+							</Tooltip>
+						</>
+					}
 					placeholder="en-US"
 					{...register("language")}
 					error={!!errors.language}
