@@ -1,100 +1,11 @@
 "use client";
 
-import Link from "next/link";
-import Image from "next/image";
-import {
-	Navbar,
-	Text,
-	Code,
-	Drawer,
-	MediaQuery,
-	useMantineTheme,
-	createStyles,
-	Anchor,
-	Group,
-} from "@mantine/core";
-import logo from "@admin/public/img/logo.svg";
+import { Navbar, Drawer, MediaQuery, useMantineTheme } from "@mantine/core";
 import { useMenuStore } from "@admin/src/stores/dashboard";
-import { getBorderColor, getCardBgColor } from "@admin/app/mantine";
+import MenuLinks from "./MenuLinks";
 
-const useStyles = createStyles((theme) => ({
-	logo: {
-		// TODO: Temporary, before we get a proper logo
-		filter: theme.colorScheme === "dark" ? "none" : "contrast(200%) brightness(50%)",
-	},
-}));
-
-export default function Menu({ version }: { version: string }) {
+export default function Menu({ version, serverUrl }: { version: string; serverUrl: string }) {
 	const menuStore = useMenuStore();
-	const theme = useMantineTheme();
-	const { classes } = useStyles();
-
-	const navbarContent = (
-		<>
-			<Navbar.Section>
-				<Group
-					position="center"
-					py={"xl"}
-					bg={getCardBgColor(theme)}
-					sx={{
-						borderBottom: `1px solid ${getBorderColor(theme)}`,
-					}}
-				>
-					<Link href={"/"}>
-						<Image className={classes.logo} src={logo} alt={"logo"} width={150} />
-					</Link>
-					<Code bg={getBorderColor(theme)}>v{version}</Code>
-				</Group>
-			</Navbar.Section>
-
-			<Navbar.Section p={"md"} bg={getCardBgColor(theme)} grow>
-				<Anchor component={Link} href={"/dashboard/one"} onClick={menuStore.toggle}>
-					One
-				</Anchor>
-				<br />
-				<Anchor component={Link} href={"/dashboard/one/two"} onClick={menuStore.toggle}>
-					Two
-				</Anchor>
-				<Text>Links here...</Text>
-				<Text>Links here...</Text>
-				<Text>Links here...</Text>
-				<Text>Links here...</Text>
-				<Text>Links here...</Text>
-				<Text>Links here...</Text>
-				<Text>Links here...</Text>
-				<Text>Links here...</Text>
-				<Text>Links here...</Text>
-				<Text>Links here...</Text>
-				<Text>Links here...</Text>
-				<Text>Links here...</Text>
-				<Text>Links here...</Text>
-				<Text>Links here...</Text>
-				<Text>Links here...</Text>
-				<Text>Links here...</Text>
-				<Text>Links here...</Text>
-				<Text>Links here...</Text>
-				<Text>Links here...</Text>
-				<Text>Links here...</Text>
-				<Text>Links here...</Text>
-				<Text>Links here...</Text>
-				<Text>Links here...</Text>
-				<Text>Links here...</Text>
-				<Text>Links here...</Text>
-				<Text>Links here...</Text>
-				<Text>Links here...</Text>
-				<Text>Links here...</Text>
-				<Text>Links here...</Text>
-				<Text>Links here...</Text>
-				<Text>Links here...</Text>
-				<Text>Links here...</Text>
-				<Text>Links here...</Text>
-				<Text>Links here...</Text>
-				<Text>Links here...</Text>
-				<Text>Links here...</Text>
-				<Text>Links here...</Text>
-			</Navbar.Section>
-		</>
-	);
 
 	return (
 		<>
@@ -106,13 +17,20 @@ export default function Menu({ version }: { version: string }) {
 					onClose={() => menuStore.toggle()}
 					padding={0}
 				>
-					{navbarContent}
+					<MenuLinks version={version} serverUrl={serverUrl} />
 				</Drawer>
 			</MediaQuery>
 
 			<MediaQuery smallerThan={"md"} styles={{ display: "none" }}>
-				<Navbar sx={{ width: 300, flexShrink: 0, height: "100vh", overflow: "auto" }}>
-					{navbarContent}
+				<Navbar
+					sx={{
+						width: 300,
+						flexShrink: 0,
+						height: "100vh",
+						overflow: "auto",
+					}}
+				>
+					<MenuLinks version={version} serverUrl={serverUrl} />
 				</Navbar>
 			</MediaQuery>
 		</>

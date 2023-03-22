@@ -43,7 +43,7 @@ const useStyles = createStyles((theme) => ({
 }));
 
 interface Props {
-	serverUrl: string | null;
+	serverUrl: string;
 	user: Omit<User, "password"> | null;
 }
 
@@ -51,13 +51,14 @@ export default function Header(props: Props) {
 	const theme = useMantineTheme();
 	const { classes } = useStyles();
 	const menuStore = useMenuStore();
+	const clientUrl = usePathname()?.split("/dashboard")[1];
 
 	interface Breadcrumb {
 		path: string;
 		name: React.ReactNode;
 	}
 	const getBreadcrumbsFromPath = useCallback((path: string) => {
-		const segments = path.split("/").slice(path.startsWith("http") ? 5 : 3);
+		const segments = path.split("/").filter((segment) => segment !== "");
 		const result: Breadcrumb[] = [{ path: "/dashboard", name: <HomeIcon className="w-6" /> }];
 
 		for (let i = 0; i < segments.length; i++) {
@@ -71,15 +72,16 @@ export default function Header(props: Props) {
 
 		return result;
 	}, []);
-	const clientUrl = usePathname();
 	const [breadcrumbs, setBreadcrumbs] = useState<Breadcrumb[]>(
-		getBreadcrumbsFromPath(props.serverUrl!)
+		getBreadcrumbsFromPath(props.serverUrl.split("/dashboard")[1]!)
 	);
 
 	useEffect(() => {
 		// This is a workaround for the fact that usePathname() doesn't immediately return the url
 		// We do this instead of displaying a loading state for the breadcrumbs
-		setBreadcrumbs(getBreadcrumbsFromPath(clientUrl ?? props.serverUrl!));
+		setBreadcrumbs(
+			getBreadcrumbsFromPath(clientUrl ?? props.serverUrl.split("/dashboard")[1]!)
+		);
 	}, [props.serverUrl, clientUrl, getBreadcrumbsFromPath]);
 
 	return (

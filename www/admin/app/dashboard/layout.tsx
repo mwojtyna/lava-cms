@@ -17,11 +17,11 @@ export default async function Dashboard({ children }: { children: React.ReactNod
 		// set to "empty" when null, because otherwise an ambiguous error is thrown
 		id: (await getServerSession(authOptions))?.user?.id ?? "empty",
 	});
-	const url = headers().get("x-url");
+	const url = headers().get("x-url")!.split("/admin")[1]!.split("?")[0]!;
 
 	return (
 		<div id="content">
-			<Menu version={version} />
+			<Menu version={version} serverUrl={url} />
 
 			<div className="flex max-h-screen flex-grow flex-col gap-4 overflow-visible md:overflow-auto">
 				<Header serverUrl={url} user={user} />
