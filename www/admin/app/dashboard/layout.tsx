@@ -6,7 +6,7 @@ import Header from "./(components)/Header";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@admin/src/pages/api/auth/[...nextauth]";
 import { trpc } from "@admin/src/utils/trpc";
-import { useServerUrlStore } from "@admin/src/stores/dashboard";
+import { useServerUrlStore } from "@admin/src/data/stores/dashboard";
 import ZustandInitializer from "../zustandInitializer";
 
 export const metadata: Metadata = {
@@ -25,10 +25,10 @@ export default async function Dashboard({ children }: { children: React.ReactNod
 		<div id="content">
 			<ZustandInitializer serverUrl={url} />
 
-			<Menu version={version} serverUrl={url} />
+			<Menu version={version} />
 
 			<div className="flex max-h-screen flex-grow flex-col gap-4 overflow-visible md:overflow-auto">
-				<Header serverUrl={url} user={user} />
+				<Header user={user} />
 
 				<main>
 					{React.Children.map(children, (child, i) => {

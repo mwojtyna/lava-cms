@@ -2,7 +2,6 @@
 
 import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
 import { Poppins } from "next/font/google";
 import {
 	Breadcrumbs,
@@ -14,7 +13,7 @@ import {
 	Anchor,
 } from "@mantine/core";
 import { HomeIcon } from "@heroicons/react/24/solid";
-import { useMenuStore } from "@admin/src/stores/dashboard";
+import { useMenuStore } from "@admin/src/data/stores/dashboard";
 import { getCardBgColor } from "@admin/app/mantine";
 import UserMenu from "./UserMenu";
 import type { User } from "api/prisma/types";

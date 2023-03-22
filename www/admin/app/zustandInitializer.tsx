@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef } from "react";
-import { useServerUrlStore } from "@admin/src/stores/dashboard";
+import { useServerUrlStore } from "@admin/src/data/stores/dashboard";
 
 interface Props {
 	serverUrl: string;

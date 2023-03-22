@@ -1,5 +1,5 @@
 import { usePathname } from "next/navigation";
-import { useServerUrlStore } from "../stores/dashboard";
+import { useServerUrlStore } from "../data/stores/dashboard";
 
 /**
  * Returns the url (after /admin, eg. /dashboard/one/two) passed down from a

@@ -1,7 +1,7 @@
 "use client";
 
 import { Navbar, Drawer, MediaQuery, useMantineTheme } from "@mantine/core";
-import { useMenuStore } from "@admin/src/stores/dashboard";
+import { useMenuStore } from "@admin/src/data/stores/dashboard";
 import MenuLinks from "./MenuLinks";
 
 export default function Menu({ version }: { version: string }) {

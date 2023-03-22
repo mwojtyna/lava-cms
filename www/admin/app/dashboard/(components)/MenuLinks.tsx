@@ -7,6 +7,7 @@ import { getBorderColor, getCardBgColor, getHoverColor } from "@admin/app/mantin
 import { ChartBarIcon, Cog6ToothIcon } from "@heroicons/react/24/solid";
 import { useUrl } from "@admin/src/hooks/useUrl";
 import logo from "@admin/public/img/logo.svg";
+import { routes } from "@admin/src/data/routes";
 
 const useStyles = createStyles((theme) => ({
 	logo: {
@@ -19,25 +20,6 @@ export default function MenuLinks({ version }: { version: string }) {
 	const theme = useMantineTheme();
 	const { classes } = useStyles();
 	const url = useUrl();
-
-	interface Data {
-		label: string;
-		path: string;
-		icon?: React.ReactNode;
-		children?: Data[];
-	}
-	const data: Data[] = [
-		{
-			label: "Dashboard",
-			path: "/dashboard",
-			icon: <ChartBarIcon className="w-5" />,
-		},
-		{
-			label: "Settings",
-			path: "/settings",
-			icon: <Cog6ToothIcon className="w-5" />,
-		},
-	];
 
 	return (
 		<>
@@ -56,8 +38,9 @@ export default function MenuLinks({ version }: { version: string }) {
 					<Code bg={getBorderColor(theme)}>v{version}</Code>
 				</Group>
 			</Navbar.Section>
+
 			<Navbar.Section bg={getCardBgColor(theme)} grow>
-				{data.map((item, index) => (
+				{routes.map((item, index) => (
 					<NavLink
 						key={index}
 						component={Link}
@@ -72,6 +55,10 @@ export default function MenuLinks({ version }: { version: string }) {
 							root: {
 								"&:hover": {
 									backgroundColor: getHoverColor(theme),
+
+									"&[data-active=true]": {
+										filter: "brightness(125%)",
+									},
 								},
 							},
 						})}
