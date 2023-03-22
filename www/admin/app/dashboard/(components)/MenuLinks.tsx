@@ -2,10 +2,10 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { useState } from "react";
 import { Navbar, useMantineTheme, NavLink, Group, Code, createStyles } from "@mantine/core";
 import { getBorderColor, getCardBgColor, getHoverColor } from "@admin/app/mantine";
 import { ChartBarIcon, Cog6ToothIcon } from "@heroicons/react/24/solid";
+import { useUrl } from "@admin/src/hooks/useUrl";
 import logo from "@admin/public/img/logo.svg";
 
 const useStyles = createStyles((theme) => ({
@@ -15,25 +15,26 @@ const useStyles = createStyles((theme) => ({
 	},
 }));
 
-export default function MenuLinks({ version, serverUrl }: { version: string; serverUrl: string }) {
+export default function MenuLinks({ version }: { version: string }) {
 	const theme = useMantineTheme();
 	const { classes } = useStyles();
+	const url = useUrl();
 
 	interface Data {
 		label: string;
-		link?: string;
+		path: string;
 		icon?: React.ReactNode;
 		children?: Data[];
 	}
 	const data: Data[] = [
 		{
 			label: "Dashboard",
-			link: "/dashboard",
+			path: "/dashboard",
 			icon: <ChartBarIcon className="w-5" />,
 		},
 		{
 			label: "Settings",
-			link: "/settings",
+			path: "/settings",
 			icon: <Cog6ToothIcon className="w-5" />,
 		},
 	];
@@ -62,10 +63,10 @@ export default function MenuLinks({ version, serverUrl }: { version: string; ser
 						component={Link}
 						childrenOffset="md"
 						p="md"
-						href={item.link!}
+						href={item.path}
 						label={item.label}
 						icon={item.icon}
-						active={serverUrl === item.link}
+						active={url.includes(item.path)}
 						variant="filled"
 						styles={(theme) => ({
 							root: {

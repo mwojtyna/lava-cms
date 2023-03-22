@@ -18,6 +18,7 @@ import { useMenuStore } from "@admin/src/stores/dashboard";
 import { getCardBgColor } from "@admin/app/mantine";
 import UserMenu from "./UserMenu";
 import type { User } from "api/prisma/types";
+import { useUrl } from "@admin/src/hooks/useUrl";
 
 const poppins = Poppins({ weight: "700", subsets: ["latin"] });
 const useStyles = createStyles((theme) => ({
@@ -42,16 +43,11 @@ const useStyles = createStyles((theme) => ({
 	},
 }));
 
-interface Props {
-	serverUrl: string;
-	user: Omit<User, "password"> | null;
-}
-
-export default function Header(props: Props) {
+export default function Header({ user }: { user: Omit<User, "password"> | null }) {
 	const theme = useMantineTheme();
 	const { classes } = useStyles();
 	const menuStore = useMenuStore();
-	const clientUrl = usePathname()?.split("/dashboard")[1];
+	const url = useUrl().split("/dashboard")[1]!;
 
 	interface Breadcrumb {
 		path: string;
@@ -72,17 +68,13 @@ export default function Header(props: Props) {
 
 		return result;
 	}, []);
-	const [breadcrumbs, setBreadcrumbs] = useState<Breadcrumb[]>(
-		getBreadcrumbsFromPath(props.serverUrl.split("/dashboard")[1]!)
-	);
+	const [breadcrumbs, setBreadcrumbs] = useState<Breadcrumb[]>(getBreadcrumbsFromPath(url));
 
 	useEffect(() => {
 		// This is a workaround for the fact that usePathname() doesn't immediately return the url
 		// We do this instead of displaying a loading state for the breadcrumbs
-		setBreadcrumbs(
-			getBreadcrumbsFromPath(clientUrl ?? props.serverUrl.split("/dashboard")[1]!)
-		);
-	}, [props.serverUrl, clientUrl, getBreadcrumbsFromPath]);
+		setBreadcrumbs(getBreadcrumbsFromPath(url));
+	}, [url, getBreadcrumbsFromPath]);
 
 	return (
 		<header className="sticky top-0 shadow-md">
@@ -111,7 +103,7 @@ export default function Header(props: Props) {
 					</Breadcrumbs>
 				</Group>
 
-				<UserMenu user={props.user} />
+				<UserMenu user={user} />
 			</Group>
 		</header>
 	);
