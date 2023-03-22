@@ -74,6 +74,7 @@ export default function UserMenu({ user }: { user: Omit<User, "password"> | null
 						</Group>
 					</UnstyledButton>
 				</Menu.Target>
+
 				<Menu.Dropdown
 					className="shadow-md"
 					sx={(theme) => ({

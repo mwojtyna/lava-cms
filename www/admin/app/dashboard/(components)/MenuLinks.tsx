@@ -38,7 +38,7 @@ export default function MenuLinks({ version }: { version: string }) {
 				</Group>
 			</Navbar.Section>
 
-			<Navbar.Section bg={getCardBgColor(theme)} grow>
+			<Navbar.Section bg={getCardBgColor(theme)}>
 				{menuRoutes.map((item, index) => (
 					<NavLink
 						key={index}
