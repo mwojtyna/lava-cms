@@ -88,7 +88,7 @@ test.describe("sign up step", () => {
 		await page.waitForURL(/\/auth\/signup/);
 
 		expect(page.url()).toMatch(/\/auth\/signup/);
-		await expect(page.locator("text=Setup website").first()).toBeInViewport();
+		await expect(page.locator("h1").first()).toHaveText("Setup website");
 	});
 });
 
