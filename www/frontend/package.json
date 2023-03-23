@@ -1,8 +1,8 @@
 {
 	"name": "frontend",
 	"version": "0.0.4",
-	"type": "module",
 	"private": true,
+	"type": "module",
 	"scripts": {
 		"start": "NODE_ENV=production http-server -p 3000 ./dist",
 		"dev": "NODE_ENV=development astro dev --port 3000",
@@ -15,9 +15,5 @@
 		"api": "workspace:*",
 		"astro": "^2.0.7",
 		"http-server": "^14.1.1"
-	},
-	"devDependencies": {
-		"@typescript-eslint/eslint-plugin": "^5.51.0",
-		"@typescript-eslint/parser": "^5.51.0"
 	}
 }

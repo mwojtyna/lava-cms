@@ -15,7 +15,6 @@ import {
 	TextInput,
 	Title,
 	Tooltip,
-	useMantineTheme,
 } from "@mantine/core";
 import { ArrowDownOnSquareIcon } from "@heroicons/react/24/outline";
 import { QuestionMarkCircleIcon } from "@heroicons/react/20/solid";
