@@ -6,7 +6,6 @@ import Header from "./(components)/Header";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@admin/src/pages/api/auth/[...nextauth]";
 import { trpc } from "@admin/src/utils/trpc";
-import { useServerUrlStore } from "@admin/src/data/stores/dashboard";
 import ZustandInitializer from "../zustandInitializer";
 
 export const metadata: Metadata = {
