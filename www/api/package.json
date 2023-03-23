@@ -45,6 +45,6 @@
 		"supertest": "^6.3.3",
 		"vite": "^4.1.1",
 		"vitest": "0.28.3",
-		"vitest-mock-extended": "^1.0.9"
+		"vitest-mock-extended": "1.0.9"
 	}
 }

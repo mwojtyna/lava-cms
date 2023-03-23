@@ -132,7 +132,7 @@ importers:
       tsx: ^3.12.3
       vite: ^4.1.1
       vitest: 0.28.3
-      vitest-mock-extended: ^1.0.9
+      vitest-mock-extended: 1.0.9
       zod: ^3.20.2
     dependencies:
       '@mswjs/http-middleware': 0.6.0_wy5jjvi7gajqfboqhyuwt55mh4
@@ -163,7 +163,7 @@ importers:
       supertest: 6.3.3
       vite: 4.2.1_@types+node@18.15.5
       vitest: 0.28.3_@vitest+ui@0.28.3
-      vitest-mock-extended: 1.1.3_vitest@0.28.3
+      vitest-mock-extended: 1.0.9_vitest@0.28.3
 
   frontend:
     specifiers:
@@ -7728,11 +7728,11 @@ packages:
       vite: 4.2.1
     dev: false
 
-  /vitest-mock-extended/1.1.3_vitest@0.28.3:
-    resolution: {integrity: sha512-MiaKYZbTg+fjozKnCpoTTva0BnlSNYyk4jiPuM2xVhg4aou112QIrALdH3/ZKK6qfXWh0A17gFIjWJjylOlXxg==}
+  /vitest-mock-extended/1.0.9_vitest@0.28.3:
+    resolution: {integrity: sha512-avWOwla4xsubFUbL1O2Zvqn8xUucQWai05ryywfhjUIthkjJKk01g5/s4SrjTHZXGZ2/h6NfF51FJ3voix1OAw==}
     peerDependencies:
-      typescript: 3.x || 4.x || 5.x
-      vitest: '>=0.29.2'
+      typescript: 3.x || 4.x
+      vitest: '>=0.26.2'
     peerDependenciesMeta:
       typescript:
         optional: true
