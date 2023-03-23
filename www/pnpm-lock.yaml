@@ -1402,6 +1402,9 @@ packages:
     resolution: {integrity: sha512-2d+6r2C/xygTjDWX9jT66defgHzbQP0Z8vrvyT3XtPjqU6JNlRNuS2ZtB8xDPdOQUUVnndzZ43BMr+Zu49K0OQ==}
     peerDependencies:
       '@trpc/server': 10.18.0
+    peerDependenciesMeta:
+      '@trpc/server':
+        optional: true
     dependencies:
       '@trpc/server': 10.18.0
     dev: false
@@ -1414,6 +1417,11 @@ packages:
       '@trpc/server': 10.18.0
       react: '>=16.8.0'
       react-dom: '>=16.8.0'
+    peerDependenciesMeta:
+      '@trpc/client':
+        optional: true
+      '@trpc/server':
+        optional: true
     dependencies:
       '@tanstack/react-query': 4.28.0_biqbaboplfbrettd7655fr4n2y
       react: 18.2.0
@@ -5262,6 +5270,9 @@ packages:
     peerDependencies:
       '@trpc/server': '>=10.9.0'
       msw: '>=0.49.3'
+    peerDependenciesMeta:
+      '@trpc/server':
+        optional: true
     dependencies:
       msw: 0.49.3
     dev: true
@@ -7125,6 +7136,9 @@ packages:
     peerDependencies:
       '@trpc/server': ^10.0.0
       zod: ^3.19.1
+    peerDependenciesMeta:
+      '@trpc/server':
+        optional: true
     dependencies:
       fs: 0.0.1-security
       fuzzysort: 2.0.4
@@ -7138,6 +7152,9 @@ packages:
     resolution: {integrity: sha512-9CChSvQMyVRo29Vb1A2jbs+LKo3d/bAf+ndSaX0T8cEiy/HChVaRN/HY5DqUryZ8hZ6uol9bEgCnGmnDbwBR9Q==}
     peerDependencies:
       typescript: '>=4.1.0'
+    peerDependenciesMeta:
+      typescript:
+        optional: true
     dev: true
 
   /tsconfig-paths/3.14.2:
@@ -7172,6 +7189,9 @@ packages:
     engines: {node: '>= 6'}
     peerDependencies:
       typescript: '>=2.8.0 || >= 3.2.0-dev || >= 3.3.0-dev || >= 3.4.0-dev || >= 3.5.0-dev || >= 3.6.0-dev || >= 3.6.0-beta || >= 3.7.0-dev || >= 3.7.0-beta'
+    peerDependenciesMeta:
+      typescript:
+        optional: true
     dependencies:
       tslib: 1.14.1
     dev: true
@@ -7691,6 +7711,9 @@ packages:
     peerDependencies:
       typescript: 3.x || 4.x || 5.x
       vitest: '>=0.29.2'
+    peerDependenciesMeta:
+      typescript:
+        optional: true
     dependencies:
       ts-essentials: 9.3.1
       vitest: 0.28.3_@vitest+ui@0.28.3

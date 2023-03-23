@@ -1,6 +1,15 @@
 {
 	"name": "lava-cms",
 	"version": "0.0.4",
+	"pnpm": {
+		"peerDependencyRules": {
+			"ignoreMissing": [
+				"@trpc/server",
+				"@trpc/client",
+				"typescript"
+			]
+		}
+	},
 	"scripts": {
 		"start": "FORCE_COLOR=1 turbo start",
 		"dev": "FORCE_COLOR=1 turbo dev",
