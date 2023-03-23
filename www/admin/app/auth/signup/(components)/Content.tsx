@@ -1,9 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { lazy, useState } from "react";
 import { Stepper } from "@mantine/core";
 import SignUpForm from "./SignUpForm";
-import SetupForm from "./SetupForm";
+const SetupForm = lazy(() => import("./SetupForm"));
 
 export default function Content({ stage }: { stage: number }) {
 	const [active, setActive] = useState(stage);
