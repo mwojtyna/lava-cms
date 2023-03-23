@@ -6,7 +6,7 @@ import { Navbar, useMantineTheme, NavLink, Group, Code, createStyles } from "@ma
 import { getBorderColor, getCardBgColor, getHoverColor } from "@admin/app/mantine";
 import { useUrl } from "@admin/src/hooks/useUrl";
 import logo from "@admin/public/img/logo.svg";
-import { menuRoutes } from "@admin/src/data/routes";
+import { rootRoutes } from "@admin/src/data/menuRoutes";
 
 const useStyles = createStyles((theme) => ({
 	logo: {
@@ -39,7 +39,7 @@ export default function MenuLinks({ version }: { version: string }) {
 			</Navbar.Section>
 
 			<Navbar.Section bg={getCardBgColor(theme)}>
-				{menuRoutes.map((item, index) => (
+				{rootRoutes.map((item, index) => (
 					<NavLink
 						key={index}
 						component={Link}

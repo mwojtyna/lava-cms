@@ -17,7 +17,7 @@ import { getCardBgColor } from "@admin/app/mantine";
 import UserMenu from "./UserMenu";
 import type { User } from "api/prisma/types";
 import { useUrl } from "@admin/src/hooks/useUrl";
-import { menuRoutes } from "@admin/src/data/routes";
+import { rootRoutes } from "@admin/src/data/menuRoutes";
 
 const poppins = Poppins({ weight: "700", subsets: ["latin"] });
 const useStyles = createStyles((theme) => ({
@@ -62,7 +62,7 @@ export default function Header({ user }: { user: Omit<User, "password"> | null }
 				previousSegments += "/" + segments[j];
 			}
 
-			const route = menuRoutes.find(
+			const route = rootRoutes.find(
 				(route) => route.path === `${previousSegments}/${segments[i]}`
 			);
 			if (route) {

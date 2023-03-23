@@ -7,7 +7,7 @@ interface Route {
 	startingRoute?: boolean;
 }
 
-export const menuRoutes: Route[] = [
+export const rootRoutes: Route[] = [
 	{
 		label: "Start",
 		path: "/dashboard",
