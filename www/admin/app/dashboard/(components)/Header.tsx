@@ -11,13 +11,14 @@ import {
 	MediaQuery,
 	useMantineTheme,
 	Anchor,
+	Text,
 } from "@mantine/core";
 import { useMenuStore } from "@admin/src/data/stores/dashboard";
 import { getCardBgColor } from "@admin/app/mantine";
 import UserMenu from "./UserMenu";
 import type { User } from "api/prisma/types";
 import { useUrl } from "@admin/src/hooks/useUrl";
-import { rootRoutes } from "@admin/src/data/menuRoutes";
+import { getRoute } from "@admin/src/data/menuRoutes";
 
 const poppins = Poppins({ weight: "700", subsets: ["latin"] });
 const useStyles = createStyles((theme) => ({
@@ -29,7 +30,6 @@ const useStyles = createStyles((theme) => ({
 		transition: "opacity 150ms ease-in-out",
 
 		"&:hover": {
-			opacity: 0.8,
 			textDecoration: "none",
 		},
 	},
@@ -51,6 +51,7 @@ export default function Header({ user }: { user: Omit<User, "password"> | null }
 	interface Breadcrumb {
 		path: string;
 		name: React.ReactNode;
+		hasChildren: boolean;
 	}
 	const getBreadcrumbsFromPath = useCallback((path: string) => {
 		const segments = path.split("/").filter((segment) => segment !== "");
@@ -62,9 +63,7 @@ export default function Header({ user }: { user: Omit<User, "password"> | null }
 				previousSegments += "/" + segments[j];
 			}
 
-			const route = rootRoutes.find(
-				(route) => route.path === `${previousSegments}/${segments[i]}`
-			);
+			const route = getRoute(`${previousSegments}/${segments[i]}`);
 			if (route) {
 				// If the route is a starting (/dashboard) route, only show it if it's the only segment
 				if (
@@ -79,10 +78,15 @@ export default function Header({ user }: { user: Omit<User, "password"> | null }
 							</Group>
 						),
 						path: route.path,
+						hasChildren: !!route.children || i === segments.length - 1,
 					});
 				}
 			} else {
-				result.push({ name: segments[i]!, path: `${previousSegments}/${segments[i]}` });
+				result.push({
+					name: segments[i]!,
+					path: `${previousSegments}/${segments[i]}`,
+					hasChildren: false,
+				});
 			}
 		}
 
@@ -91,8 +95,6 @@ export default function Header({ user }: { user: Omit<User, "password"> | null }
 	const [breadcrumbs, setBreadcrumbs] = useState<Breadcrumb[]>(getBreadcrumbsFromPath(url));
 
 	useEffect(() => {
-		// This is a workaround for the fact that usePathname() doesn't immediately return the url
-		// We do this instead of displaying a loading state for the breadcrumbs
 		setBreadcrumbs(getBreadcrumbsFromPath(url));
 	}, [url, getBreadcrumbsFromPath]);
 
@@ -110,16 +112,27 @@ export default function Header({ user }: { user: Omit<User, "password"> | null }
 							separator: classes.separator,
 						}}
 					>
-						{breadcrumbs.map((breadcrumb, i) => (
-							<Anchor
-								key={i}
-								component={Link}
-								href={breadcrumb.path}
-								underline={false}
-							>
-								{breadcrumb.name}
-							</Anchor>
-						))}
+						{breadcrumbs.map((breadcrumb, i) => {
+							if (breadcrumb.hasChildren) {
+								return <Text key={i}>{breadcrumb.name}</Text>;
+							} else {
+								return (
+									<Anchor
+										key={i}
+										component={Link}
+										href={breadcrumb.path}
+										underline={false}
+										sx={{
+											"&:hover": {
+												opacity: 0.8,
+											},
+										}}
+									>
+										{breadcrumb.name}
+									</Anchor>
+								);
+							}
+						})}
 					</Breadcrumbs>
 				</Group>
 

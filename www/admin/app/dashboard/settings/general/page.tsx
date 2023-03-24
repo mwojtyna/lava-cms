@@ -1,5 +1,5 @@
 function Dashboard() {
-	return <>Settings</>;
+	return <>General</>;
 }
 
 export default Dashboard;

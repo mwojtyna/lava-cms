@@ -5,9 +5,11 @@ interface Route {
 	path: string;
 	icon?: React.ReactNode;
 	startingRoute?: boolean;
+	children?: ChildRoute[];
 }
+type ChildRoute = Omit<Route, "children">;
 
-export const rootRoutes: Route[] = [
+export const routes: Route[] = [
 	{
 		label: "Start",
 		path: "/dashboard",
@@ -18,5 +20,23 @@ export const rootRoutes: Route[] = [
 		label: "Settings",
 		path: "/dashboard/settings",
 		icon: <Cog6ToothIcon className="w-5" />,
+		children: [
+			{
+				label: "General",
+				path: "/dashboard/settings/general",
+			},
+		],
 	},
 ];
+
+export function getRoute(path: string): Route | undefined {
+	for (const route of routes) {
+		if (route.path === path) return route;
+
+		if (route.children) {
+			for (const child of route.children) {
+				if (child.path === path) return child;
+			}
+		}
+	}
+}

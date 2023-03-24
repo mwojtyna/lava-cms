@@ -6,7 +6,7 @@ import { Navbar, useMantineTheme, NavLink, Group, Code, createStyles } from "@ma
 import { getBorderColor, getCardBgColor, getHoverColor } from "@admin/app/mantine";
 import { useUrl } from "@admin/src/hooks/useUrl";
 import logo from "@admin/public/img/logo.svg";
-import { rootRoutes } from "@admin/src/data/menuRoutes";
+import { routes } from "@admin/src/data/menuRoutes";
 
 const useStyles = createStyles((theme) => ({
 	logo: {
@@ -39,11 +39,11 @@ export default function MenuLinks({ version }: { version: string }) {
 			</Navbar.Section>
 
 			<Navbar.Section bg={getCardBgColor(theme)}>
-				{rootRoutes.map((item, index) => (
+				{routes.map((item, index) => (
 					<NavLink
 						key={index}
 						component={Link}
-						childrenOffset="md"
+						childrenOffset={0}
 						p="md"
 						href={item.path}
 						label={item.label}
@@ -52,6 +52,7 @@ export default function MenuLinks({ version }: { version: string }) {
 							(item.startingRoute && url === item.path) ||
 							(!item.startingRoute && url.startsWith(item.path))
 						}
+						defaultOpened={url.startsWith(item.path)}
 						variant="filled"
 						styles={(theme) => ({
 							root: {
@@ -61,7 +62,19 @@ export default function MenuLinks({ version }: { version: string }) {
 							},
 						})}
 					>
-						{/* {drawChildren(item)} */}
+						{item.children?.map((child, index) => (
+							<NavLink
+								key={index}
+								component={Link}
+								p="md"
+								pl="3rem"
+								href={child.path}
+								label={child.label}
+								icon={child.icon}
+								active={url === child.path}
+								variant="light"
+							/>
+						))}
 					</NavLink>
 				))}
 			</Navbar.Section>
