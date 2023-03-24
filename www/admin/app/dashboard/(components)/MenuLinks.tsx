@@ -7,6 +7,7 @@ import { getBorderColor, getCardColor, getHoverColor } from "@admin/app/mantine"
 import { useUrl } from "@admin/src/hooks/useUrl";
 import { routes } from "@admin/src/data/menuRoutes";
 import logo from "@admin/public/img/logo.svg";
+import { useMenuStore } from "@admin/src/data/stores/dashboard";
 
 const useStyles = createStyles((theme) => ({
 	logo: {
@@ -31,6 +32,7 @@ export default function MenuLinks({ version }: { version: string }) {
 	const theme = useMantineTheme();
 	const { classes } = useStyles();
 	const url = useUrl();
+	const { toggle } = useMenuStore();
 
 	return (
 		<>
@@ -67,6 +69,7 @@ export default function MenuLinks({ version }: { version: string }) {
 						}
 						defaultOpened={url.startsWith(item.path)}
 						classNames={{ root: classes.navLink }}
+						onClick={!item.children ? () => toggle() : undefined}
 					>
 						{item.children?.map((child, index) => (
 							<NavLink
@@ -79,6 +82,7 @@ export default function MenuLinks({ version }: { version: string }) {
 								icon={child.icon ?? <span className="w-5" />}
 								active={url === child.path}
 								classNames={{ root: classes.navLink }}
+								onClick={toggle}
 							/>
 						))}
 					</NavLink>
