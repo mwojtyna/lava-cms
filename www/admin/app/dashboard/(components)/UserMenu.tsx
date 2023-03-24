@@ -2,7 +2,15 @@
 
 import { useEffect, useState } from "react";
 import { signOut } from "next-auth/react";
-import { Avatar, Group, UnstyledButton, Text, Menu, useMantineColorScheme } from "@mantine/core";
+import {
+	Avatar,
+	Group,
+	UnstyledButton,
+	Text,
+	Menu,
+	useMantineColorScheme,
+	MediaQuery,
+} from "@mantine/core";
 import { useClickOutside, useDisclosure, useElementSize, useHotkeys } from "@mantine/hooks";
 import { ChevronRightIcon, ArrowLeftOnRectangleIcon } from "@heroicons/react/24/solid";
 import ThemeSwitch from "@admin/app/(components)/ThemeSwitch";
@@ -53,10 +61,12 @@ export default function UserMenu({ user }: { user: Omit<User, "password"> | null
 						onClick={toggle}
 					>
 						<Group>
-							<Avatar radius="sm" color={"blue"}>
-								{user?.name[0]}
-								{user?.last_name[0]}
-							</Avatar>
+							<MediaQuery smallerThan={"xs"} styles={{ display: "none" }}>
+								<Avatar radius="sm" color={"blue"}>
+									{user?.name[0]}
+									{user?.last_name[0]}
+								</Avatar>
+							</MediaQuery>
 							<div>
 								<Text>
 									{user?.name} {user?.last_name}
@@ -79,6 +89,7 @@ export default function UserMenu({ user }: { user: Omit<User, "password"> | null
 					className="shadow-md"
 					sx={(theme) => ({
 						borderBottomLeftRadius: theme.radius.sm,
+						borderBottomRightRadius: theme.radius.sm,
 					})}
 				>
 					<Menu.Item onClick={() => toggleColorScheme()}>
