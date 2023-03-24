@@ -14,7 +14,7 @@ import {
 	Text,
 } from "@mantine/core";
 import { useMenuStore } from "@admin/src/data/stores/dashboard";
-import { getCardBgColor } from "@admin/app/mantine";
+import { getCardColor } from "@admin/app/mantine";
 import UserMenu from "./UserMenu";
 import type { User } from "api/prisma/types";
 import { useUrl } from "@admin/src/hooks/useUrl";
@@ -100,7 +100,7 @@ export default function Header({ user }: { user: Omit<User, "password"> | null }
 
 	return (
 		<header className="sticky top-0 shadow-md">
-			<Group bg={getCardBgColor(theme)} align={"center"} position={"apart"} spacing={0}>
+			<Group bg={getCardColor(theme)} align={"center"} position={"apart"} spacing={0}>
 				<Group noWrap p="lg">
 					<MediaQuery largerThan={"md"} styles={{ display: "none" }}>
 						<Burger size={"md"} opened={menuStore.isOpen} onClick={menuStore.toggle} />

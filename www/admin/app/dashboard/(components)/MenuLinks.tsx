@@ -3,15 +3,27 @@
 import Link from "next/link";
 import Image from "next/image";
 import { Navbar, useMantineTheme, NavLink, Group, Code, createStyles } from "@mantine/core";
-import { getBorderColor, getCardBgColor, getHoverColor } from "@admin/app/mantine";
+import { getBorderColor, getCardColor, getHoverColor } from "@admin/app/mantine";
 import { useUrl } from "@admin/src/hooks/useUrl";
-import logo from "@admin/public/img/logo.svg";
 import { routes } from "@admin/src/data/menuRoutes";
+import logo from "@admin/public/img/logo.svg";
 
 const useStyles = createStyles((theme) => ({
 	logo: {
 		// TODO: Temporary, before we get a proper logo
 		filter: theme.colorScheme === "dark" ? "none" : "contrast(200%) brightness(50%)",
+	},
+	navLink: {
+		"&:hover": {
+			color: theme.colorScheme === "dark" ? theme.white : theme.black,
+		},
+		"&[data-active], &[data-active]:hover": {
+			color: theme.colorScheme === "dark" ? theme.white : theme.black,
+			backgroundColor: getHoverColor(theme),
+			boxShadow: `-100px 0 0 0 ${
+				theme.colorScheme === "dark" ? theme.colors.blue[8] : theme.colors.blue[5]
+			}`,
+		},
 	},
 }));
 
@@ -26,7 +38,7 @@ export default function MenuLinks({ version }: { version: string }) {
 				<Group
 					position="center"
 					py={"xl"}
-					bg={getCardBgColor(theme)}
+					bg={getCardColor(theme)}
 					sx={{
 						borderBottom: `1px solid ${getBorderColor(theme)}`,
 					}}
@@ -38,13 +50,14 @@ export default function MenuLinks({ version }: { version: string }) {
 				</Group>
 			</Navbar.Section>
 
-			<Navbar.Section bg={getCardBgColor(theme)}>
+			<Navbar.Section bg={getCardColor(theme)} pl="5px">
 				{routes.map((item, index) => (
 					<NavLink
 						key={index}
 						component={Link}
 						childrenOffset={0}
-						p="md"
+						px="md"
+						py="sm"
 						href={item.path}
 						label={item.label}
 						icon={item.icon}
@@ -53,26 +66,19 @@ export default function MenuLinks({ version }: { version: string }) {
 							(!item.startingRoute && url.startsWith(item.path))
 						}
 						defaultOpened={url.startsWith(item.path)}
-						variant="filled"
-						styles={(theme) => ({
-							root: {
-								"&:hover": {
-									backgroundColor: getHoverColor(theme),
-								},
-							},
-						})}
+						classNames={{ root: classes.navLink }}
 					>
 						{item.children?.map((child, index) => (
 							<NavLink
 								key={index}
 								component={Link}
-								p="md"
-								pl="3rem"
+								px="md"
+								py="sm"
 								href={child.path}
 								label={child.label}
-								icon={child.icon}
+								icon={child.icon ?? <span className="w-5" />}
 								active={url === child.path}
-								variant="light"
+								classNames={{ root: classes.navLink }}
 							/>
 						))}
 					</NavLink>

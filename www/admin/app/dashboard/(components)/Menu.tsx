@@ -3,7 +3,7 @@
 import { Navbar, Drawer, MediaQuery } from "@mantine/core";
 import { useMenuStore } from "@admin/src/data/stores/dashboard";
 import MenuLinks from "./MenuLinks";
-import { getCardBgColor } from "@admin/app/mantine";
+import { getCardColor } from "@admin/app/mantine";
 
 export default function Menu({ version }: { version: string }) {
 	const menuStore = useMenuStore();
@@ -20,7 +20,7 @@ export default function Menu({ version }: { version: string }) {
 					padding={0}
 					styles={(theme) => ({
 						content: {
-							backgroundColor: getCardBgColor(theme),
+							backgroundColor: getCardColor(theme),
 						},
 					})}
 				>
@@ -35,7 +35,7 @@ export default function Menu({ version }: { version: string }) {
 						flexShrink: 0,
 						height: "100vh",
 						overflow: "auto",
-						backgroundColor: getCardBgColor(theme),
+						backgroundColor: getCardColor(theme),
 					})}
 				>
 					<MenuLinks version={version} />
