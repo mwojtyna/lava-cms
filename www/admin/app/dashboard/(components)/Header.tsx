@@ -2,7 +2,6 @@
 
 import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
-import { Poppins } from "next/font/google";
 import {
 	Breadcrumbs,
 	Burger,
@@ -14,13 +13,12 @@ import {
 	Text,
 } from "@mantine/core";
 import { useMenuStore } from "@admin/src/data/stores/dashboard";
-import { getCardColor } from "@admin/app/mantine";
+import { getCardColor, poppins } from "@admin/app/mantine";
 import UserMenu from "./UserMenu";
 import type { User } from "api/prisma/types";
 import { useUrl } from "@admin/src/hooks/useUrl";
 import { getRoute } from "@admin/src/data/menuRoutes";
 
-const poppins = Poppins({ weight: "700", subsets: ["latin"] });
 const useStyles = createStyles((theme) => ({
 	breadcrumb: {
 		color: theme.colorScheme === "dark" ? theme.colors.dark[0] : theme.colors.dark[4],

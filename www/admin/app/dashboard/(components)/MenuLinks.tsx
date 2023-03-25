@@ -2,18 +2,24 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { Navbar, useMantineTheme, NavLink, Group, Code, createStyles } from "@mantine/core";
+import {
+	Navbar,
+	useMantineTheme,
+	NavLink,
+	Group,
+	Code,
+	createStyles,
+	Title,
+	Anchor,
+} from "@mantine/core";
 import { getBorderColor, getCardColor, getHoverColor } from "@admin/app/mantine";
 import { useUrl } from "@admin/src/hooks/useUrl";
 import { routes } from "@admin/src/data/menuRoutes";
-import logo from "@admin/public/img/logo.svg";
+import logo from "@admin/public/img/logo.png";
 import { useMenuStore } from "@admin/src/data/stores/dashboard";
+import { useRef } from "react";
 
 const useStyles = createStyles((theme) => ({
-	logo: {
-		// TODO: Temporary, before we get a proper logo
-		filter: theme.colorScheme === "dark" ? "none" : "contrast(200%) brightness(50%)",
-	},
 	navLink: {
 		"&:hover": {
 			color: theme.colorScheme === "dark" ? theme.white : theme.black,
@@ -27,27 +33,80 @@ const useStyles = createStyles((theme) => ({
 		},
 	},
 }));
+const TRANSITION_TIME = 250;
+const TRANSITION = `background-position ${TRANSITION_TIME}ms ease-in-out`;
 
 export default function MenuLinks({ version }: { version: string }) {
 	const theme = useMantineTheme();
 	const { classes } = useStyles();
+
 	const url = useUrl();
 	const { toggle } = useMenuStore();
+	const title = useRef<HTMLDivElement>(null);
 
 	return (
 		<>
 			<Navbar.Section>
 				<Group
 					position="center"
-					py={"xl"}
+					py={"2rem"}
 					bg={getCardColor(theme)}
 					sx={{
 						borderBottom: `1px solid ${getBorderColor(theme)}`,
 					}}
 				>
-					<Link href={"/dashboard"}>
-						<Image className={classes.logo} src={logo} alt={"logo"} width={150} />
-					</Link>
+					<Anchor
+						component={Link}
+						href={"/dashboard"}
+						sx={{
+							"&:hover": { textDecoration: "none" },
+						}}
+						onMouseOver={() => {
+							if (title.current) {
+								title.current.style.backgroundPosition = "center";
+							}
+						}}
+						onMouseLeave={() => {
+							if (title.current) {
+								title.current.style.backgroundPosition = "left";
+
+								setTimeout(() => {
+									title.current!.style.transition = "none";
+									title.current!.style.backgroundPosition = "right";
+
+									setTimeout(() => {
+										title.current!.style.transition = TRANSITION;
+									}, TRANSITION_TIME);
+								}, TRANSITION_TIME);
+							}
+						}}
+					>
+						<Group>
+							<Image src={logo} alt={"logo"} width={35} />
+							<Title
+								ref={title}
+								order={1}
+								sx={{
+									backgroundImage: `linear-gradient(120deg, ${
+										theme.colors.orange[5]
+									} 0%, ${theme.colors.orange[5]} 42.5%, ${theme.fn.lighten(
+										theme.colors.orange[5],
+										0.7
+									)} 50%, ${theme.fn.lighten(theme.colors.orange[5], 0.7)} 50%, ${
+										theme.colors.orange[5]
+									} 57.5%, ${theme.colors.orange[5]} 100%)`,
+
+									WebkitBackgroundClip: "text",
+									WebkitTextFillColor: "transparent",
+									backgroundSize: "300% 100%",
+									backgroundPosition: "right",
+									transition: TRANSITION,
+								}}
+							>
+								LAVA
+							</Title>
+						</Group>
+					</Anchor>
 					<Code bg={getBorderColor(theme)}>v{version}</Code>
 				</Group>
 			</Navbar.Section>
