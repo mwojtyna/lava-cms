@@ -20,12 +20,6 @@ export const routes: Route[] = [
 		label: "Settings",
 		path: "/dashboard/settings",
 		icon: <Cog6ToothIcon className="w-5" />,
-		children: [
-			{
-				label: "General",
-				path: "/dashboard/settings/general",
-			},
-		],
 	},
 ];
 

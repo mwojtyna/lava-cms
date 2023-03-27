@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { headers } from "next/headers";
 import Menu from "./(components)/Menu";
 import Header from "./(components)/Header";
+import Section from "./(components)/Section";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@admin/src/pages/api/auth/[...nextauth]";
 import { trpc } from "@admin/src/utils/trpc";
@@ -26,17 +27,13 @@ export default async function Dashboard({ children }: { children: React.ReactNod
 
 			<Menu version={version} />
 
-			<div className="flex max-h-screen flex-grow flex-col gap-4 overflow-visible md:overflow-auto">
+			<div className="max-h-screen w-full overflow-visible md:overflow-auto">
 				<Header user={user} />
 
 				<main>
 					{React.Children.map(children, (child, i) => {
 						if (child) {
-							return (
-								<div key={i} className="p-4">
-									{child}
-								</div>
-							);
+							return <Section key={i}>{child}</Section>;
 						}
 					})}
 				</main>
