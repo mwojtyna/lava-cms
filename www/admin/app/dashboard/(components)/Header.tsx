@@ -21,12 +21,14 @@ import { getRoute } from "@admin/src/data/menuRoutes";
 
 const useStyles = createStyles((theme) => ({
 	breadcrumb: {
-		color: theme.colorScheme === "dark" ? theme.colors.dark[0] : theme.colors.dark[4],
 		fontFamily: poppins.style.fontFamily,
-		fontSize: theme.fontSizes.lg,
+		fontSize: theme.fontSizes.xl,
 		fontWeight: 700,
 		transition: "opacity 150ms ease-in-out",
 
+		"& svg": {
+			width: "1.5rem",
+		},
 		"&:hover": {
 			textDecoration: "none",
 		},
@@ -111,7 +113,7 @@ export default function Header({ user }: { user: Omit<User, "password"> | null }
 						}}
 					>
 						{breadcrumbs.map((breadcrumb, i) => {
-							if (breadcrumb.hasChildren) {
+							if (breadcrumb.hasChildren || i === breadcrumbs.length - 1) {
 								return <Text key={i}>{breadcrumb.name}</Text>;
 							} else {
 								return (

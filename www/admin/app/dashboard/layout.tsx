@@ -1,9 +1,7 @@
-import React from "react";
 import type { Metadata } from "next";
 import { headers } from "next/headers";
 import Menu from "./(components)/Menu";
 import Header from "./(components)/Header";
-import Section from "./(components)/Section";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@admin/src/pages/api/auth/[...nextauth]";
 import { trpc } from "@admin/src/utils/trpc";
@@ -30,13 +28,7 @@ export default async function Dashboard({ children }: { children: React.ReactNod
 			<div className="max-h-screen w-full overflow-visible md:overflow-auto">
 				<Header user={user} />
 
-				<main>
-					{React.Children.map(children, (child, i) => {
-						if (child) {
-							return <Section key={i}>{child}</Section>;
-						}
-					})}
-				</main>
+				<main>{children}</main>
 			</div>
 		</div>
 	);
