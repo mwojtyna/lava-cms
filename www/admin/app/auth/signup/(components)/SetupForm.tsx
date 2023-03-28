@@ -75,7 +75,10 @@ export default function SetupForm() {
 				/>
 				<Textarea
 					classNames={{ label: classes.label }}
+					placeholder="This website is very awesome and fun!"
 					size="md"
+					autosize
+					minRows={2}
 					label={
 						<>
 							Description
@@ -84,7 +87,6 @@ export default function SetupForm() {
 							</Tooltip>
 						</>
 					}
-					placeholder="This website is very awesome and fun!"
 					{...register("description")}
 				/>
 				<TextInput

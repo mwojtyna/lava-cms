@@ -5,9 +5,9 @@ import { type SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { check } from "language-tags";
+import { CheckCircleIcon } from "@heroicons/react/24/outline";
 import Content from "@admin/app/dashboard/(components)/Content";
 import { trpc } from "@admin/src/utils/trpc";
-import { CheckCircleIcon } from "@heroicons/react/24/outline";
 
 export default function Settings() {
 	const inputSchema = z
@@ -24,7 +24,7 @@ export default function Settings() {
 	const {
 		register,
 		handleSubmit,
-		formState: { errors, isSubmitting, isSubmitSuccessful },
+		formState: { errors, isSubmitting },
 	} = useForm<Inputs>({ mode: "onChange", resolver: zodResolver(inputSchema) });
 
 	const onSubmit: SubmitHandler<Inputs> = async (data) => {
@@ -43,7 +43,7 @@ export default function Settings() {
 				</Stack>
 
 				<form onSubmit={handleSubmit(onSubmit)}>
-					<Stack spacing={"md"} maw={512}>
+					<Stack spacing={"md"} maw={"32rem"}>
 						<TextInput
 							label="Title"
 							placeholder="My awesome website"
@@ -54,6 +54,8 @@ export default function Settings() {
 						<Textarea
 							label="Description"
 							placeholder="This website is very awesome and fun!"
+							autosize
+							minRows={2}
 							{...register("description")}
 						/>
 						<TextInput
@@ -67,16 +69,9 @@ export default function Settings() {
 						<Group position="right">
 							<Button
 								type="submit"
-								leftIcon={
-									!isSubmitting &&
-									!isSubmitSuccessful && <CheckCircleIcon className="w-5" />
-								}
+								leftIcon={!isSubmitting && <CheckCircleIcon className="w-5" />}
 							>
-								{isSubmitting || isSubmitSuccessful ? (
-									<Loader variant="dots" color="#fff" />
-								) : (
-									<>Save</>
-								)}
+								{isSubmitting ? <Loader variant="dots" color="#fff" /> : <>Save</>}
 							</Button>
 						</Group>
 					</Stack>

@@ -99,7 +99,7 @@ export default function Header({ user }: { user: Omit<User, "password"> | null }
 	}, [url, getBreadcrumbsFromPath]);
 
 	return (
-		<header className="sticky top-0 shadow-md">
+		<header className="sticky top-0 z-10 shadow-md">
 			<Group bg={getCardColor(theme)} align={"center"} position={"apart"} spacing={0}>
 				<Group noWrap p="lg">
 					<MediaQuery largerThan={"md"} styles={{ display: "none" }}>
