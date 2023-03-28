@@ -14,7 +14,7 @@ export const setConfig = publicProcedure
 		const config = await prisma.config.findFirst();
 
 		if (!config) {
-			return prisma.config.create({
+			await prisma.config.create({
 				data: {
 					title: input.title,
 					description: input.description,
@@ -22,7 +22,7 @@ export const setConfig = publicProcedure
 				},
 			});
 		} else {
-			return prisma.config.update({
+			await prisma.config.update({
 				where: {
 					id: config.id,
 				},
