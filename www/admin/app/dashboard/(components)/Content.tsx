@@ -13,11 +13,12 @@ export default function Content({ children }: { children: React.ReactNode }) {
 		<>
 			{Children.map(children, (child) => (
 				<Box
+					className="shadow"
 					component="section"
-					m="md"
 					p="md"
 					sx={(theme) => ({
 						backgroundColor: getCardColor(theme),
+						borderRadius: theme.radius.sm,
 					})}
 				>
 					{child}

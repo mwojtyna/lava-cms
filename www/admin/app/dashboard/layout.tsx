@@ -28,7 +28,7 @@ export default async function Dashboard({ children }: { children: React.ReactNod
 			<div className="max-h-screen w-full overflow-visible md:overflow-auto">
 				<Header user={user} />
 
-				<main>{children}</main>
+				<main className="p-4">{children}</main>
 			</div>
 		</div>
 	);
