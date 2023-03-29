@@ -2,5 +2,8 @@ import { publicProcedure } from "@api/trpc";
 import { prisma } from "@api/prisma/client";
 
 export const getConfig = publicProcedure.query(async () => {
-	return await prisma.config.findFirstOrThrow();
+	const config = await prisma.config.findFirstOrThrow();
+	const { id, ...rest } = config;
+
+	return rest;
 });

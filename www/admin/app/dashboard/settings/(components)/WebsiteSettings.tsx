@@ -14,7 +14,7 @@ import { trpc } from "@admin/src/utils/trpc";
 const inputSchema = z
 	.object({
 		title: z.string().min(1),
-		description: z.string().nullable(),
+		description: z.string(),
 		language: z.string().min(1),
 	})
 	.refine((data) => check(data.language), {
@@ -34,7 +34,7 @@ export default function WebsiteSettings({ initialValue }: { initialValue: Inputs
 		try {
 			await trpc.config.setConfig.mutate({
 				title: data.title,
-				description: data.description ?? "",
+				description: data.description,
 				language: data.language,
 			});
 			notifications.show({
@@ -63,7 +63,7 @@ export default function WebsiteSettings({ initialValue }: { initialValue: Inputs
 
 	useEffect(() => {
 		setValue("title", initialValue.title);
-		setValue("description", initialValue.description ?? "");
+		setValue("description", initialValue.description);
 		setValue("language", initialValue.language);
 	}, [initialValue.title, initialValue.description, initialValue.language, setValue]);
 

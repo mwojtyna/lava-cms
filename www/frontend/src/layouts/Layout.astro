@@ -1,19 +1,18 @@
 ---
-export interface Props {
-	title: string;
-}
+import { trpc } from "@frontend/src/utils/trpc";
 
-const { title } = Astro.props;
+const config = await trpc.config.getConfig.query();
 ---
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang={config.language}>
 	<head>
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 		<meta name="generator" content={Astro.generator} />
-		<title>{title}</title>
+		{config.description !== "" && <meta name="description" content={config.description} />}
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<title>{config.title}</title>
 	</head>
 	<body>
 		<slot />
