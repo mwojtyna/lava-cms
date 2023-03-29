@@ -12,6 +12,7 @@ RUN apt-get install -y netcat
 RUN apt-get install -y git
 RUN apt-get install -y openssl
 RUN apt-get install -y sudo
+RUN apt-get install -y unzip
 
 RUN ln -sf /usr/share/zoneinfo/Europe/Warsaw /etc/localtime
 RUN echo "root:root" | chpasswd

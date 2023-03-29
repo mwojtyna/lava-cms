@@ -1,5 +1,5 @@
-# environment variables
 .env
+bin/
 
 # macOS-specific files
 .DS_Store
