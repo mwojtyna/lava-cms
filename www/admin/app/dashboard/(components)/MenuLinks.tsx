@@ -1,5 +1,6 @@
 "use client";
 
+import { useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import {
@@ -15,9 +16,8 @@ import {
 import { getBorderColor, getCardColor, getHoverColor } from "@admin/app/mantine";
 import { useUrl } from "@admin/src/hooks/useUrl";
 import { routes } from "@admin/src/data/menuRoutes";
-import logo from "@admin/public/img/logo.png";
 import { useMenuStore } from "@admin/src/data/stores/dashboard";
-import { useRef } from "react";
+import logo from "@admin/public/img/logo.png";
 
 const useStyles = createStyles((theme) => ({
 	navLink: {
@@ -33,8 +33,7 @@ const useStyles = createStyles((theme) => ({
 		},
 	},
 }));
-const TRANSITION_TIME = 250;
-const TRANSITION = `background-position ${TRANSITION_TIME}ms ease-in-out`;
+const TRANSITION_DURATION = "1000ms";
 
 export default function MenuLinks({ version }: { version: string }) {
 	const theme = useMantineTheme();
@@ -42,7 +41,9 @@ export default function MenuLinks({ version }: { version: string }) {
 
 	const url = useUrl();
 	const { toggle } = useMenuStore();
-	const title = useRef<HTMLDivElement>(null);
+
+	const title = useRef<HTMLHeadingElement>(null);
+	const transitioning = useRef(false);
 
 	return (
 		<>
@@ -62,22 +63,20 @@ export default function MenuLinks({ version }: { version: string }) {
 							"&:hover": { textDecoration: "none" },
 						}}
 						onMouseOver={() => {
-							if (title.current) {
-								title.current.style.backgroundPosition = "center";
+							if (title.current && !transitioning.current) {
+								title.current.style.backgroundPosition = "left";
+								transitioning.current = true;
 							}
 						}}
 						onMouseLeave={() => {
-							if (title.current) {
+							if (title.current && !transitioning.current) {
 								title.current.style.backgroundPosition = "left";
+								title.current.style.transitionDuration = "0ms";
+								title.current.style.backgroundPosition = "right";
 
 								setTimeout(() => {
-									title.current!.style.transition = "none";
-									title.current!.style.backgroundPosition = "right";
-
-									setTimeout(() => {
-										title.current!.style.transition = TRANSITION;
-									}, TRANSITION_TIME);
-								}, TRANSITION_TIME);
+									title.current!.style.transitionDuration = TRANSITION_DURATION;
+								});
 							}
 						}}
 					>
@@ -86,6 +85,19 @@ export default function MenuLinks({ version }: { version: string }) {
 							<Title
 								ref={title}
 								order={1}
+								onTransitionEnd={() => {
+									if (title.current) {
+										title.current.style.backgroundPosition = "left";
+										title.current.style.transitionDuration = "0ms";
+										title.current.style.backgroundPosition = "right";
+
+										setTimeout(() => {
+											title.current!.style.transitionDuration =
+												TRANSITION_DURATION;
+											transitioning.current = false;
+										});
+									}
+								}}
 								sx={{
 									backgroundImage: `linear-gradient(120deg, ${
 										theme.colors.orange[5]
@@ -100,7 +112,7 @@ export default function MenuLinks({ version }: { version: string }) {
 									WebkitTextFillColor: "transparent",
 									backgroundSize: "300% 100%",
 									backgroundPosition: "right",
-									transition: TRANSITION,
+									transition: `background-position ${TRANSITION_DURATION} ease-in-out`,
 								}}
 							>
 								LAVA
