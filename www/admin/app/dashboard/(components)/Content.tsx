@@ -1,12 +1,8 @@
 "use client";
 
-import { getCardColor } from "@admin/app/mantine";
-import { Box } from "@mantine/core";
 import { Children } from "react";
-
-Content.Card = function Card({ children }: { children: React.ReactNode }) {
-	return <>{children}</>;
-};
+import { getCardColor } from "@admin/app/mantine";
+import { Box, Divider, Stack, Title } from "@mantine/core";
 
 export default function Content({ children }: { children: React.ReactNode }) {
 	return (
@@ -27,3 +23,16 @@ export default function Content({ children }: { children: React.ReactNode }) {
 		</>
 	);
 }
+
+Content.Card = function Card({ children }: { children: React.ReactNode }) {
+	return <>{children}</>;
+};
+
+Content.Title = function CardTitle({ children }: { children: React.ReactNode }) {
+	return (
+		<Stack spacing="0.5rem" mb={"sm"}>
+			<Title order={4}>{children}</Title>
+			<Divider />
+		</Stack>
+	);
+};

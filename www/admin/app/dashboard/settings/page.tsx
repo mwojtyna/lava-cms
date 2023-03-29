@@ -1,6 +1,7 @@
 "use client";
 
-import { Button, Divider, Group, Loader, Stack, TextInput, Textarea, Title } from "@mantine/core";
+import { Button, Group, Loader, Stack, TextInput, Textarea } from "@mantine/core";
+import { notifications } from "@mantine/notifications";
 import { type SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -28,19 +29,39 @@ export default function Settings() {
 	} = useForm<Inputs>({ mode: "onChange", resolver: zodResolver(inputSchema) });
 
 	const onSubmit: SubmitHandler<Inputs> = async (data) => {
-		await trpc.config.setConfig.mutate({
-			...data,
-		});
+		try {
+			await trpc.config.setConfig.mutate({
+				...data,
+			});
+			notifications.show({
+				title: "Success",
+				message: "Website settings saved.",
+				color: "green",
+			});
+		} catch (error: unknown | Error) {
+			if (error instanceof Error) {
+				notifications.show({
+					title: "Error",
+					message: <pre>{error.message.trim()}</pre>,
+					color: "red",
+					autoClose: false,
+					sx: {
+						overflow: "auto",
+						pre: {
+							margin: 0,
+							overflow: "auto",
+						},
+					},
+				});
+			}
+		}
 	};
 
 	return (
 		<Content>
 			{/* Website settings */}
 			<Content.Card>
-				<Stack spacing="0.5rem" mb={"sm"}>
-					<Title order={4}>Website</Title>
-					<Divider />
-				</Stack>
+				<Content.Title>Website</Content.Title>
 
 				<form onSubmit={handleSubmit(onSubmit)}>
 					<Stack spacing={"md"} maw={"32rem"}>

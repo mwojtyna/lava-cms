@@ -10,6 +10,7 @@ import {
 	type ColorScheme,
 } from "@mantine/core";
 import { useColorScheme } from "@mantine/hooks";
+import { Notifications } from "@mantine/notifications";
 import { useEffect, useState } from "react";
 import { setCookie } from "cookies-next";
 
@@ -85,6 +86,7 @@ export default function Mantine(props: Props) {
 					}),
 				}}
 			>
+				<Notifications />
 				{props.children}
 			</MantineProvider>
 		</ColorSchemeProvider>
