@@ -4,16 +4,16 @@
 	"private": true,
 	"type": "module",
 	"scripts": {
-		"start": "NODE_ENV=production http-server -p 3000 ./dist",
-		"dev": "NODE_ENV=development astro dev --port 3000",
+		"start": "PORT=3000 node ./dist/server/entry.mjs",
+		"dev": "astro dev --port 3000",
 		"build": "astro build",
 		"lint": "tsc && eslint . && astro check",
 		"preview": "astro preview",
 		"astro": "astro"
 	},
 	"dependencies": {
+		"@astrojs/node": "^5.1.0",
 		"api": "workspace:*",
-		"astro": "^2.0.7",
-		"http-server": "^14.1.1"
+		"astro": "^2.1.8"
 	}
 }
