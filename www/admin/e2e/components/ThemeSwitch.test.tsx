@@ -1,9 +1,18 @@
 import { test, expect, type Page } from "@playwright/test";
+import { init } from "api/server";
+import { start, stop } from "../mocks/trpc";
 
 const TEST_ID = "theme-switch";
 function getColorScheme(page: Page) {
 	return page.locator("html").evaluate((node) => window.getComputedStyle(node).colorScheme);
 }
+
+test.beforeAll(async () => {
+	await start(await init());
+});
+test.afterAll(async () => {
+	await stop();
+});
 
 test("light theme visual comparison", async ({ page }) => {
 	await page.goto("/admin");

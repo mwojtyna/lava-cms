@@ -95,9 +95,9 @@ const config: PlaywrightTestConfig = {
 
 	/* Run your local dev server before starting the tests */
 	webServer: {
+		// Run only the admin server
 		command: process.env.CI ? "pnpm start" : "pnpm dev",
 		url: "http://localhost:3001/admin/api/health",
-		cwd: "../",
 		reuseExistingServer: true,
 	},
 };
