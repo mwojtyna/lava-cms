@@ -20,6 +20,7 @@ export default function ThemeSwitch({ size = "lg" }: { size?: "md" | "lg" }) {
 				<SunIcon className={`w-${size === "md" ? 4 : 5}`} color={theme.colors.yellow[6]} />
 			}
 			onChange={() => toggleColorScheme()}
+			wrapperProps={{ "data-testid": "theme-switch" }}
 		/>
 	);
 }

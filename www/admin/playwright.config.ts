@@ -97,6 +97,7 @@ const config: PlaywrightTestConfig = {
 	webServer: {
 		command: process.env.CI ? "pnpm start" : "pnpm dev",
 		url: "http://localhost:3001/admin/api/health",
+		cwd: "../",
 		reuseExistingServer: true,
 	},
 };
