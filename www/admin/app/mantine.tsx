@@ -5,7 +5,6 @@ import { Inter, Poppins } from "next/font/google";
 import {
 	useEmotionCache,
 	MantineProvider,
-	type MantineTheme,
 	ColorSchemeProvider,
 	type ColorScheme,
 } from "@mantine/core";
@@ -13,19 +12,7 @@ import { useColorScheme } from "@mantine/hooks";
 import { Notifications } from "@mantine/notifications";
 import { useEffect, useState } from "react";
 import { setCookie } from "cookies-next";
-
-export function getBackgroundColor(theme: MantineTheme) {
-	return theme.colorScheme === "dark" ? theme.colors.dark[7] : theme.colors.gray[2];
-}
-export function getCardColor(theme: MantineTheme) {
-	return theme.colorScheme === "dark" ? theme.colors.dark[6] : theme.white;
-}
-export function getHoverColor(theme: MantineTheme) {
-	return theme.colorScheme === "dark" ? theme.colors.dark[5] : theme.colors.gray[1];
-}
-export function getBorderColor(theme: MantineTheme) {
-	return theme.colorScheme === "dark" ? theme.colors.dark[4] : theme.colors.gray[2];
-}
+import { getBackgroundColor } from "@admin/src/utils/colors";
 
 export const poppins = Poppins({ weight: "700", subsets: ["latin"] });
 const inter = Inter({ weight: "400", subsets: ["latin"] });

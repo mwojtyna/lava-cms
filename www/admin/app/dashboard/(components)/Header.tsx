@@ -13,7 +13,8 @@ import {
 	Text,
 } from "@mantine/core";
 import { useMenuStore } from "@admin/src/data/stores/dashboard";
-import { getCardColor, poppins } from "@admin/app/mantine";
+import { poppins } from "@admin/app/mantine";
+import { getCardColor } from "@admin/src/utils/colors";
 import UserMenu from "./UserMenu";
 import type { User } from "api/prisma/types";
 import { useUrl } from "@admin/src/hooks/useUrl";

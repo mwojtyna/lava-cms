@@ -13,7 +13,7 @@ import {
 	Title,
 	Anchor,
 } from "@mantine/core";
-import { getBorderColor, getCardColor, getHoverColor } from "@admin/app/mantine";
+import { getBorderColor, getCardColor, getHoverColor } from "@admin/src/utils/colors";
 import { useUrl } from "@admin/src/hooks/useUrl";
 import { routes } from "@admin/src/data/menuRoutes";
 import { useMenuStore } from "@admin/src/data/stores/dashboard";

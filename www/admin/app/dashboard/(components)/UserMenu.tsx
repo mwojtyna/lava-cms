@@ -14,7 +14,7 @@ import {
 import { useClickOutside, useDisclosure, useElementSize, useHotkeys } from "@mantine/hooks";
 import { ChevronRightIcon, ArrowLeftOnRectangleIcon } from "@heroicons/react/24/solid";
 import ThemeSwitch from "@admin/app/(components)/ThemeSwitch";
-import { getBorderColor, getCardColor, getHoverColor } from "@admin/app/mantine";
+import { getBorderColor, getCardColor, getHoverColor } from "@admin/src/utils/colors";
 import type { User } from "api/prisma/types";
 
 export default function UserMenu({ user }: { user: Omit<User, "password"> | null }) {

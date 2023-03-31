@@ -1,7 +1,7 @@
 "use client";
 
 import { Children } from "react";
-import { getCardColor } from "@admin/app/mantine";
+import { getCardColor } from "@admin/src/utils/colors";
 import { Box, Divider, Stack, Title } from "@mantine/core";
 
 export default function Content({ children }: { children: React.ReactNode }) {

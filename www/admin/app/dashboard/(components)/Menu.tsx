@@ -3,7 +3,7 @@
 import { Navbar, Drawer, MediaQuery } from "@mantine/core";
 import { useMenuStore } from "@admin/src/data/stores/dashboard";
 import MenuLinks from "./MenuLinks";
-import { getCardColor } from "@admin/app/mantine";
+import { getCardColor } from "@admin/src/utils/colors";
 
 export default function Menu({ version }: { version: string }) {
 	const menuStore = useMenuStore();
