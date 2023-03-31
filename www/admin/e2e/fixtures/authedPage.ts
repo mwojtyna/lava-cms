@@ -4,7 +4,7 @@ import fs from "node:fs";
 import bcrypt from "bcrypt";
 import { prisma } from "api/prisma/client";
 import { init } from "api/server";
-import { start, stop } from "@admin/e2e/mocks/trpc";
+import { server, start, stop } from "@admin/e2e/mocks/trpc";
 
 export const STORAGE_STATE_PATH = "./e2e/storageState.json";
 export const NAME = "John";
@@ -82,8 +82,11 @@ export const authedPage = async (
 };
 
 async function saveSignedInState(browser: Browser) {
-	const app = await init();
-	await start(app);
+	let wasAlreadyStarted = false;
+
+	if (!server) {
+		await start(await init());
+	} else wasAlreadyStarted = true;
 
 	const page = await browser.newPage();
 
@@ -93,7 +96,22 @@ async function saveSignedInState(browser: Browser) {
 	await page.locator("button[type='submit']").click();
 	await page.waitForURL(/\/admin\/dashboard/);
 
+	const cookies = await page.context().cookies();
+	const names = ["next-auth.csrf-token", "next-auth.callback-url", "next-auth.session-token"];
+
+	const cookiesToDelete = cookies
+		.filter((cookie) => !names.includes(cookie.name))
+		.map((cookie) => cookies.indexOf(cookie));
+
+	cookiesToDelete.forEach((index) => cookies.splice(index, 1));
+
+	await page.context().clearCookies();
+	await page.context().addCookies(cookies);
+
 	await page.context().storageState({ path: STORAGE_STATE_PATH });
 	await page.close();
-	await stop();
+
+	if (!wasAlreadyStarted) {
+		await stop();
+	}
 }

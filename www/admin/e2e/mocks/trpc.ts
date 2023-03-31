@@ -4,8 +4,8 @@ import { createHttpTerminator, type HttpTerminator } from "http-terminator";
 import { type App, PORT } from "api/server";
 
 export const trpcMsw = createTRPCMsw<AppRouter>();
+export let server: HttpTerminator | null = null;
 
-let server: HttpTerminator | null = null;
 export async function start(app: App) {
 	if (server) {
 		throw new Error("Server already started!");
