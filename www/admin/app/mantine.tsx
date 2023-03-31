@@ -54,14 +54,14 @@ export default function Mantine(props: Props) {
 		// so we have to wait until the client takes over and only then set the theme automatically
 		if (!props.colorScheme) {
 			setColorScheme(preferred);
-			setCookie("color-scheme", preferred, { sameSite: "lax" });
+			setCookie("color-scheme", preferred, { sameSite: "lax", expires: new Date(9999, 12) });
 		}
 	}, [preferred, props.colorScheme]);
 
 	function toggleColorScheme() {
 		const newColor = colorScheme === "dark" ? "light" : "dark";
 
-		setCookie("color-scheme", newColor, { sameSite: "lax" });
+		setCookie("color-scheme", newColor, { sameSite: "lax", expires: new Date(9999, 12) });
 		setColorScheme(newColor);
 	}
 
