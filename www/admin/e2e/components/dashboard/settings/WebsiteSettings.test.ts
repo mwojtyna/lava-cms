@@ -42,7 +42,6 @@ test("website config displayed", async ({ authedPage: page }) => {
 		websiteSettingsMock.language
 	);
 });
-
 test("website config updates", async ({ authedPage: page }) => {
 	await page.goto("/admin/dashboard/settings");
 	await page.waitForLoadState("networkidle");
@@ -63,6 +62,7 @@ test("website config updates", async ({ authedPage: page }) => {
 	await page.waitForSelector("role=alert");
 	await expect(page.locator("role=alert")).toContainText("Success");
 });
+
 test("notification shows error when error occurs", async ({ authedPage: page }) => {
 	await page.goto("/admin/dashboard/settings");
 	await page.waitForLoadState("networkidle");
@@ -77,7 +77,6 @@ test("notification shows error when error occurs", async ({ authedPage: page }) 
 	await page.waitForSelector("role=alert");
 	await expect(page.locator("role=alert")).toContainText("Error");
 });
-
 test("shows field required errors", async ({ authedPage: page }) => {
 	await page.goto("/admin/dashboard/settings");
 	await page.waitForLoadState("networkidle");
@@ -96,4 +95,12 @@ test("shows field required errors", async ({ authedPage: page }) => {
 		"aria-invalid",
 		"true"
 	);
+});
+test("shows error when language code invalid", async ({ authedPage: page }) => {
+	await page.goto("/admin/dashboard/settings");
+
+	const languageInput = page.locator("input[type='text']").nth(1);
+	await languageInput.fill("invalid");
+
+	await expect(languageInput).toHaveAttribute("aria-invalid", "true");
 });
