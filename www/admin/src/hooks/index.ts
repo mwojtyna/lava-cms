@@ -10,5 +10,5 @@ export function useUrl() {
 	const { url: serverUrl } = useServerUrlStore();
 	const clientUrl = usePathname()!.split("/admin")[1]!;
 
-	return clientUrl ? clientUrl : serverUrl;
+	return clientUrl ?? serverUrl;
 }

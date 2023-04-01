@@ -17,7 +17,7 @@ import { poppins } from "@admin/app/mantine";
 import { getCardColor } from "@admin/src/utils/colors";
 import UserMenu from "./UserMenu";
 import type { User } from "api/prisma/types";
-import { useUrl } from "@admin/src/hooks/useUrl";
+import { useUrl } from "@admin/src/hooks";
 import { getRoute } from "@admin/src/data/menuRoutes";
 
 const useStyles = createStyles((theme) => ({

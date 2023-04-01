@@ -14,7 +14,7 @@ import {
 	Anchor,
 } from "@mantine/core";
 import { getBorderColor, getCardColor, getHoverColor } from "@admin/src/utils/colors";
-import { useUrl } from "@admin/src/hooks/useUrl";
+import { useUrl } from "@admin/src/hooks";
 import { routes } from "@admin/src/data/menuRoutes";
 import { useMenuStore } from "@admin/src/data/stores/dashboard";
 import logo from "@admin/public/img/logo.png";
