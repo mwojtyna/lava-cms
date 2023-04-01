@@ -73,7 +73,7 @@ export default function Mantine(props: Props) {
 					}),
 				}}
 			>
-				<Notifications />
+				<Notifications limit={10} />
 				{props.children}
 			</MantineProvider>
 		</ColorSchemeProvider>
