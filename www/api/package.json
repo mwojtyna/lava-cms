@@ -8,12 +8,12 @@
 		"start": "NODE_ENV=production tsx .",
 		"dev": "NODE_ENV=development tsx watch --clear-screen=false .",
 		"lint": "tsc && eslint .",
+		"db:push": "prisma db push && dotenv -e .env.test -- prisma db push",
 		"test": "vitest run",
 		"test:dev": "vitest",
 		"test:ui": "vitest --ui",
 		"test:coverage": "vitest --coverage",
-		"test:report": "vite preview --base /__vitest__ --outDir html --open",
-		"test:db": "dotenv -e .env.test -- prisma db push"
+		"test:report": "vite preview --base /__vitest__ --outDir html --open"
 	},
 	"dependencies": {
 		"@mswjs/http-middleware": "0.6.0",
