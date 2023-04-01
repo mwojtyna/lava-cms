@@ -10,6 +10,7 @@ import { check } from "language-tags";
 import { CheckCircleIcon } from "@heroicons/react/24/outline";
 import Content from "@admin/app/dashboard/(components)/Content";
 import { trpc } from "@admin/src/utils/trpc";
+import { trpcReact } from "@admin/src/utils/trpcReact";
 
 const inputSchema = z
 	.object({
@@ -22,7 +23,9 @@ const inputSchema = z
 	});
 type Inputs = z.infer<typeof inputSchema>;
 
-export default function WebsiteSettings({ initialValue }: { initialValue: Inputs }) {
+export default function WebsiteSettings({ initialData }: { initialData: Inputs }) {
+	const data = trpcReact.config.getConfig.useQuery().data ?? initialData;
+
 	const {
 		register,
 		handleSubmit,
@@ -62,10 +65,10 @@ export default function WebsiteSettings({ initialValue }: { initialValue: Inputs
 	};
 
 	useEffect(() => {
-		setValue("title", initialValue.title);
-		setValue("description", initialValue.description);
-		setValue("language", initialValue.language);
-	}, [initialValue.title, initialValue.description, initialValue.language, setValue]);
+		setValue("title", data.title);
+		setValue("description", data.description);
+		setValue("language", data.language);
+	}, [setValue, data]);
 
 	return (
 		<Content.Card>
