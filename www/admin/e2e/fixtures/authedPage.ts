@@ -5,12 +5,9 @@ import bcrypt from "bcrypt";
 import { prisma } from "api/prisma/client";
 import { init } from "api/server";
 import { server, start, stop } from "@admin/e2e/mocks/trpc";
+import { userMock, websiteSettingsMock } from "@admin/e2e/mocks/data";
 
 export const STORAGE_STATE_PATH = "./e2e/storageState.json";
-export const NAME = "John";
-export const LAST_NAME = "Doe";
-export const EMAIL = "johndoe@domain.com";
-export const PASSWORD = "password";
 
 export const authedPage = async (
 	{ browser }: { browser: Browser },
@@ -22,19 +19,15 @@ export const authedPage = async (
 		existingUser ??
 		(await prisma.user.create({
 			data: {
-				name: NAME,
-				last_name: LAST_NAME,
-				email: EMAIL,
-				password: await bcrypt.hash(PASSWORD, 10),
+				...userMock,
+				password: await bcrypt.hash(userMock.password, 10),
 			},
 		}));
 
 	if (!(await prisma.config.findFirst())) {
 		await prisma.config.create({
 			data: {
-				title: "My website",
-				description: "My website description",
-				language: "en",
+				...websiteSettingsMock,
 			},
 		});
 	}
@@ -91,8 +84,8 @@ async function saveSignedInState(browser: Browser) {
 	const page = await browser.newPage();
 
 	await page.goto("/admin");
-	await page.locator("input[name='email']").type(EMAIL);
-	await page.locator("input[name='password']").type(PASSWORD);
+	await page.locator("input[name='email']").type(userMock.email);
+	await page.locator("input[name='password']").type(userMock.password);
 	await page.locator("button[type='submit']").click();
 	await page.waitForURL(/\/admin\/dashboard/);
 

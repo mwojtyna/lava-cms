@@ -3,15 +3,13 @@ import bcrypt from "bcrypt";
 import { start, stop } from "@admin/e2e/mocks/trpc";
 import { init } from "api/server";
 import { prisma } from "api/prisma/client";
-import { EMAIL, LAST_NAME, NAME, PASSWORD } from "@admin/e2e/fixtures/authedPage";
+import { userMock } from "@admin/e2e/mocks/data";
 
 test.beforeAll(async () => {
 	await prisma.user.create({
 		data: {
-			name: NAME,
-			last_name: LAST_NAME,
-			email: EMAIL,
-			password: await bcrypt.hash(PASSWORD, 10),
+			...userMock,
+			password: await bcrypt.hash(userMock.password, 10),
 		},
 	});
 	await prisma.config.create({
@@ -54,13 +52,13 @@ test("shows error when invalid credentials", async ({ page }) => {
 
 	// Wrong email
 	await emailInput.type("wrong@email.com");
-	await passwordInput.type(PASSWORD);
+	await passwordInput.type(userMock.password);
 	await submitButton.click();
 	await page.waitForSelector("text=The credentials are invalid.");
 	await clearInputs();
 
 	// Wrong password
-	await emailInput.type(EMAIL);
+	await emailInput.type(userMock.email);
 	await passwordInput.type("wrongpassword");
 	await submitButton.click();
 	await page.waitForSelector("text=The credentials are invalid.");
@@ -82,8 +80,8 @@ test("shows error when invalid credentials", async ({ page }) => {
 
 test("shows error when server error", async ({ page }) => {
 	await page.goto("/admin/auth/signin");
-	await page.locator("input[type='email']").type(EMAIL);
-	await page.locator("input[type='password']").type(PASSWORD);
+	await page.locator("input[type='email']").type(userMock.email);
+	await page.locator("input[type='password']").type(userMock.password);
 	await stop();
 	await page.locator("button[type='submit']").click();
 
@@ -101,8 +99,8 @@ test("shows error when email invalid", async ({ page }) => {
 
 test("signs in when credentials are valid", async ({ page }) => {
 	await page.goto("/admin/auth/signin");
-	await page.locator("input[type='email']").type(EMAIL);
-	await page.locator("input[type='password']").type(PASSWORD);
+	await page.locator("input[type='email']").type(userMock.email);
+	await page.locator("input[type='password']").type(userMock.password);
 	await page.locator("button[type='submit']").click();
 	await page.waitForURL(/\/admin\/dashboard/);
 
