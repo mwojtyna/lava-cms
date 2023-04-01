@@ -14,6 +14,21 @@ test.afterAll(async () => {
 	await stop();
 });
 
+test("light theme visual comparison", async ({ authedPage: page }) => {
+	await page.emulateMedia({ colorScheme: "light" });
+	await page.goto("/admin/dashboard/settings");
+	await page.waitForLoadState("networkidle");
+
+	expect(await page.getByTestId(TEST_ID).screenshot()).toMatchSnapshot();
+});
+test("dark theme visual comparison", async ({ authedPage: page }) => {
+	await page.emulateMedia({ colorScheme: "dark" });
+	await page.goto("/admin/dashboard/settings");
+	await page.waitForLoadState("networkidle");
+
+	expect(await page.getByTestId(TEST_ID).screenshot()).toMatchSnapshot();
+});
+
 test("website config displayed", async ({ authedPage: page }) => {
 	await page.goto("/admin/dashboard/settings");
 
@@ -44,6 +59,9 @@ test("website config updates", async ({ authedPage: page }) => {
 	expect(config.title).toBe("My new website");
 	expect(config.description).toBe("My new website description");
 	expect(config.language).toBe("pl");
+
+	await page.waitForSelector("role=alert");
+	await expect(page.locator("role=alert")).toContainText("Success");
 });
 test("notification shows error when error occurs", async ({ authedPage: page }) => {
 	await page.goto("/admin/dashboard/settings");
@@ -58,4 +76,24 @@ test("notification shows error when error occurs", async ({ authedPage: page }) 
 
 	await page.waitForSelector("role=alert");
 	await expect(page.locator("role=alert")).toContainText("Error");
+});
+
+test("shows field required errors", async ({ authedPage: page }) => {
+	await page.goto("/admin/dashboard/settings");
+	await page.waitForLoadState("networkidle");
+
+	const element = page.getByTestId(TEST_ID);
+	await element.locator("input[type='text']").first().fill("");
+	await element.locator("textarea").fill("");
+	await element.locator("input[type='text']").last().fill("");
+	await element.locator("button[type='submit']").click();
+
+	await expect(element.locator("input[type='text']").first()).toHaveAttribute(
+		"aria-invalid",
+		"true"
+	);
+	await expect(element.locator("input[type='text']").last()).toHaveAttribute(
+		"aria-invalid",
+		"true"
+	);
 });
