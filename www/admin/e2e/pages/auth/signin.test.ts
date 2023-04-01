@@ -82,7 +82,14 @@ test("shows error when server error", async ({ page }) => {
 	await page.goto("/admin/auth/signin");
 	await page.locator("input[type='email']").type(userMock.email);
 	await page.locator("input[type='password']").type(userMock.password);
-	await stop();
+	await page.route("**/api/auth/callback/**", (route) =>
+		route.fulfill({
+			body: JSON.stringify({
+				url: "http://localhost:3001/admin/api/auth/error?error=UnknownError&provider=credentials",
+			}),
+			status: 500,
+		})
+	);
 	await page.locator("button[type='submit']").click();
 
 	await expect(page.getByRole("alert")).toContainText("Something went wrong. Try again later.");
