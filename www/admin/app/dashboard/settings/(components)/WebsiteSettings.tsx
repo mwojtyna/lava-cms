@@ -1,5 +1,4 @@
 "use client";
-
 import { useEffect } from "react";
 import { Button, Group, Loader, Stack, TextInput, Textarea } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
@@ -8,9 +7,9 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { check } from "language-tags";
 import { CheckCircleIcon } from "@heroicons/react/24/outline";
-import Content from "@admin/app/dashboard/(components)/Content";
 import { trpc } from "@admin/src/utils/trpc";
 import { trpcReact } from "@admin/src/utils/trpcReact";
+import { Section } from "@admin/app/dashboard/(components)/Section";
 
 const inputSchema = z
 	.object({
@@ -71,8 +70,8 @@ export default function WebsiteSettings({ initialData }: { initialData: Inputs }
 	}, [setValue, data]);
 
 	return (
-		<Content.Card>
-			<Content.Title>Website</Content.Title>
+		<Section data-testid="website-settings">
+			<Section.Title>Website</Section.Title>
 
 			<form onSubmit={handleSubmit(onSubmit)}>
 				<Stack spacing={"md"} maw={"32rem"}>
@@ -108,6 +107,6 @@ export default function WebsiteSettings({ initialData }: { initialData: Inputs }
 					</Group>
 				</Stack>
 			</form>
-		</Content.Card>
+		</Section>
 	);
 }
