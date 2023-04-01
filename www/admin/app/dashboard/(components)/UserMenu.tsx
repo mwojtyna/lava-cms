@@ -46,6 +46,7 @@ export default function UserMenu({ user }: { user: Omit<User, "password"> | null
 						height: "2.5rem",
 					},
 				})}
+				data-testid="user-menu"
 			>
 				<Menu.Target>
 					<UnstyledButton
@@ -91,6 +92,7 @@ export default function UserMenu({ user }: { user: Omit<User, "password"> | null
 						borderBottomLeftRadius: theme.radius.sm,
 						borderBottomRightRadius: theme.radius.sm,
 					})}
+					data-testid="user-menu-dropdown"
 				>
 					<Menu.Item onClick={() => toggleColorScheme()}>
 						<Group position="apart">
