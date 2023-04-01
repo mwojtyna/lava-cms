@@ -29,19 +29,19 @@ const useStyles = createStyles(() => ({
 	},
 }));
 
+const inputSchema = z
+	.object({
+		title: z.string().min(1),
+		description: z.string(),
+		language: z.string().min(1),
+	})
+	.refine((data) => check(data.language), {
+		path: ["language"],
+	});
+type Inputs = z.infer<typeof inputSchema>;
+
 export default function SetupForm() {
 	const router = useRouter();
-
-	const inputSchema = z
-		.object({
-			title: z.string().min(1),
-			description: z.string(),
-			language: z.string().min(1),
-		})
-		.refine((data) => check(data.language), {
-			path: ["language"],
-		});
-	type Inputs = z.infer<typeof inputSchema>;
 
 	const {
 		register,
