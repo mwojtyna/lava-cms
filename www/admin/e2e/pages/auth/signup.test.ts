@@ -20,9 +20,16 @@ test.describe("sign up step", () => {
 		await prisma.user.deleteMany();
 	});
 
-	test("visual comparison", async ({ page }) => {
+	test("light theme visual comparison", async ({ page }) => {
+		await page.emulateMedia({ colorScheme: "light" });
 		await page.goto("/admin/auth/signup");
-		await page.waitForURL(/\/admin\/auth\/signup/);
+		await page.waitForLoadState("networkidle");
+		await expect(page).toHaveScreenshot();
+	});
+	test("dark theme visual comparison", async ({ page }) => {
+		await page.emulateMedia({ colorScheme: "dark" });
+		await page.goto("/admin/auth/signup");
+		await page.waitForLoadState("networkidle");
 		await expect(page).toHaveScreenshot();
 	});
 
@@ -112,8 +119,16 @@ test.describe("setup website step", () => {
 		await prisma.config.deleteMany();
 	});
 
-	test("visual comparison", async ({ page }) => {
+	test("light theme visual comparison", async ({ page }) => {
+		await page.emulateMedia({ colorScheme: "light" });
 		await page.goto("/admin/auth/signup");
+		await page.waitForLoadState("networkidle");
+		await expect(page).toHaveScreenshot();
+	});
+	test("dark theme visual comparison", async ({ page }) => {
+		await page.emulateMedia({ colorScheme: "dark" });
+		await page.goto("/admin/auth/signup");
+		await page.waitForLoadState("networkidle");
 		await expect(page).toHaveScreenshot();
 	});
 
