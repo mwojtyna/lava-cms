@@ -2,6 +2,7 @@
 	"name": "admin",
 	"version": "0.0.4",
 	"private": true,
+	"type": "module",
 	"scripts": {
 		"start": "next start -p 3001",
 		"dev": "nodemon --watch next.config.mjs --exec 'next dev -p 3001'",
