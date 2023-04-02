@@ -16,15 +16,13 @@ test.afterAll(async () => {
 
 test("light theme visual comparison", async ({ authedPage: page }) => {
 	await page.emulateMedia({ colorScheme: "light" });
-	await page.goto("/admin/dashboard/settings");
-	await page.waitForLoadState("networkidle");
+	await page.goto("/admin/dashboard/settings", { waitUntil: "networkidle" });
 
 	expect(await page.getByTestId(TEST_ID).screenshot()).toMatchSnapshot();
 });
 test("dark theme visual comparison", async ({ authedPage: page }) => {
 	await page.emulateMedia({ colorScheme: "dark" });
-	await page.goto("/admin/dashboard/settings");
-	await page.waitForLoadState("networkidle");
+	await page.goto("/admin/dashboard/settings", { waitUntil: "networkidle" });
 
 	expect(await page.getByTestId(TEST_ID).screenshot()).toMatchSnapshot();
 });
@@ -43,8 +41,7 @@ test("website config displayed", async ({ authedPage: page }) => {
 	);
 });
 test("website config updates", async ({ authedPage: page }) => {
-	await page.goto("/admin/dashboard/settings");
-	await page.waitForLoadState("networkidle");
+	await page.goto("/admin/dashboard/settings", { waitUntil: "networkidle" });
 
 	const element = page.getByTestId(TEST_ID);
 	await element.locator("input[type='text']").first().fill("My new website");
@@ -59,13 +56,11 @@ test("website config updates", async ({ authedPage: page }) => {
 	expect(config.description).toBe("My new website description");
 	expect(config.language).toBe("pl");
 
-	await page.waitForSelector("role=alert");
 	await expect(page.locator("role=alert")).toContainText("Success");
 });
 
 test("notification shows error when error occurs", async ({ authedPage: page }) => {
-	await page.goto("/admin/dashboard/settings");
-	await page.waitForLoadState("networkidle");
+	await page.goto("/admin/dashboard/settings", { waitUntil: "networkidle" });
 
 	await page.route("**/api/trpc/config**", (route) => route.fulfill({ status: 500 }));
 	const element = page.getByTestId(TEST_ID);
@@ -74,13 +69,10 @@ test("notification shows error when error occurs", async ({ authedPage: page }) 
 	await element.locator("input[type='text']").last().fill("pl");
 	await element.locator("button[type='submit']").click();
 
-	await page.waitForSelector("role=alert");
 	await expect(page.locator("role=alert")).toContainText("Error");
 });
 test("shows field required errors", async ({ authedPage: page }) => {
-	await page.goto("/admin/dashboard/settings");
-	await page.waitForLoadState("networkidle");
-
+	await page.goto("/admin/dashboard/settings", { waitUntil: "networkidle" });
 	const element = page.getByTestId(TEST_ID);
 	await element.locator("input[type='text']").first().fill("");
 	await element.locator("textarea").fill("");
@@ -97,7 +89,7 @@ test("shows field required errors", async ({ authedPage: page }) => {
 	);
 });
 test("shows error when language code invalid", async ({ authedPage: page }) => {
-	await page.goto("/admin/dashboard/settings");
+	await page.goto("/admin/dashboard/settings", { waitUntil: "networkidle" });
 
 	const languageInput = page.locator("input[type='text']").nth(1);
 	await languageInput.fill("invalid");

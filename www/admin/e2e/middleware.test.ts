@@ -42,7 +42,7 @@ test("redirects to dashboard when user is signed in", async ({ authedPage }) => 
 	await authedPage.goto("/admin");
 
 	expect(authedPage.url()).toMatch(/\/admin\/dashboard/);
-	await expect(authedPage.locator("#content").first()).toBeVisible();
+	await expect(authedPage.locator("#content").first()).toBeInViewport();
 });
 
 test("returns 401 when trying to access /api/trpc when not signed in", async ({ page }) => {
@@ -68,7 +68,7 @@ test("returns json when trying to access /api/trpc when signed in", async ({ aut
 	]);
 	await start(app);
 
-	const res = await authedPage.goto("/admin/api/trpc");
+	const res = await authedPage.goto("/admin/api/trpc/random.endpoint");
 	expect(authedPage.url()).toMatch(/\/admin\/api\/trpc/);
 	expect(await res?.headerValue("content-type")).toMatch(/application\/json/);
 	expect(await res?.json()).toBeDefined();

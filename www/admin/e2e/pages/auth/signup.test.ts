@@ -22,14 +22,12 @@ test.describe("sign up step", () => {
 
 	test("light theme visual comparison", async ({ page }) => {
 		await page.emulateMedia({ colorScheme: "light" });
-		await page.goto("/admin/auth/signup");
-		await page.waitForLoadState("networkidle");
+		await page.goto("/admin/auth/signup", { waitUntil: "networkidle" });
 		await expect(page).toHaveScreenshot();
 	});
 	test("dark theme visual comparison", async ({ page }) => {
 		await page.emulateMedia({ colorScheme: "dark" });
-		await page.goto("/admin/auth/signup");
-		await page.waitForLoadState("networkidle");
+		await page.goto("/admin/auth/signup", { waitUntil: "networkidle" });
 		await expect(page).toHaveScreenshot();
 	});
 
@@ -44,7 +42,7 @@ test.describe("sign up step", () => {
 		await page.locator("input[type='email']").type("invalid@domain");
 		await page.locator("button[type=submit]").click();
 
-		await expect(page.locator("text=The e-mail you provided is invalid.")).toBeVisible();
+		await expect(page.locator("text=The e-mail you provided is invalid.")).toBeInViewport();
 	});
 
 	test("shows error when password invalid", async ({ page }) => {
@@ -56,22 +54,22 @@ test.describe("sign up step", () => {
 		passwordField.first().fill("pass");
 		await expect(
 			page.locator("text=The password must be at least 8 characters long.")
-		).toBeVisible();
+		).toBeInViewport();
 
 		passwordField.first().fill("12345678");
 		await expect(
 			page.locator("text=The password must contain at least one lowercase letter.")
-		).toBeVisible();
+		).toBeInViewport();
 
 		passwordField.first().fill("password");
 		await expect(
 			page.locator("text=The password must contain at least one uppercase letter.")
-		).toBeVisible();
+		).toBeInViewport();
 
 		passwordField.first().fill("Password");
 		await expect(
 			page.locator("text=The password must contain at least one digit.")
-		).toBeVisible();
+		).toBeInViewport();
 	});
 
 	test("shows error when passwords don't match", async ({ page }) => {
@@ -80,7 +78,7 @@ test.describe("sign up step", () => {
 		await page.locator("button[type=submit]").click();
 		await page.locator("input[type='password']").nth(1).type("password");
 
-		await expect(page.locator("text=The passwords do not match.")).toBeVisible();
+		await expect(page.locator("text=The passwords do not match.")).toBeInViewport();
 	});
 
 	test("goes to the next step when info is valid", async ({ page }) => {
@@ -121,14 +119,12 @@ test.describe("setup website step", () => {
 
 	test("light theme visual comparison", async ({ page }) => {
 		await page.emulateMedia({ colorScheme: "light" });
-		await page.goto("/admin/auth/signup");
-		await page.waitForLoadState("networkidle");
+		await page.goto("/admin/auth/signup", { waitUntil: "networkidle" });
 		await expect(page).toHaveScreenshot();
 	});
 	test("dark theme visual comparison", async ({ page }) => {
 		await page.emulateMedia({ colorScheme: "dark" });
-		await page.goto("/admin/auth/signup");
-		await page.waitForLoadState("networkidle");
+		await page.goto("/admin/auth/signup", { waitUntil: "networkidle" });
 		await expect(page).toHaveScreenshot();
 	});
 
@@ -160,6 +156,6 @@ test.describe("setup website step", () => {
 		await authedPage.waitForURL(/\/dashboard/);
 
 		expect(authedPage.url()).toMatch(/\/dashboard/);
-		await expect(authedPage.locator("#content").first()).toBeVisible();
+		await expect(authedPage.locator("#content").first()).toBeInViewport();
 	});
 });

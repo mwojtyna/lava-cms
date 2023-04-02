@@ -34,14 +34,12 @@ test.afterEach(async () => {
 
 test("light theme visual comparison", async ({ page }) => {
 	await page.emulateMedia({ colorScheme: "light" });
-	await page.goto("/admin/auth/signin");
-	await page.waitForLoadState("networkidle");
+	await page.goto("/admin/auth/signin", { waitUntil: "networkidle" });
 	await expect(page).toHaveScreenshot();
 });
 test("dark theme visual comparison", async ({ page }) => {
 	await page.emulateMedia({ colorScheme: "dark" });
-	await page.goto("/admin/auth/signin");
-	await page.waitForLoadState("networkidle");
+	await page.goto("/admin/auth/signin", { waitUntil: "networkidle" });
 	await expect(page).toHaveScreenshot();
 });
 
@@ -61,21 +59,21 @@ test("shows error when invalid credentials", async ({ page }) => {
 	await emailInput.type("wrong@email.com");
 	await passwordInput.type(userMock.password);
 	await submitButton.click();
-	await page.waitForSelector("text=The credentials are invalid.");
+	await expect(page.locator("text=The credentials are invalid.")).toBeInViewport();
 	await clearInputs();
 
 	// Wrong password
 	await emailInput.type(userMock.email);
 	await passwordInput.type("wrongpassword");
 	await submitButton.click();
-	await page.waitForSelector("text=The credentials are invalid.");
+	await expect(page.locator("text=The credentials are invalid.")).toBeInViewport();
 	await clearInputs();
 
 	// Both wrong
 	await emailInput.type("wrong@email.com");
 	await passwordInput.type("wrongpassword");
 	await submitButton.click();
-	await page.waitForSelector("text=The credentials are invalid.");
+	await expect(page.locator("text=The credentials are invalid.")).toBeInViewport();
 
 	await expect(page).toHaveScreenshot();
 
@@ -108,7 +106,7 @@ test("shows error when email invalid", async ({ page }) => {
 	await page.click("button[type=submit]");
 	await page.locator("input[type='email']").type("invalid@domain");
 
-	await expect(page.locator("text=The e-mail you provided is invalid.")).toBeVisible();
+	await expect(page.locator("text=The e-mail you provided is invalid.")).toBeInViewport();
 });
 
 test("signs in when credentials are valid", async ({ page }) => {
@@ -119,5 +117,5 @@ test("signs in when credentials are valid", async ({ page }) => {
 	await page.waitForURL(/\/admin\/dashboard/);
 
 	expect(page.url()).toMatch(/\/admin\/dashboard/);
-	await expect(page.locator("#content").first()).toBeVisible();
+	await expect(page.locator("#content").first()).toBeInViewport();
 });
