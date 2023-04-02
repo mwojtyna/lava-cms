@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/playwright:v1.30.0
+FROM mcr.microsoft.com/playwright:v1.32.1
 
 WORKDIR /
 SHELL ["/bin/bash", "-c"]
@@ -12,13 +12,14 @@ RUN apt-get install -y netcat
 RUN apt-get install -y git
 RUN apt-get install -y openssl
 RUN apt-get install -y sudo
+RUN apt-get install -y unzip
 
 RUN ln -sf /usr/share/zoneinfo/Europe/Warsaw /etc/localtime
 RUN echo "root:root" | chpasswd
 RUN git config --global --add safe.directory /workspaces/lava-cms/
 
 # Install node
-ENV NODE_VERSION=18.14.1
+ENV NODE_VERSION=18.15.0
 ENV NVM_DIR=/home/pwuser/.nvm
 RUN mkdir -p ${NVM_DIR}
 

@@ -14,9 +14,10 @@
 		}
 	],
 	"settings": {
-		"typescript.tsdk": "admin/node_modules/typescript/lib",
+		"typescript.tsdk": "www/node_modules/typescript/lib",
 		"typescript.enablePromptUseWorkspaceTsdk": true,
 		"cSpell.words": [
+			"astrojs",
 			"Authed",
 			"mswjs",
 			"nextauth",
@@ -33,6 +34,7 @@
 		],
 		"prettier.requireConfig": true,
 		"testing.automaticallyOpenPeekView": "never",
-		"sarif-viewer.connectToGithubCodeScanning": "on"
+		"sarif-viewer.connectToGithubCodeScanning": "on",
+		"workbench.editor.labelFormat": "medium"
 	}
 }

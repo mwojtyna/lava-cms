@@ -5,6 +5,7 @@
 			"@frontend/*": ["./*"],
 			"@api/*": ["../api/*"]
 		},
+		"importsNotUsedAsValues": "error",
 		"noEmit": true
 	},
 	"extends": "astro/tsconfigs/strict"

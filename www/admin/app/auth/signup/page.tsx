@@ -1,14 +1,18 @@
-"use client";
+import type { Metadata } from "next";
+import { trpc } from "@admin/src/utils/trpc";
+import Content from "./(components)/Content";
 
-import { Center } from "@mantine/core";
-import SignUpForm from "./SignUpForm";
+export const metadata: Metadata = {
+	title: "Lava CMS - Sign up",
+};
+export const revalidate = 0;
 
-function SignIn() {
+export default async function SignIn() {
+	const { reason } = await trpc.auth.setupRequired.query();
+
 	return (
-		<Center h="100vh">
-			<SignUpForm />
-		</Center>
+		<main className="flex h-screen justify-center p-10">
+			<Content stage={reason === "no-config" ? 1 : 0} />
+		</main>
 	);
 }
-
-export default SignIn;

@@ -1,12 +1,14 @@
 {
 	"name": "api",
-	"version": "0.0.1",
+	"version": "0.0.4",
 	"private": true,
 	"main": "index.ts",
+	"type": "module",
 	"scripts": {
-		"start": "NODE_ENV=production ts-node --transpile-only .",
-		"dev": "NODE_ENV=development nodemon",
+		"start": "NODE_ENV=production tsx .",
+		"dev": "NODE_ENV=development tsx watch --clear-screen=false .",
 		"lint": "tsc && eslint .",
+		"db:push": "prisma db push && dotenv -e .env.test -- prisma db push",
 		"test": "vitest run",
 		"test:dev": "vitest",
 		"test:ui": "vitest --ui",
@@ -14,18 +16,17 @@
 		"test:report": "vite preview --base /__vitest__ --outDir html --open"
 	},
 	"dependencies": {
-		"@mswjs/http-middleware": "^0.7.0",
+		"@mswjs/http-middleware": "0.6.0",
 		"@prisma/client": "^4.10.0",
-		"@tsconfig/node18": "^1.0.1",
+		"@tsconfig/node18-strictest-esm": "^1.0.1",
 		"bcrypt": "^5.1.0",
 		"cors": "^2.8.5",
 		"dotenv": "^16.0.3",
 		"express": "^4.18.2",
-		"msw": "^1.0.1",
+		"msw": "0.49.3",
 		"strict-event-emitter": "0.3.2",
 		"trpc-panel": "^1.2.8",
-		"ts-node": "^10.9.1",
-		"tsconfig-paths": "^4.1.2",
+		"tsx": "^3.12.3",
 		"zod": "^3.20.2"
 	},
 	"devDependencies": {
@@ -34,19 +35,14 @@
 		"@types/express": "^4.17.17",
 		"@types/node": "^18.13.0",
 		"@types/supertest": "^2.0.12",
-		"@typescript-eslint/eslint-plugin": "^5.51.0",
-		"@typescript-eslint/parser": "^5.51.0",
 		"@vitest/coverage-c8": "0.28.3",
 		"@vitest/ui": "0.28.3",
 		"dotenv-cli": "^7.0.0",
-		"eslint": "^8.33.0",
 		"headers-polyfill": "^3.1.2",
-		"nodemon": "^2.0.20",
 		"prisma": "^4.10.0",
 		"supertest": "^6.3.3",
-		"typescript": "^4.9.5",
 		"vite": "^4.1.1",
 		"vitest": "0.28.3",
-		"vitest-mock-extended": "^1.0.9"
+		"vitest-mock-extended": "1.0.9"
 	}
 }

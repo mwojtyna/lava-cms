@@ -4,11 +4,11 @@
 		"paths": {
 			"@api/*": ["./*"]
 		},
-		"noEmit": true
+		"noEmit": true,
+		"noPropertyAccessFromIndexSignature": false,
+		"noImplicitReturns": false,
+		"verbatimModuleSyntax": true,
+		"importsNotUsedAsValues": "remove"
 	},
-	"ts-node": {
-		"files": true,
-		"require": ["tsconfig-paths/register"]
-	},
-	"extends": "@tsconfig/node18/tsconfig.json"
+	"extends": "@tsconfig/node18-strictest-esm/tsconfig.json"
 }

@@ -22,6 +22,12 @@ const config: PlaywrightTestConfig = {
 		 * For example in `await expect(locator).toHaveText();`
 		 */
 		timeout: 5000,
+		toHaveScreenshot: {
+			maxDiffPixelRatio: 0.01,
+		},
+		toMatchSnapshot: {
+			maxDiffPixelRatio: 0.01,
+		},
 	},
 	/* Run tests in files in parallel */
 	fullyParallel: true,
@@ -95,6 +101,7 @@ const config: PlaywrightTestConfig = {
 
 	/* Run your local dev server before starting the tests */
 	webServer: {
+		// Run only the admin server
 		command: process.env.CI ? "pnpm start" : "pnpm dev",
 		url: "http://localhost:3001/admin/api/health",
 		reuseExistingServer: true,

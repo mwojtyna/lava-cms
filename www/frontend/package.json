@@ -1,26 +1,19 @@
 {
 	"name": "frontend",
-	"type": "module",
-	"version": "0.0.1",
+	"version": "0.0.4",
 	"private": true,
+	"type": "module",
 	"scripts": {
-		"start": "NODE_ENV=production http-server -p 3000 ./dist",
-		"dev": "NODE_ENV=development astro dev --port 3000",
+		"start": "bin/deno/deno run --allow-net --allow-read --allow-env ./dist/server/entry.mjs",
+		"dev": "astro dev --port 3000",
 		"build": "astro build",
 		"lint": "tsc && eslint . && astro check",
 		"preview": "astro preview",
 		"astro": "astro"
 	},
 	"dependencies": {
+		"@astrojs/deno": "^4.1.0",
 		"api": "workspace:*",
-		"astro": "^2.0.7",
-		"http-server": "^14.1.1"
-	},
-	"devDependencies": {
-		"@typescript-eslint/eslint-plugin": "^5.51.0",
-		"@typescript-eslint/parser": "^5.51.0",
-		"eslint": "^8.33.0",
-		"prettier": "^2.8.3",
-		"typescript": "^4.9.5"
+		"astro": "^2.1.8"
 	}
 }

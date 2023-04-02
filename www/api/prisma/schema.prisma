@@ -20,3 +20,14 @@ model User {
     @@map("user")
     @@schema("admin")
 }
+
+// Frontend schema
+model Config {
+    id          String @id @default(cuid())
+    title       String
+    description String
+    language    String
+
+    @@map("config")
+    @@schema("frontend")
+}

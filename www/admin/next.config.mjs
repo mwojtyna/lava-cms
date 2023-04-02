@@ -12,6 +12,7 @@ const config = {
 	swcMinify: true,
 	experimental: {
 		appDir: true,
+		typedRoutes: true,
 	},
 	// Fix for `import type` not working
 	transpilePackages: ["api"],
