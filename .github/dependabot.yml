@@ -3,33 +3,33 @@ updates:
   # /nginx/Dockerfile
   - package-ecosystem: docker
     directory: "/nginx"
-    target-branch: 0.0.4
+    target-branch: main
     schedule:
       interval: daily
 
   # /www/Dockerfile
   - package-ecosystem: docker
     directory: "/www"
-    target-branch: 0.0.4
+    target-branch: main
     schedule:
       interval: daily
 
   # /.github/workflows/docker/*
   - package-ecosystem: docker
     directory: "/.github/workflows/docker"
-    target-branch: 0.0.4
+    target-branch: main
     schedule:
       interval: daily
 
   # /.devcontainer/Dockerfile
   - package-ecosystem: docker
     directory: "/.devcontainer"
-    target-branch: 0.0.4
+    target-branch: main
     schedule:
       interval: daily
 
   - package-ecosystem: "github-actions"
     directory: "/"
-    target-branch: 0.0.4
+    target-branch: main
     schedule:
       interval: daily
