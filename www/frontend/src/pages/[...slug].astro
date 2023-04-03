@@ -1,0 +1,11 @@
+---
+import { trpc } from "@frontend/src/utils/trpc";
+import Layout from "@frontend/src/layouts/Layout.astro";
+
+const page = await trpc.pages.getPage.query({ path: Astro.params.slug ?? "/" });
+if (!page) {
+	return Astro.redirect("/404");
+}
+---
+
+<Layout>{page?.name}</Layout>
