@@ -31,3 +31,13 @@ model Config {
     @@map("config")
     @@schema("frontend")
 }
+
+model Pages {
+    id        String  @id @default(cuid())
+    name      String
+    path      String  @unique
+    root_page Boolean @default(false)
+
+    @@map("pages")
+    @@schema("frontend")
+}
