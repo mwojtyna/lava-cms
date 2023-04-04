@@ -7,8 +7,8 @@ export function Section(props: React.ComponentPropsWithoutRef<"div">) {
 	return (
 		<Card
 			component="section"
-			shadow="xs"
 			sx={(theme) => ({ backgroundColor: getCardColor(theme) })}
+			withBorder
 			{...props}
 		>
 			{props.children}
