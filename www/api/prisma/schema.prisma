@@ -32,12 +32,12 @@ model Config {
     @@schema("frontend")
 }
 
-model Pages {
+model Page {
     id        String  @id @default(cuid())
     name      String
     path      String  @unique
     root_page Boolean @default(false)
 
-    @@map("pages")
+    @@map("page")
     @@schema("frontend")
 }

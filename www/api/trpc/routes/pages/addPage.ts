@@ -11,7 +11,7 @@ export const addPage = publicProcedure
 		})
 	)
 	.mutation(async ({ input }) => {
-		await prisma.pages.create({
+		await prisma.page.create({
 			data: {
 				name: input.name,
 				path: input.path,
