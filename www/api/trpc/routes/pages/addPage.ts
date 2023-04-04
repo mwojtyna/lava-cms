@@ -15,7 +15,6 @@ export const addPage = publicProcedure
 			data: {
 				name: input.name,
 				path: input.path,
-				root_page: input.rootPage ?? false,
 			},
 		});
 	});

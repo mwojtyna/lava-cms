@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import PageList from "./(components)/PageList";
+import PageTree from "./(components)/PageTree";
 import { trpc } from "@admin/src/utils/trpc";
 
 export const metadata: Metadata = {
@@ -10,5 +10,5 @@ export const revalidate = 0;
 export default async function Pages() {
 	const pages = await trpc.pages.getPages.query();
 
-	return <PageList pages={pages} />;
+	return <PageTree initialData={pages} />;
 }
