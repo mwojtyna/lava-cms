@@ -130,6 +130,7 @@ export default function MenuLinks({ version }: { version: string }) {
 						key={index}
 						component={Link}
 						childrenOffset={0}
+						sx={{ fontWeight: 500 }}
 						px="md"
 						py="sm"
 						href={item.path}

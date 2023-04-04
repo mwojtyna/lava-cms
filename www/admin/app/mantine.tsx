@@ -15,7 +15,7 @@ import { setCookie } from "cookies-next";
 import { getBackgroundColor } from "@admin/src/utils/colors";
 
 export const poppins = Poppins({ weight: "700", subsets: ["latin"] });
-const inter = Inter({ weight: "400", subsets: ["latin"] });
+const inter = Inter({ weight: "variable", subsets: ["latin"] });
 
 interface Props {
 	children: React.ReactNode;
