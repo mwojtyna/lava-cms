@@ -62,6 +62,7 @@ export default function MenuLinks({ version }: { version: string }) {
 						sx={{
 							"&:hover": { textDecoration: "none" },
 						}}
+						onClick={toggle}
 						onMouseOver={() => {
 							if (title.current && !transitioning.current) {
 								title.current.style.backgroundPosition = "left";
