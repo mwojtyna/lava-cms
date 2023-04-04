@@ -2,10 +2,8 @@
 import { trpc } from "@frontend/src/utils/trpc";
 import Layout from "@frontend/src/layouts/Layout.astro";
 
-const page = await trpc.pages.getPage.query({ path: Astro.params.slug ?? "/" });
-if (!page) {
-	return Astro.redirect("/404");
-}
+const slug = Astro.params.slug;
+const page = await trpc.pages.getPage.query({ path: slug ? "/" + slug : "/" });
 ---
 
-<Layout>{page?.name}</Layout>
+<Layout>{page ? page.name : 404}</Layout>
