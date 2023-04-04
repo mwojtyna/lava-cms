@@ -36,7 +36,7 @@ else
 	deno_uri="https://github.com/${repo}/releases/download/${1}/deno-${target}.zip"
 fi
 
-bin_dir="${DENO_INSTALL:-./frontend/bin/}"
+bin_dir="${DENO_INSTALL:-./frontend/bin}"
 exe="$bin_dir/deno"
 
 if [ ! -d "$bin_dir" ]; then
