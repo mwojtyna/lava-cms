@@ -7,7 +7,7 @@ interface Props extends ComponentProps<"div"> {
 	droppableId: string;
 	disabled?: boolean;
 }
-export default function Drop(props: Props) {
+export default function DropZone(props: Props) {
 	const { droppableId, disabled, ...rest } = props;
 
 	return (
