@@ -1,63 +1,82 @@
 "use client";
 
-import { Card, Center, Group, Stack, Text } from "@mantine/core";
-import { Draggable } from "@hello-pangea/dnd";
+import { Card, Center, Group, Portal, Text } from "@mantine/core";
+import { Draggable, type DraggableProvided, type DraggableStateSnapshot } from "@hello-pangea/dnd";
 import { DocumentIcon, FolderIcon } from "@heroicons/react/24/solid";
 import { getHoverColor } from "@admin/src/utils/colors";
 import GripIcon from "@admin/app/(components)/GripIcon";
 import type { Node } from "./PageTree";
 import DropZone from "./DropZone";
 
-export default function Page({ node, index, last }: { node: Node; index: number; last: boolean }) {
+interface Props {
+	node: Node;
+	index: number;
+	last: boolean;
+}
+export default function Page(props: Props) {
 	return (
-		<Draggable draggableId={node.page.id} index={index} isDragDisabled={node.page.path === "/"}>
-			{(provided) => (
-				<Card
-					p="sm"
-					mb={last ? 0 : "sm"}
-					withBorder
-					sx={(theme) => ({
-						backgroundColor: getHoverColor(theme),
-					})}
-					ref={provided.innerRef}
-					{...provided.draggableProps}
-				>
-					<Group
-						ml={node.page.path === "/" ? "0.5rem" : 0}
-						mb={node.children.length > 0 ? "sm" : 0}
-					>
-						{node.page.path !== "/" && (
-							<Center className="hover:cursor-grab" {...provided.dragHandleProps}>
-								<GripIcon />
-							</Center>
-						)}
-						{node.children.length === 0 ? (
-							<DocumentIcon className="w-5" />
-						) : (
-							<FolderIcon className="w-5 text-orange-400" />
-						)}
-						<Text weight={500} size={"md"}>
-							{node.page.name}
-						</Text>
-						<Text color={"dimmed"} size={"sm"}>
-							{node.page.path.split("/")[node.page.path.split("/").length - 1]}
-						</Text>
-					</Group>
-
-					{node.children.length > 0 && (
-						<DropZone droppableId={node.page.id}>
-							{node.children.map((child, i, array) => (
-								<Page
-									key={child.page.id}
-									node={child}
-									index={i}
-									last={i === array.length - 1}
-								/>
-							))}
-						</DropZone>
-					)}
-				</Card>
-			)}
+		<Draggable
+			draggableId={props.node.page.id}
+			index={props.index}
+			isDragDisabled={props.node.page.path === "/"}
+		>
+			{(provided, snapshot) => <Content {...props} provided={provided} snapshot={snapshot} />}
 		</Draggable>
 	);
+}
+
+function Content(props: Props & { provided: DraggableProvided; snapshot: DraggableStateSnapshot }) {
+	const child = (
+		<Card
+			p="sm"
+			mb={!props.last || props.snapshot.isDragging ? "sm" : 0}
+			withBorder
+			sx={(theme) => ({
+				backgroundColor: getHoverColor(theme),
+			})}
+			ref={props.provided.innerRef}
+			{...props.provided.draggableProps}
+		>
+			<Group
+				ml={props.node.page.path === "/" ? "0.5rem" : 0}
+				mb={props.node.children.length > 0 ? "sm" : 0}
+			>
+				{props.node.page.path !== "/" && (
+					<Center className="hover:cursor-grab" {...props.provided.dragHandleProps}>
+						<GripIcon />
+					</Center>
+				)}
+				{props.node.children.length === 0 ? (
+					<DocumentIcon className="w-5" />
+				) : (
+					<FolderIcon className="w-5 text-orange-400" />
+				)}
+				<Text weight={500} size={"md"}>
+					{props.node.page.name}
+				</Text>
+				<Text color={"dimmed"} size={"sm"}>
+					{props.node.page.path.split("/")[props.node.page.path.split("/").length - 1]}
+				</Text>
+			</Group>
+
+			{props.node.children.length > 0 && (
+				<DropZone droppableId={props.node.page.id}>
+					{props.node.children.map((child, i, array) => (
+						<Page
+							key={child.page.id}
+							node={child}
+							index={i}
+							last={i === array.length - 1}
+						/>
+					))}
+				</DropZone>
+			)}
+		</Card>
+	);
+
+	if (!props.snapshot.isDragging) {
+		return child;
+	} else {
+		return <Portal>{child}</Portal>;
+	}
 }
