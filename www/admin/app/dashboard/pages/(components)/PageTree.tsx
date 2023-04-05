@@ -51,7 +51,7 @@ export default function PageTree({ initialData }: { initialData: PageType[] }) {
 		<Section>
 			<Section.Title>Structure</Section.Title>
 			<DragDropContext onDragEnd={() => console.log("root_chuj")}>
-				<Page node={pageTree} />
+				<Page node={pageTree} index={0} />
 			</DragDropContext>
 		</Section>
 	);

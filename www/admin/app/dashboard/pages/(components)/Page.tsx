@@ -8,10 +8,14 @@ import GripIcon from "@admin/app/(components)/GripIcon";
 import type { Node } from "./PageTree";
 import Drop from "./Drop";
 
-export default function Page({ node }: { node: Node }) {
+export default function Page({ node, index }: { node: Node; index: number }) {
 	return (
-		<Drop droppableId={node.page.id}>
-			<Draggable draggableId={node.page.id} index={0} isDragDisabled={node.page.path === "/"}>
+		<Drop droppableId={node.page.id} disabled={node.page.path === "/"}>
+			<Draggable
+				draggableId={node.page.id}
+				index={index}
+				isDragDisabled={node.page.path === "/"}
+			>
 				{(provided) => {
 					return (
 						<Card
@@ -38,7 +42,7 @@ export default function Page({ node }: { node: Node }) {
 								{node.children.length === 0 ? (
 									<DocumentIcon className="w-5" />
 								) : (
-									<FolderIcon className="w-5 text-orange-300" />
+									<FolderIcon className="w-5 text-orange-400" />
 								)}
 								<Text weight={500} size={"md"}>
 									{node.page.name}
@@ -54,8 +58,8 @@ export default function Page({ node }: { node: Node }) {
 
 							{node.children.length > 0 && (
 								<Stack spacing="sm">
-									{node.children.map((child) => (
-										<Page key={child.page.id} node={child} />
+									{node.children.map((child, i) => (
+										<Page key={child.page.id} node={child} index={i} />
 									))}
 								</Stack>
 							)}

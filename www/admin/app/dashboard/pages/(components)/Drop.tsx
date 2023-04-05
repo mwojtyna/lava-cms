@@ -5,12 +5,13 @@ import type { ComponentProps } from "react";
 
 interface Props extends ComponentProps<"div"> {
 	droppableId: string;
+	disabled?: boolean;
 }
 export default function Drop(props: Props) {
-	const { droppableId, ...rest } = props;
+	const { droppableId, disabled, ...rest } = props;
 
 	return (
-		<Droppable droppableId={props.droppableId}>
+		<Droppable droppableId={props.droppableId} isDropDisabled={disabled}>
 			{(provided) => {
 				return (
 					<div {...provided.droppableProps} ref={provided.innerRef} {...rest}>
