@@ -5,16 +5,15 @@ import type { ComponentProps } from "react";
 
 interface Props extends ComponentProps<"div"> {
 	droppableId: string;
-	disabled?: boolean;
 	renderClone: DraggableChildrenFn | null;
 }
 export default function DropZone(props: Props) {
-	const { droppableId, disabled, renderClone, ...rest } = props;
+	const { droppableId, renderClone, ...rest } = props;
 
 	return (
 		<Droppable
 			droppableId={props.droppableId}
-			isDropDisabled={disabled}
+			isCombineEnabled={true}
 			renderClone={renderClone}
 		>
 			{(provided) => (
