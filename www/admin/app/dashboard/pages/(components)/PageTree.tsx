@@ -5,14 +5,16 @@ import { DragDropContext, type DropResult } from "@hello-pangea/dnd";
 import { Section } from "@admin/app/dashboard/(components)/Section";
 import { trpcReact } from "@admin/src/utils/trpcReact";
 import type { Page as PageType } from "api/prisma/types";
-import Page from "./Page";
+import Page, { Clone } from "./Page";
 import DropZone from "./DropZone";
 
 export interface Node {
 	page: PageType;
 	children: Node[];
 }
-function getNode(id: string, node: Node): Node | undefined {
+
+let rootNode: Node;
+export function getNode(id: string, node: Node = rootNode): Node | undefined {
 	if (node.page.id === id) {
 		return node;
 	}
@@ -30,7 +32,7 @@ function getNode(id: string, node: Node): Node | undefined {
 export default function PageTree({ initialData }: { initialData: PageType[] }) {
 	const data = trpcReact.pages.getPages.useQuery().data ?? initialData;
 
-	const rootNode: Node = useMemo(() => {
+	rootNode = useMemo(() => {
 		const rootPage = data.find((page) => page.path === "/")!;
 		return {
 			page: rootPage,
@@ -74,13 +76,10 @@ export default function PageTree({ initialData }: { initialData: PageType[] }) {
 			<DragDropContext onDragEnd={reorder}>
 				<DropZone
 					droppableId={rootNode.page.id}
-					renderClone={(provided) => (
-						<div
-							ref={provided.innerRef}
-							{...provided.draggableProps}
-							className="h-full w-full bg-red-600"
-						></div>
-					)}
+					renderClone={(provided) => {
+						const node = getNode(provided.draggableProps["data-rfd-draggable-id"])!;
+						return <Clone node={node} provided={provided} last={true} />;
+					}}
 				>
 					{rootNode.children.map((child, i, array) => (
 						<Page
