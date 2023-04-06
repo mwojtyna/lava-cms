@@ -1,6 +1,6 @@
 "use client";
 
-import { Card, Center, Group, Portal, Text } from "@mantine/core";
+import { Card, Center, Group, Text } from "@mantine/core";
 import { Draggable, type DraggableProvided, type DraggableStateSnapshot } from "@hello-pangea/dnd";
 import { DocumentIcon, FolderIcon } from "@heroicons/react/24/solid";
 import { getHoverColor } from "@admin/src/utils/colors";
@@ -25,7 +25,12 @@ export default function Page(props: Props) {
 	);
 }
 
-function Content(props: Props & { provided: DraggableProvided; snapshot: DraggableStateSnapshot }) {
+function Content(
+	props: Props & {
+		provided: DraggableProvided;
+		snapshot: DraggableStateSnapshot;
+	}
+) {
 	const child = (
 		<Card
 			p="sm"
@@ -59,24 +64,27 @@ function Content(props: Props & { provided: DraggableProvided; snapshot: Draggab
 				</Text>
 			</Group>
 
-			{props.node.children.length > 0 && (
-				<DropZone droppableId={props.node.page.id}>
-					{props.node.children.map((child, i, array) => (
-						<Page
-							key={child.page.id}
-							node={child}
-							index={i}
-							last={i === array.length - 1}
-						/>
-					))}
-				</DropZone>
-			)}
+			<DropZone
+				droppableId={props.node.page.id}
+				renderClone={(provided) => (
+					<div
+						ref={provided.innerRef}
+						{...provided.draggableProps}
+						className="h-full w-full bg-red-600"
+					></div>
+				)}
+			>
+				{props.node.children.map((child, i, array) => (
+					<Page
+						key={child.page.id}
+						node={child}
+						index={i}
+						last={i === array.length - 1}
+					/>
+				))}
+			</DropZone>
 		</Card>
 	);
 
-	if (!props.snapshot.isDragging) {
-		return child;
-	} else {
-		return <Portal>{child}</Portal>;
-	}
+	return child;
 }

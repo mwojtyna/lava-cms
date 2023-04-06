@@ -63,7 +63,7 @@ export default function PageTree({ initialData }: { initialData: PageType[] }) {
 
 	function reorder(result: DropResult) {
 		console.log(
-			getNode(result.destination?.droppableId, rootNode)?.page.path,
+			getNode(result.destination!.droppableId!, rootNode)?.page.path,
 			result.destination?.index
 		);
 	}
@@ -72,7 +72,16 @@ export default function PageTree({ initialData }: { initialData: PageType[] }) {
 		<Section>
 			<Section.Title>Structure</Section.Title>
 			<DragDropContext onDragEnd={reorder}>
-				<DropZone droppableId={rootNode.page.id}>
+				<DropZone
+					droppableId={rootNode.page.id}
+					renderClone={(provided) => (
+						<div
+							ref={provided.innerRef}
+							{...provided.draggableProps}
+							className="h-full w-full bg-red-600"
+						></div>
+					)}
+				>
 					{rootNode.children.map((child, i, array) => (
 						<Page
 							key={child.page.id}
