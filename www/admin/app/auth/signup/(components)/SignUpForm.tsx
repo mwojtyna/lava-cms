@@ -81,7 +81,7 @@ export default function SignUpForm({ onSignUp }: { onSignUp?: () => void }) {
 					placeholder="user@domain.com"
 					{...register("email")}
 					error={errors.email?.message}
-					icon={<EnvelopeIcon className="w-5" />}
+					icon={<EnvelopeIcon width="1.25rem" />}
 					autoFocus
 				/>
 
@@ -93,7 +93,7 @@ export default function SignUpForm({ onSignUp }: { onSignUp?: () => void }) {
 						placeholder="Jan"
 						{...register("name")}
 						error={!!errors.name}
-						icon={<UserIcon className="w-5" />}
+						icon={<UserIcon width="1.25rem" />}
 					/>
 					<TextInput
 						size="md"
@@ -110,7 +110,7 @@ export default function SignUpForm({ onSignUp }: { onSignUp?: () => void }) {
 					label="Password"
 					{...register("password")}
 					error={errors.password?.message}
-					icon={<LockClosedIcon className="w-5" />}
+					icon={<LockClosedIcon width="1.25rem" />}
 					visibilityToggleIcon={({ reveal, size }) =>
 						reveal ? (
 							<EyeSlashIcon style={{ width: size }} />
@@ -124,7 +124,7 @@ export default function SignUpForm({ onSignUp }: { onSignUp?: () => void }) {
 					label="Repeat password"
 					{...register("repeatPassword")}
 					error={errors.repeatPassword?.message}
-					icon={<LockClosedIcon className="w-5" />}
+					icon={<LockClosedIcon width="1.25rem" />}
 					visibilityToggleIcon={({ reveal, size }) =>
 						reveal ? (
 							<EyeSlashIcon style={{ width: size }} />
@@ -140,7 +140,7 @@ export default function SignUpForm({ onSignUp }: { onSignUp?: () => void }) {
 						size="md"
 						type="submit"
 						leftIcon={
-							!isSubmitting && !isSubmitSuccessful && <UserPlusIcon className="w-5" />
+							!isSubmitting && !isSubmitSuccessful && <UserPlusIcon width="1.25rem" />
 						}
 					>
 						{isSubmitting || isSubmitSuccessful ? (

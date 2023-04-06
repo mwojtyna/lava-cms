@@ -1,12 +1,10 @@
 "use client";
 
 import { useMemo } from "react";
-import { DragDropContext, type DropResult } from "@hello-pangea/dnd";
 import { Section } from "@admin/app/dashboard/(components)/Section";
 import { trpcReact } from "@admin/src/utils/trpcReact";
 import type { Page as PageType } from "api/prisma/types";
-import Page, { Clone } from "./Page";
-import DropZone from "./DropZone";
+import Page from "./Page";
 
 export interface Node {
 	page: PageType;
@@ -63,34 +61,10 @@ export default function PageTree({ initialData }: { initialData: PageType[] }) {
 		}
 	}, [data]);
 
-	function reorder(result: DropResult) {
-		console.log(
-			getNode(result.destination!.droppableId!, rootNode)?.page.path,
-			result.destination?.index
-		);
-	}
-
 	return (
 		<Section>
 			<Section.Title>Structure</Section.Title>
-			<DragDropContext onDragEnd={reorder}>
-				<DropZone
-					droppableId={rootNode.page.id}
-					renderClone={(provided) => {
-						const node = getNode(provided.draggableProps["data-rfd-draggable-id"])!;
-						return <Clone node={node} provided={provided} last={true} />;
-					}}
-				>
-					{rootNode.children.map((child, i, array) => (
-						<Page
-							key={child.page.id}
-							node={child}
-							index={i}
-							last={i === array.length - 1}
-						/>
-					))}
-				</DropZone>
-			</DragDropContext>
+			<Page node={rootNode} last />
 		</Section>
 	);
 }

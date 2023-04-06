@@ -75,7 +75,7 @@ function SignInForm() {
 					<Alert
 						color="red"
 						variant="filled"
-						icon={<ExclamationCircleIcon className="w-5" />}
+						icon={<ExclamationCircleIcon width="1.25rem" />}
 					>
 						{errors.root?.invalidCredentials.message}
 					</Alert>
@@ -88,7 +88,7 @@ function SignInForm() {
 					placeholder="user@domain.com"
 					{...register("email")}
 					error={errors.email?.message}
-					icon={<EnvelopeIcon className="w-5" />}
+					icon={<EnvelopeIcon width="1.25rem" />}
 					autoFocus
 				/>
 				<PasswordInput
@@ -96,7 +96,7 @@ function SignInForm() {
 					label="Password"
 					{...register("password")}
 					error={!!errors.password}
-					icon={<LockClosedIcon className="w-5" />}
+					icon={<LockClosedIcon width="1.25rem" />}
 					visibilityToggleIcon={({ reveal, size }) =>
 						reveal ? (
 							<EyeSlashIcon style={{ width: size }} />
@@ -113,7 +113,7 @@ function SignInForm() {
 						type="submit"
 						leftIcon={
 							!isSubmitting &&
-							!isSubmitSuccessful && <ArrowRightOnRectangleIcon className="w-5" />
+							!isSubmitSuccessful && <ArrowRightOnRectangleIcon width="1.25rem" />
 						}
 					>
 						{isSubmitting ||

@@ -127,7 +127,7 @@ export default function SetupForm() {
 						type="submit"
 						leftIcon={
 							!isSubmitting &&
-							!isSubmitSuccessful && <ArrowDownOnSquareIcon className="w-5" />
+							!isSubmitSuccessful && <ArrowDownOnSquareIcon width="1.25rem" />
 						}
 					>
 						{isSubmitting || isSubmitSuccessful ? (
