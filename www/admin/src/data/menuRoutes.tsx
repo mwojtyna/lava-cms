@@ -1,8 +1,9 @@
+import type { Route as NextRoute } from "next";
 import { HomeIcon, Cog6ToothIcon, Square2StackIcon } from "@heroicons/react/24/solid";
 
 interface Route {
 	label: string;
-	path: string;
+	path: NextRoute;
 	icon?: React.ReactNode;
 	startingRoute?: boolean;
 	children?: ChildRoute[];
