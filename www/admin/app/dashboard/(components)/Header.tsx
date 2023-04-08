@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import type { Route } from "next";
 import Link from "next/link";
 import {
 	Breadcrumbs,
@@ -50,7 +51,7 @@ export default function Header({ user }: { user: Omit<User, "password"> | null }
 	const url = useUrl();
 
 	interface Breadcrumb {
-		path: string;
+		path: Route;
 		name: React.ReactNode;
 		hasChildren: boolean;
 	}
@@ -85,7 +86,7 @@ export default function Header({ user }: { user: Omit<User, "password"> | null }
 			} else {
 				result.push({
 					name: segments[i]!,
-					path: `${previousSegments}/${segments[i]}`,
+					path: `${previousSegments}/${segments[i]}` as Route,
 					hasChildren: false,
 				});
 			}
