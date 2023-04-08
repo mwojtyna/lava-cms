@@ -15,7 +15,7 @@ import {
 } from "@heroicons/react/24/solid";
 import { getBorderColor, getHoverColor } from "@admin/src/utils/colors";
 import type { Node } from "./PageTree";
-import { EditNameModal } from "./Modals";
+import { EditNameModal } from "./EditNameModal";
 
 const useStyles = createStyles((theme) => ({
 	icon: {
@@ -76,19 +76,11 @@ export default function Page(props: PageProps) {
 								<DocumentIcon className="w-5" />
 							)}
 
-							{/* name */}
 							<Text sx={{ fontWeight: 500 }}>{props.node.page.name}</Text>
 
-							{/* slug */}
-							{!props.root && (
-								<Text color="dimmed" size="sm">
-									{
-										props.node.page.path.split("/")[
-											props.node.page.path.split("/").length - 1
-										]
-									}
-								</Text>
-							)}
+							<Text color="dimmed" size="sm">
+								{props.node.page.path}
+							</Text>
 
 							<ActionIcon
 								variant="light"

@@ -31,6 +31,7 @@
 		"react-dom": "^18.2.0",
 		"react-hook-form": "^7.43.1",
 		"sharp": "^0.32.0",
+		"slugify": "^1.6.6",
 		"zod": "^3.20.2",
 		"zustand": "^4.3.6"
 	},
