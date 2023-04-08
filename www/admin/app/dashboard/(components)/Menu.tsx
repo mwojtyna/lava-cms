@@ -30,10 +30,11 @@ export default function Menu({ version }: { version: string }) {
 
 			<MediaQuery smallerThan={"md"} styles={{ display: "none" }}>
 				<Navbar
+					zIndex={"auto"}
+					w={WIDTH}
+					h="100vh"
 					sx={(theme) => ({
-						width: WIDTH,
 						flexShrink: 0,
-						height: "100vh",
 						overflow: "auto",
 						backgroundColor: getCardColor(theme),
 					})}

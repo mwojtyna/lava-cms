@@ -100,7 +100,7 @@ export default function WebsiteSettings({ initialData }: { initialData: Inputs }
 					<Group position="right">
 						<Button
 							type="submit"
-							leftIcon={!isSubmitting && <CheckCircleIcon width="1.25rem" />}
+							leftIcon={!isSubmitting && <CheckCircleIcon className="w-5" />}
 						>
 							{isSubmitting ? <Loader variant="dots" color="#fff" /> : <>Save</>}
 						</Button>

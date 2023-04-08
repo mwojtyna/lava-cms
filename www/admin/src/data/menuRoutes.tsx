@@ -14,18 +14,18 @@ export const routes: Route[] = [
 	{
 		label: "Start",
 		path: "/dashboard",
-		icon: <HomeIcon width="1.25rem" />,
+		icon: <HomeIcon className="w-5" />,
 		startingRoute: true,
 	},
 	{
 		label: "Pages",
 		path: "/dashboard/pages",
-		icon: <Square2StackIcon width="1.25rem" />,
+		icon: <Square2StackIcon className="w-5" />,
 	},
 	{
 		label: "Settings",
 		path: "/dashboard/settings",
-		icon: <Cog6ToothIcon width="1.25rem" />,
+		icon: <Cog6ToothIcon className="w-5" />,
 	},
 ];
 
