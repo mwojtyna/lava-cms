@@ -5,11 +5,9 @@ import { type SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import {
-	Button,
 	Code,
 	createStyles,
 	Group,
-	Loader,
 	Stack,
 	Textarea,
 	TextInput,
@@ -21,6 +19,7 @@ import { QuestionMarkCircleIcon } from "@heroicons/react/20/solid";
 import { check } from "language-tags";
 import ThemeSwitch from "@admin/app/(components)/ThemeSwitch";
 import { trpc } from "@admin/src/utils/trpc";
+import SubmitButton from "@admin/app/(components)/SubmitButton";
 
 const useStyles = createStyles(() => ({
 	label: {
@@ -122,20 +121,16 @@ export default function SetupForm() {
 
 				<Group position="apart">
 					<ThemeSwitch />
-					<Button
+					<SubmitButton
 						size="md"
-						type="submit"
 						leftIcon={
 							!isSubmitting &&
 							!isSubmitSuccessful && <ArrowDownOnSquareIcon className="w-5" />
 						}
+						isLoading={isSubmitting || isSubmitSuccessful}
 					>
-						{isSubmitting || isSubmitSuccessful ? (
-							<Loader variant="dots" color="#fff" />
-						) : (
-							<>Submit</>
-						)}
-					</Button>
+						Submit
+					</SubmitButton>
 				</Group>
 			</Stack>
 		</form>

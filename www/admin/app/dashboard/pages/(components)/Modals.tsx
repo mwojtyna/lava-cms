@@ -1,8 +1,8 @@
 import { type SubmitHandler, useForm } from "react-hook-form";
-import { Button, Group, Loader, Modal, Stack, TextInput } from "@mantine/core";
-import { CheckCircleIcon } from "@heroicons/react/24/outline";
+import { Group, Modal, Stack, TextInput } from "@mantine/core";
 import type { Page } from "api/prisma/types";
 import { trpcReact } from "@admin/src/utils/trpcReact";
+import SubmitButton from "@admin/app/(components)/SubmitButton";
 
 interface Props {
 	opened: boolean;
@@ -46,17 +46,9 @@ export function EditNameModal(props: Props) {
 								"A server error occurred. Open the console for more details.")
 						}
 					/>
+
 					<Group position="right">
-						<Button
-							type="submit"
-							leftIcon={!mutation.isLoading && <CheckCircleIcon className="w-5" />}
-						>
-							{mutation.isLoading ? (
-								<Loader variant="dots" color="#fff" />
-							) : (
-								<>Save</>
-							)}
-						</Button>
+						<SubmitButton isLoading={mutation.isLoading}>Save</SubmitButton>
 					</Group>
 				</Stack>
 			</form>

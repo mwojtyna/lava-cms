@@ -1,15 +1,16 @@
 "use client";
+
 import { useEffect } from "react";
-import { Button, Group, Loader, Stack, TextInput, Textarea } from "@mantine/core";
+import { Group, Stack, TextInput, Textarea } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
 import { type SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { check } from "language-tags";
-import { CheckCircleIcon } from "@heroicons/react/24/outline";
 import { trpc } from "@admin/src/utils/trpc";
 import { trpcReact } from "@admin/src/utils/trpcReact";
 import { Section } from "@admin/app/dashboard/(components)/Section";
+import SubmitButton from "@admin/app/(components)/SubmitButton";
 
 const inputSchema = z
 	.object({
@@ -98,12 +99,7 @@ export default function WebsiteSettings({ initialData }: { initialData: Inputs }
 					/>
 
 					<Group position="right">
-						<Button
-							type="submit"
-							leftIcon={!isSubmitting && <CheckCircleIcon className="w-5" />}
-						>
-							{isSubmitting ? <Loader variant="dots" color="#fff" /> : <>Save</>}
-						</Button>
+						<SubmitButton isLoading={isSubmitting}>Save</SubmitButton>
 					</Group>
 				</Stack>
 			</form>

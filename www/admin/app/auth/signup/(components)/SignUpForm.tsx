@@ -8,13 +8,14 @@ import {
 	UserIcon,
 	UserPlusIcon,
 } from "@heroicons/react/24/outline";
-import { Button, Group, Loader, PasswordInput, Stack, TextInput, Title } from "@mantine/core";
+import { Group, PasswordInput, Stack, TextInput, Title } from "@mantine/core";
 import { type SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { signIn } from "next-auth/react";
 import { z } from "zod";
 import { trpc } from "@admin/src/utils/trpc";
 import ThemeSwitch from "@admin/app/(components)/ThemeSwitch";
+import SubmitButton from "@admin/app/(components)/SubmitButton";
 
 export default function SignUpForm({ onSignUp }: { onSignUp?: () => void }) {
 	const inputSchema = z
@@ -136,19 +137,15 @@ export default function SignUpForm({ onSignUp }: { onSignUp?: () => void }) {
 
 				<Group position="apart">
 					<ThemeSwitch />
-					<Button
+					<SubmitButton
 						size="md"
-						type="submit"
 						leftIcon={
 							!isSubmitting && !isSubmitSuccessful && <UserPlusIcon className="w-5" />
 						}
+						isLoading={isSubmitting || isSubmitSuccessful}
 					>
-						{isSubmitting || isSubmitSuccessful ? (
-							<Loader variant="dots" color="#fff" />
-						) : (
-							<>Sign up</>
-						)}
-					</Button>
+						Sign up
+					</SubmitButton>
 				</Group>
 			</Stack>
 		</form>
