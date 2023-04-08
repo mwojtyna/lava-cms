@@ -64,7 +64,7 @@ export default function PageTree({ initialData }: { initialData: PageType[] }) {
 	return (
 		<Section>
 			<Section.Title>Structure</Section.Title>
-			<Page node={rootNode} last />
+			<Page node={rootNode} root last />
 		</Section>
 	);
 }
