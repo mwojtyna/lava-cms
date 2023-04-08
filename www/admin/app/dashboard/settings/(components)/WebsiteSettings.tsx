@@ -7,7 +7,6 @@ import { type SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { check } from "language-tags";
-import { trpc } from "@admin/src/utils/trpc";
 import { trpcReact } from "@admin/src/utils/trpcReact";
 import { Section } from "@admin/app/dashboard/(components)/Section";
 import SubmitButton from "@admin/app/(components)/SubmitButton";
@@ -25,6 +24,7 @@ type Inputs = z.infer<typeof inputSchema>;
 
 export default function WebsiteSettings({ initialData }: { initialData: Inputs }) {
 	const data = trpcReact.config.getConfig.useQuery().data ?? initialData;
+	const mutation = trpcReact.config.setConfig.useMutation();
 
 	const {
 		register,
@@ -35,7 +35,7 @@ export default function WebsiteSettings({ initialData }: { initialData: Inputs }
 
 	const onSubmit: SubmitHandler<Inputs> = async (data) => {
 		try {
-			await trpc.config.setConfig.mutate({
+			await mutation.mutateAsync({
 				title: data.title,
 				description: data.description,
 				language: data.language,
