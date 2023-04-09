@@ -10,7 +10,7 @@ export const addPage = publicProcedure
 		z.object({
 			name: z.string(),
 			url: z.string().regex(url),
-			parent_id: z.string().optional(),
+			parent_id: z.string().cuid().optional(),
 		})
 	)
 	.mutation(async ({ input }) => {
