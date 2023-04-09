@@ -1,10 +1,11 @@
-import { type ChangeEvent, useState } from "react";
+import type { ChangeEvent } from "react";
 import { type SubmitHandler, useForm } from "react-hook-form";
-import { Group, Modal, Stack, TextInput } from "@mantine/core";
+import { Alert, Group, Modal, Stack, TextInput } from "@mantine/core";
 import slugify from "slugify";
 import type { Page } from "api/prisma/types";
 import { trpcReact } from "@admin/src/utils/trpcReact";
 import SubmitButton from "@admin/app/(components)/SubmitButton";
+import { ExclamationCircleIcon } from "@heroicons/react/24/outline";
 
 interface Props {
 	opened: boolean;
@@ -15,35 +16,40 @@ interface Props {
 export function EditNameModal(props: Props) {
 	const mutation = trpcReact.pages.editPage.useMutation();
 
-	const [newUrl, setNewUrl] = useState(props.page.url);
-	function changePath(name: string) {
+	function getSlugFromUrl(path: string) {
+		const split = path.split("/");
+		return split[split.length - 1];
+	}
+	function setSlug(name: string) {
 		if (props.page.url === "/") {
 			return "/";
 		}
 
-		const slug = slugify(name, {
+		return slugify(name, {
 			lower: true,
 			strict: true,
 			locale: "en",
 		});
-		const split = props.page.url.split("/");
-
-		return props.page.url.replace(split[split.length - 1]!, slug);
 	}
 
 	interface Inputs {
 		name: string;
+		slug: string;
 	}
 	const {
 		register,
 		handleSubmit,
 		formState: { errors },
-	} = useForm<Inputs>();
+		setValue,
+	} = useForm<Inputs>({ defaultValues: { slug: getSlugFromUrl(props.page.url) } });
 	const onSubmit: SubmitHandler<Inputs> = async (data) => {
+		const split = props.page.url.split("/");
+		split[split.length - 1] = data.slug;
+
 		await mutation.mutateAsync({
 			id: props.page.id,
 			newName: data.name,
-			newUrl: newUrl,
+			newUrl: split.join("/"),
 		});
 		props.onClose();
 	};
@@ -52,6 +58,15 @@ export function EditNameModal(props: Props) {
 		<Modal opened={props.opened} onClose={props.onClose} title="Edit name" centered>
 			<form onSubmit={handleSubmit(onSubmit)}>
 				<Stack>
+					{mutation.error && (
+						<Alert
+							color="red"
+							variant="filled"
+							icon={<ExclamationCircleIcon className="w-5" />}
+						>
+							An unexpected error occurred. Open the console for more details.
+						</Alert>
+					)}
 					<TextInput
 						defaultValue={props.page.name}
 						label="New name"
@@ -60,16 +75,18 @@ export function EditNameModal(props: Props) {
 						{...register("name", {
 							required: " ",
 							onChange: (e: ChangeEvent<HTMLInputElement>) =>
-								setNewUrl(changePath(e.target.value)),
+								setValue("slug", setSlug(e.target.value)),
 						})}
-						error={
-							errors.name?.message ||
-							(mutation.error?.message &&
-								"A server error occurred. Open the console for more details.")
-						}
+						error={errors.name?.message}
 					/>
 					{props.page.url !== "/" && (
-						<TextInput value={newUrl} label="URL" variant="filled" disabled />
+						<TextInput
+							label="Slug"
+							variant="filled"
+							withAsterisk
+							{...register("slug", { required: " " })}
+							error={errors.slug?.message}
+						/>
 					)}
 
 					<Group position="right">
