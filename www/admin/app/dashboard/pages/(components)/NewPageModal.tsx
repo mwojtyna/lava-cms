@@ -17,10 +17,6 @@ interface Props {
 export function NewPageModal(props: Props) {
 	const mutation = trpcReact.pages.addPage.useMutation();
 
-	function getSlugFromUrl(path: string) {
-		const split = path.split("/");
-		return split[split.length - 1];
-	}
 	function setSlug(name: string) {
 		return slugify(name, {
 			lower: true,
@@ -40,11 +36,7 @@ export function NewPageModal(props: Props) {
 		setValue,
 		setError,
 		clearErrors,
-	} = useForm<Inputs>({
-		defaultValues: {
-			slug: getSlugFromUrl(props.parentPage.url),
-		},
-	});
+	} = useForm<Inputs>();
 	const onSubmit: SubmitHandler<Inputs> = async (data) => {
 		try {
 			await mutation.mutateAsync({
