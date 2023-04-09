@@ -17,6 +17,10 @@ export function EditNameModal(props: Props) {
 	const mutation = trpcReact.pages.editPage.useMutation();
 
 	function getSlugFromUrl(path: string) {
+		if (path === "/") {
+			return "/";
+		}
+
 		const split = path.split("/");
 		return split[split.length - 1];
 	}
@@ -44,7 +48,7 @@ export function EditNameModal(props: Props) {
 	} = useForm<Inputs>({ defaultValues: { slug: getSlugFromUrl(props.page.url) } });
 	const onSubmit: SubmitHandler<Inputs> = async (data) => {
 		const split = props.page.url.split("/");
-		split[split.length - 1] = data.slug;
+		if (data.slug !== "/") split[split.length - 1] = data.slug;
 
 		await mutation.mutateAsync({
 			id: props.page.id,
