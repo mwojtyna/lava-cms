@@ -11,25 +11,17 @@ import SubmitButton from "@admin/app/(components)/SubmitButton";
 interface Props {
 	opened: boolean;
 	onClose: () => void;
-	page: Page;
+	parentPage: Page;
 }
 
-export function EditNameModal(props: Props) {
-	const mutation = trpcReact.pages.editPage.useMutation();
+export function NewPageModal(props: Props) {
+	const mutation = trpcReact.pages.addPage.useMutation();
 
 	function getSlugFromUrl(path: string) {
-		if (path === "/") {
-			return "/";
-		}
-
 		const split = path.split("/");
 		return split[split.length - 1];
 	}
 	function setSlug(name: string) {
-		if (props.page.url === "/") {
-			return "/";
-		}
-
 		return slugify(name, {
 			lower: true,
 			strict: true,
@@ -50,19 +42,15 @@ export function EditNameModal(props: Props) {
 		clearErrors,
 	} = useForm<Inputs>({
 		defaultValues: {
-			slug: getSlugFromUrl(props.page.url),
+			slug: getSlugFromUrl(props.parentPage.url),
 		},
 	});
 	const onSubmit: SubmitHandler<Inputs> = async (data) => {
-		const split = props.page.url.split("/");
-		if (data.slug !== "/") split[split.length - 1] = data.slug;
-
 		try {
 			await mutation.mutateAsync({
-				id: props.page.id,
-				newName: data.name,
-				oldUrl: props.page.url,
-				newUrl: split.join("/"),
+				name: data.name,
+				url: props.parentPage.url + (props.parentPage.url !== "/" ? "/" : "") + data.slug,
+				parent_id: props.parentPage.id,
 			});
 		} catch (error) {
 			if (error instanceof TRPCClientError && error.data.code === "CONFLICT") {
@@ -82,7 +70,7 @@ export function EditNameModal(props: Props) {
 	};
 
 	return (
-		<Modal opened={props.opened} onClose={props.onClose} title="Edit name" centered>
+		<Modal opened={props.opened} onClose={props.onClose} title="Add page" centered>
 			<form onSubmit={handleSubmit(onSubmit)}>
 				<Stack>
 					{errors.root && (
@@ -95,8 +83,7 @@ export function EditNameModal(props: Props) {
 						</Alert>
 					)}
 					<TextInput
-						defaultValue={props.page.name}
-						label="New name"
+						label="Name"
 						data-autofocus
 						withAsterisk
 						{...register("name", {
@@ -108,15 +95,13 @@ export function EditNameModal(props: Props) {
 						})}
 						error={errors.name?.message}
 					/>
-					{props.page.url !== "/" && (
-						<TextInput
-							label="Slug"
-							variant="filled"
-							withAsterisk
-							{...register("slug", { required: " " })}
-							error={errors.slug?.message}
-						/>
-					)}
+					<TextInput
+						label="Slug"
+						variant="filled"
+						withAsterisk
+						{...register("slug", { required: " " })}
+						error={errors.slug?.message}
+					/>
 
 					<Group position="right">
 						<SubmitButton isLoading={mutation.isLoading}>Save</SubmitButton>

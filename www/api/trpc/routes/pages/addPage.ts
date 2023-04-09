@@ -1,4 +1,6 @@
 import { z } from "zod";
+import { Prisma } from "@prisma/client";
+import { TRPCError } from "@trpc/server";
 import { prisma } from "@api/prisma/client";
 import { publicProcedure } from "@api/trpc";
 import { url } from "@api/trpc/regex";
@@ -8,14 +10,23 @@ export const addPage = publicProcedure
 		z.object({
 			name: z.string(),
 			url: z.string().regex(url),
-			rootPage: z.boolean().optional(),
+			parent_id: z.string().optional(),
 		})
 	)
 	.mutation(async ({ input }) => {
-		await prisma.page.create({
-			data: {
-				name: input.name,
-				url: input.url,
-			},
-		});
+		try {
+			await prisma.page.create({
+				data: {
+					name: input.name,
+					url: input.url,
+					parent_id: input.parent_id ?? null,
+				},
+			});
+		} catch (error) {
+			if (error instanceof Prisma.PrismaClientKnownRequestError) {
+				throw new TRPCError({
+					code: "CONFLICT",
+				});
+			}
+		}
 	});

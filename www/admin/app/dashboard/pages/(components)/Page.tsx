@@ -15,6 +15,7 @@ import {
 } from "@heroicons/react/24/solid";
 import { getBorderColor, getHoverColor } from "@admin/src/utils/colors";
 import type { Node } from "./PageTree";
+import { NewPageModal } from "./NewPageModal";
 import { EditNameModal } from "./EditNameModal";
 
 const useStyles = createStyles((theme) => ({
@@ -32,10 +33,16 @@ export default function Page(props: PageProps) {
 	const { classes } = useStyles();
 	const theme = useMantineTheme();
 
+	const [isAdding, setIsAdding] = useState(false);
 	const [isEditing, setIsEditing] = useState(false);
 
 	return (
 		<>
+			<NewPageModal
+				parentPage={props.node.page}
+				opened={isAdding}
+				onClose={() => setIsAdding(false)}
+			/>
 			<EditNameModal
 				page={props.node.page}
 				opened={isEditing}
@@ -95,7 +102,11 @@ export default function Page(props: PageProps) {
 						<Group spacing={"xs"}>
 							{props.root ? (
 								<>
-									<ActionIcon variant="light" className={classes.icon}>
+									<ActionIcon
+										variant="light"
+										className={classes.icon}
+										onClick={() => setIsAdding(true)}
+									>
 										<DocumentPlusIcon className="w-5" />
 									</ActionIcon>
 								</>
@@ -103,7 +114,11 @@ export default function Page(props: PageProps) {
 								<>
 									<ChevronUpDownIcon className="w-5" />
 
-									<ActionIcon variant="light" className={classes.icon}>
+									<ActionIcon
+										variant="light"
+										className={classes.icon}
+										onClick={() => setIsAdding(true)}
+									>
 										<DocumentPlusIcon className="w-5" />
 									</ActionIcon>
 
@@ -124,7 +139,9 @@ export default function Page(props: PageProps) {
 					<Stack
 						spacing="xs"
 						pl="lg"
-						sx={(theme) => ({ borderLeft: `1px solid ${getBorderColor(theme)}` })}
+						sx={(theme) => ({
+							borderLeft: `2px solid ${getBorderColor(theme)}`,
+						})}
 					>
 						{props.node.children.map((child, index) => (
 							<Page
