@@ -53,6 +53,7 @@ export function EditNameModal(props: Props) {
 		await mutation.mutateAsync({
 			id: props.page.id,
 			newName: data.name,
+			oldUrl: props.page.url,
 			newUrl: split.join("/"),
 		});
 		props.onClose();

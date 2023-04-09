@@ -12,7 +12,7 @@ export interface Node {
 }
 
 let rootNode: Node;
-export function getNode(id: string, node: Node = rootNode): Node | undefined {
+export function getNode(id: string, node: Node = rootNode): Node | null {
 	if (node.page.id === id) {
 		return node;
 	}
@@ -24,7 +24,7 @@ export function getNode(id: string, node: Node = rootNode): Node | undefined {
 		}
 	}
 
-	return undefined;
+	return null;
 }
 
 export default function PageTree({ initialData }: { initialData: PageType[] }) {
