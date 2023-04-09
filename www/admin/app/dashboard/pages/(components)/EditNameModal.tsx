@@ -2,6 +2,7 @@ import type { ChangeEvent } from "react";
 import { type SubmitHandler, useForm } from "react-hook-form";
 import { Alert, Group, Modal, Stack, TextInput } from "@mantine/core";
 import slugify from "slugify";
+import { TRPCClientError } from "@trpc/client";
 import type { Page } from "api/prisma/types";
 import { trpcReact } from "@admin/src/utils/trpcReact";
 import SubmitButton from "@admin/app/(components)/SubmitButton";
@@ -45,17 +46,38 @@ export function EditNameModal(props: Props) {
 		handleSubmit,
 		formState: { errors },
 		setValue,
-	} = useForm<Inputs>({ defaultValues: { slug: getSlugFromUrl(props.page.url) } });
+		setError,
+		clearErrors,
+	} = useForm<Inputs>({
+		defaultValues: {
+			slug: getSlugFromUrl(props.page.url),
+		},
+	});
 	const onSubmit: SubmitHandler<Inputs> = async (data) => {
 		const split = props.page.url.split("/");
 		if (data.slug !== "/") split[split.length - 1] = data.slug;
 
-		await mutation.mutateAsync({
-			id: props.page.id,
-			newName: data.name,
-			oldUrl: props.page.url,
-			newUrl: split.join("/"),
-		});
+		try {
+			await mutation.mutateAsync({
+				id: props.page.id,
+				newName: data.name,
+				oldUrl: props.page.url,
+				newUrl: split.join("/"),
+			});
+		} catch (error) {
+			if (error instanceof TRPCClientError && error.data.code === "CONFLICT") {
+				setError("slug", {
+					type: "manual",
+					message: "This slug is already taken.",
+				});
+			} else {
+				setError("root", {
+					message: "An unexpected error occurred. Open the console for more details.",
+				});
+			}
+			return;
+		}
+
 		props.onClose();
 	};
 
@@ -63,13 +85,13 @@ export function EditNameModal(props: Props) {
 		<Modal opened={props.opened} onClose={props.onClose} title="Edit name" centered>
 			<form onSubmit={handleSubmit(onSubmit)}>
 				<Stack>
-					{mutation.error && (
+					{errors.root && (
 						<Alert
 							color="red"
 							variant="filled"
 							icon={<ExclamationCircleIcon className="w-5" />}
 						>
-							An unexpected error occurred. Open the console for more details.
+							{errors.root.message}
 						</Alert>
 					)}
 					<TextInput
@@ -79,8 +101,10 @@ export function EditNameModal(props: Props) {
 						withAsterisk
 						{...register("name", {
 							required: " ",
-							onChange: (e: ChangeEvent<HTMLInputElement>) =>
-								setValue("slug", setSlug(e.target.value)),
+							onChange: (e: ChangeEvent<HTMLInputElement>) => {
+								setValue("slug", setSlug(e.target.value));
+								clearErrors("slug");
+							},
 						})}
 						error={errors.name?.message}
 					/>

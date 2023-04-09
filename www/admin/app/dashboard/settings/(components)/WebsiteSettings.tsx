@@ -45,7 +45,7 @@ export default function WebsiteSettings({ initialData }: { initialData: Inputs }
 				message: "Website settings saved.",
 				color: "green",
 			});
-		} catch (error: unknown | Error) {
+		} catch (error) {
 			if (error instanceof Error) {
 				notifications.show({
 					title: "Error",
