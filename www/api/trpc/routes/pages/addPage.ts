@@ -7,7 +7,7 @@ export const addPage = publicProcedure
 	.input(
 		z.object({
 			name: z.string(),
-			path: z.string().regex(url),
+			url: z.string().regex(url),
 			rootPage: z.boolean().optional(),
 		})
 	)
@@ -15,7 +15,7 @@ export const addPage = publicProcedure
 		await prisma.page.create({
 			data: {
 				name: input.name,
-				path: input.path,
+				url: input.url,
 			},
 		});
 	});

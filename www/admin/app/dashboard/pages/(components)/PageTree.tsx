@@ -31,20 +31,14 @@ export default function PageTree({ initialData }: { initialData: PageType[] }) {
 	const data = trpcReact.pages.getPages.useQuery().data ?? initialData;
 
 	rootNode = useMemo(() => {
-		const rootPage = data.find((page) => page.path === "/")!;
+		const rootPage = data.find((page) => page.url === "/")!;
 		return {
 			page: rootPage,
 			children: findChildren(rootPage),
 		};
 
 		function findChildren(root: PageType) {
-			const children: PageType[] = data.filter(
-				(page) =>
-					page.path !== root.path && // Not the root page
-					page.path.split(root.path).length === 2 && // Is a child of the root page
-					page.path.replace(root.path, "").split("/").length ===
-						(root.path === "/" ? 1 : 2) // Is a direct child of the root page
-			);
+			const children: PageType[] = data.filter((page) => page.parent_id === root.id);
 			if (children.length === 0) {
 				return [];
 			}

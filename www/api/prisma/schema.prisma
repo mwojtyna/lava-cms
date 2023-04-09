@@ -33,9 +33,12 @@ model Config {
 }
 
 model Page {
-    id   String @id @default(cuid())
-    name String
-    path String @unique
+    id        String  @id @default(cuid())
+    name      String
+    url       String  @unique
+    parent    Page?   @relation("Tree", fields: [parent_id], references: [id])
+    parent_id String?
+    child     Page[]  @relation("Tree")
 
     @@map("page")
     @@schema("frontend")

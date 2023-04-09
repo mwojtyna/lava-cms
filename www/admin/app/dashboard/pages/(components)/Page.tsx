@@ -79,7 +79,7 @@ export default function Page(props: PageProps) {
 							<Text sx={{ fontWeight: 500 }}>{props.node.page.name}</Text>
 
 							<Text color="dimmed" size="sm">
-								{props.node.page.path}
+								{props.node.page.url}
 							</Text>
 
 							<ActionIcon

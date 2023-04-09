@@ -8,7 +8,7 @@ export const editPage = publicProcedure
 		z.object({
 			id: z.string(),
 			newName: z.string(),
-			newPath: z.string().regex(url),
+			newUrl: z.string().regex(url),
 		})
 	)
 	.mutation(async ({ input }) => {
@@ -16,7 +16,7 @@ export const editPage = publicProcedure
 			where: { id: input.id },
 			data: {
 				name: input.newName,
-				path: input.newPath,
+				url: input.newUrl,
 			},
 		});
 	});

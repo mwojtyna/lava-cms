@@ -15,9 +15,9 @@ interface Props {
 export function EditNameModal(props: Props) {
 	const mutation = trpcReact.pages.editPage.useMutation();
 
-	const [newPath, setNewPath] = useState(props.page.path);
+	const [newUrl, setNewUrl] = useState(props.page.url);
 	function changePath(name: string) {
-		if (props.page.path === "/") {
+		if (props.page.url === "/") {
 			return "/";
 		}
 
@@ -26,9 +26,9 @@ export function EditNameModal(props: Props) {
 			strict: true,
 			locale: "en",
 		});
-		const split = props.page.path.split("/");
+		const split = props.page.url.split("/");
 
-		return props.page.path.replace(split[split.length - 1]!, slug);
+		return props.page.url.replace(split[split.length - 1]!, slug);
 	}
 
 	interface Inputs {
@@ -43,7 +43,7 @@ export function EditNameModal(props: Props) {
 		await mutation.mutateAsync({
 			id: props.page.id,
 			newName: data.name,
-			newPath: newPath,
+			newUrl: newUrl,
 		});
 		props.onClose();
 	};
@@ -60,7 +60,7 @@ export function EditNameModal(props: Props) {
 						{...register("name", {
 							required: " ",
 							onChange: (e: ChangeEvent<HTMLInputElement>) =>
-								setNewPath(changePath(e.target.value)),
+								setNewUrl(changePath(e.target.value)),
 						})}
 						error={
 							errors.name?.message ||
@@ -68,7 +68,9 @@ export function EditNameModal(props: Props) {
 								"A server error occurred. Open the console for more details.")
 						}
 					/>
-					<TextInput value={newPath} label="Path" variant="filled" disabled />
+					{props.page.url !== "/" && (
+						<TextInput value={newUrl} label="URL" variant="filled" disabled />
+					)}
 
 					<Group position="right">
 						<SubmitButton isLoading={mutation.isLoading}>Save</SubmitButton>
