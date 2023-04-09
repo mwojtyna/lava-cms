@@ -14,7 +14,7 @@ interface Props {
 	page: Page;
 }
 
-export function EditNameModal(props: Props) {
+export default function EditPageModal(props: Props) {
 	const mutation = trpcReact.pages.editPage.useMutation();
 
 	function getSlugFromUrl(path: string) {

@@ -16,7 +16,7 @@ import {
 import { getBorderColor, getHoverColor } from "@admin/src/utils/colors";
 import type { Node } from "./PageTree";
 import { NewPageModal } from "./NewPageModal";
-import { EditNameModal } from "./EditNameModal";
+import EditPageModal from "./EditPageModal";
 
 const useStyles = createStyles((theme) => ({
 	icon: {
@@ -43,7 +43,7 @@ export default function Page(props: PageProps) {
 				opened={isAdding}
 				onClose={() => setIsAdding(false)}
 			/>
-			<EditNameModal
+			<EditPageModal
 				page={props.node.page}
 				opened={isEditing}
 				onClose={() => setIsEditing(false)}
