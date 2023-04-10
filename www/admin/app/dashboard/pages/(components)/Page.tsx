@@ -25,10 +25,11 @@ const useStyles = createStyles((theme) => ({
 interface PageProps {
 	node: Node;
 	last: boolean;
+	root?: boolean;
 	openNewPageModal: (page: PageType) => void;
 	openEditPageModal: (page: PageType) => void;
 	openDeletePageModal: (page: PageType) => void;
-	root?: boolean;
+	openMovePageModal: (page: PageType) => void;
 }
 export default function Page(props: PageProps) {
 	const { classes } = useStyles();
@@ -109,7 +110,11 @@ export default function Page(props: PageProps) {
 										<DocumentPlusIcon className="w-5" />
 									</ActionIcon>
 
-									<ActionIcon variant="light" className={classes.icon}>
+									<ActionIcon
+										variant="light"
+										className={classes.icon}
+										onClick={() => props.openMovePageModal(props.node.page)}
+									>
 										<FolderArrowDownIcon className="w-5" />
 									</ActionIcon>
 
@@ -142,6 +147,7 @@ export default function Page(props: PageProps) {
 								openNewPageModal={props.openNewPageModal}
 								openEditPageModal={props.openEditPageModal}
 								openDeletePageModal={props.openDeletePageModal}
+								openMovePageModal={props.openMovePageModal}
 							/>
 						))}
 					</Stack>

@@ -8,6 +8,7 @@ import Page from "./Page";
 import NewPageModal from "./NewPageModal";
 import EditPageModal from "./EditPageModal";
 import DeletePageModal from "./DeletePageModal";
+import MovePageModal from "./MovePageModal";
 
 export interface Node {
 	page: PageType;
@@ -30,11 +31,12 @@ export function getNode(id: string = rootNode.page.id, node: Node = rootNode): N
 	return null;
 }
 
-type Modals = "new" | "edit" | "delete";
+type Modals = "new" | "edit" | "delete" | "move";
 interface State {
 	newIsOpen: boolean;
 	editIsOpen: boolean;
 	deleteIsOpen: boolean;
+	moveIsOpen: boolean;
 }
 type Action =
 	| {
@@ -104,27 +106,31 @@ export default function PageTree({ initialData }: { initialData: PageType[] }) {
 		newIsOpen: false,
 		editIsOpen: false,
 		deleteIsOpen: false,
+		moveIsOpen: false,
 		page: rootNode.page,
 	});
 
 	return (
 		<Section>
-			{/* Setting page to root page instead of undefined when closing modals,
-			 	because I don't want to deal with null handling */}
 			<NewPageModal
 				page={state.page}
 				isOpen={state.newIsOpen}
-				onClose={() => dispatch({ type: "close", modal: "new", page: rootNode.page })}
+				onClose={() => dispatch({ type: "close", modal: "new", page: state.page })}
 			/>
 			<EditPageModal
 				page={state.page}
 				isOpen={state.editIsOpen}
-				onClose={() => dispatch({ type: "close", modal: "edit", page: rootNode.page })}
+				onClose={() => dispatch({ type: "close", modal: "edit", page: state.page })}
 			/>
 			<DeletePageModal
 				page={state.page}
 				isOpen={state.deleteIsOpen}
-				onClose={() => dispatch({ type: "close", modal: "delete", page: rootNode.page })}
+				onClose={() => dispatch({ type: "close", modal: "delete", page: state.page })}
+			/>
+			<MovePageModal
+				page={state.page}
+				isOpen={state.moveIsOpen}
+				onClose={() => dispatch({ type: "close", modal: "move", page: state.page })}
 			/>
 
 			<Section.Title>Structure</Section.Title>
@@ -138,6 +144,9 @@ export default function PageTree({ initialData }: { initialData: PageType[] }) {
 				}}
 				openDeletePageModal={(page) => {
 					dispatch({ type: "open", modal: "delete", page });
+				}}
+				openMovePageModal={(page) => {
+					dispatch({ type: "open", modal: "move", page });
 				}}
 				root
 				last
