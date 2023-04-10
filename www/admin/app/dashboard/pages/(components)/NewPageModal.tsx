@@ -14,7 +14,7 @@ interface Props {
 	parentPage: Page;
 }
 
-export function NewPageModal(props: Props) {
+export default function NewPageModal(props: Props) {
 	const mutation = trpcReact.pages.addPage.useMutation();
 
 	function setSlug(name: string) {

@@ -15,8 +15,9 @@ import {
 } from "@heroicons/react/24/solid";
 import { getBorderColor, getHoverColor } from "@admin/src/utils/colors";
 import type { Node } from "./PageTree";
-import { NewPageModal } from "./NewPageModal";
+import NewPageModal from "./NewPageModal";
 import EditPageModal from "./EditPageModal";
+import DeletePageModal from "./DeletePageModal";
 
 const useStyles = createStyles((theme) => ({
 	icon: {
@@ -35,6 +36,7 @@ export default function Page(props: PageProps) {
 
 	const [isAdding, setIsAdding] = useState(false);
 	const [isEditing, setIsEditing] = useState(false);
+	const [isDeleting, setIsDeleting] = useState(false);
 
 	return (
 		<>
@@ -47,6 +49,11 @@ export default function Page(props: PageProps) {
 				page={props.node.page}
 				opened={isEditing}
 				onClose={() => setIsEditing(false)}
+			/>
+			<DeletePageModal
+				page={props.node.page}
+				opened={isDeleting}
+				onClose={() => setIsDeleting(false)}
 			/>
 
 			<Stack spacing="xs">
@@ -126,7 +133,11 @@ export default function Page(props: PageProps) {
 										<FolderArrowDownIcon className="w-5" />
 									</ActionIcon>
 
-									<ActionIcon variant="light" className={classes.icon}>
+									<ActionIcon
+										variant="light"
+										className={classes.icon}
+										onClick={() => setIsDeleting(true)}
+									>
 										<TrashIcon color={theme.colors.red[8]} className="w-5" />
 									</ActionIcon>
 								</>

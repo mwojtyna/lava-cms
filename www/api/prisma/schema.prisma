@@ -36,7 +36,7 @@ model Page {
     id        String  @id @default(cuid())
     name      String
     url       String  @unique
-    parent    Page?   @relation("Tree", fields: [parent_id], references: [id])
+    parent    Page?   @relation("Tree", fields: [parent_id], references: [id], onDelete: Cascade)
     parent_id String?
     child     Page[]  @relation("Tree")
 
