@@ -35,7 +35,7 @@ interface PageProps {
 	node: Node;
 	last: boolean;
 	root?: boolean;
-	openNewPageModal: (page: PageType) => void;
+	openAddPageModal: (page: PageType) => void;
 	openEditPageModal: (page: PageType) => void;
 	openDeletePageModal: (page: PageType) => void;
 	openMovePageModal: (page: PageType) => void;
@@ -109,7 +109,7 @@ export default function Page(props: PageProps) {
 									<ActionIcon
 										variant="light"
 										className={classes.icon}
-										onClick={() => props.openNewPageModal(props.node.page)}
+										onClick={() => props.openAddPageModal(props.node.page)}
 									>
 										<DocumentPlusIcon className="w-5" />
 									</ActionIcon>
@@ -121,7 +121,7 @@ export default function Page(props: PageProps) {
 									<ActionIcon
 										variant="light"
 										className={classes.icon}
-										onClick={() => props.openNewPageModal(props.node.page)}
+										onClick={() => props.openAddPageModal(props.node.page)}
 									>
 										<DocumentPlusIcon className="w-5" />
 									</ActionIcon>
@@ -160,7 +160,7 @@ export default function Page(props: PageProps) {
 								key={child.page.id}
 								node={child}
 								last={index === props.node.children.length - 1}
-								openNewPageModal={props.openNewPageModal}
+								openAddPageModal={props.openAddPageModal}
 								openEditPageModal={props.openEditPageModal}
 								openDeletePageModal={props.openDeletePageModal}
 								openMovePageModal={props.openMovePageModal}

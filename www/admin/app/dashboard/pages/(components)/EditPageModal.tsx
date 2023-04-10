@@ -1,4 +1,4 @@
-import { type ChangeEvent, useCallback, useEffect } from "react";
+import { type ChangeEvent, useEffect } from "react";
 import { type SubmitHandler, useForm } from "react-hook-form";
 import { Alert, Group, Modal, Stack, TextInput } from "@mantine/core";
 import { ExclamationCircleIcon, PencilSquareIcon } from "@heroicons/react/24/outline";
@@ -29,13 +29,13 @@ export default function EditPageModal(props: PagesModalProps) {
 	});
 	const onSubmit: SubmitHandler<Inputs> = async (data) => {
 		const split = props.page.url.split("/");
-		if (data.slug !== "/") split[split.length - 1] = data.slug;
+		split[split.length - 1] = data.slug;
 
 		try {
 			await mutation.mutateAsync({
 				id: props.page.id,
 				newName: data.name,
-				newUrl: split.join("/"),
+				newUrl: props.page.url === "/" ? "/" : split.join("/"),
 			});
 		} catch (error) {
 			if (error instanceof TRPCClientError && error.data.code === "CONFLICT") {
@@ -60,27 +60,9 @@ export default function EditPageModal(props: PagesModalProps) {
 	};
 
 	function getSlugFromUrl(path: string) {
-		if (path === "/") {
-			return "/";
-		}
-
 		const split = path.split("/");
 		return split[split.length - 1]!;
 	}
-	const makeSlug = useCallback(
-		(name: string) => {
-			if (props.page.url === "/") {
-				return "/";
-			}
-
-			return slugify(name, {
-				lower: true,
-				strict: true,
-				locale: "en",
-			});
-		},
-		[props.page.url]
-	);
 
 	useEffect(() => {
 		if (props.isOpen && props.page) {
@@ -88,7 +70,7 @@ export default function EditPageModal(props: PagesModalProps) {
 			setValue("slug", getSlugFromUrl(props.page.url));
 			clearErrors();
 		}
-	}, [props.isOpen, props.page, clearErrors, makeSlug, setValue]);
+	}, [props.isOpen, props.page, clearErrors, setValue]);
 
 	return (
 		<Modal opened={props.isOpen} onClose={props.onClose} title="Edit name" centered>
@@ -110,7 +92,14 @@ export default function EditPageModal(props: PagesModalProps) {
 						{...register("name", {
 							required: " ",
 							onChange: (e: ChangeEvent<HTMLInputElement>) => {
-								setValue("slug", makeSlug(e.target.value));
+								setValue(
+									"slug",
+									slugify(e.target.value, {
+										lower: true,
+										strict: true,
+										locale: "en",
+									})
+								);
 								clearErrors("slug");
 							},
 						})}

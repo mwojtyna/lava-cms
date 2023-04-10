@@ -16,7 +16,7 @@ function setSlug(name: string) {
 	});
 }
 
-export default function NewPageModal(props: PagesModalProps) {
+export default function AddPageModal(props: PagesModalProps) {
 	const mutation = trpcReact.pages.addPage.useMutation();
 
 	interface Inputs {

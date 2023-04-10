@@ -5,7 +5,7 @@ import { Section } from "@admin/app/dashboard/(components)/Section";
 import { trpcReact } from "@admin/src/utils/trpcReact";
 import type { Page as PageType } from "api/prisma/types";
 import Page from "./Page";
-import NewPageModal from "./NewPageModal";
+import AddPageModal from "./AddPageModal";
 import EditPageModal from "./EditPageModal";
 import DeletePageModal from "./DeletePageModal";
 import MovePageModal from "./MovePageModal";
@@ -31,9 +31,9 @@ export function getNode(id: string = rootNode.page.id, node: Node = rootNode): N
 	return null;
 }
 
-type Modals = "new" | "edit" | "delete" | "move";
+type Modals = "add" | "edit" | "delete" | "move";
 interface State {
-	newIsOpen: boolean;
+	addIsOpen: boolean;
 	editIsOpen: boolean;
 	deleteIsOpen: boolean;
 	moveIsOpen: boolean;
@@ -103,7 +103,7 @@ export default function PageTree({ initialData }: { initialData: PageType[] }) {
 	}, [data]);
 
 	const [state, dispatch] = useReducer(reducer, {
-		newIsOpen: false,
+		addIsOpen: false,
 		editIsOpen: false,
 		deleteIsOpen: false,
 		moveIsOpen: false,
@@ -112,10 +112,10 @@ export default function PageTree({ initialData }: { initialData: PageType[] }) {
 
 	return (
 		<Section>
-			<NewPageModal
+			<AddPageModal
 				page={state.page}
-				isOpen={state.newIsOpen}
-				onClose={() => dispatch({ type: "close", modal: "new", page: state.page })}
+				isOpen={state.addIsOpen}
+				onClose={() => dispatch({ type: "close", modal: "add", page: state.page })}
 			/>
 			<EditPageModal
 				page={state.page}
@@ -137,8 +137,8 @@ export default function PageTree({ initialData }: { initialData: PageType[] }) {
 			<Section.Title>Structure</Section.Title>
 			<Page
 				node={rootNode}
-				openNewPageModal={(page) => {
-					dispatch({ type: "open", modal: "new", page });
+				openAddPageModal={(page) => {
+					dispatch({ type: "open", modal: "add", page });
 				}}
 				openEditPageModal={(page) => {
 					dispatch({ type: "open", modal: "edit", page });
