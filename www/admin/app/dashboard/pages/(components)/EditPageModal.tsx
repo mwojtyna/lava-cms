@@ -1,41 +1,16 @@
-import type { ChangeEvent } from "react";
+import { type ChangeEvent, useCallback, useEffect } from "react";
 import { type SubmitHandler, useForm } from "react-hook-form";
 import { Alert, Group, Modal, Stack, TextInput } from "@mantine/core";
-import { ExclamationCircleIcon } from "@heroicons/react/24/outline";
+import { ExclamationCircleIcon, PencilSquareIcon } from "@heroicons/react/24/outline";
 import slugify from "slugify";
 import { TRPCClientError } from "@trpc/client";
-import type { Page } from "api/prisma/types";
 import { trpcReact } from "@admin/src/utils/trpcReact";
 import SubmitButton from "@admin/app/(components)/SubmitButton";
+import { useEditPageModal } from "@admin/src/data/stores/pages";
 
-interface Props {
-	opened: boolean;
-	onClose: () => void;
-	page: Page;
-}
-
-export default function EditPageModal(props: Props) {
+export default function EditPageModal() {
 	const mutation = trpcReact.pages.editPage.useMutation();
-
-	function getSlugFromUrl(path: string) {
-		if (path === "/") {
-			return "/";
-		}
-
-		const split = path.split("/");
-		return split[split.length - 1];
-	}
-	function setSlug(name: string) {
-		if (props.page.url === "/") {
-			return "/";
-		}
-
-		return slugify(name, {
-			lower: true,
-			strict: true,
-			locale: "en",
-		});
-	}
+	const modal = useEditPageModal();
 
 	interface Inputs {
 		name: string;
@@ -50,18 +25,20 @@ export default function EditPageModal(props: Props) {
 		clearErrors,
 	} = useForm<Inputs>({
 		defaultValues: {
-			slug: getSlugFromUrl(props.page.url),
+			slug: getSlugFromUrl(modal.page?.url ?? ""),
 		},
 	});
 	const onSubmit: SubmitHandler<Inputs> = async (data) => {
-		const split = props.page.url.split("/");
+		if (!modal.page) throw new Error("No page selected!");
+
+		const split = modal.page.url.split("/");
 		if (data.slug !== "/") split[split.length - 1] = data.slug;
 
 		try {
 			await mutation.mutateAsync({
-				id: props.page.id,
+				id: modal.page.id,
 				newName: data.name,
-				oldUrl: props.page.url,
+				oldUrl: modal.page.url,
 				newUrl: split.join("/"),
 			});
 		} catch (error) {
@@ -78,11 +55,41 @@ export default function EditPageModal(props: Props) {
 			return;
 		}
 
-		props.onClose();
+		modal.close();
 	};
 
+	function getSlugFromUrl(path: string) {
+		if (path === "/") {
+			return "/";
+		}
+
+		const split = path.split("/");
+		return split[split.length - 1];
+	}
+	const makeSlug = useCallback(
+		(name: string) => {
+			if (modal.page?.url === "/") {
+				return "/";
+			}
+
+			return slugify(name, {
+				lower: true,
+				strict: true,
+				locale: "en",
+			});
+		},
+		[modal.page?.url]
+	);
+
+	useEffect(() => {
+		if (modal.isOpen && modal.page) {
+			setValue("name", modal.page.name);
+			setValue("slug", makeSlug(modal.page.name));
+		}
+	}, [modal.isOpen, modal.page, clearErrors, clearErrors, makeSlug, setValue]);
+
 	return (
-		<Modal opened={props.opened} onClose={props.onClose} title="Edit name" centered>
+		<Modal opened={modal.isOpen} onClose={modal.close} title="Edit name" centered>
 			<form onSubmit={handleSubmit(onSubmit)}>
 				<Stack>
 					{errors.root && (
@@ -95,20 +102,19 @@ export default function EditPageModal(props: Props) {
 						</Alert>
 					)}
 					<TextInput
-						defaultValue={props.page.name}
-						label="New name"
+						label="Name"
 						data-autofocus
 						withAsterisk
 						{...register("name", {
 							required: " ",
 							onChange: (e: ChangeEvent<HTMLInputElement>) => {
-								setValue("slug", setSlug(e.target.value));
+								setValue("slug", makeSlug(e.target.value));
 								clearErrors("slug");
 							},
 						})}
 						error={errors.name?.message}
 					/>
-					{props.page.url !== "/" && (
+					{modal.page?.url !== "/" && (
 						<TextInput
 							label="Slug"
 							variant="filled"
@@ -119,7 +125,12 @@ export default function EditPageModal(props: Props) {
 					)}
 
 					<Group position="right">
-						<SubmitButton isLoading={mutation.isLoading}>Save</SubmitButton>
+						<SubmitButton
+							isLoading={mutation.isLoading}
+							leftIcon={<PencilSquareIcon className="w-5" />}
+						>
+							Save
+						</SubmitButton>
 					</Group>
 				</Stack>
 			</form>

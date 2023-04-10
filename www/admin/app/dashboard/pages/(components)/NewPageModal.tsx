@@ -1,21 +1,16 @@
 import type { ChangeEvent } from "react";
 import { type SubmitHandler, useForm } from "react-hook-form";
 import { Alert, Group, Modal, Stack, TextInput } from "@mantine/core";
-import { ExclamationCircleIcon } from "@heroicons/react/24/outline";
+import { DocumentPlusIcon, ExclamationCircleIcon } from "@heroicons/react/24/outline";
 import slugify from "slugify";
 import { TRPCClientError } from "@trpc/client";
-import type { Page } from "api/prisma/types";
 import { trpcReact } from "@admin/src/utils/trpcReact";
 import SubmitButton from "@admin/app/(components)/SubmitButton";
+import { useNewPageModal } from "@admin/src/data/stores/pages";
 
-interface Props {
-	opened: boolean;
-	onClose: () => void;
-	parentPage: Page;
-}
-
-export default function NewPageModal(props: Props) {
+export default function NewPageModal() {
 	const mutation = trpcReact.pages.addPage.useMutation();
+	const modal = useNewPageModal();
 
 	function setSlug(name: string) {
 		return slugify(name, {
@@ -41,8 +36,8 @@ export default function NewPageModal(props: Props) {
 		try {
 			await mutation.mutateAsync({
 				name: data.name,
-				url: props.parentPage.url + (props.parentPage.url !== "/" ? "/" : "") + data.slug,
-				parent_id: props.parentPage.id,
+				url: modal.page?.url + (modal.page?.url !== "/" ? "/" : "") + data.slug,
+				parent_id: modal.page?.id,
 			});
 		} catch (error) {
 			if (error instanceof TRPCClientError && error.data.code === "CONFLICT") {
@@ -58,11 +53,11 @@ export default function NewPageModal(props: Props) {
 			return;
 		}
 
-		props.onClose();
+		modal.close();
 	};
 
 	return (
-		<Modal opened={props.opened} onClose={props.onClose} title="Add page" centered>
+		<Modal opened={modal.isOpen} onClose={modal.close} title="Add page" centered>
 			<form onSubmit={handleSubmit(onSubmit)}>
 				<Stack>
 					{errors.root && (
@@ -96,7 +91,12 @@ export default function NewPageModal(props: Props) {
 					/>
 
 					<Group position="right">
-						<SubmitButton isLoading={mutation.isLoading}>Save</SubmitButton>
+						<SubmitButton
+							isLoading={mutation.isLoading}
+							leftIcon={<DocumentPlusIcon className="w-5" />}
+						>
+							Add
+						</SubmitButton>
 					</Group>
 				</Stack>
 			</form>

@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import { ActionIcon, Card, Group, Stack, Text, createStyles, useMantineTheme } from "@mantine/core";
 import {
 	ChevronRightIcon,
@@ -15,9 +14,11 @@ import {
 } from "@heroicons/react/24/solid";
 import { getBorderColor, getHoverColor } from "@admin/src/utils/colors";
 import type { Node } from "./PageTree";
-import NewPageModal from "./NewPageModal";
-import EditPageModal from "./EditPageModal";
-import DeletePageModal from "./DeletePageModal";
+import {
+	useDeletePageModal,
+	useEditPageModal,
+	useNewPageModal,
+} from "@admin/src/data/stores/pages";
 
 const useStyles = createStyles((theme) => ({
 	icon: {
@@ -34,28 +35,12 @@ export default function Page(props: PageProps) {
 	const { classes } = useStyles();
 	const theme = useMantineTheme();
 
-	const [isAdding, setIsAdding] = useState(false);
-	const [isEditing, setIsEditing] = useState(false);
-	const [isDeleting, setIsDeleting] = useState(false);
+	const newPageModal = useNewPageModal();
+	const editPageModal = useEditPageModal();
+	const deletePageModal = useDeletePageModal();
 
 	return (
 		<>
-			<NewPageModal
-				parentPage={props.node.page}
-				opened={isAdding}
-				onClose={() => setIsAdding(false)}
-			/>
-			<EditPageModal
-				page={props.node.page}
-				opened={isEditing}
-				onClose={() => setIsEditing(false)}
-			/>
-			<DeletePageModal
-				page={props.node.page}
-				opened={isDeleting}
-				onClose={() => setIsDeleting(false)}
-			/>
-
 			<Stack spacing="xs">
 				<Card
 					pl={props.node.children.length > 0 ? "xs" : "sm"}
@@ -99,7 +84,7 @@ export default function Page(props: PageProps) {
 							<ActionIcon
 								variant="light"
 								className={classes.icon}
-								onClick={() => setIsEditing(!isEditing)}
+								onClick={() => editPageModal.open(props.node.page)}
 							>
 								<PencilSquareIcon className="w-4" />
 							</ActionIcon>
@@ -112,7 +97,7 @@ export default function Page(props: PageProps) {
 									<ActionIcon
 										variant="light"
 										className={classes.icon}
-										onClick={() => setIsAdding(true)}
+										onClick={() => newPageModal.open(props.node.page)}
 									>
 										<DocumentPlusIcon className="w-5" />
 									</ActionIcon>
@@ -124,7 +109,7 @@ export default function Page(props: PageProps) {
 									<ActionIcon
 										variant="light"
 										className={classes.icon}
-										onClick={() => setIsAdding(true)}
+										onClick={() => newPageModal.open(props.node.page)}
 									>
 										<DocumentPlusIcon className="w-5" />
 									</ActionIcon>
@@ -136,7 +121,7 @@ export default function Page(props: PageProps) {
 									<ActionIcon
 										variant="light"
 										className={classes.icon}
-										onClick={() => setIsDeleting(true)}
+										onClick={() => deletePageModal.open(props.node.page)}
 									>
 										<TrashIcon color={theme.colors.red[8]} className="w-5" />
 									</ActionIcon>

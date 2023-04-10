@@ -1,25 +1,22 @@
 import { Button, Group, Modal, Stack, Text } from "@mantine/core";
 import { TrashIcon } from "@heroicons/react/24/outline";
-import type { Page } from "api/prisma/types";
 import SubmitButton from "@admin/app/(components)/SubmitButton";
 import { trpcReact } from "@admin/src/utils/trpcReact";
+import { useDeletePageModal } from "@admin/src/data/stores/pages";
 
-interface Props {
-	opened: boolean;
-	onClose: () => void;
-	page: Page;
-}
-export default function DeletePageModal(props: Props) {
+export default function DeletePageModal() {
 	const deleteMutation = trpcReact.pages.deletePage.useMutation();
+	const modal = useDeletePageModal();
 
 	return (
 		<Modal
-			opened={props.opened}
-			onClose={props.onClose}
+			opened={modal.isOpen}
+			onClose={modal.close}
 			centered
+			withCloseButton={false}
 			title={
 				<Text>
-					Delete page <strong className="whitespace-nowrap">{props.page.url}</strong> and
+					Delete page <strong className="whitespace-nowrap">{modal.page?.url}</strong> and
 					all its children?
 				</Text>
 			}
@@ -30,7 +27,7 @@ export default function DeletePageModal(props: Props) {
 					of the page and all its children!
 				</Text>
 				<Group position="right">
-					<Button variant="default" onClick={props.onClose}>
+					<Button variant="default" onClick={modal.close}>
 						No, don&apos;t delete
 					</Button>
 					<SubmitButton
@@ -38,8 +35,10 @@ export default function DeletePageModal(props: Props) {
 						leftIcon={<TrashIcon className="w-4" />}
 						color="red"
 						onClick={async () => {
-							await deleteMutation.mutateAsync({ id: props.page.id });
-							props.onClose();
+							if (!modal.page) throw new Error("No page selected!");
+
+							await deleteMutation.mutateAsync({ id: modal.page.id });
+							modal.close();
 						}}
 					>
 						Delete

@@ -5,6 +5,9 @@ import { Section } from "@admin/app/dashboard/(components)/Section";
 import { trpcReact } from "@admin/src/utils/trpcReact";
 import type { Page as PageType } from "api/prisma/types";
 import Page from "./Page";
+import NewPageModal from "./NewPageModal";
+import EditPageModal from "./EditPageModal";
+import DeletePageModal from "./DeletePageModal";
 
 export interface Node {
 	page: PageType;
@@ -12,7 +15,7 @@ export interface Node {
 }
 
 let rootNode: Node;
-export function getNode(id: string, node: Node = rootNode): Node | null {
+export function getNode(id: string = rootNode.page.id, node: Node = rootNode): Node | null {
 	if (node.page.id === id) {
 		return node;
 	}
@@ -57,6 +60,10 @@ export default function PageTree({ initialData }: { initialData: PageType[] }) {
 
 	return (
 		<Section>
+			<NewPageModal />
+			<EditPageModal />
+			<DeletePageModal />
+
 			<Section.Title>Structure</Section.Title>
 			<Page node={rootNode} root last />
 		</Section>
