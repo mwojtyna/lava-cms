@@ -44,6 +44,11 @@ export default function NewPageModal(props: PagesModalProps) {
 					type: "manual",
 					message: "This slug is already taken.",
 				});
+			} else if (error instanceof TRPCClientError && error.data.code === "BAD_REQUEST") {
+				setError("slug", {
+					type: "manual",
+					message: "Slug invalid.",
+				});
 			} else {
 				setError("root", {
 					message: "An unexpected error occurred. Open the console for more details.",
