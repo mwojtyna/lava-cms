@@ -59,9 +59,7 @@ export default function MenuLinks({ version }: { version: string }) {
 					<Anchor
 						component={Link}
 						href={"/dashboard"}
-						sx={{
-							"&:hover": { textDecoration: "none" },
-						}}
+						unstyled
 						onClick={toggle}
 						onMouseOver={() => {
 							if (title.current && !transitioning.current) {

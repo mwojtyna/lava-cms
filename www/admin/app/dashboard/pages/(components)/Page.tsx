@@ -1,6 +1,15 @@
 "use client";
 
-import { ActionIcon, Card, Group, Stack, Text, createStyles, useMantineTheme } from "@mantine/core";
+import {
+	ActionIcon,
+	Anchor,
+	Card,
+	Group,
+	Stack,
+	Text,
+	createStyles,
+	useMantineTheme,
+} from "@mantine/core";
 import {
 	ChevronRightIcon,
 	ChevronUpDownIcon,
@@ -74,7 +83,14 @@ export default function Page(props: PageProps) {
 							<Text sx={{ fontWeight: 500 }}>{props.node.page.name}</Text>
 
 							<Text color="dimmed" size="sm">
-								{props.node.page.url}
+								<Anchor
+									className="hover:underline"
+									href={props.node.page.url}
+									target="_blank"
+									unstyled
+								>
+									{props.node.page.url}
+								</Anchor>
 							</Text>
 
 							<ActionIcon
