@@ -1,10 +1,18 @@
-import { type FormEventHandler, forwardRef, useMemo, useState } from "react";
+import {
+	type FormEventHandler,
+	forwardRef,
+	useMemo,
+	useState,
+	type ReactNode,
+	useEffect,
+} from "react";
 import { Alert, Group, Modal, Select, Stack, Text } from "@mantine/core";
 import { ExclamationCircleIcon, FolderArrowDownIcon } from "@heroicons/react/24/outline";
 import type { Page } from "api/prisma/types";
 import SubmitButton from "@admin/app/(components)/SubmitButton";
 import { trpcReact } from "@admin/src/utils/trpcReact";
 import type { PagesModalProps } from "./PageTree";
+import { TRPCClientError } from "@trpc/client";
 
 interface ItemProps extends React.ComponentPropsWithoutRef<"div"> {
 	image: string;
@@ -36,7 +44,9 @@ export default function MovePageModal(props: PagesModalProps & { allPages: Page[
 						return props.page.url.split("/").length > 2;
 					} else {
 						return (
-							page.id !== props.page.id && !page.url.startsWith(props.page.url + "/")
+							page.id !== props.page.id &&
+							!page.url.startsWith(props.page.url + "/") &&
+							props.page.parent_id !== page.id
 						);
 					}
 				})
@@ -50,28 +60,64 @@ export default function MovePageModal(props: PagesModalProps & { allPages: Page[
 	);
 
 	const [destinationId, setDestinationId] = useState<string | null>(null);
+	const [error, setError] = useState<{ message: ReactNode; unexpected: boolean } | null>(null);
+
 	const onSubmit: FormEventHandler<HTMLFormElement> = async (e) => {
 		e.preventDefault();
+		setError(null);
 
-		await mutation.mutateAsync({
-			id: props.page.id,
-			slug: props.page.url.split("/").pop()!,
-			newParentId: destinationId!,
-		});
+		try {
+			await mutation.mutateAsync({
+				id: props.page.id,
+				slug: props.page.url.split("/").pop()!,
+				newParentId: destinationId!,
+			});
+		} catch (error) {
+			if (error instanceof TRPCClientError && error.data.code === "CONFLICT") {
+				const destinationUrl = data.find((data) => data.page.id === destinationId)!.page
+					.url;
+
+				const newPath =
+					destinationUrl +
+					(destinationUrl === "/" ? "" : "/") +
+					props.page.url.split("/").pop()!;
+
+				setError({
+					message: (
+						<>
+							A page with path <strong>{newPath}</strong> already exists! Either
+							change the slug or move it somewhere else.
+						</>
+					),
+					unexpected: false,
+				});
+			} else {
+				setError({
+					message: "An unexpected error occurred. Open the console for more details.",
+					unexpected: true,
+				});
+			}
+			return;
+		}
+
 		props.onClose();
 	};
+
+	useEffect(() => {
+		setError(null);
+	}, [props.isOpen]);
 
 	return (
 		<Modal opened={props.isOpen} onClose={props.onClose} centered title="Move page">
 			<form onSubmit={onSubmit}>
 				<Stack>
-					{mutation.isError && (
+					{error?.unexpected && (
 						<Alert
 							color="red"
 							variant="filled"
 							icon={<ExclamationCircleIcon className="w-5" />}
 						>
-							An unexpected error occurred. Open the console for more details.
+							{error.message}
 						</Alert>
 					)}
 
@@ -86,6 +132,7 @@ export default function MovePageModal(props: PagesModalProps & { allPages: Page[
 						withinPortal
 						searchable
 						required
+						error={!error?.unexpected && error?.message}
 					/>
 					<Group position="right">
 						<SubmitButton

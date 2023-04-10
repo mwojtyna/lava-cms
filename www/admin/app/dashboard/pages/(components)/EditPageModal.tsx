@@ -81,8 +81,9 @@ export default function EditPageModal(props: PagesModalProps) {
 		if (props.isOpen && props.page) {
 			setValue("name", props.page.name);
 			setValue("slug", makeSlug(props.page.name));
+			clearErrors();
 		}
-	}, [props.isOpen, props.page, clearErrors, clearErrors, makeSlug, setValue]);
+	}, [props.isOpen, props.page, clearErrors, makeSlug, setValue]);
 
 	return (
 		<Modal opened={props.isOpen} onClose={props.onClose} title="Edit name" centered>
