@@ -26,18 +26,28 @@ SelectItem.displayName = "SelectItem";
 export default function MovePageModal(props: PagesModalProps & { allPages: Page[] }) {
 	const mutation = trpcReact.pages.movePage.useMutation();
 
-	const data = useMemo(() => {
-		return props.allPages
-			.filter(
-				(page) => page.id !== props.page.id && !page.url.startsWith(props.page.url + "/")
-			)
-			.sort((a, b) => a.name.localeCompare(b.name))
-			.map((page) => ({
-				label: page.name,
-				value: page.id,
-				page: page,
-			}));
-	}, [props.allPages, props.page]);
+	const data = useMemo(
+		() =>
+			props.allPages
+				.filter((page) => {
+					// If the current page is Root, then remove it if the page to be moved is a direct child of Root.
+					// Else remove page if it is the page to be moved or if it is its child.
+					if (page.url === "/") {
+						return props.page.url.split("/").length > 2;
+					} else {
+						return (
+							page.id !== props.page.id && !page.url.startsWith(props.page.url + "/")
+						);
+					}
+				})
+				.sort((a, b) => a.name.localeCompare(b.name))
+				.map((page) => ({
+					label: page.name,
+					value: page.id,
+					page: page,
+				})),
+		[props.allPages, props.page]
+	);
 
 	const [destinationId, setDestinationId] = useState<string | null>(null);
 	const onSubmit: FormEventHandler<HTMLFormElement> = async (e) => {
