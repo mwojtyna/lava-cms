@@ -10,11 +10,18 @@ export const editPage = publicProcedure
 		z.object({
 			id: z.string().cuid(),
 			newName: z.string(),
-			oldUrl: z.string().regex(urlRegex),
 			newUrl: z.string().regex(urlRegex),
 		})
 	)
 	.mutation(async ({ input }) => {
+		const page = await prisma.page.findFirst({
+			where: { id: input.id },
+		});
+
+		if (!page) {
+			throw new TRPCError({ code: "NOT_FOUND" });
+		}
+
 		try {
 			await prisma.$transaction([
 				prisma.page.update({
@@ -24,7 +31,7 @@ export const editPage = publicProcedure
 						url: input.newUrl,
 					},
 				}),
-				prisma.$executeRaw`UPDATE frontend.page SET "url" = REPLACE("url", ${input.oldUrl} || '/', ${input.newUrl} || '/') WHERE "url" LIKE ${input.oldUrl} || '/%';`,
+				prisma.$executeRaw`UPDATE frontend.page SET "url" = REPLACE("url", ${page.url} || '/', ${input.newUrl} || '/') WHERE "url" LIKE ${page.url} || '/%';`,
 			]);
 		} catch (error) {
 			if (error instanceof Prisma.PrismaClientKnownRequestError) {

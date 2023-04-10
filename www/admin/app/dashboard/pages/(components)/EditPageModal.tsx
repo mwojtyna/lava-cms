@@ -35,7 +35,6 @@ export default function EditPageModal(props: PagesModalProps) {
 			await mutation.mutateAsync({
 				id: props.page.id,
 				newName: data.name,
-				oldUrl: props.page.url,
 				newUrl: split.join("/"),
 			});
 		} catch (error) {

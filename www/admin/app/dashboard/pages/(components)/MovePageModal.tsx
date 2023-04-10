@@ -1,47 +1,82 @@
-import { Button, Group, Modal, Stack, Text } from "@mantine/core";
-import { TrashIcon } from "@heroicons/react/24/outline";
+import { type FormEventHandler, forwardRef, useMemo, useState } from "react";
+import { Group, Modal, Select, Stack, Text } from "@mantine/core";
+import { FolderArrowDownIcon } from "@heroicons/react/24/outline";
+import type { Page } from "api/prisma/types";
 import SubmitButton from "@admin/app/(components)/SubmitButton";
 import { trpcReact } from "@admin/src/utils/trpcReact";
 import type { PagesModalProps } from "./PageTree";
 
-export default function MovePageModal(props: PagesModalProps) {
-	const deleteMutation = trpcReact.pages.deletePage.useMutation();
+interface ItemProps extends React.ComponentPropsWithoutRef<"div"> {
+	image: string;
+	label: string;
+	description: string;
+	page: Page;
+}
+const SelectItem = forwardRef<HTMLDivElement, ItemProps>(
+	({ image, label, description, page, ...others }: ItemProps, ref) => (
+		<div ref={ref} {...others}>
+			<Text>
+				{page.name} <Text color="dimmed">{page.url}</Text>
+			</Text>
+		</div>
+	)
+);
+SelectItem.displayName = "SelectItem";
+
+export default function MovePageModal(props: PagesModalProps & { allPages: Page[] }) {
+	const mutation = trpcReact.pages.movePage.useMutation();
+
+	const data = useMemo(() => {
+		return props.allPages
+			.filter(
+				(page) => page.id !== props.page.id && !page.url.startsWith(props.page.url + "/")
+			)
+			.sort((a, b) => a.name.localeCompare(b.name))
+			.map((page) => ({
+				label: page.name,
+				value: page.id,
+				page: page,
+			}));
+	}, [props.allPages, props.page]);
+
+	const [destinationId, setDestinationId] = useState<string | null>(null);
+	const onSubmit: FormEventHandler<HTMLFormElement> = async (e) => {
+		e.preventDefault();
+
+		await mutation.mutateAsync({
+			id: props.page.id,
+			slug: props.page.url.split("/").pop()!,
+			newParentId: destinationId!,
+		});
+		props.onClose();
+	};
 
 	return (
-		<Modal
-			opened={props.isOpen}
-			onClose={props.onClose}
-			centered
-			withCloseButton={false}
-			title={
-				<Text>
-					Delete page <strong className="whitespace-nowrap">{props.page.url}</strong> and
-					all its children?
-				</Text>
-			}
-		>
-			<Stack>
-				<Text size="sm">
-					Are you sure you want to delete the page? You will permanently lose all contents
-					of the page and all its children!
-				</Text>
-				<Group position="right">
-					<Button variant="default" onClick={props.onClose}>
-						No, don&apos;t delete
-					</Button>
-					<SubmitButton
-						isLoading={deleteMutation.isLoading}
-						leftIcon={<TrashIcon className="w-4" />}
-						color="red"
-						onClick={async () => {
-							await deleteMutation.mutateAsync({ id: props.page.id });
-							props.onClose();
-						}}
-					>
-						Delete
-					</SubmitButton>
-				</Group>
-			</Stack>
+		<Modal opened={props.isOpen} onClose={props.onClose} centered title="Move page">
+			<form onSubmit={onSubmit}>
+				<Stack>
+					<Select
+						value={destinationId}
+						onChange={setDestinationId}
+						label="Move to"
+						maxDropdownHeight={window.innerHeight / 2.25}
+						dropdownPosition="bottom"
+						itemComponent={SelectItem}
+						data={data}
+						withinPortal
+						searchable
+						required
+					/>
+					<Group position="right">
+						<SubmitButton
+							leftIcon={<FolderArrowDownIcon className="w-5" />}
+							isLoading={mutation.isLoading}
+						>
+							Move
+						</SubmitButton>
+					</Group>
+				</Stack>
+			</form>
 		</Modal>
 	);
 }

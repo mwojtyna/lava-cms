@@ -131,6 +131,7 @@ export default function PageTree({ initialData }: { initialData: PageType[] }) {
 				page={state.page}
 				isOpen={state.moveIsOpen}
 				onClose={() => dispatch({ type: "close", modal: "move", page: state.page })}
+				allPages={data}
 			/>
 
 			<Section.Title>Structure</Section.Title>
