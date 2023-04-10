@@ -12,13 +12,9 @@ import {
 	PencilSquareIcon,
 	TrashIcon,
 } from "@heroicons/react/24/solid";
+import type { Page as PageType } from "api/prisma/types";
 import { getBorderColor, getHoverColor } from "@admin/src/utils/colors";
 import type { Node } from "./PageTree";
-import {
-	useDeletePageModal,
-	useEditPageModal,
-	useNewPageModal,
-} from "@admin/src/data/stores/pages";
 
 const useStyles = createStyles((theme) => ({
 	icon: {
@@ -29,15 +25,14 @@ const useStyles = createStyles((theme) => ({
 interface PageProps {
 	node: Node;
 	last: boolean;
+	openNewPageModal: (page: PageType) => void;
+	openEditPageModal: (page: PageType) => void;
+	openDeletePageModal: (page: PageType) => void;
 	root?: boolean;
 }
 export default function Page(props: PageProps) {
 	const { classes } = useStyles();
 	const theme = useMantineTheme();
-
-	const newPageModal = useNewPageModal();
-	const editPageModal = useEditPageModal();
-	const deletePageModal = useDeletePageModal();
 
 	return (
 		<>
@@ -84,7 +79,7 @@ export default function Page(props: PageProps) {
 							<ActionIcon
 								variant="light"
 								className={classes.icon}
-								onClick={() => editPageModal.open(props.node.page)}
+								onClick={() => props.openEditPageModal(props.node.page)}
 							>
 								<PencilSquareIcon className="w-4" />
 							</ActionIcon>
@@ -97,7 +92,7 @@ export default function Page(props: PageProps) {
 									<ActionIcon
 										variant="light"
 										className={classes.icon}
-										onClick={() => newPageModal.open(props.node.page)}
+										onClick={() => props.openNewPageModal(props.node.page)}
 									>
 										<DocumentPlusIcon className="w-5" />
 									</ActionIcon>
@@ -109,7 +104,7 @@ export default function Page(props: PageProps) {
 									<ActionIcon
 										variant="light"
 										className={classes.icon}
-										onClick={() => newPageModal.open(props.node.page)}
+										onClick={() => props.openNewPageModal(props.node.page)}
 									>
 										<DocumentPlusIcon className="w-5" />
 									</ActionIcon>
@@ -121,7 +116,7 @@ export default function Page(props: PageProps) {
 									<ActionIcon
 										variant="light"
 										className={classes.icon}
-										onClick={() => deletePageModal.open(props.node.page)}
+										onClick={() => props.openDeletePageModal(props.node.page)}
 									>
 										<TrashIcon color={theme.colors.red[8]} className="w-5" />
 									</ActionIcon>
@@ -144,6 +139,9 @@ export default function Page(props: PageProps) {
 								key={child.page.id}
 								node={child}
 								last={index === props.node.children.length - 1}
+								openNewPageModal={props.openNewPageModal}
+								openEditPageModal={props.openEditPageModal}
+								openDeletePageModal={props.openDeletePageModal}
 							/>
 						))}
 					</Stack>

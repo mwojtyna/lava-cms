@@ -6,19 +6,18 @@ import slugify from "slugify";
 import { TRPCClientError } from "@trpc/client";
 import { trpcReact } from "@admin/src/utils/trpcReact";
 import SubmitButton from "@admin/app/(components)/SubmitButton";
-import { useNewPageModal } from "@admin/src/data/stores/pages";
+import type { PagesModalProps } from "./PageTree";
 
-export default function NewPageModal() {
+function setSlug(name: string) {
+	return slugify(name, {
+		lower: true,
+		strict: true,
+		locale: "en",
+	});
+}
+
+export default function NewPageModal(props: PagesModalProps) {
 	const mutation = trpcReact.pages.addPage.useMutation();
-	const modal = useNewPageModal();
-
-	function setSlug(name: string) {
-		return slugify(name, {
-			lower: true,
-			strict: true,
-			locale: "en",
-		});
-	}
 
 	interface Inputs {
 		name: string;
@@ -36,8 +35,8 @@ export default function NewPageModal() {
 		try {
 			await mutation.mutateAsync({
 				name: data.name,
-				url: modal.page?.url + (modal.page?.url !== "/" ? "/" : "") + data.slug,
-				parent_id: modal.page?.id,
+				url: props.page.url + (props.page.url !== "/" ? "/" : "") + data.slug,
+				parent_id: props.page.id,
 			});
 		} catch (error) {
 			if (error instanceof TRPCClientError && error.data.code === "CONFLICT") {
@@ -53,11 +52,11 @@ export default function NewPageModal() {
 			return;
 		}
 
-		modal.close();
+		props.onClose();
 	};
 
 	return (
-		<Modal opened={modal.isOpen} onClose={modal.close} title="Add page" centered>
+		<Modal opened={props.isOpen} onClose={props.onClose} title="Add page" centered>
 			<form onSubmit={handleSubmit(onSubmit)}>
 				<Stack>
 					{errors.root && (

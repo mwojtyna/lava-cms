@@ -6,11 +6,10 @@ import slugify from "slugify";
 import { TRPCClientError } from "@trpc/client";
 import { trpcReact } from "@admin/src/utils/trpcReact";
 import SubmitButton from "@admin/app/(components)/SubmitButton";
-import { useEditPageModal } from "@admin/src/data/stores/pages";
+import type { PagesModalProps } from "./PageTree";
 
-export default function EditPageModal() {
+export default function EditPageModal(props: PagesModalProps) {
 	const mutation = trpcReact.pages.editPage.useMutation();
-	const modal = useEditPageModal();
 
 	interface Inputs {
 		name: string;
@@ -25,20 +24,18 @@ export default function EditPageModal() {
 		clearErrors,
 	} = useForm<Inputs>({
 		defaultValues: {
-			slug: getSlugFromUrl(modal.page?.url ?? ""),
+			slug: getSlugFromUrl(props.page.url),
 		},
 	});
 	const onSubmit: SubmitHandler<Inputs> = async (data) => {
-		if (!modal.page) throw new Error("No page selected!");
-
-		const split = modal.page.url.split("/");
+		const split = props.page.url.split("/");
 		if (data.slug !== "/") split[split.length - 1] = data.slug;
 
 		try {
 			await mutation.mutateAsync({
-				id: modal.page.id,
+				id: props.page.id,
 				newName: data.name,
-				oldUrl: modal.page.url,
+				oldUrl: props.page.url,
 				newUrl: split.join("/"),
 			});
 		} catch (error) {
@@ -55,7 +52,7 @@ export default function EditPageModal() {
 			return;
 		}
 
-		modal.close();
+		props.onClose();
 	};
 
 	function getSlugFromUrl(path: string) {
@@ -68,7 +65,7 @@ export default function EditPageModal() {
 	}
 	const makeSlug = useCallback(
 		(name: string) => {
-			if (modal.page?.url === "/") {
+			if (props.page.url === "/") {
 				return "/";
 			}
 
@@ -78,18 +75,18 @@ export default function EditPageModal() {
 				locale: "en",
 			});
 		},
-		[modal.page?.url]
+		[props.page.url]
 	);
 
 	useEffect(() => {
-		if (modal.isOpen && modal.page) {
-			setValue("name", modal.page.name);
-			setValue("slug", makeSlug(modal.page.name));
+		if (props.isOpen && props.page) {
+			setValue("name", props.page.name);
+			setValue("slug", makeSlug(props.page.name));
 		}
-	}, [modal.isOpen, modal.page, clearErrors, clearErrors, makeSlug, setValue]);
+	}, [props.isOpen, props.page, clearErrors, clearErrors, makeSlug, setValue]);
 
 	return (
-		<Modal opened={modal.isOpen} onClose={modal.close} title="Edit name" centered>
+		<Modal opened={props.isOpen} onClose={props.onClose} title="Edit name" centered>
 			<form onSubmit={handleSubmit(onSubmit)}>
 				<Stack>
 					{errors.root && (
@@ -114,7 +111,7 @@ export default function EditPageModal() {
 						})}
 						error={errors.name?.message}
 					/>
-					{modal.page?.url !== "/" && (
+					{props.page.url !== "/" && (
 						<TextInput
 							label="Slug"
 							variant="filled"
