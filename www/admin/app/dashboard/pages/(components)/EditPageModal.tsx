@@ -60,7 +60,7 @@ export default function EditPageModal(props: PagesModalProps) {
 		}
 
 		const split = path.split("/");
-		return split[split.length - 1];
+		return split[split.length - 1]!;
 	}
 	const makeSlug = useCallback(
 		(name: string) => {
@@ -80,7 +80,7 @@ export default function EditPageModal(props: PagesModalProps) {
 	useEffect(() => {
 		if (props.isOpen && props.page) {
 			setValue("name", props.page.name);
-			setValue("slug", makeSlug(props.page.name));
+			setValue("slug", getSlugFromUrl(props.page.url));
 			clearErrors();
 		}
 	}, [props.isOpen, props.page, clearErrors, makeSlug, setValue]);
