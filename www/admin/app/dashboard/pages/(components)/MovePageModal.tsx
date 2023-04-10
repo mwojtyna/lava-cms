@@ -1,6 +1,6 @@
 import { type FormEventHandler, forwardRef, useMemo, useState } from "react";
-import { Group, Modal, Select, Stack, Text } from "@mantine/core";
-import { FolderArrowDownIcon } from "@heroicons/react/24/outline";
+import { Alert, Group, Modal, Select, Stack, Text } from "@mantine/core";
+import { ExclamationCircleIcon, FolderArrowDownIcon } from "@heroicons/react/24/outline";
 import type { Page } from "api/prisma/types";
 import SubmitButton from "@admin/app/(components)/SubmitButton";
 import { trpcReact } from "@admin/src/utils/trpcReact";
@@ -65,6 +65,16 @@ export default function MovePageModal(props: PagesModalProps & { allPages: Page[
 		<Modal opened={props.isOpen} onClose={props.onClose} centered title="Move page">
 			<form onSubmit={onSubmit}>
 				<Stack>
+					{mutation.isError && (
+						<Alert
+							color="red"
+							variant="filled"
+							icon={<ExclamationCircleIcon className="w-5" />}
+						>
+							An unexpected error occurred. Open the console for more details.
+						</Alert>
+					)}
+
 					<Select
 						value={destinationId}
 						onChange={setDestinationId}

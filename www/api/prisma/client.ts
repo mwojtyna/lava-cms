@@ -6,7 +6,7 @@ const globalForPrisma = global as unknown as { prisma: PrismaClient };
 export const prisma =
 	globalForPrisma.prisma ||
 	new PrismaClient({
-		errorFormat: "pretty",
+		errorFormat: "colorless",
 		log: ["query", "info", "warn", "error"],
 	});
 
