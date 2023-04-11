@@ -31,6 +31,8 @@ export function getNode(id: string = rootNode.page.id, node: Node = rootNode): N
 	return null;
 }
 
+export const invalidUrls = ["/admin"];
+
 type Modals = "add" | "edit" | "delete" | "move";
 interface State {
 	addIsOpen: boolean;

@@ -6,7 +6,7 @@ import slugify from "slugify";
 import { TRPCClientError } from "@trpc/client";
 import { trpcReact } from "@admin/src/utils/trpcReact";
 import SubmitButton from "@admin/app/(components)/SubmitButton";
-import type { PagesModalProps } from "./PageTree";
+import { type PagesModalProps, invalidUrls } from "./PageTree";
 
 export default function EditPageModal(props: PagesModalProps) {
 	const mutation = trpcReact.pages.editPage.useMutation();
@@ -31,22 +31,31 @@ export default function EditPageModal(props: PagesModalProps) {
 		const split = props.page.url.split("/");
 		split[split.length - 1] = data.slug;
 
+		const newUrl = props.page.url === "/" ? "/" : split.join("/");
+		if (invalidUrls.includes(newUrl)) {
+			setError("slug", {
+				type: "value",
+				message: `The resulting path ${newUrl} is not allowed.`,
+			});
+			return;
+		}
+
 		try {
 			await mutation.mutateAsync({
 				id: props.page.id,
 				newName: data.name,
-				newUrl: props.page.url === "/" ? "/" : split.join("/"),
+				newUrl: newUrl,
 			});
 		} catch (error) {
 			if (error instanceof TRPCClientError && error.data.code === "CONFLICT") {
 				setError("slug", {
 					type: "manual",
-					message: "This slug is already taken.",
+					message: `A page with path ${newUrl} already exists.`,
 				});
 			} else if (error instanceof TRPCClientError && error.data.code === "BAD_REQUEST") {
 				setError("slug", {
 					type: "manual",
-					message: "Slug invalid.",
+					message: "Slug is invalid.",
 				});
 			} else {
 				setError("root", {
