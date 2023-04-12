@@ -8,6 +8,7 @@ import {
 	Group,
 	Stack,
 	Text,
+	Tooltip,
 	createStyles,
 	useMantineTheme,
 } from "@mantine/core";
@@ -107,54 +108,64 @@ export default function Page(props: PageProps) {
 							</Anchor>
 						</Text>
 
-						<ActionIcon
-							variant="light"
-							className={classes.icon}
-							onClick={() => props.openEditPageModal(props.node.page)}
-						>
-							<PencilSquareIcon className="w-4" />
-						</ActionIcon>
+						<Tooltip label="Edit page details" withinPortal>
+							<ActionIcon
+								variant="light"
+								className={classes.icon}
+								onClick={() => props.openEditPageModal(props.node.page)}
+							>
+								<PencilSquareIcon className="w-4" />
+							</ActionIcon>
+						</Tooltip>
 					</Group>
 
 					{/* Page actions */}
 					<Group spacing={"xs"}>
 						{props.root ? (
 							<>
-								<ActionIcon
-									variant="light"
-									className={classes.icon}
-									onClick={() => props.openAddPageModal(props.node.page)}
-								>
-									<DocumentPlusIcon className="w-5" />
-								</ActionIcon>
+								<Tooltip label="Add new page" withinPortal>
+									<ActionIcon
+										variant="light"
+										className={classes.icon}
+										onClick={() => props.openAddPageModal(props.node.page)}
+									>
+										<DocumentPlusIcon className="w-5" />
+									</ActionIcon>
+								</Tooltip>
 							</>
 						) : (
 							<>
 								<ChevronUpDownIcon className="w-5" />
 
-								<ActionIcon
-									variant="light"
-									className={classes.icon}
-									onClick={() => props.openAddPageModal(props.node.page)}
-								>
-									<DocumentPlusIcon className="w-5" />
-								</ActionIcon>
+								<Tooltip label="Add new page" withinPortal>
+									<ActionIcon
+										variant="light"
+										className={classes.icon}
+										onClick={() => props.openAddPageModal(props.node.page)}
+									>
+										<DocumentPlusIcon className="w-5" />
+									</ActionIcon>
+								</Tooltip>
 
-								<ActionIcon
-									variant="light"
-									className={classes.icon}
-									onClick={() => props.openMovePageModal(props.node.page)}
-								>
-									<FolderArrowDownIcon className="w-5" />
-								</ActionIcon>
+								<Tooltip label="Move page" withinPortal>
+									<ActionIcon
+										variant="light"
+										className={classes.icon}
+										onClick={() => props.openMovePageModal(props.node.page)}
+									>
+										<FolderArrowDownIcon className="w-5" />
+									</ActionIcon>
+								</Tooltip>
 
-								<ActionIcon
-									variant="light"
-									className={classes.icon}
-									onClick={() => props.openDeletePageModal(props.node.page)}
-								>
-									<TrashIcon color={theme.colors.red[8]} className="w-5" />
-								</ActionIcon>
+								<Tooltip label="Delete page" withinPortal>
+									<ActionIcon
+										variant="light"
+										className={classes.icon}
+										onClick={() => props.openDeletePageModal(props.node.page)}
+									>
+										<TrashIcon color={theme.colors.red[8]} className="w-5" />
+									</ActionIcon>
+								</Tooltip>
 							</>
 						)}
 					</Group>
