@@ -27,6 +27,8 @@ import type { Page as PageType } from "api/prisma/types";
 import { getBorderColor, getHoverColor } from "@admin/src/utils/colors";
 import type { Node } from "./PageTree";
 
+const ANIMATION_DURATION = 200;
+
 const useStyles = createStyles((theme) => ({
 	icon: {
 		backgroundColor: getHoverColor(theme),
@@ -35,7 +37,7 @@ const useStyles = createStyles((theme) => ({
 
 interface PageProps {
 	node: Node;
-	last: boolean;
+	last?: boolean;
 	root?: boolean;
 	openAddPageModal: (page: PageType) => void;
 	openEditPageModal: (page: PageType) => void;
@@ -45,8 +47,10 @@ interface PageProps {
 export default function Page(props: PageProps) {
 	const { classes } = useStyles();
 	const theme = useMantineTheme();
-	const [parent] = useAutoAnimate({ duration: 150 });
+
+	const [parent] = useAutoAnimate({ duration: ANIMATION_DURATION });
 	const [isExpanded, setIsExpanded] = useState(true);
+	const [showMargin, setShowMargin] = useState(true);
 
 	return (
 		<div data-testid="page">
@@ -54,7 +58,6 @@ export default function Page(props: PageProps) {
 				pl={props.node.children.length > 0 ? "xs" : "sm"}
 				pr="xs"
 				py="xs"
-				mb={isExpanded && props.node.children.length > 0 ? "xs" : 0}
 				withBorder
 				sx={(theme) => ({
 					backgroundColor: getHoverColor(theme),
@@ -68,7 +71,10 @@ export default function Page(props: PageProps) {
 								<ActionIcon
 									variant="light"
 									className={classes.icon}
-									onClick={() => setIsExpanded(!isExpanded)}
+									onClick={() => {
+										if (!isExpanded) setShowMargin(true);
+										setIsExpanded(!isExpanded);
+									}}
 								>
 									<ChevronRightIcon
 										className="w-5"
@@ -159,22 +165,28 @@ export default function Page(props: PageProps) {
 				ref={parent}
 				spacing="xs"
 				pl="lg"
+				mt={showMargin && props.node.children.length > 0 ? "xs" : 0}
+				mah={isExpanded ? "100vh" : 0}
+				opacity={isExpanded ? 1 : 0}
+				onTransitionEnd={() => {
+					if (!isExpanded) setShowMargin(false);
+				}}
 				sx={(theme) => ({
 					borderLeft: `2px solid ${getBorderColor(theme)}`,
+					transition: `max-height ${ANIMATION_DURATION}ms ease-in-out, opacity ${ANIMATION_DURATION}ms ease-in-out`,
 				})}
 			>
-				{isExpanded &&
-					props.node.children.map((child, index) => (
-						<Page
-							key={child.page.id}
-							node={child}
-							last={index === props.node.children.length - 1}
-							openAddPageModal={props.openAddPageModal}
-							openEditPageModal={props.openEditPageModal}
-							openDeletePageModal={props.openDeletePageModal}
-							openMovePageModal={props.openMovePageModal}
-						/>
-					))}
+				{props.node.children.map((child, index) => (
+					<Page
+						key={child.page.id}
+						node={child}
+						last={index === props.node.children.length - 1}
+						openAddPageModal={props.openAddPageModal}
+						openEditPageModal={props.openEditPageModal}
+						openDeletePageModal={props.openDeletePageModal}
+						openMovePageModal={props.openMovePageModal}
+					/>
+				))}
 			</Stack>
 		</div>
 	);
