@@ -5,7 +5,7 @@ import Header from "./_components/Header";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@admin/src/pages/api/auth/[...nextauth]";
 import { trpc } from "@admin/src/utils/trpc";
-import ZustandInitializer from "../zustandInitializer";
+import ZustandInitializer from "@admin/app/_providers/zustandInitializer";
 
 export const metadata: Metadata = {
 	title: "Lava CMS - Admin dashboard",

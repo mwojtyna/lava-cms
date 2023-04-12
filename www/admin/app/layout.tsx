@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import { cookies } from "next/headers";
 import type { ColorScheme } from "@mantine/core";
-import Mantine from "./mantine";
-import TrpcProvider from "./trpcProvider";
+import Mantine from "./_providers/mantine";
+import TrpcProvider from "./_providers/trpcProvider";
 import "@admin/src/styles/globals.css";
 
 export const metadata: Metadata = {
