@@ -14,8 +14,8 @@ import { type SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { z } from "zod";
-import ThemeSwitch from "@admin/app/(components)/ThemeSwitch";
-import SubmitButton from "@admin/app/(components)/SubmitButton";
+import ThemeSwitch from "@admin/app/_components/ThemeSwitch";
+import SubmitButton from "@admin/app/_components/SubmitButton";
 
 function SignInForm() {
 	const router = useRouter();

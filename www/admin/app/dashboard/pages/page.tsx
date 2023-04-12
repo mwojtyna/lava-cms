@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import PageTree from "./(components)/PageTree";
+import PageTree from "./_components/PageTree";
 import { trpc } from "@admin/src/utils/trpc";
 
 export const metadata: Metadata = {

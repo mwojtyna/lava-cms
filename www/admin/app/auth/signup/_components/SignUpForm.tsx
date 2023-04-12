@@ -14,8 +14,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { signIn } from "next-auth/react";
 import { z } from "zod";
 import { trpc } from "@admin/src/utils/trpc";
-import ThemeSwitch from "@admin/app/(components)/ThemeSwitch";
-import SubmitButton from "@admin/app/(components)/SubmitButton";
+import ThemeSwitch from "@admin/app/_components/ThemeSwitch";
+import SubmitButton from "@admin/app/_components/SubmitButton";
 
 export default function SignUpForm({ onSignUp }: { onSignUp?: () => void }) {
 	const inputSchema = z

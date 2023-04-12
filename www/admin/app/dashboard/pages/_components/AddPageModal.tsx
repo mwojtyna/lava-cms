@@ -1,15 +1,23 @@
-import { type ChangeEvent, useEffect } from "react";
+import type { ChangeEvent } from "react";
 import { type SubmitHandler, useForm } from "react-hook-form";
 import { Alert, Group, Modal, Stack, TextInput } from "@mantine/core";
-import { ExclamationCircleIcon, PencilSquareIcon } from "@heroicons/react/24/outline";
+import { DocumentPlusIcon, ExclamationCircleIcon } from "@heroicons/react/24/outline";
 import slugify from "slugify";
 import { TRPCClientError } from "@trpc/client";
 import { trpcReact } from "@admin/src/utils/trpcReact";
-import SubmitButton from "@admin/app/(components)/SubmitButton";
+import SubmitButton from "@admin/app/_components/SubmitButton";
 import { type PagesModalProps, invalidUrls } from "./PageTree";
 
-export default function EditPageModal(props: PagesModalProps) {
-	const mutation = trpcReact.pages.editPage.useMutation();
+function setSlug(name: string) {
+	return slugify(name, {
+		lower: true,
+		strict: true,
+		locale: "en",
+	});
+}
+
+export default function AddPageModal(props: PagesModalProps) {
+	const mutation = trpcReact.pages.addPage.useMutation();
 
 	interface Inputs {
 		name: string;
@@ -22,35 +30,28 @@ export default function EditPageModal(props: PagesModalProps) {
 		setValue,
 		setError,
 		clearErrors,
-	} = useForm<Inputs>({
-		defaultValues: {
-			slug: getSlugFromUrl(props.page.url),
-		},
-	});
+	} = useForm<Inputs>();
 	const onSubmit: SubmitHandler<Inputs> = async (data) => {
-		const split = props.page.url.split("/");
-		split[split.length - 1] = data.slug;
-
-		const newUrl = props.page.url === "/" ? "/" : split.join("/");
-		if (invalidUrls.includes(newUrl)) {
+		const url = props.page.url + (props.page.url !== "/" ? "/" : "") + data.slug;
+		if (invalidUrls.includes(url)) {
 			setError("slug", {
 				type: "value",
-				message: `The resulting path ${newUrl} is not allowed.`,
+				message: `The resulting path ${url} is not allowed.`,
 			});
 			return;
 		}
 
 		try {
 			await mutation.mutateAsync({
-				id: props.page.id,
-				newName: data.name,
-				newUrl: newUrl,
+				name: data.name,
+				url: url,
+				parent_id: props.page.id,
 			});
 		} catch (error) {
 			if (error instanceof TRPCClientError && error.data.code === "CONFLICT") {
 				setError("slug", {
 					type: "manual",
-					message: `A page with path ${newUrl} already exists.`,
+					message: `A page with path ${url} already exists.`,
 				});
 			} else if (error instanceof TRPCClientError && error.data.code === "BAD_REQUEST") {
 				setError("slug", {
@@ -68,21 +69,8 @@ export default function EditPageModal(props: PagesModalProps) {
 		props.onClose();
 	};
 
-	function getSlugFromUrl(path: string) {
-		const split = path.split("/");
-		return split[split.length - 1]!;
-	}
-
-	useEffect(() => {
-		if (props.isOpen && props.page) {
-			setValue("name", props.page.name);
-			setValue("slug", getSlugFromUrl(props.page.url));
-			clearErrors();
-		}
-	}, [props.isOpen, props.page, clearErrors, setValue]);
-
 	return (
-		<Modal opened={props.isOpen} onClose={props.onClose} title="Edit name" centered>
+		<Modal opened={props.isOpen} onClose={props.onClose} title="Add page" centered>
 			<form onSubmit={handleSubmit(onSubmit)}>
 				<Stack>
 					{errors.root && (
@@ -101,35 +89,26 @@ export default function EditPageModal(props: PagesModalProps) {
 						{...register("name", {
 							required: " ",
 							onChange: (e: ChangeEvent<HTMLInputElement>) => {
-								setValue(
-									"slug",
-									slugify(e.target.value, {
-										lower: true,
-										strict: true,
-										locale: "en",
-									})
-								);
+								setValue("slug", setSlug(e.target.value));
 								clearErrors("slug");
 							},
 						})}
 						error={errors.name?.message}
 					/>
-					{props.page.url !== "/" && (
-						<TextInput
-							label="Slug"
-							variant="filled"
-							withAsterisk
-							{...register("slug", { required: " " })}
-							error={errors.slug?.message}
-						/>
-					)}
+					<TextInput
+						label="Slug"
+						variant="filled"
+						withAsterisk
+						{...register("slug", { required: " " })}
+						error={errors.slug?.message}
+					/>
 
 					<Group position="right">
 						<SubmitButton
 							isLoading={mutation.isLoading}
-							leftIcon={<PencilSquareIcon className="w-5" />}
+							leftIcon={<DocumentPlusIcon className="w-5" />}
 						>
-							Save
+							Add
 						</SubmitButton>
 					</Group>
 				</Stack>

@@ -17,9 +17,9 @@ import {
 import { ArrowDownOnSquareIcon } from "@heroicons/react/24/outline";
 import { QuestionMarkCircleIcon } from "@heroicons/react/20/solid";
 import { check } from "language-tags";
-import ThemeSwitch from "@admin/app/(components)/ThemeSwitch";
+import ThemeSwitch from "@admin/app/_components/ThemeSwitch";
 import { trpc } from "@admin/src/utils/trpc";
-import SubmitButton from "@admin/app/(components)/SubmitButton";
+import SubmitButton from "@admin/app/_components/SubmitButton";
 
 const useStyles = createStyles(() => ({
 	label: {

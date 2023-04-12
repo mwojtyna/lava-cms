@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useReducer } from "react";
-import { Section } from "@admin/app/dashboard/(components)/Section";
+import { Section } from "@admin/app/dashboard/_components/Section";
 import { trpcReact } from "@admin/src/utils/trpcReact";
 import type { Page as PageType } from "api/prisma/types";
 import Page from "./Page";
