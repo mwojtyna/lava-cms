@@ -3,6 +3,7 @@ import { ExclamationCircleIcon, TrashIcon } from "@heroicons/react/24/outline";
 import SubmitButton from "@admin/app/_components/SubmitButton";
 import { trpcReact } from "@admin/src/utils/trpcReact";
 import type { PagesModalProps } from "./PageTree";
+import type { LocalStorageData } from "./Page";
 
 export default function DeletePageModal(props: PagesModalProps) {
 	const mutation = trpcReact.pages.deletePage.useMutation();
@@ -46,6 +47,16 @@ export default function DeletePageModal(props: PagesModalProps) {
 						color="red"
 						onClick={async () => {
 							await mutation.mutateAsync({ id: props.page.id });
+
+							// Remove the 'is page expanded' data from local storage
+							const data = localStorage.getItem("page-tree");
+							if (data) {
+								const parsedData: LocalStorageData = JSON.parse(data);
+								const { [props.page.id]: _, ...rest } = parsedData;
+
+								localStorage.setItem("page-tree", JSON.stringify(rest));
+							}
+
 							props.onClose();
 						}}
 					>

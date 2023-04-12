@@ -12,6 +12,7 @@ import {
 	createStyles,
 	useMantineTheme,
 } from "@mantine/core";
+import { useLocalStorage } from "@mantine/hooks";
 import {
 	ChevronRightIcon,
 	ChevronUpDownIcon,
@@ -45,13 +46,23 @@ interface PageProps {
 	openDeletePageModal: (page: PageType) => void;
 	openMovePageModal: (page: PageType) => void;
 }
+
+export type LocalStorageData = { [x: string]: boolean };
+
 export default function Page(props: PageProps) {
 	const { classes } = useStyles();
 	const theme = useMantineTheme();
 
 	const [parent] = useAutoAnimate({ duration: ANIMATION_DURATION });
-	const [isExpanded, setIsExpanded] = useState(true);
 	const [showMargin, setShowMargin] = useState(true);
+
+	const [isExpanded, setIsExpanded] = useLocalStorage({
+		key: "page-tree",
+		defaultValue: {
+			[props.node.page.id]: true,
+		},
+	});
+	const isThisExpanded = () => isExpanded[props.node.page.id];
 
 	return (
 		<div data-testid="page">
@@ -73,19 +84,25 @@ export default function Page(props: PageProps) {
 									variant="light"
 									className={classes.icon}
 									onClick={() => {
-										if (!isExpanded) setShowMargin(true);
-										setIsExpanded(!isExpanded);
+										if (!isThisExpanded()) setShowMargin(true);
+
+										setIsExpanded({
+											...isExpanded,
+											[props.node.page.id]: !isThisExpanded(),
+										});
 									}}
 								>
 									<ChevronRightIcon
 										className="w-5"
 										style={{
-											transform: `rotate(${isExpanded ? "90deg" : "0"})`,
+											transform: `rotate(${
+												isThisExpanded() ? "90deg" : "0"
+											})`,
 										}}
 									/>
 								</ActionIcon>
 
-								{isExpanded ? (
+								{isThisExpanded() ? (
 									<FolderOpenIcon className="w-5" />
 								) : (
 									<FolderIcon className="w-5" />
@@ -177,10 +194,10 @@ export default function Page(props: PageProps) {
 				spacing="xs"
 				pl="lg"
 				mt={showMargin && props.node.children.length > 0 ? "xs" : 0}
-				mah={isExpanded ? "100vh" : 0}
-				opacity={isExpanded ? 1 : 0}
+				mah={isThisExpanded() ? "100vh" : 0}
+				opacity={isThisExpanded() ? 1 : 0}
 				onTransitionEnd={() => {
-					if (!isExpanded) setShowMargin(false);
+					if (!isThisExpanded()) setShowMargin(false);
 				}}
 				sx={(theme) => ({
 					borderLeft: `2px solid ${getBorderColor(theme)}`,
