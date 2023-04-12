@@ -1,7 +1,7 @@
 import type { MantineTheme } from "@mantine/core";
 
 export function getBackgroundColor(theme: MantineTheme) {
-	return theme.colorScheme === "dark" ? theme.colors.dark[7] : theme.colors.gray[2];
+	return theme.colorScheme === "dark" ? theme.colors.dark[7] : theme.colors.gray[1];
 }
 
 export function getCardColor(theme: MantineTheme) {
