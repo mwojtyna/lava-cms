@@ -62,7 +62,10 @@ export default function Page(props: PageProps) {
 			[props.node.page.id]: true,
 		},
 	});
-	const isThisExpanded = () => isExpanded[props.node.page.id];
+	const isThisExpanded = () => {
+		const data = isExpanded[props.node.page.id];
+		return data !== undefined ? data : true;
+	};
 
 	return (
 		<div data-testid="page">
@@ -84,7 +87,7 @@ export default function Page(props: PageProps) {
 									variant="light"
 									className={classes.icon}
 									onClick={() => {
-										if (!isThisExpanded()) setShowMargin(true);
+										if (isThisExpanded() === false) setShowMargin(true);
 
 										setIsExpanded({
 											...isExpanded,
