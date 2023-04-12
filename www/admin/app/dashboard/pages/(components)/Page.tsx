@@ -21,6 +21,7 @@ import {
 	PencilSquareIcon,
 	TrashIcon,
 } from "@heroicons/react/24/solid";
+import { useAutoAnimate } from "@formkit/auto-animate/react";
 import type { Page as PageType } from "api/prisma/types";
 import { getBorderColor, getHoverColor } from "@admin/src/utils/colors";
 import type { Node } from "./PageTree";
@@ -43,132 +44,131 @@ interface PageProps {
 export default function Page(props: PageProps) {
 	const { classes } = useStyles();
 	const theme = useMantineTheme();
+	const [parent] = useAutoAnimate();
 
 	return (
-		<>
-			<Stack spacing="xs">
-				<Card
-					pl={props.node.children.length > 0 ? "xs" : "sm"}
-					pr="xs"
-					py="xs"
-					withBorder
-					sx={(theme) => ({
-						backgroundColor: getHoverColor(theme),
-					})}
-				>
-					<Group position="apart">
-						{/* Page details */}
-						<Group spacing={"sm"}>
-							{props.node.children.length > 0 ? (
-								<>
-									<ActionIcon variant="light" className={classes.icon}>
-										<ChevronRightIcon
-											className="w-5"
-											style={{
-												transform: `rotate(${true ? "90deg" : "0"})`,
-											}}
-										/>
-									</ActionIcon>
+		<div>
+			<Card
+				pl={props.node.children.length > 0 ? "xs" : "sm"}
+				pr="xs"
+				py="xs"
+				mb={props.node.children.length > 0 ? "xs" : 0}
+				withBorder
+				sx={(theme) => ({
+					backgroundColor: getHoverColor(theme),
+				})}
+			>
+				<Group position="apart">
+					{/* Page details */}
+					<Group spacing={"sm"}>
+						{props.node.children.length > 0 ? (
+							<>
+								<ActionIcon variant="light" className={classes.icon}>
+									<ChevronRightIcon
+										className="w-5"
+										style={{
+											transform: `rotate(${true ? "90deg" : "0"})`,
+										}}
+									/>
+								</ActionIcon>
 
-									{true ? (
-										<FolderOpenIcon className="w-5" />
-									) : (
-										<FolderIcon className="w-5" />
-									)}
-								</>
-							) : (
-								<DocumentIcon className="w-5" />
-							)}
+								{true ? (
+									<FolderOpenIcon className="w-5" />
+								) : (
+									<FolderIcon className="w-5" />
+								)}
+							</>
+						) : (
+							<DocumentIcon className="w-5" />
+						)}
 
-							<Text sx={{ fontWeight: 500 }}>{props.node.page.name}</Text>
+						<Text sx={{ fontWeight: 500 }}>{props.node.page.name}</Text>
 
-							<Text color="dimmed" size="sm">
-								<Anchor
-									className="hover:underline"
-									href={props.node.page.url}
-									target="_blank"
-									unstyled
-								>
-									{props.node.page.url}
-								</Anchor>
-							</Text>
-
-							<ActionIcon
-								variant="light"
-								className={classes.icon}
-								onClick={() => props.openEditPageModal(props.node.page)}
+						<Text color="dimmed" size="sm">
+							<Anchor
+								className="hover:underline"
+								href={props.node.page.url}
+								target="_blank"
+								unstyled
 							>
-								<PencilSquareIcon className="w-4" />
-							</ActionIcon>
-						</Group>
+								{props.node.page.url}
+							</Anchor>
+						</Text>
 
-						{/* Page actions */}
-						<Group spacing={"xs"}>
-							{props.root ? (
-								<>
-									<ActionIcon
-										variant="light"
-										className={classes.icon}
-										onClick={() => props.openAddPageModal(props.node.page)}
-									>
-										<DocumentPlusIcon className="w-5" />
-									</ActionIcon>
-								</>
-							) : (
-								<>
-									<ChevronUpDownIcon className="w-5" />
-
-									<ActionIcon
-										variant="light"
-										className={classes.icon}
-										onClick={() => props.openAddPageModal(props.node.page)}
-									>
-										<DocumentPlusIcon className="w-5" />
-									</ActionIcon>
-
-									<ActionIcon
-										variant="light"
-										className={classes.icon}
-										onClick={() => props.openMovePageModal(props.node.page)}
-									>
-										<FolderArrowDownIcon className="w-5" />
-									</ActionIcon>
-
-									<ActionIcon
-										variant="light"
-										className={classes.icon}
-										onClick={() => props.openDeletePageModal(props.node.page)}
-									>
-										<TrashIcon color={theme.colors.red[8]} className="w-5" />
-									</ActionIcon>
-								</>
-							)}
-						</Group>
+						<ActionIcon
+							variant="light"
+							className={classes.icon}
+							onClick={() => props.openEditPageModal(props.node.page)}
+						>
+							<PencilSquareIcon className="w-4" />
+						</ActionIcon>
 					</Group>
-				</Card>
 
-				{props.node.children.length > 0 && (
-					<Stack
-						spacing="xs"
-						pl="lg"
-						sx={(theme) => ({
-							borderLeft: `2px solid ${getBorderColor(theme)}`,
-						})}
-					>
-						{props.node.children.map((child, index) => (
-							<Page
-								key={child.page.id}
-								node={child}
-								last={index === props.node.children.length - 1}
-								openAddPageModal={props.openAddPageModal}
-								openEditPageModal={props.openEditPageModal}
-								openDeletePageModal={props.openDeletePageModal}
-								openMovePageModal={props.openMovePageModal}
-							/>
-						))}
-					</Stack>
-				)}
+					{/* Page actions */}
+					<Group spacing={"xs"}>
+						{props.root ? (
+							<>
+								<ActionIcon
+									variant="light"
+									className={classes.icon}
+									onClick={() => props.openAddPageModal(props.node.page)}
+								>
+									<DocumentPlusIcon className="w-5" />
+								</ActionIcon>
+							</>
+						) : (
+							<>
+								<ChevronUpDownIcon className="w-5" />
+
+								<ActionIcon
+									variant="light"
+									className={classes.icon}
+									onClick={() => props.openAddPageModal(props.node.page)}
+								>
+									<DocumentPlusIcon className="w-5" />
+								</ActionIcon>
+
+								<ActionIcon
+									variant="light"
+									className={classes.icon}
+									onClick={() => props.openMovePageModal(props.node.page)}
+								>
+									<FolderArrowDownIcon className="w-5" />
+								</ActionIcon>
+
+								<ActionIcon
+									variant="light"
+									className={classes.icon}
+									onClick={() => props.openDeletePageModal(props.node.page)}
+								>
+									<TrashIcon color={theme.colors.red[8]} className="w-5" />
+								</ActionIcon>
+							</>
+						)}
+					</Group>
+				</Group>
+			</Card>
+
+			<Stack
+				ref={parent}
+				spacing="xs"
+				pl="lg"
+				sx={(theme) => ({
+					borderLeft: `2px solid ${getBorderColor(theme)}`,
+				})}
+			>
+				{props.node.children.map((child, index) => (
+					<Page
+						key={child.page.id}
+						node={child}
+						last={index === props.node.children.length - 1}
+						openAddPageModal={props.openAddPageModal}
+						openEditPageModal={props.openEditPageModal}
+						openDeletePageModal={props.openDeletePageModal}
+						openMovePageModal={props.openMovePageModal}
+					/>
+				))}
 			</Stack>
-		</>
+		</div>
 	);
 }

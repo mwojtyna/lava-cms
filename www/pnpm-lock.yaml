@@ -38,6 +38,9 @@ importers:
       '@emotion/react':
         specifier: ^11.10.6
         version: 11.10.6(@types/react@18.0.28)(react@18.2.0)
+      '@formkit/auto-animate':
+        specifier: 1.0.0-beta.6
+        version: 1.0.0-beta.6
       '@heroicons/react':
         specifier: ^2.0.16
         version: 2.0.16(react@18.2.0)
@@ -964,6 +967,10 @@ packages:
       react: 18.2.0
       react-dom: 18.2.0(react@18.2.0)
       tabbable: 6.1.1
+    dev: false
+
+  /@formkit/auto-animate@1.0.0-beta.6:
+    resolution: {integrity: sha512-PVDhLAlr+B4Xb7e+1wozBUWmXa6BFU8xUPR/W/E+TsQhPS1qkAdAsJ25keEnFrcePSnXHrOsh3tiFbEToOzV9w==}
     dev: false
 
   /@heroicons/react@2.0.16(react@18.2.0):
