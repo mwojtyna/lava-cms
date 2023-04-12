@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import {
 	ActionIcon,
 	Anchor,
@@ -44,15 +45,16 @@ interface PageProps {
 export default function Page(props: PageProps) {
 	const { classes } = useStyles();
 	const theme = useMantineTheme();
-	const [parent] = useAutoAnimate();
+	const [parent] = useAutoAnimate({ duration: 150 });
+	const [isExpanded, setIsExpanded] = useState(true);
 
 	return (
-		<div>
+		<div data-testid="page">
 			<Card
 				pl={props.node.children.length > 0 ? "xs" : "sm"}
 				pr="xs"
 				py="xs"
-				mb={props.node.children.length > 0 ? "xs" : 0}
+				mb={isExpanded && props.node.children.length > 0 ? "xs" : 0}
 				withBorder
 				sx={(theme) => ({
 					backgroundColor: getHoverColor(theme),
@@ -63,16 +65,20 @@ export default function Page(props: PageProps) {
 					<Group spacing={"sm"}>
 						{props.node.children.length > 0 ? (
 							<>
-								<ActionIcon variant="light" className={classes.icon}>
+								<ActionIcon
+									variant="light"
+									className={classes.icon}
+									onClick={() => setIsExpanded(!isExpanded)}
+								>
 									<ChevronRightIcon
 										className="w-5"
 										style={{
-											transform: `rotate(${true ? "90deg" : "0"})`,
+											transform: `rotate(${isExpanded ? "90deg" : "0"})`,
 										}}
 									/>
 								</ActionIcon>
 
-								{true ? (
+								{isExpanded ? (
 									<FolderOpenIcon className="w-5" />
 								) : (
 									<FolderIcon className="w-5" />
@@ -157,17 +163,18 @@ export default function Page(props: PageProps) {
 					borderLeft: `2px solid ${getBorderColor(theme)}`,
 				})}
 			>
-				{props.node.children.map((child, index) => (
-					<Page
-						key={child.page.id}
-						node={child}
-						last={index === props.node.children.length - 1}
-						openAddPageModal={props.openAddPageModal}
-						openEditPageModal={props.openEditPageModal}
-						openDeletePageModal={props.openDeletePageModal}
-						openMovePageModal={props.openMovePageModal}
-					/>
-				))}
+				{isExpanded &&
+					props.node.children.map((child, index) => (
+						<Page
+							key={child.page.id}
+							node={child}
+							last={index === props.node.children.length - 1}
+							openAddPageModal={props.openAddPageModal}
+							openEditPageModal={props.openEditPageModal}
+							openDeletePageModal={props.openDeletePageModal}
+							openMovePageModal={props.openMovePageModal}
+						/>
+					))}
 			</Stack>
 		</div>
 	);
