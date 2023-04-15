@@ -1,7 +1,12 @@
-import type { ChangeEvent } from "react";
+import { type ChangeEvent, useState } from "react";
 import { type SubmitHandler, useForm } from "react-hook-form";
-import { Alert, Group, Modal, Stack, TextInput } from "@mantine/core";
-import { DocumentPlusIcon, ExclamationCircleIcon } from "@heroicons/react/24/outline";
+import { ActionIcon, Alert, Group, Modal, Stack, TextInput } from "@mantine/core";
+import {
+	DocumentPlusIcon,
+	ExclamationCircleIcon,
+	LockClosedIcon,
+	LockOpenIcon,
+} from "@heroicons/react/24/outline";
 import slugify from "slugify";
 import { TRPCClientError } from "@trpc/client";
 import { trpcReact } from "@admin/src/utils/trpcReact";
@@ -18,6 +23,7 @@ function setSlug(name: string) {
 
 export default function AddPageModal(props: PagesModalProps) {
 	const mutation = trpcReact.pages.addPage.useMutation();
+	const [slugLocked, setSlugLocked] = useState(false);
 
 	interface Inputs {
 		name: string;
@@ -89,15 +95,25 @@ export default function AddPageModal(props: PagesModalProps) {
 						{...register("name", {
 							required: " ",
 							onChange: (e: ChangeEvent<HTMLInputElement>) => {
-								setValue("slug", setSlug(e.target.value));
-								clearErrors("slug");
+								if (!slugLocked) {
+									setValue("slug", setSlug(e.target.value));
+									clearErrors("slug");
+								}
 							},
 						})}
 						error={errors.name?.message}
 					/>
 					<TextInput
 						label="Slug"
-						variant="filled"
+						rightSection={
+							<ActionIcon onClick={() => setSlugLocked(!slugLocked)}>
+								{slugLocked ? (
+									<LockClosedIcon className="w-4" />
+								) : (
+									<LockOpenIcon className="w-4" />
+								)}
+							</ActionIcon>
+						}
 						withAsterisk
 						{...register("slug", { required: " " })}
 						error={errors.slug?.message}

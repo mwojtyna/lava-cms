@@ -1,15 +1,22 @@
 import { type ChangeEvent, useEffect } from "react";
 import { type SubmitHandler, useForm } from "react-hook-form";
-import { Alert, Group, Modal, Stack, TextInput } from "@mantine/core";
-import { ExclamationCircleIcon, PencilSquareIcon } from "@heroicons/react/24/outline";
+import { ActionIcon, Alert, Group, Modal, Stack, TextInput } from "@mantine/core";
+import {
+	ExclamationCircleIcon,
+	LockClosedIcon,
+	LockOpenIcon,
+	PencilSquareIcon,
+} from "@heroicons/react/24/outline";
 import slugify from "slugify";
 import { TRPCClientError } from "@trpc/client";
 import { trpcReact } from "@admin/src/utils/trpcReact";
+import { usePagePreferences } from "@admin/src/hooks/usePagePreferences";
 import SubmitButton from "@admin/app/_components/SubmitButton";
 import { type PagesModalProps, invalidUrls } from "./PageTree";
 
 export default function EditPageModal(props: PagesModalProps) {
 	const mutation = trpcReact.pages.editPage.useMutation();
+	const { pagePreferences, setPagePreferences } = usePagePreferences(props.page.id);
 
 	interface Inputs {
 		name: string;
@@ -101,15 +108,17 @@ export default function EditPageModal(props: PagesModalProps) {
 						{...register("name", {
 							required: " ",
 							onChange: (e: ChangeEvent<HTMLInputElement>) => {
-								setValue(
-									"slug",
-									slugify(e.target.value, {
-										lower: true,
-										strict: true,
-										locale: "en",
-									})
-								);
-								clearErrors("slug");
+								if (!pagePreferences.slugLocked) {
+									setValue(
+										"slug",
+										slugify(e.target.value, {
+											lower: true,
+											strict: true,
+											locale: "en",
+										})
+									);
+									clearErrors("slug");
+								}
 							},
 						})}
 						error={errors.name?.message}
@@ -117,8 +126,23 @@ export default function EditPageModal(props: PagesModalProps) {
 					{props.page.url !== "/" && (
 						<TextInput
 							label="Slug"
-							variant="filled"
 							withAsterisk
+							rightSection={
+								<ActionIcon
+									onClick={() =>
+										setPagePreferences({
+											...pagePreferences,
+											slugLocked: !pagePreferences.slugLocked,
+										})
+									}
+								>
+									{pagePreferences.slugLocked ? (
+										<LockClosedIcon className="w-4" />
+									) : (
+										<LockOpenIcon className="w-4" />
+									)}
+								</ActionIcon>
+							}
 							{...register("slug", { required: " " })}
 							error={errors.slug?.message}
 						/>

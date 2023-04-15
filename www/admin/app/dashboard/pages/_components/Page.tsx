@@ -12,7 +12,6 @@ import {
 	createStyles,
 	useMantineTheme,
 } from "@mantine/core";
-import { useLocalStorage } from "@mantine/hooks";
 import {
 	ChevronRightIcon,
 	ChevronUpDownIcon,
@@ -28,6 +27,7 @@ import { useAutoAnimate } from "@formkit/auto-animate/react";
 import type { Page as PageType } from "api/prisma/types";
 import { getBorderColor, getHoverColor } from "@admin/src/utils/colors";
 import type { Node } from "./PageTree";
+import { usePagePreferences } from "@admin/src/hooks/usePagePreferences";
 
 const ANIMATION_DURATION = 200;
 
@@ -56,16 +56,7 @@ export default function Page(props: PageProps) {
 	const [parent] = useAutoAnimate({ duration: ANIMATION_DURATION });
 	const [showMargin, setShowMargin] = useState(true);
 
-	const [isExpanded, setIsExpanded] = useLocalStorage({
-		key: "page-tree",
-		defaultValue: {
-			[props.node.page.id]: true,
-		},
-	});
-	const isThisExpanded = () => {
-		const data = isExpanded[props.node.page.id];
-		return data !== undefined ? data : true;
-	};
+	const { pagePreferences, setPagePreferences } = usePagePreferences(props.node.page.id);
 
 	return (
 		<div data-testid="page">
@@ -87,11 +78,11 @@ export default function Page(props: PageProps) {
 									variant="light"
 									className={classes.icon}
 									onClick={() => {
-										if (isThisExpanded() === false) setShowMargin(true);
+										if (!pagePreferences.expanded) setShowMargin(true);
 
-										setIsExpanded({
-											...isExpanded,
-											[props.node.page.id]: !isThisExpanded(),
+										setPagePreferences({
+											...pagePreferences,
+											expanded: !pagePreferences.expanded,
 										});
 									}}
 								>
@@ -99,13 +90,13 @@ export default function Page(props: PageProps) {
 										className="w-5"
 										style={{
 											transform: `rotate(${
-												isThisExpanded() ? "90deg" : "0"
+												pagePreferences.expanded ? "90deg" : "0"
 											})`,
 										}}
 									/>
 								</ActionIcon>
 
-								{isThisExpanded() ? (
+								{pagePreferences.expanded ? (
 									<FolderOpenIcon className="w-5" />
 								) : (
 									<FolderIcon className="w-5" />
@@ -197,10 +188,10 @@ export default function Page(props: PageProps) {
 				spacing="xs"
 				pl="lg"
 				mt={showMargin && props.node.children.length > 0 ? "xs" : 0}
-				mah={isThisExpanded() ? "100vh" : 0}
-				opacity={isThisExpanded() ? 1 : 0}
+				mah={pagePreferences.expanded ? "100vh" : 0}
+				opacity={pagePreferences.expanded ? 1 : 0}
 				onTransitionEnd={() => {
-					if (!isThisExpanded()) setShowMargin(false);
+					if (!pagePreferences.expanded) setShowMargin(false);
 				}}
 				sx={(theme) => ({
 					borderLeft: `2px solid ${getBorderColor(theme)}`,

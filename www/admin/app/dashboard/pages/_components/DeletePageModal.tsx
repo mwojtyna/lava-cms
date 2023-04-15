@@ -48,7 +48,7 @@ export default function DeletePageModal(props: PagesModalProps) {
 						onClick={async () => {
 							await mutation.mutateAsync({ id: props.page.id });
 
-							// Remove the 'is page expanded' data from local storage
+							// Remove page preferences of deleted page from local storage
 							const data = localStorage.getItem("page-tree");
 							if (data) {
 								const parsedData: LocalStorageData = JSON.parse(data);
