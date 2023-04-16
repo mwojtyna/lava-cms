@@ -27,6 +27,7 @@ import {
 import { useAutoAnimate } from "@formkit/auto-animate/react";
 import {
 	DndContext,
+	type DragEndEvent,
 	DragOverlay,
 	KeyboardSensor,
 	PointerSensor,
@@ -98,6 +99,31 @@ export default function Page(props: PageProps) {
 	}, [props.node.children]);
 
 	const reorderMutation = trpcReact.pages.reorderPage.useMutation();
+	async function handleDragEnd(e: DragEndEvent) {
+		enableAutoAnimate(false);
+		props.setReordering(true);
+
+		const activeNode = children.find((child) => child.page.id === e.active.id)!;
+		const overNode = children.find((child) => child.page.id === e.over?.id);
+
+		if (!overNode) return;
+
+		setChildren((children) =>
+			arrayMove(children, children.indexOf(activeNode), children.indexOf(overNode))
+		);
+
+		await reorderMutation.mutateAsync({
+			activeId: e.active.id.toString(),
+			activeParentId: activeNode.page.parent_id!,
+			overId: overNode.page.id,
+			order: activeNode.page.order,
+			newOrder: overNode.page.order,
+		});
+
+		enableAutoAnimate(true);
+		props.setReordering(false);
+		document.body.style.cursor = "default";
+	}
 
 	return (
 		<div data-testid="page" ref={setNodeRef} style={style}>
@@ -251,35 +277,7 @@ export default function Page(props: PageProps) {
 					sensors={sensors}
 					collisionDetection={closestCenter}
 					onDragStart={() => (document.body.style.cursor = "grabbing")}
-					onDragEnd={async (e) => {
-						enableAutoAnimate(false);
-						props.setReordering(true);
-
-						const activeNode = children.find((child) => child.page.id === e.active.id)!;
-						const overNode = children.find((child) => child.page.id === e.over?.id);
-
-						if (!overNode) return;
-
-						setChildren((children) =>
-							arrayMove(
-								children,
-								children.indexOf(activeNode),
-								children.indexOf(overNode)
-							)
-						);
-
-						await reorderMutation.mutateAsync({
-							activeId: e.active.id.toString(),
-							activeParentId: activeNode.page.parent_id!,
-							overId: overNode.page.id,
-							order: activeNode.page.order,
-							newOrder: overNode.page.order,
-						});
-
-						enableAutoAnimate(true);
-						props.setReordering(false);
-						document.body.style.cursor = "default";
-					}}
+					onDragEnd={handleDragEnd}
 				>
 					<SortableContext
 						items={children.map((child) => child.page.id)}
