@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useReducer, useState } from "react";
-import { Loader, LoadingOverlay } from "@mantine/core";
+import { Loader, LoadingOverlay, useMantineColorScheme } from "@mantine/core";
 import { Section } from "@admin/app/dashboard/_components/Section";
 import { trpcReact } from "@admin/src/utils/trpcReact";
 import type { Page as PageType } from "api/prisma/types";
@@ -79,6 +79,7 @@ export interface PagesModalProps {
 
 export default function PageTree({ initialData }: { initialData: PageType[] }) {
 	const data = trpcReact.pages.getPages.useQuery().data ?? initialData;
+	const colorScheme = useMantineColorScheme();
 
 	rootNode = useMemo(() => {
 		const rootPage = data.find((page) => page.url === "/")!;
@@ -140,7 +141,13 @@ export default function PageTree({ initialData }: { initialData: PageType[] }) {
 
 			<LoadingOverlay
 				visible={reordering}
-				loader={<Loader variant="dots" size="xl" color="#fff" />}
+				loader={
+					<Loader
+						variant="dots"
+						size="xl"
+						color={colorScheme.colorScheme === "dark" ? "#fff" : "#333"}
+					/>
+				}
 			/>
 
 			<Section.Title>Structure</Section.Title>
