@@ -1,11 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import {
 	ActionIcon,
 	Anchor,
 	Card,
 	Group,
+	Portal,
 	Stack,
 	Text,
 	Tooltip,
@@ -24,10 +25,26 @@ import {
 	TrashIcon,
 } from "@heroicons/react/24/solid";
 import { useAutoAnimate } from "@formkit/auto-animate/react";
-import type { Page as PageType } from "api/prisma/types";
+import {
+	DndContext,
+	DragOverlay,
+	KeyboardSensor,
+	PointerSensor,
+	closestCenter,
+	useSensor,
+	useSensors,
+} from "@dnd-kit/core";
+import {
+	SortableContext,
+	sortableKeyboardCoordinates,
+	useSortable,
+	verticalListSortingStrategy,
+} from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
 import { getBorderColor, getHoverColor } from "@admin/src/utils/colors";
-import type { Node } from "./PageTree";
 import { usePagePreferences } from "@admin/src/hooks/usePagePreferences";
+import type { TreeNode } from "./PageTree";
+import { trpcReact } from "@admin/src/utils/trpcReact";
 
 const ANIMATION_DURATION = 200;
 
@@ -38,13 +55,13 @@ const useStyles = createStyles((theme) => ({
 }));
 
 interface PageProps {
-	node: Node;
+	node: TreeNode;
 	last?: boolean;
 	root?: boolean;
-	openAddPageModal: (page: PageType) => void;
-	openEditPageModal: (page: PageType) => void;
-	openDeletePageModal: (page: PageType) => void;
-	openMovePageModal: (page: PageType) => void;
+	openAddPageModal: (node: TreeNode) => void;
+	openEditPageModal: (node: TreeNode) => void;
+	openDeletePageModal: (node: TreeNode) => void;
+	openMovePageModal: (node: TreeNode) => void;
 }
 
 export type LocalStorageData = { [x: string]: boolean };
@@ -58,10 +75,30 @@ export default function Page(props: PageProps) {
 
 	const { pagePreferences, setPagePreferences } = usePagePreferences(props.node.page.id);
 
+	const { attributes, listeners, setNodeRef, transform, transition } = useSortable({
+		id: props.node.page.id,
+	});
+	const sensors = useSensors(
+		useSensor(PointerSensor),
+		useSensor(KeyboardSensor, {
+			coordinateGetter: sortableKeyboardCoordinates,
+		})
+	);
+	const style = {
+		transform: CSS.Translate.toString(transform),
+		transition,
+	};
+
+	const sortedChildren = useMemo(
+		() => props.node.children.sort((a, b) => a.page.order - b.page.order),
+		[props.node.children]
+	);
+	const reorderMutation = trpcReact.pages.reorderPage.useMutation();
+
 	return (
-		<div data-testid="page">
+		<div data-testid="page" ref={setNodeRef} style={style}>
 			<Card
-				pl={props.node.children.length > 0 ? "xs" : "sm"}
+				pl={sortedChildren.length > 0 ? "xs" : "sm"}
 				pr="xs"
 				py="xs"
 				withBorder
@@ -72,7 +109,7 @@ export default function Page(props: PageProps) {
 				<Group position="apart">
 					{/* Page details */}
 					<Group spacing={"sm"}>
-						{props.node.children.length > 0 ? (
+						{sortedChildren.length > 0 ? (
 							<>
 								<ActionIcon
 									variant="light"
@@ -109,25 +146,29 @@ export default function Page(props: PageProps) {
 						<Text sx={{ fontWeight: 500 }}>{props.node.page.name}</Text>
 
 						<Text color="dimmed" size="sm">
-							<Anchor
-								className="hover:underline"
-								href={props.node.page.url}
-								target="_blank"
-								unstyled
-							>
-								{props.node.page.url}
-							</Anchor>
+							<Tooltip label="Open the generated page" withinPortal>
+								<Anchor
+									className="hover:underline"
+									href={props.node.page.url}
+									target="_blank"
+									unstyled
+								>
+									{props.node.page.url}
+								</Anchor>
+							</Tooltip>
 						</Text>
 
 						<Tooltip label="Edit page details" withinPortal>
 							<ActionIcon
 								variant="light"
 								className={classes.icon}
-								onClick={() => props.openEditPageModal(props.node.page)}
+								onClick={() => props.openEditPageModal(props.node)}
 							>
 								<PencilSquareIcon className="w-4" />
 							</ActionIcon>
 						</Tooltip>
+
+						{props.node.page.order.toString()}
 					</Group>
 
 					{/* Page actions */}
@@ -138,7 +179,7 @@ export default function Page(props: PageProps) {
 									<ActionIcon
 										variant="light"
 										className={classes.icon}
-										onClick={() => props.openAddPageModal(props.node.page)}
+										onClick={() => props.openAddPageModal(props.node)}
 									>
 										<DocumentPlusIcon className="w-5" />
 									</ActionIcon>
@@ -146,13 +187,17 @@ export default function Page(props: PageProps) {
 							</>
 						) : (
 							<>
-								<ChevronUpDownIcon className="w-5" />
+								<Tooltip label="Reorder page (click and drag)" withinPortal>
+									<ActionIcon {...listeners} {...attributes}>
+										<ChevronUpDownIcon className="w-5" />
+									</ActionIcon>
+								</Tooltip>
 
 								<Tooltip label="Add new page" withinPortal>
 									<ActionIcon
 										variant="light"
 										className={classes.icon}
-										onClick={() => props.openAddPageModal(props.node.page)}
+										onClick={() => props.openAddPageModal(props.node)}
 									>
 										<DocumentPlusIcon className="w-5" />
 									</ActionIcon>
@@ -162,7 +207,7 @@ export default function Page(props: PageProps) {
 									<ActionIcon
 										variant="light"
 										className={classes.icon}
-										onClick={() => props.openMovePageModal(props.node.page)}
+										onClick={() => props.openMovePageModal(props.node)}
 									>
 										<FolderArrowDownIcon className="w-5" />
 									</ActionIcon>
@@ -172,7 +217,7 @@ export default function Page(props: PageProps) {
 									<ActionIcon
 										variant="light"
 										className={classes.icon}
-										onClick={() => props.openDeletePageModal(props.node.page)}
+										onClick={() => props.openDeletePageModal(props.node)}
 									>
 										<TrashIcon color={theme.colors.red[8]} className="w-5" />
 									</ActionIcon>
@@ -187,7 +232,7 @@ export default function Page(props: PageProps) {
 				ref={parent}
 				spacing="xs"
 				pl="lg"
-				mt={showMargin && props.node.children.length > 0 ? "xs" : 0}
+				mt={showMargin && sortedChildren.length > 0 ? "xs" : 0}
 				mah={pagePreferences.expanded ? "100vh" : 0}
 				opacity={pagePreferences.expanded ? 1 : 0}
 				onTransitionEnd={() => {
@@ -198,17 +243,51 @@ export default function Page(props: PageProps) {
 					transition: `max-height ${ANIMATION_DURATION}ms ease-in-out, opacity ${ANIMATION_DURATION}ms ease-in-out`,
 				})}
 			>
-				{props.node.children.map((child, index) => (
-					<Page
-						key={child.page.id}
-						node={child}
-						last={index === props.node.children.length - 1}
-						openAddPageModal={props.openAddPageModal}
-						openEditPageModal={props.openEditPageModal}
-						openDeletePageModal={props.openDeletePageModal}
-						openMovePageModal={props.openMovePageModal}
-					/>
-				))}
+				<DndContext
+					sensors={sensors}
+					collisionDetection={closestCenter}
+					onDragStart={() => (document.body.style.cursor = "grabbing")}
+					onDragEnd={(e) => {
+						const activeNode = sortedChildren.find(
+							(child) => child.page.id === e.active.id
+						)!;
+						const overNode = sortedChildren.find(
+							(child) => child.page.id === e.over?.id
+						);
+
+						if (!overNode) return;
+
+						reorderMutation.mutate({
+							activeId: e.active.id.toString(),
+							activeParentId: activeNode.page.parent_id!,
+							overId: overNode.page.id,
+							order: activeNode.page.order,
+							newOrder: overNode.page.order,
+						});
+						document.body.style.cursor = "default";
+					}}
+				>
+					<SortableContext
+						items={sortedChildren.map((child) => child.page.id)}
+						strategy={verticalListSortingStrategy}
+					>
+						{sortedChildren.map((child, index) => (
+							<Page
+								key={child.page.id}
+								node={child}
+								last={index === sortedChildren.length - 1}
+								openAddPageModal={props.openAddPageModal}
+								openEditPageModal={props.openEditPageModal}
+								openDeletePageModal={props.openDeletePageModal}
+								openMovePageModal={props.openMovePageModal}
+							/>
+						))}
+					</SortableContext>
+
+					<Portal>
+						<DragOverlay dropAnimation={null}></DragOverlay>
+					</Portal>
+				</DndContext>
 			</Stack>
 		</div>
 	);

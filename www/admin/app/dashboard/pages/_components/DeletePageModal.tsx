@@ -16,8 +16,8 @@ export default function DeletePageModal(props: PagesModalProps) {
 			withCloseButton={false}
 			title={
 				<Text>
-					Delete page <strong className="whitespace-nowrap">{props.page.url}</strong> and
-					all its children?
+					Delete page <strong className="whitespace-nowrap">{props.node.page.url}</strong>{" "}
+					and all its children?
 				</Text>
 			}
 		>
@@ -46,13 +46,17 @@ export default function DeletePageModal(props: PagesModalProps) {
 						leftIcon={<TrashIcon className="w-4" />}
 						color="red"
 						onClick={async () => {
-							await mutation.mutateAsync({ id: props.page.id });
+							await mutation.mutateAsync({
+								id: props.node.page.id,
+								parent_id: props.node.page.parent_id!,
+								order: props.node.page.order,
+							});
 
 							// Remove page preferences of deleted page from local storage
 							const data = localStorage.getItem("page-tree");
 							if (data) {
 								const parsedData: LocalStorageData = JSON.parse(data);
-								const { [props.page.id]: _, ...rest } = parsedData;
+								const { [props.node.page.id]: _, ...rest } = parsedData;
 
 								localStorage.setItem("page-tree", JSON.stringify(rest));
 							}

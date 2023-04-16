@@ -41,12 +41,12 @@ export default function MovePageModal(props: PagesModalProps & { allPages: Page[
 					// If the current page is Root, then remove it if the page to be moved is a direct child of Root.
 					// Else remove page if it is the page to be moved or if it is its child.
 					if (page.url === "/") {
-						return props.page.url.split("/").length > 2;
+						return props.node.page.url.split("/").length > 2;
 					} else {
 						return (
-							page.id !== props.page.id &&
-							!page.url.startsWith(props.page.url + "/") &&
-							props.page.parent_id !== page.id
+							page.id !== props.node.page.id &&
+							!page.url.startsWith(props.node.page.url + "/") &&
+							props.node.page.parent_id !== page.id
 						);
 					}
 				})
@@ -56,7 +56,7 @@ export default function MovePageModal(props: PagesModalProps & { allPages: Page[
 					value: page.id,
 					page: page,
 				})),
-		[props.allPages, props.page]
+		[props.allPages, props.node.page]
 	);
 
 	const [destinationId, setDestinationId] = useState<string | null>(null);
@@ -68,8 +68,8 @@ export default function MovePageModal(props: PagesModalProps & { allPages: Page[
 
 		try {
 			await mutation.mutateAsync({
-				id: props.page.id,
-				slug: props.page.url.split("/").pop()!,
+				id: props.node.page.id,
+				slug: props.node.page.url.split("/").pop()!,
 				newParentId: destinationId!,
 			});
 		} catch (error) {
@@ -80,7 +80,7 @@ export default function MovePageModal(props: PagesModalProps & { allPages: Page[
 				const newPath =
 					destinationUrl +
 					(destinationUrl === "/" ? "" : "/") +
-					props.page.url.split("/").pop()!;
+					props.node.page.url.split("/").pop()!;
 
 				setError({
 					message: (
@@ -125,7 +125,9 @@ export default function MovePageModal(props: PagesModalProps & { allPages: Page[
 						value={destinationId}
 						onChange={setDestinationId}
 						label="Move to"
-						maxDropdownHeight={window.innerHeight / 2.25}
+						maxDropdownHeight={
+							typeof window !== "undefined" ? window.innerHeight / 2.25 : undefined
+						}
 						dropdownPosition="bottom"
 						itemComponent={SelectItem}
 						data={data}

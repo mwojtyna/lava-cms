@@ -26,13 +26,36 @@ export const movePage = publicProcedure
 			throw new TRPCError({ code: "NOT_FOUND" });
 		}
 
-		await caller.pages.editPage({
-			id: input.id,
-			newName: page.name,
-			newUrl: parentPage.url + (parentPage.url === "/" ? "" : "/") + input.slug,
-		});
-		await prisma.page.update({
-			where: { id: input.id },
-			data: { parent_id: input.newParentId },
+		await prisma.$transaction(async (tx) => {
+			await caller.pages.editPage({
+				id: input.id,
+				newName: page.name,
+				newUrl: parentPage.url + (parentPage.url === "/" ? "" : "/") + input.slug,
+			});
+
+			const newParentChildCount = await tx.page.findMany({
+				where: { parent_id: input.newParentId },
+				select: { _count: true },
+			});
+			await tx.page.update({
+				where: { id: input.id },
+				data: {
+					parent_id: input.newParentId,
+					order: newParentChildCount.length,
+				},
+			});
+			await tx.page.updateMany({
+				where: {
+					parent_id: page.parent_id,
+					order: {
+						gt: page.order,
+					},
+				},
+				data: {
+					order: {
+						decrement: 1,
+					},
+				},
+			});
 		});
 	});

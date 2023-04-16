@@ -10,13 +10,13 @@ import EditPageModal from "./EditPageModal";
 import DeletePageModal from "./DeletePageModal";
 import MovePageModal from "./MovePageModal";
 
-export interface Node {
+export interface TreeNode {
 	page: PageType;
-	children: Node[];
+	children: TreeNode[];
 }
-let rootNode: Node;
 
-export function getNode(id: string = rootNode.page.id, node: Node = rootNode): Node | null {
+let rootNode: TreeNode;
+export function getNode(id: string = rootNode.page.id, node: TreeNode = rootNode): TreeNode | null {
 	if (node.page.id === id) {
 		return node;
 	}
@@ -44,26 +44,26 @@ type Action =
 	| {
 			type: "open";
 			modal: Modals;
-			page: PageType;
+			node: TreeNode;
 	  }
 	| {
 			type: "close";
 			modal: Modals;
-			page: PageType;
+			node: TreeNode;
 	  };
 
-function reducer(state: State, action: Action): State & { page: PageType } {
+function reducer(state: State, action: Action): State & { node: TreeNode } {
 	if (action.type === "open") {
 		return {
 			...state,
 			[action.modal + "IsOpen"]: true,
-			page: action.page,
+			node: action.node,
 		};
 	} else if (action.type === "close") {
 		return {
 			...state,
 			[action.modal + "IsOpen"]: false,
-			page: action.page,
+			node: action.node,
 		};
 	}
 
@@ -72,7 +72,7 @@ function reducer(state: State, action: Action): State & { page: PageType } {
 
 export interface PagesModalProps {
 	isOpen: boolean;
-	page: PageType;
+	node: TreeNode;
 	onClose: () => void;
 }
 
@@ -92,7 +92,7 @@ export default function PageTree({ initialData }: { initialData: PageType[] }) {
 				return [];
 			}
 
-			const nodeChildren: Node[] = [];
+			const nodeChildren: TreeNode[] = [];
 			children.forEach((child) => {
 				nodeChildren.push({
 					page: child,
@@ -109,47 +109,47 @@ export default function PageTree({ initialData }: { initialData: PageType[] }) {
 		editIsOpen: false,
 		deleteIsOpen: false,
 		moveIsOpen: false,
-		page: rootNode.page,
+		node: rootNode,
 	});
 
 	return (
 		<Section>
 			<AddPageModal
-				page={state.page}
+				node={state.node}
 				isOpen={state.addIsOpen}
-				onClose={() => dispatch({ type: "close", modal: "add", page: state.page })}
+				onClose={() => dispatch({ type: "close", modal: "add", node: state.node })}
 			/>
 			<EditPageModal
-				page={state.page}
+				node={state.node}
 				isOpen={state.editIsOpen}
-				onClose={() => dispatch({ type: "close", modal: "edit", page: state.page })}
+				onClose={() => dispatch({ type: "close", modal: "edit", node: state.node })}
 			/>
 			<DeletePageModal
-				page={state.page}
+				node={state.node}
 				isOpen={state.deleteIsOpen}
-				onClose={() => dispatch({ type: "close", modal: "delete", page: state.page })}
+				onClose={() => dispatch({ type: "close", modal: "delete", node: state.node })}
 			/>
 			<MovePageModal
-				page={state.page}
+				node={state.node}
 				isOpen={state.moveIsOpen}
-				onClose={() => dispatch({ type: "close", modal: "move", page: state.page })}
+				onClose={() => dispatch({ type: "close", modal: "move", node: state.node })}
 				allPages={data}
 			/>
 
 			<Section.Title>Structure</Section.Title>
 			<Page
 				node={rootNode}
-				openAddPageModal={(page) => {
-					dispatch({ type: "open", modal: "add", page });
+				openAddPageModal={(node) => {
+					dispatch({ type: "open", modal: "add", node });
 				}}
-				openEditPageModal={(page) => {
-					dispatch({ type: "open", modal: "edit", page });
+				openEditPageModal={(node) => {
+					dispatch({ type: "open", modal: "edit", node });
 				}}
-				openDeletePageModal={(page) => {
-					dispatch({ type: "open", modal: "delete", page });
+				openDeletePageModal={(node) => {
+					dispatch({ type: "open", modal: "delete", node });
 				}}
-				openMovePageModal={(page) => {
-					dispatch({ type: "open", modal: "move", page });
+				openMovePageModal={(node) => {
+					dispatch({ type: "open", modal: "move", node });
 				}}
 				root
 				last

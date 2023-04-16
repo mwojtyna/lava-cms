@@ -13,6 +13,9 @@
 		"test:report": "playwright show-report"
 	},
 	"dependencies": {
+		"@dnd-kit/core": "^6.0.8",
+		"@dnd-kit/sortable": "^7.0.2",
+		"@dnd-kit/utilities": "^3.2.1",
 		"@emotion/react": "^11.10.6",
 		"@formkit/auto-animate": "1.0.0-beta.6",
 		"@heroicons/react": "^2.0.16",

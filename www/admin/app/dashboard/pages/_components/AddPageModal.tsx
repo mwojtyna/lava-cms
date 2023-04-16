@@ -38,7 +38,7 @@ export default function AddPageModal(props: PagesModalProps) {
 		clearErrors,
 	} = useForm<Inputs>();
 	const onSubmit: SubmitHandler<Inputs> = async (data) => {
-		const url = props.page.url + (props.page.url !== "/" ? "/" : "") + data.slug;
+		const url = props.node.page.url + (props.node.page.url !== "/" ? "/" : "") + data.slug;
 		if (invalidUrls.includes(url)) {
 			setError("slug", {
 				type: "value",
@@ -51,7 +51,8 @@ export default function AddPageModal(props: PagesModalProps) {
 			await mutation.mutateAsync({
 				name: data.name,
 				url: url,
-				parent_id: props.page.id,
+				parent_id: props.node.page.id,
+				order: props.node.children.length,
 			});
 		} catch (error) {
 			if (error instanceof TRPCClientError && error.data.code === "CONFLICT") {

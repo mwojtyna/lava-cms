@@ -16,7 +16,7 @@ import { type PagesModalProps, invalidUrls } from "./PageTree";
 
 export default function EditPageModal(props: PagesModalProps) {
 	const mutation = trpcReact.pages.editPage.useMutation();
-	const { pagePreferences, setPagePreferences } = usePagePreferences(props.page.id);
+	const { pagePreferences, setPagePreferences } = usePagePreferences(props.node.page.id);
 
 	interface Inputs {
 		name: string;
@@ -31,14 +31,14 @@ export default function EditPageModal(props: PagesModalProps) {
 		clearErrors,
 	} = useForm<Inputs>({
 		defaultValues: {
-			slug: getSlugFromUrl(props.page.url),
+			slug: getSlugFromUrl(props.node.page.url),
 		},
 	});
 	const onSubmit: SubmitHandler<Inputs> = async (data) => {
-		const split = props.page.url.split("/");
+		const split = props.node.page.url.split("/");
 		split[split.length - 1] = data.slug;
 
-		const newUrl = props.page.url === "/" ? "/" : split.join("/");
+		const newUrl = props.node.page.url === "/" ? "/" : split.join("/");
 		if (invalidUrls.includes(newUrl)) {
 			setError("slug", {
 				type: "value",
@@ -49,7 +49,7 @@ export default function EditPageModal(props: PagesModalProps) {
 
 		try {
 			await mutation.mutateAsync({
-				id: props.page.id,
+				id: props.node.page.id,
 				newName: data.name,
 				newUrl: newUrl,
 			});
@@ -81,12 +81,12 @@ export default function EditPageModal(props: PagesModalProps) {
 	}
 
 	useEffect(() => {
-		if (props.isOpen && props.page) {
-			setValue("name", props.page.name);
-			setValue("slug", getSlugFromUrl(props.page.url));
+		if (props.isOpen && props.node.page) {
+			setValue("name", props.node.page.name);
+			setValue("slug", getSlugFromUrl(props.node.page.url));
 			clearErrors();
 		}
-	}, [props.isOpen, props.page, clearErrors, setValue]);
+	}, [props.isOpen, props.node.page, clearErrors, setValue]);
 
 	return (
 		<Modal opened={props.isOpen} onClose={props.onClose} title="Edit name" centered>
@@ -123,7 +123,7 @@ export default function EditPageModal(props: PagesModalProps) {
 						})}
 						error={errors.name?.message}
 					/>
-					{props.page.url !== "/" && (
+					{props.node.page.url !== "/" && (
 						<TextInput
 							label="Slug"
 							withAsterisk

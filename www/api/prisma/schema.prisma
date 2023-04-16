@@ -39,6 +39,7 @@ model Page {
     parent    Page?   @relation("Tree", fields: [parent_id], references: [id], onDelete: Cascade)
     parent_id String?
     child     Page[]  @relation("Tree")
+    order     Int
 
     @@map("page")
     @@schema("frontend")

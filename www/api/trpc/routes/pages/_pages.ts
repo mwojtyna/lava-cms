@@ -5,6 +5,7 @@ import { getPages } from "./getPages";
 import { editPage } from "./editPage";
 import { deletePage } from "./deletePage";
 import { movePage } from "./movePage";
+import { reorderPage } from "./reorderPage";
 
 export const pagesRouter = router({
 	addPage,
@@ -13,6 +14,7 @@ export const pagesRouter = router({
 	editPage,
 	deletePage,
 	movePage,
+	reorderPage,
 });
 
 export type PagesRouter = typeof pagesRouter;
