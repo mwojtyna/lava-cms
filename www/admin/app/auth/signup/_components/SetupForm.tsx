@@ -54,6 +54,7 @@ export default function SetupForm() {
 		await trpc.pages.addPage.mutate({
 			name: "Root",
 			url: "/",
+			order: 0,
 		});
 
 		router.push("/dashboard");
