@@ -1,7 +1,12 @@
 ---
 import { trpc } from "@frontend/src/utils/trpc";
 
+interface Props {
+	name?: string;
+}
+
 const config = await trpc.config.getConfig.query();
+const { name } = Astro.props;
 ---
 
 <!DOCTYPE html>
@@ -12,7 +17,7 @@ const config = await trpc.config.getConfig.query();
 		<meta name="generator" content={Astro.generator} />
 		{config.description !== "" && <meta name="description" content={config.description} />}
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<title>{config.title}</title>
+		<title>{name ?? "404"} - {config.title}</title>
 	</head>
 	<body>
 		<slot />
