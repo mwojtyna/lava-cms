@@ -100,7 +100,7 @@ export default function PageTree({ initialData }: { initialData: PageType[] }) {
 				});
 			});
 
-			return nodeChildren;
+			return nodeChildren.sort((a, b) => a.page.order - b.page.order);
 		}
 	}, [data]);
 

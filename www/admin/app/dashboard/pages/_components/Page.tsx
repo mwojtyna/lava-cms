@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import {
 	ActionIcon,
 	Anchor,
@@ -36,6 +36,7 @@ import {
 } from "@dnd-kit/core";
 import {
 	SortableContext,
+	arrayMove,
 	sortableKeyboardCoordinates,
 	useSortable,
 	verticalListSortingStrategy,
@@ -70,7 +71,7 @@ export default function Page(props: PageProps) {
 	const { classes } = useStyles();
 	const theme = useMantineTheme();
 
-	const [parent] = useAutoAnimate({ duration: ANIMATION_DURATION });
+	const [parent, enableAutoAnimate] = useAutoAnimate({ duration: ANIMATION_DURATION });
 	const [showMargin, setShowMargin] = useState(true);
 
 	const { pagePreferences, setPagePreferences } = usePagePreferences(props.node.page.id);
@@ -89,16 +90,18 @@ export default function Page(props: PageProps) {
 		transition,
 	};
 
-	const sortedChildren = useMemo(
-		() => props.node.children.sort((a, b) => a.page.order - b.page.order),
-		[props.node.children]
-	);
+	// We need a local copy of children to avoid reshuffling of pages when reordering
+	const [children, setChildren] = useState(props.node.children);
+	useEffect(() => {
+		setChildren(props.node.children);
+	}, [props.node.children]);
+
 	const reorderMutation = trpcReact.pages.reorderPage.useMutation();
 
 	return (
 		<div data-testid="page" ref={setNodeRef} style={style}>
 			<Card
-				pl={sortedChildren.length > 0 ? "xs" : "sm"}
+				pl={children.length > 0 ? "xs" : "sm"}
 				pr="xs"
 				py="xs"
 				withBorder
@@ -109,7 +112,7 @@ export default function Page(props: PageProps) {
 				<Group position="apart">
 					{/* Page details */}
 					<Group spacing={"sm"}>
-						{sortedChildren.length > 0 ? (
+						{children.length > 0 ? (
 							<>
 								<ActionIcon
 									variant="light"
@@ -232,7 +235,7 @@ export default function Page(props: PageProps) {
 				ref={parent}
 				spacing="xs"
 				pl="lg"
-				mt={showMargin && sortedChildren.length > 0 ? "xs" : 0}
+				mt={showMargin && children.length > 0 ? "xs" : 0}
 				mah={pagePreferences.expanded ? "100vh" : 0}
 				opacity={pagePreferences.expanded ? 1 : 0}
 				onTransitionEnd={() => {
@@ -247,35 +250,43 @@ export default function Page(props: PageProps) {
 					sensors={sensors}
 					collisionDetection={closestCenter}
 					onDragStart={() => (document.body.style.cursor = "grabbing")}
-					onDragEnd={(e) => {
-						const activeNode = sortedChildren.find(
-							(child) => child.page.id === e.active.id
-						)!;
-						const overNode = sortedChildren.find(
-							(child) => child.page.id === e.over?.id
-						);
+					onDragEnd={async (e) => {
+						enableAutoAnimate(false);
+
+						const activeNode = children.find((child) => child.page.id === e.active.id)!;
+						const overNode = children.find((child) => child.page.id === e.over?.id);
 
 						if (!overNode) return;
 
-						reorderMutation.mutate({
+						setChildren((children) =>
+							arrayMove(
+								children,
+								children.indexOf(activeNode),
+								children.indexOf(overNode)
+							)
+						);
+
+						await reorderMutation.mutateAsync({
 							activeId: e.active.id.toString(),
 							activeParentId: activeNode.page.parent_id!,
 							overId: overNode.page.id,
 							order: activeNode.page.order,
 							newOrder: overNode.page.order,
 						});
+
+						enableAutoAnimate(true);
 						document.body.style.cursor = "default";
 					}}
 				>
 					<SortableContext
-						items={sortedChildren.map((child) => child.page.id)}
+						items={children.map((child) => child.page.id)}
 						strategy={verticalListSortingStrategy}
 					>
-						{sortedChildren.map((child, index) => (
+						{children.map((child, index) => (
 							<Page
 								key={child.page.id}
 								node={child}
-								last={index === sortedChildren.length - 1}
+								last={index === children.length - 1}
 								openAddPageModal={props.openAddPageModal}
 								openEditPageModal={props.openEditPageModal}
 								openDeletePageModal={props.openDeletePageModal}
