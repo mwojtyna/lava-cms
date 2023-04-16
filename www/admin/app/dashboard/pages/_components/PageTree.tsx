@@ -1,6 +1,7 @@
 "use client";
 
-import { useMemo, useReducer } from "react";
+import { useMemo, useReducer, useState } from "react";
+import { Loader, LoadingOverlay } from "@mantine/core";
 import { Section } from "@admin/app/dashboard/_components/Section";
 import { trpcReact } from "@admin/src/utils/trpcReact";
 import type { Page as PageType } from "api/prisma/types";
@@ -111,6 +112,7 @@ export default function PageTree({ initialData }: { initialData: PageType[] }) {
 		moveIsOpen: false,
 		node: rootNode,
 	});
+	const [reordering, setReordering] = useState(false);
 
 	return (
 		<Section>
@@ -136,6 +138,11 @@ export default function PageTree({ initialData }: { initialData: PageType[] }) {
 				allPages={data}
 			/>
 
+			<LoadingOverlay
+				visible={reordering}
+				loader={<Loader variant="dots" size="xl" color="#fff" />}
+			/>
+
 			<Section.Title>Structure</Section.Title>
 			<Page
 				node={rootNode}
@@ -151,6 +158,7 @@ export default function PageTree({ initialData }: { initialData: PageType[] }) {
 				openMovePageModal={(node) => {
 					dispatch({ type: "open", modal: "move", node });
 				}}
+				setReordering={setReordering}
 				root
 				last
 			/>

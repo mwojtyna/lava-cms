@@ -63,6 +63,7 @@ interface PageProps {
 	openEditPageModal: (node: TreeNode) => void;
 	openDeletePageModal: (node: TreeNode) => void;
 	openMovePageModal: (node: TreeNode) => void;
+	setReordering: (value: boolean) => void;
 }
 
 export type LocalStorageData = { [x: string]: boolean };
@@ -170,8 +171,6 @@ export default function Page(props: PageProps) {
 								<PencilSquareIcon className="w-4" />
 							</ActionIcon>
 						</Tooltip>
-
-						{props.node.page.order.toString()}
 					</Group>
 
 					{/* Page actions */}
@@ -244,6 +243,7 @@ export default function Page(props: PageProps) {
 				sx={(theme) => ({
 					borderLeft: `2px solid ${getBorderColor(theme)}`,
 					transition: `max-height ${ANIMATION_DURATION}ms ease-in-out, opacity ${ANIMATION_DURATION}ms ease-in-out`,
+					overflow: "auto",
 				})}
 			>
 				<DndContext
@@ -252,6 +252,7 @@ export default function Page(props: PageProps) {
 					onDragStart={() => (document.body.style.cursor = "grabbing")}
 					onDragEnd={async (e) => {
 						enableAutoAnimate(false);
+						props.setReordering(true);
 
 						const activeNode = children.find((child) => child.page.id === e.active.id)!;
 						const overNode = children.find((child) => child.page.id === e.over?.id);
@@ -275,6 +276,7 @@ export default function Page(props: PageProps) {
 						});
 
 						enableAutoAnimate(true);
+						props.setReordering(false);
 						document.body.style.cursor = "default";
 					}}
 				>
@@ -291,6 +293,7 @@ export default function Page(props: PageProps) {
 								openEditPageModal={props.openEditPageModal}
 								openDeletePageModal={props.openDeletePageModal}
 								openMovePageModal={props.openMovePageModal}
+								setReordering={props.setReordering}
 							/>
 						))}
 					</SortableContext>
