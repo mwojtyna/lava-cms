@@ -26,9 +26,11 @@ export const addPage = publicProcedure
 			});
 		} catch (error) {
 			if (error instanceof Prisma.PrismaClientKnownRequestError) {
-				throw new TRPCError({
-					code: "CONFLICT",
-				});
+				if (error.code === "P2002") {
+					throw new TRPCError({
+						code: "CONFLICT",
+					});
+				}
 			}
 		}
 	});
