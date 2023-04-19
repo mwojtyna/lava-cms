@@ -269,8 +269,6 @@ export default function Page(props: PageProps) {
 				sx={(theme) => ({
 					borderLeft: `2px solid ${getBorderColor(theme)}`,
 					transition: `max-height ${ANIMATION_DURATION}ms ease-in-out, opacity ${ANIMATION_DURATION}ms ease-in-out`,
-					overflowY: "auto",
-					overflowX: "hidden",
 				})}
 			>
 				<DndContext
