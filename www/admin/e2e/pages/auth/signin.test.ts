@@ -1,5 +1,4 @@
 import { expect, test } from "@playwright/test";
-import bcrypt from "bcrypt";
 import { start, stop } from "@admin/e2e/mocks/trpc";
 import { init } from "api/server";
 import { prisma } from "api/prisma/client";
@@ -9,7 +8,7 @@ test.beforeAll(async () => {
 	await prisma.user.create({
 		data: {
 			...userMock,
-			password: await bcrypt.hash(userMock.password, 10),
+			password: userMock.passwordEncrypted,
 		},
 	});
 	await prisma.config.create({
