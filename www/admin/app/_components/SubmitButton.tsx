@@ -1,5 +1,5 @@
 import { CheckCircleIcon } from "@heroicons/react/24/outline";
-import { Button, Loader, type ButtonProps } from "@mantine/core";
+import { Button, Loader, type ButtonProps } from "@admin/src/components";
 import type { ComponentPropsWithRef, ReactNode } from "react";
 
 export default function SubmitButton(

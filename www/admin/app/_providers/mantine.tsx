@@ -7,7 +7,7 @@ import {
 	MantineProvider,
 	ColorSchemeProvider,
 	type ColorScheme,
-} from "@mantine/core";
+} from "@admin/src/components";
 import { useColorScheme } from "@mantine/hooks";
 import { Notifications } from "@mantine/notifications";
 import { useEffect, useState } from "react";

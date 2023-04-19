@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
-import { Group, Stack, TextInput, Textarea } from "@mantine/core";
+import { Group, Stack, TextInput, Textarea } from "@admin/src/components";
 import { notifications } from "@mantine/notifications";
 import { type SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";

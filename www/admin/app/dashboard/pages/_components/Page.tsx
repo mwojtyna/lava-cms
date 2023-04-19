@@ -12,7 +12,7 @@ import {
 	Tooltip,
 	createStyles,
 	useMantineTheme,
-} from "@mantine/core";
+} from "@admin/src/components";
 import {
 	ChevronRightIcon,
 	ChevronUpDownIcon,

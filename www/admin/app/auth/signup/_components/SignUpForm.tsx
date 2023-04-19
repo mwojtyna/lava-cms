@@ -8,7 +8,7 @@ import {
 	UserIcon,
 	UserPlusIcon,
 } from "@heroicons/react/24/outline";
-import { Group, PasswordInput, Stack, TextInput, Title } from "@mantine/core";
+import { Group, PasswordInput, Stack, TextInput, Title } from "@admin/src/components";
 import { type SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { signIn } from "next-auth/react";

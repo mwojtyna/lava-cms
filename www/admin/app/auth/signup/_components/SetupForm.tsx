@@ -13,7 +13,7 @@ import {
 	TextInput,
 	Title,
 	Tooltip,
-} from "@mantine/core";
+} from "@admin/src/components";
 import { ArrowDownOnSquareIcon } from "@heroicons/react/24/outline";
 import { QuestionMarkCircleIcon } from "@heroicons/react/20/solid";
 import { check } from "language-tags";

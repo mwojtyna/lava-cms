@@ -1,6 +1,6 @@
 "use client";
 
-import { Switch, useMantineColorScheme, useMantineTheme } from "@mantine/core";
+import { Switch, useMantineColorScheme, useMantineTheme } from "@admin/src/components";
 import { SunIcon, MoonIcon } from "@heroicons/react/24/outline";
 
 export default function ThemeSwitch({ size = "lg" }: { size?: "md" | "lg" }) {

@@ -1,4 +1,4 @@
-import { Alert, Button, Group, Modal, Stack, Text } from "@mantine/core";
+import { Alert, Button, Group, Modal, Stack, Text } from "@admin/src/components";
 import { ExclamationCircleIcon, TrashIcon } from "@heroicons/react/24/outline";
 import SubmitButton from "@admin/app/_components/SubmitButton";
 import { trpcReact } from "@admin/src/utils/trpcReact";

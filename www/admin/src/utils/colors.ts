@@ -1,4 +1,4 @@
-import type { MantineTheme } from "@mantine/core";
+import type { MantineTheme } from "@admin/src/components";
 
 export function getBackgroundColor(theme: MantineTheme) {
 	return theme.colorScheme === "dark" ? theme.colors.dark[7] : theme.colors.gray[1];

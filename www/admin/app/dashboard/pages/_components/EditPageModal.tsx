@@ -1,6 +1,6 @@
 import { type ChangeEvent, useEffect } from "react";
 import { type SubmitHandler, useForm } from "react-hook-form";
-import { ActionIcon, Alert, Group, Modal, Stack, TextInput } from "@mantine/core";
+import { ActionIcon, Alert, Group, Modal, Stack, TextInput } from "@admin/src/components";
 import {
 	ExclamationCircleIcon,
 	LockClosedIcon,

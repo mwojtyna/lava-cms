@@ -1,6 +1,6 @@
 "use client";
 
-import { Navbar, Drawer, MediaQuery } from "@mantine/core";
+import { Navbar, Drawer, MediaQuery } from "@admin/src/components";
 import { useMenuStore } from "@admin/src/data/stores/dashboard";
 import MenuLinks from "./MenuLinks";
 import { getCardColor } from "@admin/src/utils/colors";

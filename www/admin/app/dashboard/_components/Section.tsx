@@ -1,6 +1,4 @@
-"use client";
-
-import { Card, Divider, Stack, Title } from "@mantine/core";
+import { Card, Divider, Stack, Title } from "@admin/src/components";
 
 export function Section(props: React.ComponentPropsWithoutRef<"div">) {
 	return (

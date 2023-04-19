@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import dynamic from "next/dynamic";
-import { Stepper } from "@mantine/core";
+import { Stepper } from "@admin/src/components";
 import SignUpForm from "./SignUpForm";
 const SetupForm = dynamic(() => import("./SetupForm"));
 

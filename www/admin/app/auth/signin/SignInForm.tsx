@@ -8,7 +8,7 @@ import {
 	EyeIcon,
 	EyeSlashIcon,
 } from "@heroicons/react/24/outline";
-import { Alert, Group, PasswordInput, Stack, TextInput, Title } from "@mantine/core";
+import { Alert, Group, PasswordInput, Stack, TextInput, Title } from "@admin/src/components";
 import { signIn } from "next-auth/react";
 import { type SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";

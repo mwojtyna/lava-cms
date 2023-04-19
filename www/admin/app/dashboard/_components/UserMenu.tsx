@@ -10,7 +10,7 @@ import {
 	Menu,
 	useMantineColorScheme,
 	MediaQuery,
-} from "@mantine/core";
+} from "@admin/src/components";
 import { useClickOutside, useDisclosure, useElementSize, useHotkeys } from "@mantine/hooks";
 import { ChevronRightIcon, ArrowLeftOnRectangleIcon } from "@heroicons/react/24/solid";
 import ThemeSwitch from "@admin/app/_components/ThemeSwitch";

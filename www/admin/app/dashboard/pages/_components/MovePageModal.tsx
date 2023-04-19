@@ -6,7 +6,7 @@ import {
 	type ReactNode,
 	useEffect,
 } from "react";
-import { Alert, Group, Modal, Select, Stack, Text } from "@mantine/core";
+import { Alert, Group, Modal, Select, Stack, Text } from "@admin/src/components";
 import { ExclamationCircleIcon, FolderArrowDownIcon } from "@heroicons/react/24/outline";
 import type { Page } from "api/prisma/types";
 import SubmitButton from "@admin/app/_components/SubmitButton";
