@@ -32,5 +32,9 @@ export const addPage = publicProcedure
 					});
 				}
 			}
+
+			throw new TRPCError({
+				code: "INTERNAL_SERVER_ERROR",
+			});
 		}
 	});
