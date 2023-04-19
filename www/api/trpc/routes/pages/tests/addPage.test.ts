@@ -18,7 +18,7 @@ it("adds a page", async () => {
 	const call = prisma.page.create.mock.calls[0];
 	expect(call).toBeDefined();
 
-	expect(prisma.page.create).toHaveBeenCalled();
+	expect(prisma.page.create).toHaveBeenCalledOnce();
 	expect(call![0].data).toMatchObject(PAGE);
 });
 
