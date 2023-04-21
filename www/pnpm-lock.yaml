@@ -177,9 +177,15 @@ importers:
       '@prisma/client':
         specifier: ^4.10.0
         version: 4.11.0(prisma@4.11.0)
-      '@tsconfig/node18-strictest-esm':
-        specifier: ^1.0.1
-        version: 1.0.1
+      '@tsconfig/esm':
+        specifier: ^1.0.3
+        version: 1.0.3
+      '@tsconfig/node18':
+        specifier: ^2.0.0
+        version: 2.0.0
+      '@tsconfig/strictest':
+        specifier: ^2.0.1
+        version: 2.0.1
       bcrypt:
         specifier: ^5.1.0
         version: 5.1.0
@@ -1593,9 +1599,16 @@ packages:
   /@trpc/server@10.18.0:
     resolution: {integrity: sha512-nVMqdDIF9YLOeC3g6RdAvdCPqkHFjpshSqZGThZ+fyjiWSUXj2ZKCduhJFnY77TjtgODojeaaghmzcnjxb+Onw==}
 
-  /@tsconfig/node18-strictest-esm@1.0.1:
-    resolution: {integrity: sha512-cHzmAqw7CMbyqROWeBgVhard3F2V6zxOSJnQ4E6SJWruXD5ypuP9/QKekwBdfXQ4oUTaizIICKIwb+v3v33t0w==}
-    deprecated: TypeScript 5.0 supports combining TSConfigs using array syntax in extends
+  /@tsconfig/esm@1.0.3:
+    resolution: {integrity: sha512-Gp56rIc3R8ab032nXMUitmc7YIb4nAi8DQ6Qt47tuL0Ssn9LIOm+o2FQmqPu3jX4z0TsqgzWwkmVygxcq+yHYg==}
+    dev: false
+
+  /@tsconfig/node18@2.0.0:
+    resolution: {integrity: sha512-uI/B0ShkiEwTk036pncXucVlj4y11EW6mycQvCEzC1PkR2TBvdQZ5Wf96dp+XXWAc70FEDfvwTqanoaDpP6rPw==}
+    dev: false
+
+  /@tsconfig/strictest@2.0.1:
+    resolution: {integrity: sha512-7JHHCbyCsGUxLd0pDbp24yz3zjxw2t673W5oAP6HCEdr/UUhaRhYd3SSnUsGCk+VnPVJVA4mXROzbhI+nyIk+w==}
     dev: false
 
   /@types/babel__core@7.20.0:

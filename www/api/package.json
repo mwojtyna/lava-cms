@@ -18,7 +18,9 @@
 	"dependencies": {
 		"@mswjs/http-middleware": "0.6.0",
 		"@prisma/client": "^4.10.0",
-		"@tsconfig/node18-strictest-esm": "^1.0.1",
+		"@tsconfig/esm": "^1.0.3",
+		"@tsconfig/node18": "^2.0.0",
+		"@tsconfig/strictest": "^2.0.1",
 		"bcrypt": "^5.1.0",
 		"cors": "^2.8.5",
 		"dotenv": "^16.0.3",
