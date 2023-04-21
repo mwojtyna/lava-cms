@@ -1,10 +1,11 @@
 import { expect, it, vi } from "vitest";
 import { prisma } from "@api/prisma/__mocks__/client";
 import { caller } from "@api/trpc/routes/_app";
+import type { Page } from "@api/prisma/types";
 
 vi.mock("@api/prisma/client");
 
-const PAGE = {
+const PAGE: Page = {
 	id: "0",
 	name: "Test",
 	url: "/test",
