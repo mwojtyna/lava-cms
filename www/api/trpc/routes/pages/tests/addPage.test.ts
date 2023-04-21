@@ -42,9 +42,7 @@ it("throws a trpc 409 'CONFLICT' error if the page url already exists", async ()
 });
 
 it("throws a trpc 500 'INTERNAL_SERVER_ERROR' error if any other error occurs", async () => {
-	prisma.page.create.mockRejectedValue(
-		new Prisma.PrismaClientUnknownRequestError("unknown", { clientVersion: "mocked" })
-	);
+	prisma.page.create.mockRejectedValue(new Error("Unknown error"));
 
 	await expect(caller.pages.addPage(PAGE)).rejects.toThrowError(
 		"INTERNAL_SERVER_ERROR" satisfies TRPC_ERROR_CODE_KEY

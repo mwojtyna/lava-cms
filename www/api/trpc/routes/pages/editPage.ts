@@ -35,9 +35,15 @@ export const editPage = publicProcedure
 			]);
 		} catch (error) {
 			if (error instanceof Prisma.PrismaClientKnownRequestError) {
-				throw new TRPCError({
-					code: "CONFLICT",
-				});
+				if (error.code === "P2002") {
+					throw new TRPCError({
+						code: "CONFLICT",
+					});
+				}
 			}
+
+			throw new TRPCError({
+				code: "INTERNAL_SERVER_ERROR",
+			});
 		}
 	});
