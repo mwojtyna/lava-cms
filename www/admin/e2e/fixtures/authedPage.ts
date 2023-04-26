@@ -1,11 +1,10 @@
 import type { Browser } from "playwright";
 import type { BrowserContextOptions, Page } from "@playwright/test";
 import fs from "node:fs";
-import bcrypt from "bcrypt";
 import { prisma } from "api/prisma/client";
 import { init } from "api/server";
 import { server, start, stop } from "@admin/e2e/mocks/trpc";
-import { userMock, websiteSettingsMock } from "@admin/e2e/mocks/data";
+import { userMock, userPasswordDecrypted, websiteSettingsMock } from "@admin/e2e/mocks/data";
 
 export const STORAGE_STATE_PATH = "./e2e/storageState.json";
 
@@ -20,7 +19,6 @@ export const authedPage = async (
 		(await prisma.user.create({
 			data: {
 				...userMock,
-				password: await bcrypt.hash(userMock.password, 10),
 			},
 		}));
 
@@ -85,7 +83,7 @@ async function saveSignedInState(browser: Browser) {
 
 	await page.goto("/admin");
 	await page.locator("input[name='email']").type(userMock.email);
-	await page.locator("input[name='password']").type(userMock.password);
+	await page.locator("input[name='password']").type(userPasswordDecrypted);
 	await page.locator("button[type='submit']").click();
 	await page.waitForURL(/\/admin\/dashboard/);
 
