@@ -275,6 +275,7 @@ export default function Page(props: PageProps) {
 				})}
 			>
 				<DndContext
+					id={props.node.page.id} // Without an id a mismatch between SSR and CSR occurs
 					sensors={sensors}
 					collisionDetection={closestCenter}
 					onDragStart={() => (document.body.style.cursor = "grabbing")}
