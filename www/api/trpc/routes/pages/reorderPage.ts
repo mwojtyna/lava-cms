@@ -13,10 +13,6 @@ export const reorderPage = publicProcedure
 		})
 	)
 	.mutation(async ({ input }) => {
-		if (input.newOrder === input.order) {
-			return;
-		}
-
 		await prisma.$transaction([
 			prisma.page.updateMany({
 				where: {

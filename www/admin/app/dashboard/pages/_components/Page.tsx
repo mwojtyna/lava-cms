@@ -112,13 +112,16 @@ export default function Page(props: PageProps) {
 			arrayMove(children, children.indexOf(activeNode), children.indexOf(overNode))
 		);
 
-		await reorderMutation.mutateAsync({
-			activeId: e.active.id.toString(),
-			activeParentId: activeNode.page.parent_id!,
-			overId: overNode.page.id,
-			order: activeNode.page.order,
-			newOrder: overNode.page.order,
-		});
+		// If new order is the same as the old order, don't do anything
+		if (activeNode.page.order !== overNode.page.order) {
+			await reorderMutation.mutateAsync({
+				activeId: e.active.id.toString(),
+				activeParentId: activeNode.page.parent_id!,
+				overId: overNode.page.id,
+				order: activeNode.page.order,
+				newOrder: overNode.page.order,
+			});
+		}
 
 		enableAutoAnimate(true);
 		props.setReordering(false);
