@@ -36,8 +36,7 @@ else
 	deno_uri="https://github.com/${repo}/releases/download/${1}/deno-${target}.zip"
 fi
 
-deno_install="${DENO_INSTALL:-./frontend/bin/deno}"
-bin_dir="$deno_install"
+bin_dir="${DENO_INSTALL:-./frontend/bin}"
 exe="$bin_dir/deno"
 
 if [ ! -d "$bin_dir" ]; then
@@ -57,8 +56,4 @@ else
 	/bin/zsh) shell_profile=".zshrc" ;;
 	*) shell_profile=".bashrc" ;;
 	esac
-	echo "Manually add the directory to your \$HOME/$shell_profile (or similar)"
-	echo "  export DENO_INSTALL=\"$deno_install\""
-	echo "  export PATH=\"\$DENO_INSTALL/bin:\$PATH\""
-	echo "Run '$exe --help' to get started"
 fi

@@ -1,8 +1,8 @@
 {
 	"name": "api",
-	"version": "0.0.4",
+	"version": "0.0.5",
 	"private": true,
-	"main": "index.ts",
+	"main": "main.ts",
 	"type": "module",
 	"scripts": {
 		"start": "NODE_ENV=production tsx .",

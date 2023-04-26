@@ -1,8 +1,9 @@
-import { HomeIcon, Cog6ToothIcon } from "@heroicons/react/24/solid";
+import type { Route as NextRoute } from "next";
+import { HomeIcon, Cog6ToothIcon, Square2StackIcon } from "@heroicons/react/24/solid";
 
 interface Route {
 	label: string;
-	path: string;
+	path: NextRoute;
 	icon?: React.ReactNode;
 	startingRoute?: boolean;
 	children?: ChildRoute[];
@@ -15,6 +16,11 @@ export const routes: Route[] = [
 		path: "/dashboard",
 		icon: <HomeIcon className="w-5" />,
 		startingRoute: true,
+	},
+	{
+		label: "Pages",
+		path: "/dashboard/pages",
+		icon: <Square2StackIcon className="w-5" />,
 	},
 	{
 		label: "Settings",

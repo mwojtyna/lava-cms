@@ -12,9 +12,9 @@ import {
 	createStyles,
 	Title,
 	Anchor,
-} from "@mantine/core";
+} from "@admin/src/components";
 import { getBorderColor, getCardColor, getHoverColor } from "@admin/src/utils/colors";
-import { useUrl } from "@admin/src/hooks";
+import { useUrl } from "@admin/src/hooks/useUrl";
 import { routes } from "@admin/src/data/menuRoutes";
 import { useMenuStore } from "@admin/src/data/stores/dashboard";
 import logo from "@admin/public/img/logo.png";
@@ -59,9 +59,8 @@ export default function MenuLinks({ version }: { version: string }) {
 					<Anchor
 						component={Link}
 						href={"/dashboard"}
-						sx={{
-							"&:hover": { textDecoration: "none" },
-						}}
+						unstyled
+						onClick={toggle}
 						onMouseOver={() => {
 							if (title.current && !transitioning.current) {
 								title.current.style.backgroundPosition = "left";
@@ -129,6 +128,7 @@ export default function MenuLinks({ version }: { version: string }) {
 						key={index}
 						component={Link}
 						childrenOffset={0}
+						sx={{ fontWeight: 500 }}
 						px="md"
 						py="sm"
 						href={item.path}

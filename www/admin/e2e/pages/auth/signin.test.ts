@@ -1,15 +1,13 @@
 import { expect, test } from "@playwright/test";
-import bcrypt from "bcrypt";
 import { start, stop } from "@admin/e2e/mocks/trpc";
 import { init } from "api/server";
 import { prisma } from "api/prisma/client";
-import { userMock } from "@admin/e2e/mocks/data";
+import { userMock, userPasswordDecrypted } from "@admin/e2e/mocks/data";
 
 test.beforeAll(async () => {
 	await prisma.user.create({
 		data: {
 			...userMock,
-			password: await bcrypt.hash(userMock.password, 10),
 		},
 	});
 	await prisma.config.create({
@@ -57,7 +55,7 @@ test("shows error when invalid credentials", async ({ page }) => {
 
 	// Wrong email
 	await emailInput.type("wrong@email.com");
-	await passwordInput.type(userMock.password);
+	await passwordInput.type(userPasswordDecrypted);
 	await submitButton.click();
 	await expect(page.locator("text=The credentials are invalid.")).toBeInViewport();
 	await clearInputs();
@@ -86,7 +84,7 @@ test("shows error when invalid credentials", async ({ page }) => {
 test("shows error when server error", async ({ page }) => {
 	await page.goto("/admin/auth/signin");
 	await page.locator("input[type='email']").type(userMock.email);
-	await page.locator("input[type='password']").type(userMock.password);
+	await page.locator("input[type='password']").type(userPasswordDecrypted);
 	await page.route("**/api/auth/callback/**", (route) =>
 		route.fulfill({
 			body: JSON.stringify({
@@ -112,7 +110,7 @@ test("shows error when email invalid", async ({ page }) => {
 test("signs in when credentials are valid", async ({ page }) => {
 	await page.goto("/admin/auth/signin");
 	await page.locator("input[type='email']").type(userMock.email);
-	await page.locator("input[type='password']").type(userMock.password);
+	await page.locator("input[type='password']").type(userPasswordDecrypted);
 	await page.locator("button[type='submit']").click();
 	await page.waitForURL(/\/admin\/dashboard/);
 

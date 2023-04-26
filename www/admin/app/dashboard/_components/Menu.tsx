@@ -1,6 +1,6 @@
 "use client";
 
-import { Navbar, Drawer, MediaQuery } from "@mantine/core";
+import { Navbar, Drawer, MediaQuery } from "@admin/src/components";
 import { useMenuStore } from "@admin/src/data/stores/dashboard";
 import MenuLinks from "./MenuLinks";
 import { getCardColor } from "@admin/src/utils/colors";
@@ -30,10 +30,11 @@ export default function Menu({ version }: { version: string }) {
 
 			<MediaQuery smallerThan={"md"} styles={{ display: "none" }}>
 				<Navbar
+					zIndex={"auto"}
+					w={WIDTH}
+					h="100vh"
 					sx={(theme) => ({
-						width: WIDTH,
 						flexShrink: 0,
-						height: "100vh",
 						overflow: "auto",
 						backgroundColor: getCardColor(theme),
 					})}

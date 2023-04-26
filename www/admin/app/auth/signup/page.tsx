@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { trpc } from "@admin/src/utils/trpc";
-import Content from "./(components)/Content";
+import Content from "./_components/Content";
 
 export const metadata: Metadata = {
 	title: "Lava CMS - Sign up",

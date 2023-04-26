@@ -8,22 +8,14 @@ import {
 	EyeIcon,
 	EyeSlashIcon,
 } from "@heroicons/react/24/outline";
-import {
-	Alert,
-	Button,
-	Group,
-	Loader,
-	PasswordInput,
-	Stack,
-	TextInput,
-	Title,
-} from "@mantine/core";
+import { Alert, Group, PasswordInput, Stack, TextInput, Title } from "@admin/src/components";
 import { signIn } from "next-auth/react";
 import { type SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { z } from "zod";
-import ThemeSwitch from "@admin/app/(components)/ThemeSwitch";
+import ThemeSwitch from "@admin/app/_components/ThemeSwitch";
+import SubmitButton from "@admin/app/_components/SubmitButton";
 
 function SignInForm() {
 	const router = useRouter();
@@ -108,21 +100,18 @@ function SignInForm() {
 
 				<Group position="apart" spacing="lg">
 					<ThemeSwitch />
-					<Button
+					<SubmitButton
 						size="md"
-						type="submit"
 						leftIcon={
 							!isSubmitting &&
 							!isSubmitSuccessful && <ArrowRightOnRectangleIcon className="w-5" />
 						}
+						isLoading={
+							isSubmitting || (isSubmitSuccessful && !errors.root?.invalidCredentials)
+						}
 					>
-						{isSubmitting ||
-						(isSubmitSuccessful && !errors.root?.invalidCredentials) ? (
-							<Loader variant="dots" color="#fff" />
-						) : (
-							<>Sign in</>
-						)}
-					</Button>
+						Sign in
+					</SubmitButton>
 				</Group>
 			</Stack>
 		</form>

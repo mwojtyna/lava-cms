@@ -27,7 +27,7 @@ RUN npm install -g pnpm
 COPY ./ /app
 COPY --from=builder /app/admin/.next /app/admin/.next
 COPY --from=builder /app/frontend/dist /app/frontend/dist
-COPY --from=builder /app/frontend/bin/deno/deno /app/frontend/bin/deno/deno
+COPY --from=builder /app/frontend/bin/deno /app/frontend/bin/deno
 
 RUN pnpm install --frozen-lockfile --prod
 RUN cd api && pnpx prisma generate

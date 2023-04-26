@@ -20,7 +20,7 @@ it("creates a config row if it doesn't exist", async () => {
 	const call = prisma.config.create.mock.calls[0];
 	expect(call).toBeDefined();
 
-	expect(prisma.config.create).toHaveBeenCalled();
+	expect(prisma.config.create).toHaveBeenCalledOnce();
 	expect(call![0].data).toMatchObject({
 		title: TITLE,
 		description: DESCRIPTION,
@@ -45,7 +45,7 @@ it("updates a config row if it exists", async () => {
 	const call = prisma.config.update.mock.calls[0];
 	expect(call).toBeDefined();
 
-	expect(prisma.config.update).toHaveBeenCalled();
+	expect(prisma.config.update).toHaveBeenCalledOnce();
 	expect(call![0].data).toMatchObject({
 		title: TITLE,
 		description: DESCRIPTION,

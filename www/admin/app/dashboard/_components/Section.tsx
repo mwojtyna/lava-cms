@@ -1,16 +1,8 @@
-"use client";
-
-import { getCardColor } from "@admin/src/utils/colors";
-import { Card, Divider, Stack, Title } from "@mantine/core";
+import { Card, Divider, Stack, Title } from "@admin/src/components";
 
 export function Section(props: React.ComponentPropsWithoutRef<"div">) {
 	return (
-		<Card
-			component="section"
-			shadow="xs"
-			sx={(theme) => ({ backgroundColor: getCardColor(theme) })}
-			{...props}
-		>
+		<Card component="section" withBorder {...props}>
 			{props.children}
 		</Card>
 	);

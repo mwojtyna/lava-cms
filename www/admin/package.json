@@ -1,8 +1,7 @@
 {
 	"name": "admin",
-	"version": "0.0.4",
+	"version": "0.0.5",
 	"private": true,
-	"type": "module",
 	"scripts": {
 		"start": "next start -p 3001",
 		"dev": "nodemon --watch next.config.mjs --exec 'next dev -p 3001'",
@@ -14,7 +13,11 @@
 		"test:report": "playwright show-report"
 	},
 	"dependencies": {
+		"@dnd-kit/core": "^6.0.8",
+		"@dnd-kit/sortable": "^7.0.2",
+		"@dnd-kit/utilities": "^3.2.1",
 		"@emotion/react": "^11.10.6",
+		"@formkit/auto-animate": "1.0.0-beta.6",
 		"@heroicons/react": "^2.0.16",
 		"@hookform/resolvers": "^2.9.11",
 		"@mantine/core": "^6.0.5",
@@ -32,6 +35,7 @@
 		"react-dom": "^18.2.0",
 		"react-hook-form": "^7.43.1",
 		"sharp": "^0.32.0",
+		"slugify": "^1.6.6",
 		"zod": "^3.20.2",
 		"zustand": "^4.3.6"
 	},

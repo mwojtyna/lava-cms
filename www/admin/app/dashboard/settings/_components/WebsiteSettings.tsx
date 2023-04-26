@@ -1,15 +1,15 @@
 "use client";
+
 import { useEffect } from "react";
-import { Button, Group, Loader, Stack, TextInput, Textarea } from "@mantine/core";
+import { Group, Stack, TextInput, Textarea } from "@admin/src/components";
 import { notifications } from "@mantine/notifications";
 import { type SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { check } from "language-tags";
-import { CheckCircleIcon } from "@heroicons/react/24/outline";
-import { trpc } from "@admin/src/utils/trpc";
 import { trpcReact } from "@admin/src/utils/trpcReact";
-import { Section } from "@admin/app/dashboard/(components)/Section";
+import { Section } from "@admin/app/dashboard/_components/Section";
+import SubmitButton from "@admin/app/_components/SubmitButton";
 
 const inputSchema = z
 	.object({
@@ -24,6 +24,7 @@ type Inputs = z.infer<typeof inputSchema>;
 
 export default function WebsiteSettings({ initialData }: { initialData: Inputs }) {
 	const data = trpcReact.config.getConfig.useQuery().data ?? initialData;
+	const mutation = trpcReact.config.setConfig.useMutation();
 
 	const {
 		register,
@@ -34,7 +35,7 @@ export default function WebsiteSettings({ initialData }: { initialData: Inputs }
 
 	const onSubmit: SubmitHandler<Inputs> = async (data) => {
 		try {
-			await trpc.config.setConfig.mutate({
+			await mutation.mutateAsync({
 				title: data.title,
 				description: data.description,
 				language: data.language,
@@ -44,7 +45,7 @@ export default function WebsiteSettings({ initialData }: { initialData: Inputs }
 				message: "Website settings saved.",
 				color: "green",
 			});
-		} catch (error: unknown | Error) {
+		} catch (error) {
 			if (error instanceof Error) {
 				notifications.show({
 					title: "Error",
@@ -98,12 +99,7 @@ export default function WebsiteSettings({ initialData }: { initialData: Inputs }
 					/>
 
 					<Group position="right">
-						<Button
-							type="submit"
-							leftIcon={!isSubmitting && <CheckCircleIcon className="w-5" />}
-						>
-							{isSubmitting ? <Loader variant="dots" color="#fff" /> : <>Save</>}
-						</Button>
+						<SubmitButton isLoading={isSubmitting}>Save</SubmitButton>
 					</Group>
 				</Stack>
 			</form>

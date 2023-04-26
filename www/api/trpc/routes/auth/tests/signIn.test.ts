@@ -1,6 +1,5 @@
 import { expect, it, vi } from "vitest";
 import { prisma } from "@api/prisma/__mocks__/client";
-import bcrypt from "bcrypt";
 import { caller } from "@api/trpc/routes/_app";
 
 vi.mock("@api/prisma/client");
@@ -10,6 +9,7 @@ const NAME = "John";
 const LAST_NAME = "Doe";
 const EMAIL = "johndoe@domain.com";
 const PASSWORD = "password";
+const HASHED_PASSWORD = "$2a$10$.Ckfh4eDN6ilAAkdMSVOC.4yY1fE3AujLWfpIPWXsB1fFBzwNtbqC";
 
 it("returns user's id if email and password are correct", async () => {
 	prisma.user.findFirst.mockResolvedValue({
@@ -17,7 +17,7 @@ it("returns user's id if email and password are correct", async () => {
 		name: NAME,
 		last_name: LAST_NAME,
 		email: EMAIL,
-		password: await bcrypt.hash(PASSWORD, 10),
+		password: HASHED_PASSWORD,
 	});
 	const { userId } = (await caller.auth.signIn({ email: EMAIL, password: PASSWORD })) ?? {};
 
@@ -36,7 +36,7 @@ it("returns null if password is incorrect", async () => {
 		name: NAME,
 		last_name: LAST_NAME,
 		email: EMAIL,
-		password: await bcrypt.hash(PASSWORD, 10),
+		password: HASHED_PASSWORD,
 	});
 
 	expect(await caller.auth.signIn({ email: EMAIL, password: "wrong-password" })).toBeNull();
