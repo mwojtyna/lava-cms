@@ -1,4 +1,4 @@
-FROM node:18.15.0-slim as builder
+FROM node:18.16.0-slim as builder
 WORKDIR /app
 
 # Setup system
@@ -15,7 +15,7 @@ RUN scripts/deno_install.sh
 RUN cd api && pnpm prisma generate
 RUN pnpm build
 
-FROM node:18.15.0-slim as runner
+FROM node:18.16.0-slim as runner
 WORKDIR /app
 
 # Setup system
