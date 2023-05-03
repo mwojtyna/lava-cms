@@ -68,5 +68,5 @@ test("signs out when button pressed", async ({ authedPage: page }) => {
 	const dropdown = page.getByTestId(MENU_DROPDOWN_ID);
 
 	await dropdown.getByText("Sign out").click();
-	await expect(page).toHaveURL("/admin/auth/signin");
+	await expect(page).toHaveURL("/admin/signin");
 });

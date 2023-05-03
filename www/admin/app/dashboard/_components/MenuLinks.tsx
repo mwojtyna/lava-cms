@@ -10,11 +10,11 @@ import {
 	Group,
 	Code,
 	createStyles,
-	Title,
+	TypographyH1,
 	Anchor,
 } from "@admin/src/components";
 import { getBorderColor, getCardColor, getHoverColor } from "@admin/src/utils/colors";
-import { useUrl } from "@admin/src/hooks/useUrl";
+import { useUrl } from "@admin/src/hooks";
 import { routes } from "@admin/src/data/menuRoutes";
 import { useMenuStore } from "@admin/src/data/stores/dashboard";
 import logo from "@admin/public/img/logo.png";
@@ -81,7 +81,7 @@ export default function MenuLinks({ version }: { version: string }) {
 					>
 						<Group>
 							<Image src={logo} alt={"logo"} width={35} />
-							<Title
+							<TypographyH1
 								ref={title}
 								order={1}
 								onTransitionEnd={() => {
@@ -115,7 +115,7 @@ export default function MenuLinks({ version }: { version: string }) {
 								}}
 							>
 								LAVA
-							</Title>
+							</TypographyH1>
 						</Group>
 					</Anchor>
 					<Code bg={getBorderColor(theme)}>v{version}</Code>

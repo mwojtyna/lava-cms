@@ -8,7 +8,7 @@ import {
 	UserIcon,
 	UserPlusIcon,
 } from "@heroicons/react/24/outline";
-import { Group, PasswordInput, Stack, TextInput, Title } from "@admin/src/components";
+import { Group, PasswordInput, Stack, TextInput, TypographyH1 } from "@admin/src/components";
 import { type SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { signIn } from "next-auth/react";
@@ -71,9 +71,9 @@ export default function SignUpForm({ onSignUp }: { onSignUp?: () => void }) {
 	return (
 		<form onSubmit={handleSubmit(onSubmit)} className="w-full max-w-md">
 			<Stack spacing="lg">
-				<Title order={1} size="3.5rem" variant="gradient">
+				<TypographyH1 order={1} size="3.5rem" variant="gradient">
 					Sign up
-				</Title>
+				</TypographyH1>
 
 				<TextInput
 					size="md"

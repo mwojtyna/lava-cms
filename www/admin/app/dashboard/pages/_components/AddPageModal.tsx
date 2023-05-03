@@ -10,7 +10,7 @@ import {
 import slugify from "slugify";
 import { TRPCClientError } from "@trpc/client";
 import { trpcReact } from "@admin/src/utils/trpcReact";
-import SubmitButton from "@admin/app/_components/SubmitButton";
+import SubmitButton from "@admin/src/components/SubmitButton";
 import { type PagesModalProps, invalidUrls } from "./PageTree";
 
 function setSlug(name: string) {

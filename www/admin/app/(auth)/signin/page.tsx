@@ -7,7 +7,7 @@ export const metadata: Metadata = {
 
 function SignIn() {
 	return (
-		<main className="grid h-[100svh] place-items-center">
+		<main className="grid h-screen place-items-center">
 			<SignInForm />
 		</main>
 	);

@@ -11,7 +11,7 @@ import {
 	Stack,
 	Textarea,
 	TextInput,
-	Title,
+	TypographyH1,
 	Tooltip,
 } from "@admin/src/components";
 import { ArrowDownOnSquareIcon } from "@heroicons/react/24/outline";
@@ -65,9 +65,9 @@ export default function SetupForm() {
 	return (
 		<form onSubmit={handleSubmit(onSubmit)} className="w-full max-w-md">
 			<Stack spacing={"lg"}>
-				<Title order={1} size="3.5rem" variant="gradient">
+				<TypographyH1 order={1} size="3.5rem" variant="gradient">
 					Setup website
-				</Title>
+				</TypographyH1>
 
 				<TextInput
 					size="md"

@@ -1,8 +1,10 @@
 import type { Metadata } from "next";
-import { cookies } from "next/headers";
-import type { ColorScheme } from "@admin/src/components";
-import Mantine from "./_providers/mantine";
+import { Inter } from "next/font/google";
+import { cookies, headers } from "next/headers";
 import TrpcProvider from "./_providers/trpcProvider";
+import { Body } from "@admin/src/components";
+import { ZustandProvider } from "@admin/src/components/providers";
+import { colorThemeSchema } from "@admin/src/data/stores/dashboard";
 import "@admin/src/styles/globals.css";
 
 export const metadata: Metadata = {
@@ -13,17 +15,26 @@ export const metadata: Metadata = {
 	},
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
-	const colorScheme: ColorScheme | undefined = cookies().get("color-scheme")
-		?.value as ColorScheme;
+const regularFont = Inter({
+	weight: "variable",
+	subsets: ["latin"],
+	variable: "--font-sans",
+});
+
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+	const colorTheme = await colorThemeSchema
+		.optional()
+		.parseAsync(cookies().get("color-theme")?.value);
+
+	const url = headers().get("x-url")!.split("/admin")[1]!.split("?")[0]!;
 
 	return (
 		<html lang="en-US">
-			<body>
-				<TrpcProvider>
-					<Mantine colorScheme={colorScheme}>{children}</Mantine>
-				</TrpcProvider>
-			</body>
+			<ZustandProvider colorTheme={colorTheme} url={url}>
+				<Body fonts={[regularFont]}>
+					<TrpcProvider>{children}</TrpcProvider>
+				</Body>
+			</ZustandProvider>
 		</html>
 	);
 }

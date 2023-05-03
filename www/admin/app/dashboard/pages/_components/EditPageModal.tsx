@@ -10,8 +10,8 @@ import {
 import slugify from "slugify";
 import { TRPCClientError } from "@trpc/client";
 import { trpcReact } from "@admin/src/utils/trpcReact";
-import { usePagePreferences } from "@admin/src/hooks/usePagePreferences";
-import SubmitButton from "@admin/app/_components/SubmitButton";
+import { usePagePreferences } from "@admin/src/hooks";
+import SubmitButton from "@admin/src/components/SubmitButton";
 import { type PagesModalProps, invalidUrls } from "./PageTree";
 
 export default function EditPageModal(props: PagesModalProps) {

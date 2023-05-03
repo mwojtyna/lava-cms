@@ -44,7 +44,7 @@ import {
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { getBorderColor, getHoverColor } from "@admin/src/utils/colors";
-import { usePagePreferences } from "@admin/src/hooks/usePagePreferences";
+import { usePagePreferences } from "@admin/src/hooks";
 import type { TreeNode } from "./PageTree";
 import { trpcReact } from "@admin/src/utils/trpcReact";
 

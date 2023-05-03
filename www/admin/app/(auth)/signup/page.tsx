@@ -11,7 +11,7 @@ export default async function SignIn() {
 	const { reason } = await trpc.auth.setupRequired.query();
 
 	return (
-		<main className="flex h-screen justify-center p-10">
+		<main className="flex justify-center p-10">
 			<Content stage={reason === "no-config" ? 1 : 0} />
 		</main>
 	);

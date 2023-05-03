@@ -1,4 +1,4 @@
-import { Card, Divider, Stack, Title } from "@admin/src/components";
+import { Card, Divider, Stack, TypographyH1 } from "@admin/src/components";
 
 export function Section(props: React.ComponentPropsWithoutRef<"div">) {
 	return (
@@ -11,7 +11,7 @@ export function Section(props: React.ComponentPropsWithoutRef<"div">) {
 Section.Title = function CardTitle({ children }: { children: React.ReactNode }) {
 	return (
 		<Stack spacing="0.5rem" mb={"sm"}>
-			<Title order={4}>{children}</Title>
+			<TypographyH1 order={4}>{children}</TypographyH1>
 			<Divider />
 		</Stack>
 	);

@@ -9,7 +9,7 @@ import {
 import { Alert, Group, Modal, Select, Stack, Text } from "@admin/src/components";
 import { ExclamationCircleIcon, FolderArrowDownIcon } from "@heroicons/react/24/outline";
 import type { Page } from "api/prisma/types";
-import SubmitButton from "@admin/app/_components/SubmitButton";
+import SubmitButton from "@admin/src/components/SubmitButton";
 import { trpcReact } from "@admin/src/utils/trpcReact";
 import type { PagesModalProps } from "./PageTree";
 import { TRPCClientError } from "@trpc/client";

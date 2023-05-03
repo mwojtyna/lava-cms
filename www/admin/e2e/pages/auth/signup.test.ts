@@ -22,23 +22,23 @@ test.describe("sign up step", () => {
 
 	test("light theme visual comparison", async ({ page }) => {
 		await page.emulateMedia({ colorScheme: "light" });
-		await page.goto("/admin/auth/signup", { waitUntil: "networkidle" });
+		await page.goto("/admin/signup", { waitUntil: "networkidle" });
 		await expect(page).toHaveScreenshot();
 	});
 	test("dark theme visual comparison", async ({ page }) => {
 		await page.emulateMedia({ colorScheme: "dark" });
-		await page.goto("/admin/auth/signup", { waitUntil: "networkidle" });
+		await page.goto("/admin/signup", { waitUntil: "networkidle" });
 		await expect(page).toHaveScreenshot();
 	});
 
 	test("shows 'field required' errors", async ({ page }) => {
-		await page.goto("/admin/auth/signup");
+		await page.goto("/admin/signup");
 		await page.click("button[type=submit]");
 		await expect(page).toHaveScreenshot();
 	});
 
 	test("shows error when email invalid", async ({ page }) => {
-		await page.goto("/admin/auth/signup");
+		await page.goto("/admin/signup");
 		await page.locator("input[type='email']").type("invalid@domain");
 		await page.locator("button[type=submit]").click();
 
@@ -46,7 +46,7 @@ test.describe("sign up step", () => {
 	});
 
 	test("shows error when password invalid", async ({ page }) => {
-		await page.goto("/admin/auth/signup");
+		await page.goto("/admin/signup");
 
 		await page.locator("button[type=submit]").click();
 		const passwordField = page.locator("input[type='password']").first();
@@ -73,7 +73,7 @@ test.describe("sign up step", () => {
 	});
 
 	test("shows error when passwords don't match", async ({ page }) => {
-		await page.goto("/admin/auth/signup");
+		await page.goto("/admin/signup");
 
 		await page.locator("button[type=submit]").click();
 		await page.locator("input[type='password']").nth(1).type("password");
@@ -82,7 +82,7 @@ test.describe("sign up step", () => {
 	});
 
 	test("goes to the next step when info is valid", async ({ page }) => {
-		await page.goto("/admin/auth/signup");
+		await page.goto("/admin/signup");
 
 		await page.locator("input[type='email']").type(EMAIL);
 		await page.locator("input[type='text']").first().type(NAME);
@@ -119,23 +119,23 @@ test.describe("setup website step", () => {
 
 	test("light theme visual comparison", async ({ page }) => {
 		await page.emulateMedia({ colorScheme: "light" });
-		await page.goto("/admin/auth/signup", { waitUntil: "networkidle" });
+		await page.goto("/admin/signup", { waitUntil: "networkidle" });
 		await expect(page).toHaveScreenshot();
 	});
 	test("dark theme visual comparison", async ({ page }) => {
 		await page.emulateMedia({ colorScheme: "dark" });
-		await page.goto("/admin/auth/signup", { waitUntil: "networkidle" });
+		await page.goto("/admin/signup", { waitUntil: "networkidle" });
 		await expect(page).toHaveScreenshot();
 	});
 
 	test("shows 'field required' errors", async ({ page }) => {
-		await page.goto("/admin/auth/signup");
+		await page.goto("/admin/signup");
 		await page.click("button[type=submit]");
 		await expect(page).toHaveScreenshot();
 	});
 
 	test("shows error when language code invalid", async ({ page }) => {
-		await page.goto("/admin/auth/signup");
+		await page.goto("/admin/signup");
 
 		const languageInput = page.locator("input[type='text']").nth(1);
 		await languageInput.type("invalid");
@@ -149,7 +149,7 @@ test.describe("setup website step", () => {
 		// then it will redirect to /dashboard
 		await prisma.config.deleteMany();
 
-		await authedPage.goto("/admin/auth/signup");
+		await authedPage.goto("/admin/signup");
 		await authedPage.locator("input[type='text']").first().type("My website");
 		await authedPage.locator("input[type='text']").nth(1).type("en");
 		await authedPage.locator("button[type=submit]").click();

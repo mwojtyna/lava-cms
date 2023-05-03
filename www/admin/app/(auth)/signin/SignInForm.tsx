@@ -5,17 +5,14 @@ import {
 	EnvelopeIcon,
 	ExclamationCircleIcon,
 	ArrowRightOnRectangleIcon,
-	EyeIcon,
-	EyeSlashIcon,
 } from "@heroicons/react/24/outline";
-import { Alert, Group, PasswordInput, Stack, TextInput, Title } from "@admin/src/components";
 import { signIn } from "next-auth/react";
 import { type SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { z } from "zod";
-import ThemeSwitch from "@admin/app/_components/ThemeSwitch";
-import SubmitButton from "@admin/app/_components/SubmitButton";
+import { Input, TypographyH1, Button, Switch } from "@admin/src/components/ui";
+import { ThemeSwitch } from "@admin/src/components";
 
 function SignInForm() {
 	const router = useRouter();
@@ -58,12 +55,15 @@ function SignInForm() {
 
 	return (
 		<form onSubmit={handleSubmit(onSubmit)} className="w-full max-w-md px-10">
-			<Stack spacing="lg">
-				<Title order={1} size="3.5rem" variant="gradient">
-					Sign in
-				</Title>
+			<div className="flex flex-col gap-5">
+				<TypographyH1 className="break mb-4">
+					Sign in to{" "}
+					<span className="bg-gradient-to-r from-orange-600 to-orange-500 bg-clip-text text-transparent dark:from-orange-500 dark:to-orange-400">
+						Lava
+					</span>
+				</TypographyH1>
 
-				{errors.root?.invalidCredentials && (
+				{/* {errors.root?.invalidCredentials && (
 					<Alert
 						color="red"
 						variant="filled"
@@ -71,49 +71,37 @@ function SignInForm() {
 					>
 						{errors.root?.invalidCredentials.message}
 					</Alert>
-				)}
+				)} */}
 
-				<TextInput
-					size="md"
+				<Input
 					type="email"
 					label="E-mail"
 					placeholder="user@domain.com"
 					{...register("email")}
 					error={errors.email?.message}
-					icon={<EnvelopeIcon className="w-5" />}
+					icon={<EnvelopeIcon />}
 					autoFocus
 				/>
-				<PasswordInput
-					size="md"
+
+				<Input
+					type="password"
 					label="Password"
 					{...register("password")}
 					error={!!errors.password}
-					icon={<LockClosedIcon className="w-5" />}
-					visibilityToggleIcon={({ reveal, size }) =>
-						reveal ? (
-							<EyeSlashIcon style={{ width: size }} />
-						) : (
-							<EyeIcon style={{ width: size }} />
-						)
-					}
+					icon={<LockClosedIcon />}
 				/>
 
-				<Group position="apart" spacing="lg">
+				<div className="flex items-center justify-between">
 					<ThemeSwitch />
-					<SubmitButton
-						size="md"
-						leftIcon={
-							!isSubmitting &&
-							!isSubmitSuccessful && <ArrowRightOnRectangleIcon className="w-5" />
-						}
-						isLoading={
-							isSubmitting || (isSubmitSuccessful && !errors.root?.invalidCredentials)
-						}
+					<Button
+						type="submit"
+						icon={<ArrowRightOnRectangleIcon className="w-5" />}
+						className="ml-auto"
 					>
 						Sign in
-					</SubmitButton>
-				</Group>
-			</Stack>
+					</Button>
+				</div>
+			</div>
 		</form>
 	);
 }
