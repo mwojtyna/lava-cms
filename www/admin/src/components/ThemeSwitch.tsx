@@ -10,11 +10,10 @@ export function ThemeSwitch() {
 	return (
 		<Switch
 			className="!bg-input"
-			defaultChecked={store.colorTheme === "dark"}
-			checked={store.colorTheme === "dark"} // For when theme automatically adapts to system preferences
+			checked={store.colorTheme === "dark"}
 			onCheckedChange={(checked) => store.set(checked ? "dark" : "light")}
-			iconOff={<SunIcon className="text-primary" />}
 			iconOn={<MoonIcon className="text-primary" />}
+			iconOff={<SunIcon className="text-primary" />}
 			data-testid="theme-switch"
 		/>
 	);

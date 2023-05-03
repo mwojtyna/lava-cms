@@ -12,9 +12,19 @@ export function Body({ children, fonts, ...props }: Props) {
 	const store = useColorThemeStore();
 
 	React.useEffect(() => {
+		const matchMedia = window.matchMedia("(prefers-color-scheme: dark)");
+
 		if (!store.colorTheme) {
-			store.set(window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+			store.set(matchMedia.matches ? "dark" : "light");
 		}
+
+		const onPreferenceChanged: (e: MediaQueryListEvent) => void = (e) => {
+			store.set(e.matches ? "dark" : "light");
+		};
+		matchMedia.addEventListener("change", onPreferenceChanged);
+
+		return () => matchMedia.removeEventListener("change", onPreferenceChanged);
+
 		// Disable because we only want it to run when component mounts first
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
