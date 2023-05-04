@@ -11,7 +11,8 @@ import { type SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { z } from "zod";
-import { Input, TypographyH1, Button, Alert, AlertTitle } from "@admin/src/components/ui";
+import { TypographyH1, Alert, AlertTitle } from "@admin/src/components/ui/server";
+import { Input, Button } from "@admin/src/components/ui/client";
 import { ThemeSwitch } from "@admin/src/components";
 
 function SignInForm() {

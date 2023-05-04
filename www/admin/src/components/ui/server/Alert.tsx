@@ -1,6 +1,5 @@
 import * as React from "react";
 import { type VariantProps, cva } from "class-variance-authority";
-
 import { cn } from "@admin/src/utils/styles";
 
 const alertVariants = cva(
@@ -33,7 +32,6 @@ const Alert = React.forwardRef<HTMLDivElement, AlertProps>(
 			className={cn(alertVariants({ variant }), className)}
 			{...props}
 		>
-			{typeof window}
 			{icon}
 			{children}
 		</div>

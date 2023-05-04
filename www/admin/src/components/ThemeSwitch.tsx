@@ -1,7 +1,7 @@
 "use client";
 
 import { MoonIcon, SunIcon } from "@heroicons/react/24/outline";
-import { Switch } from "./ui";
+import { Switch } from "./ui/client";
 import { useColorThemeStore } from "@admin/src/data/stores/dashboard";
 
 export function ThemeSwitch() {

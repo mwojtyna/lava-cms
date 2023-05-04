@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import { cn } from "@admin/src/utils/styles";
-import { Label } from "./Label";
+import { Label } from "../client";
 import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline";
 import { ActionIcon } from "./ActionIcon";
 
