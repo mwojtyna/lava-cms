@@ -1,4 +1,2 @@
-"use client";
-
-export * from "./ZustandProvider";
-export * from "./TrpcProvider";
+export { ZustandProvider } from "./ZustandProvider";
+export { TrpcProvider } from "./TrpcProvider";

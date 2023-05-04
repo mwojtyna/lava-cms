@@ -1,5 +1,4 @@
-"use client";
 // export * from "@mantine/core";
 
-export * from "./ThemeSwitch";
-export * from "./Body";
+export { ThemeSwitch } from "./ThemeSwitch";
+export { Body } from "./Body";

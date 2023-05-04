@@ -15,7 +15,7 @@ import { TypographyH1, Alert, AlertTitle } from "@admin/src/components/ui/server
 import { Input, Button } from "@admin/src/components/ui/client";
 import { ThemeSwitch } from "@admin/src/components";
 
-function SignInForm() {
+export function SignInForm() {
 	const router = useRouter();
 
 	const inputSchema = z.object({
@@ -105,5 +105,3 @@ function SignInForm() {
 		</form>
 	);
 }
-
-export default SignInForm;
