@@ -1,6 +1,8 @@
 export * from "./typography";
-
-export { Input } from "./Input";
-export { Label } from "./Label";
-export { Button } from "./Button";
-export { Switch } from "./Switch";
+export * from "./Input";
+export * from "./Label";
+export * from "./Button";
+export * from "./Switch";
+export * from "./Alert";
+export * from "./ActionIcon";
+export * from "./Loader";

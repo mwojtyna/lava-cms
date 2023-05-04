@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import { cookies, headers } from "next/headers";
-import TrpcProvider from "./_providers/trpcProvider";
+import { TrpcProvider } from "@admin/src/components/providers";
 import { Body } from "@admin/src/components";
 import { ZustandProvider } from "@admin/src/components/providers";
 import { colorThemeSchema } from "@admin/src/data/stores/dashboard";

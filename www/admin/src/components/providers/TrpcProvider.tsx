@@ -7,7 +7,7 @@ import { SessionProvider } from "next-auth/react";
 import { trpcReact } from "@admin/src/utils/trpcReact";
 import { env } from "@admin/src/env/client.mjs";
 
-function TrpcProvider(props: { children: React.ReactNode }) {
+export function TrpcProvider(props: { children: React.ReactNode }) {
 	const [queryClient] = useState(() => new QueryClient());
 	const [trpcClient] = useState(() =>
 		trpcReact.createClient({
@@ -35,5 +35,3 @@ function TrpcProvider(props: { children: React.ReactNode }) {
 		</SessionProvider>
 	);
 }
-
-export default TrpcProvider;

@@ -4,6 +4,7 @@ import * as React from "react";
 import { Slot } from "@radix-ui/react-slot";
 import { type VariantProps, cva } from "class-variance-authority";
 import { cn } from "@admin/src/utils/styles";
+import { Loader } from "./Loader";
 
 const buttonVariants = cva(
 	"active:translate-y-px inline-flex items-center justify-center rounded-md text-base font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none ring-offset-background",
@@ -35,23 +36,37 @@ export interface ButtonProps
 		VariantProps<typeof buttonVariants> {
 	asChild?: boolean;
 	icon?: React.ReactNode;
+	loading?: boolean;
 }
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
 	(
-		{ className, variant, size, asChild = false, type = "button", icon, children, ...props },
+		{
+			className,
+			variant,
+			size,
+			asChild = false,
+			type = "button",
+			icon,
+			children,
+			loading,
+			disabled,
+			...props
+		},
 		ref
 	) => {
 		const Comp = asChild ? Slot : "button";
+
 		return (
 			<Comp
 				className={cn(buttonVariants({ variant, size, className }))}
 				ref={ref}
 				type={type}
+				disabled={loading || disabled}
 				{...props}
 			>
 				<div className="flex w-full justify-between gap-3">
-					{icon}
+					{loading ? <Loader /> : icon}
 					<span className="mx-auto">{children}</span>
 				</div>
 			</Comp>

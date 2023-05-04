@@ -11,7 +11,7 @@ import { type SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { z } from "zod";
-import { Input, TypographyH1, Button, Switch } from "@admin/src/components/ui";
+import { Input, TypographyH1, Button, Alert, AlertTitle } from "@admin/src/components/ui";
 import { ThemeSwitch } from "@admin/src/components";
 
 function SignInForm() {
@@ -44,7 +44,7 @@ function SignInForm() {
 		} else if (res?.error === "CredentialsSignin") {
 			// "CredentialsSignin" is the error message when the user inputs wrong credentials
 			setError("root.invalidCredentials", {
-				message: "The credentials are invalid.",
+				message: "Your credentials are invalid.",
 			});
 		} else {
 			setError("root.invalidCredentials", {
@@ -63,15 +63,13 @@ function SignInForm() {
 					</span>
 				</TypographyH1>
 
-				{/* {errors.root?.invalidCredentials && (
-					<Alert
-						color="red"
-						variant="filled"
-						icon={<ExclamationCircleIcon className="w-5" />}
-					>
-						{errors.root?.invalidCredentials.message}
+				{errors.root?.invalidCredentials && (
+					<Alert variant="destructive" icon={<ExclamationCircleIcon className="w-5" />}>
+						<AlertTitle className="mb-0">
+							{errors.root?.invalidCredentials.message}
+						</AlertTitle>
 					</Alert>
-				)} */}
+				)}
 
 				<Input
 					type="email"
@@ -97,6 +95,7 @@ function SignInForm() {
 						type="submit"
 						icon={<ArrowRightOnRectangleIcon className="w-5" />}
 						className="ml-auto shadow-lg shadow-primary/25"
+						loading={isSubmitting || isSubmitSuccessful}
 					>
 						Sign in
 					</Button>
