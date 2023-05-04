@@ -56,9 +56,9 @@ function SignInForm() {
 	return (
 		<form onSubmit={handleSubmit(onSubmit)} className="w-full max-w-md px-10">
 			<div className="flex flex-col gap-5">
-				<TypographyH1 className="break mb-4">
+				<TypographyH1 className="mb-4">
 					Sign in to{" "}
-					<span className="bg-gradient-to-r from-orange-600 to-orange-500 bg-clip-text text-transparent dark:from-orange-500 dark:to-orange-400">
+					<span className="bg-gradient-to-b from-orange-300 to-orange-600 bg-clip-text text-transparent">
 						Lava
 					</span>
 				</TypographyH1>
@@ -96,7 +96,7 @@ function SignInForm() {
 					<Button
 						type="submit"
 						icon={<ArrowRightOnRectangleIcon className="w-5" />}
-						className="ml-auto"
+						className="ml-auto shadow-lg shadow-primary/25"
 					>
 						Sign in
 					</Button>
