@@ -16,7 +16,7 @@ const config = {
 	},
 	// Fix for `import type` not working
 	transpilePackages: ["api"],
-	compress: false,
+	compress: true,
 
 	redirects: async () => {
 		return [
