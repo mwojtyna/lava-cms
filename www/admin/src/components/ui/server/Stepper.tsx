@@ -9,11 +9,15 @@ interface StepperProps extends React.HTMLAttributes<HTMLDivElement> {
 
 const Stepper = React.forwardRef<HTMLDivElement, StepperProps>(
 	({ children, className, currentStep, steps, separator, ...props }, ref) => (
-		<div ref={ref} className={cn("flex gap-2", className)} {...props}>
+		<div ref={ref} className={cn("flex items-center gap-2", className)} {...props}>
 			{steps.map((step, i) => (
 				<React.Fragment key={i}>
 					<span className={cn(currentStep !== i && "text-muted-foreground")}>{step}</span>{" "}
-					{i < steps.length - 1 && separator}
+					{i < steps.length - 1 && (
+						<span className={cn(currentStep !== i && "text-muted-foreground")}>
+							{separator}
+						</span>
+					)}
 				</React.Fragment>
 			))}
 		</div>

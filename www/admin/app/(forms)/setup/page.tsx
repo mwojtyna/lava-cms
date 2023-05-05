@@ -7,7 +7,6 @@ import { Stepper } from "@admin/src/components/ui/server";
 export const metadata: Metadata = {
 	title: "Lava CMS - Setup",
 };
-export const revalidate = 0;
 
 const reasonFormMap: Record<
 	NonNullable<Awaited<ReturnType<typeof trpc.auth.setupRequired.query>>["reason"]>,
