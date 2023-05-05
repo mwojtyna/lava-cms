@@ -3,7 +3,7 @@ import { type VariantProps, cva } from "class-variance-authority";
 import { cn } from "@admin/src/utils/styles";
 
 const alertVariants = cva(
-	"relative w-full rounded-lg border p-4 [&>svg]:absolute [&>svg]:text-foreground [&>svg]:left-4 [&>svg]:top-[14px] [&>svg+div]:translate-y-[-3px] [&:has(svg)]:pl-11",
+	"relative w-full rounded-lg border p-4 [&>svg]:absolute [&>svg]:text-foreground [&>svg]:left-4 [&>svg]:top-[14px] [&>svg+div]:translate-y-[-3px]",
 	{
 		variants: {
 			variant: {
@@ -29,7 +29,7 @@ const Alert = React.forwardRef<HTMLDivElement, AlertProps>(
 		<div
 			ref={ref}
 			role="alert"
-			className={cn(alertVariants({ variant }), className)}
+			className={cn(alertVariants({ variant }), className, icon && "pl-11")}
 			{...props}
 		>
 			{icon}
