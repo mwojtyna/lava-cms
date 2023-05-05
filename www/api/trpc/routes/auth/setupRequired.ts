@@ -7,7 +7,6 @@ export const setupRequired = publicProcedure.query(async () => {
 	const setupRequired = user === null || config === null;
 
 	return {
-		setupRequired,
 		...(setupRequired && {
 			reason: user === null ? ("no-user" as const) : ("no-config" as const),
 		}),

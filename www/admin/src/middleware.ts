@@ -5,37 +5,29 @@ import { trpc } from "@admin/src/utils/trpc";
 export default withAuth(
 	async (request) => {
 		const url = request.nextUrl.clone();
-		const { setupRequired } = await trpc.auth.setupRequired.query();
+		const { reason } = await trpc.auth.setupRequired.query();
 
-		if (!url.pathname.startsWith("/api/trpc")) {
-			if (setupRequired) {
-				if (url.pathname !== "/signup") {
-					// Redirect to sign up page if opening the dashboard for the first time
-					url.pathname = "/signup";
-					return NextResponse.redirect(url);
-				}
-			} else {
-				if (url.pathname === "/signup") {
-					// Redirect to dashboard if already signed up
-					url.pathname = "/dashboard";
-					return NextResponse.redirect(url);
-				}
-				if (!request.nextauth.token && url.pathname !== "/signin") {
-					// Redirect to sign in page if not signed in
-					url.pathname = "/signin";
-					return NextResponse.redirect(url);
-				}
-				if (request.nextauth.token && url.pathname === "/signin") {
-					// Redirect to dashboard if already signed in
-					url.pathname = "/dashboard";
-					return NextResponse.redirect(url);
-				}
+		if (reason) {
+			if (url.pathname !== "/setup") {
+				// Redirect to sign up page if opening the dashboard for the first time
+				url.pathname = "/setup";
+				return NextResponse.redirect(url);
 			}
 		} else {
-			// Return 401 if not signed in, there is a user in the db
-			// and trying to access the api
-			if (!request.nextauth.token && !setupRequired) {
-				return new NextResponse("Unauthorized", { status: 401 });
+			if (url.pathname === "/setup") {
+				// Redirect to dashboard if already signed up
+				url.pathname = "/dashboard";
+				return NextResponse.redirect(url);
+			}
+			if (!request.nextauth.token && url.pathname !== "/signin") {
+				// Redirect to sign in page if not signed in
+				url.pathname = "/signin";
+				return NextResponse.redirect(url);
+			}
+			if (request.nextauth.token && url.pathname === "/signin") {
+				// Redirect to dashboard if already signed in
+				url.pathname = "/dashboard";
+				return NextResponse.redirect(url);
 			}
 		}
 
@@ -60,4 +52,6 @@ export default withAuth(
 	}
 );
 
-export const config = { matcher: ["/:path*"] };
+export const config = {
+	matcher: ["/((?!api|_next/static|_next/image|favicon.ico).*)"],
+};

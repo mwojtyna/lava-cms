@@ -1,1 +1,3 @@
-export * from "./SignInForm";
+export { SignInForm } from "./SignInForm";
+export { SignUpForm } from "./SignUpForm";
+export { SinglePageForm } from "./SinglePageForm";

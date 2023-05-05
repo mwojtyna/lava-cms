@@ -28,7 +28,7 @@ export function TrpcProvider(props: { children: React.ReactNode }) {
 		})
 	);
 	return (
-		<SessionProvider basePath="/admin/api/auth" refetchOnWindowFocus={false}>
+		<SessionProvider basePath="/admin/api/auth">
 			<trpcReact.Provider client={trpcClient} queryClient={queryClient}>
 				<QueryClientProvider client={queryClient}>{props.children}</QueryClientProvider>
 			</trpcReact.Provider>

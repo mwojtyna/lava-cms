@@ -19,10 +19,10 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
 		const [showPassword, setShowPassword] = React.useState(false);
 
 		return (
-			<div className="grid w-full max-w-sm items-center gap-1.5">
+			<div className="min-w-sm flex w-full flex-col items-start gap-1.5">
 				{label && <Label htmlFor={inputId}>{label}</Label>}
 
-				<div className="relative flex h-11 items-center justify-center">
+				<div className="relative flex h-11 w-full items-center justify-center">
 					{icon && <div className="absolute left-3 w-5">{icon}</div>}
 
 					<input
@@ -44,6 +44,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
 						<ActionIcon
 							className="absolute right-2"
 							onClick={() => setShowPassword(!showPassword)}
+							tabIndex={-1}
 						>
 							{showPassword ? (
 								<EyeSlashIcon className="w-5" />

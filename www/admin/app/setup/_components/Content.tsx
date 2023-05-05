@@ -3,7 +3,7 @@
 import { useState } from "react";
 import dynamic from "next/dynamic";
 import { Stepper } from "@admin/src/components";
-import SignUpForm from "./SignUpForm";
+import SignUpForm from "../../../src/components/forms/SignUpForm";
 const SetupForm = dynamic(() => import("./SetupForm"));
 
 export default function Content({ stage }: { stage: number }) {
