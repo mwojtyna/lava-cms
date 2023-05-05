@@ -1,6 +1,7 @@
 "use client";
 
-import { EnvelopeIcon, LockClosedIcon, UserIcon, UserPlusIcon } from "@heroicons/react/24/outline";
+import { EnvelopeIcon, LockClosedIcon, UserIcon } from "@heroicons/react/24/outline";
+import { ArrowRightIcon } from "@heroicons/react/20/solid";
 import { type SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { signIn } from "next-auth/react";
@@ -64,18 +65,18 @@ export function SignUpForm() {
 			onSubmit={handleSubmit(onSubmit)}
 			className="my-auto w-full max-w-lg"
 			titleText={
-				<span className="bg-gradient-to-b from-foreground/75 to-foreground bg-clip-text text-transparent">
+				<span className="bg-gradient-to-b from-foreground/75 to-foreground bg-clip-text text-transparent dark:bg-gradient-to-t">
 					Add admin user
 				</span>
 			}
 			submitButton={
 				<Button
 					type="submit"
-					icon={<UserPlusIcon className="w-5" />}
+					icon={<ArrowRightIcon className="w-5" />}
 					className="ml-auto shadow-lg shadow-primary/25"
 					loading={isSubmitting || isSubmitSuccessful}
 				>
-					Sign up
+					Continue
 				</Button>
 			}
 		>
