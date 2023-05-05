@@ -7,8 +7,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { signIn } from "next-auth/react";
 import { z } from "zod";
 import { trpcReact } from "@admin/src/utils/trpcReact";
-import { Button, Input } from "../../src/components/ui/client";
-import { SinglePageForm } from "../../src/components/SinglePageForm";
+import { Button, Input } from "@admin/src/components/ui/client";
+import { SinglePageForm } from "@admin/src/components";
 
 const inputSchema = z
 	.object({
@@ -63,9 +63,8 @@ export function SignUpForm() {
 	return (
 		<SinglePageForm
 			onSubmit={handleSubmit(onSubmit)}
-			className="my-auto w-full max-w-lg"
 			titleText={
-				<span className="bg-gradient-to-b from-foreground/75 to-foreground bg-clip-text text-transparent dark:bg-gradient-to-t">
+				<span className="bg-gradient-to-b from-foreground/70 to-foreground bg-clip-text text-transparent dark:bg-gradient-to-t">
 					Add admin user
 				</span>
 			}
@@ -94,7 +93,7 @@ export function SignUpForm() {
 				<Input
 					type="text"
 					label="Name"
-					placeholder="Jan"
+					placeholder="John"
 					{...register("name")}
 					error={!!errors.name}
 					icon={<UserIcon className="w-5" />}
@@ -102,7 +101,7 @@ export function SignUpForm() {
 				<Input
 					type="text"
 					label="Last name"
-					placeholder="Kowalski"
+					placeholder="Doe"
 					{...register("lastName")}
 					error={!!errors.lastName}
 				/>

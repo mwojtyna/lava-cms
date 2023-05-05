@@ -13,7 +13,7 @@ import { useRouter } from "next/navigation";
 import { z } from "zod";
 import { Alert, AlertTitle } from "@admin/src/components/ui/server";
 import { Input, Button } from "@admin/src/components/ui/client";
-import { SinglePageForm } from "../../src/components/SinglePageForm";
+import { SinglePageForm } from "@admin/src/components";
 
 const schema = z.object({
 	email: z
@@ -57,10 +57,12 @@ export function SignInForm() {
 	return (
 		<SinglePageForm
 			onSubmit={handleSubmit(onSubmit)}
-			className="w-full max-w-md px-10"
+			className="max-w-sm"
 			titleText={
 				<>
-					Sign in to{" "}
+					<span className="bg-gradient-to-b from-foreground/70 to-foreground bg-clip-text text-transparent dark:bg-gradient-to-t">
+						Sign in to{" "}
+					</span>
 					<span className="bg-gradient-to-b from-orange-300 to-orange-600 bg-clip-text text-transparent">
 						Lava
 					</span>

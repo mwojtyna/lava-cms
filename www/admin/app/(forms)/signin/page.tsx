@@ -6,9 +6,5 @@ export const metadata: Metadata = {
 };
 
 export default function SignIn() {
-	return (
-		<main className="grid h-screen place-items-center">
-			<SignInForm />
-		</main>
-	);
+	return <SignInForm />;
 }

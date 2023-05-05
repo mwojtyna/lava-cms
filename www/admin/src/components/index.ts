@@ -1,4 +1,5 @@
 // export * from "@mantine/core";
 
-export { ThemeSwitch } from "./ThemeSwitch";
 export { Body } from "./Body";
+export { SinglePageForm } from "./SinglePageForm";
+export { ThemeSwitch } from "./ThemeSwitch";

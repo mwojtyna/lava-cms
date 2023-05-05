@@ -17,7 +17,7 @@ export function SinglePageForm({
 	...props
 }: Props) {
 	return (
-		<form onSubmit={onSubmit} className={cn("w-full max-w-md px-10", className)} {...props}>
+		<form onSubmit={onSubmit} className={cn("w-full max-w-md", className)} {...props}>
 			<div className="flex flex-col gap-5">
 				<TypographyH1 className="mb-4">{titleText}</TypographyH1>
 
