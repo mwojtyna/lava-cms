@@ -1,12 +1,13 @@
 "use client";
 
+import { useRouter } from "next/navigation";
+import { signIn } from "next-auth/react";
 import { EnvelopeIcon, LockClosedIcon, UserIcon } from "@heroicons/react/24/outline";
 import { ArrowRightIcon } from "@heroicons/react/20/solid";
 import { type SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { signIn } from "next-auth/react";
 import { z } from "zod";
-import { trpcReact } from "@admin/src/utils/trpcReact";
+import { trpc } from "@admin/src/utils/trpc";
 import { Button, Input } from "@admin/src/components/ui/client";
 import { SinglePageForm } from "@admin/src/components";
 
@@ -44,10 +45,11 @@ export function SignUpForm() {
 		handleSubmit,
 		formState: { errors, isSubmitting, isSubmitSuccessful },
 	} = useForm<Inputs>({ mode: "onSubmit", resolver: zodResolver(inputSchema) });
-	const mutation = trpcReact.auth.signUp.useMutation();
+
+	const router = useRouter();
 
 	const onSubmit: SubmitHandler<Inputs> = async (data) => {
-		await mutation.mutateAsync({
+		await trpc.auth.signUp.mutate({
 			name: data.name,
 			lastName: data.lastName,
 			email: data.email,
@@ -58,10 +60,12 @@ export function SignUpForm() {
 			email: data.email,
 			password: data.password,
 		});
+		router.refresh();
 	};
 
 	return (
 		<SinglePageForm
+			className="max-w-md"
 			onSubmit={handleSubmit(onSubmit)}
 			titleText={
 				<span className="bg-gradient-to-b from-foreground/70 to-foreground bg-clip-text text-transparent dark:bg-gradient-to-t">

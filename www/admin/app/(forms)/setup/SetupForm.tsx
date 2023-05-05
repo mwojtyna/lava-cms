@@ -4,31 +4,21 @@ import { useRouter } from "next/navigation";
 import { type SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import {
-	Code,
-	createStyles,
-	Group,
-	Stack,
-	Textarea,
-	TextInput,
-	TypographyH1,
-	Tooltip,
-} from "@admin/src/components";
-import { ArrowDownOnSquareIcon } from "@heroicons/react/24/outline";
-import { QuestionMarkCircleIcon } from "@heroicons/react/20/solid";
+import { ArrowRightIcon, QuestionMarkCircleIcon } from "@heroicons/react/20/solid";
 import { check } from "language-tags";
-import ThemeSwitch from "@admin/app/_components/ThemeSwitch";
+import { SinglePageForm } from "@admin/src/components";
 import { trpc } from "@admin/src/utils/trpc";
-import SubmitButton from "@admin/app/_components/SubmitButton";
+import {
+	Button,
+	Input,
+	Textarea,
+	Tooltip,
+	TooltipContent,
+	TooltipTrigger,
+} from "@admin/src/components/ui/client";
+import { TypographyCode } from "@admin/src/components/ui/server";
 
-const useStyles = createStyles(() => ({
-	label: {
-		display: "flex",
-		gap: "0.25rem",
-	},
-}));
-
-const inputSchema = z
+const schema = z
 	.object({
 		title: z.string().min(1),
 		description: z.string(),
@@ -37,102 +27,98 @@ const inputSchema = z
 	.refine((data) => check(data.language), {
 		path: ["language"],
 	});
-type Inputs = z.infer<typeof inputSchema>;
+type Inputs = z.infer<typeof schema>;
 
-export default function SetupForm() {
+export function SetupForm() {
 	const router = useRouter();
 
 	const {
 		register,
 		handleSubmit,
 		formState: { errors, isSubmitting, isSubmitSuccessful },
-	} = useForm<Inputs>({ mode: "onChange", resolver: zodResolver(inputSchema) });
+	} = useForm<Inputs>({ mode: "onChange", resolver: zodResolver(schema) });
 	const onSubmit: SubmitHandler<Inputs> = async (data) => {
-		await trpc.config.setConfig.mutate({
-			...data,
-		});
-		await trpc.pages.addPage.mutate({
-			name: "Root",
-			url: "/",
-			order: 0,
-		});
+		await Promise.all([
+			trpc.config.setConfig.mutate({
+				...data,
+			}),
+			trpc.pages.addPage.mutate({
+				name: "Root",
+				url: "/",
+				order: 0,
+			}),
+		]);
 
 		router.push("/dashboard");
 	};
 
-	const { classes } = useStyles();
-
 	return (
-		<form onSubmit={handleSubmit(onSubmit)} className="w-full max-w-md">
-			<Stack spacing={"lg"}>
-				<TypographyH1 order={1} size="3.5rem" variant="gradient">
-					Setup website
-				</TypographyH1>
+		<SinglePageForm
+			className="w-96" // sm
+			onSubmit={handleSubmit(onSubmit)}
+			titleText={
+				<span className="bg-gradient-to-b from-foreground/70 to-foreground bg-clip-text text-transparent dark:bg-gradient-to-t">
+					Set up website
+				</span>
+			}
+			submitButton={
+				<Button
+					type="submit"
+					icon={<ArrowRightIcon className="w-5" />}
+					className="ml-auto shadow-lg shadow-primary/25"
+					loading={isSubmitting || isSubmitSuccessful}
+				>
+					Finish
+				</Button>
+			}
+		>
+			<Input
+				label="Title"
+				placeholder="My Awesome Website"
+				{...register("title")}
+				error={!!errors.title}
+				autoFocus
+				withAsterisk
+			/>
 
-				<TextInput
-					size="md"
-					label="Title"
-					placeholder="My Awesome Website"
-					{...register("title")}
-					error={!!errors.title}
-					autoFocus
-					withAsterisk
-				/>
-				<Textarea
-					classNames={{ label: classes.label }}
-					placeholder="This website is very awesome and fun!"
-					size="md"
-					autosize
-					minRows={2}
-					label={
-						<>
-							Description
-							<Tooltip label="Used for SEO and social media previews" withArrow>
+			<Textarea
+				label={
+					<>
+						Description&nbsp;
+						<Tooltip>
+							<TooltipTrigger>
 								<QuestionMarkCircleIcon className="w-4" />
-							</Tooltip>
-						</>
-					}
-					{...register("description")}
-				/>
-				<TextInput
-					classNames={{ label: classes.label }}
-					size="md"
-					label={
-						<>
-							Language
-							<Tooltip
-								label={
-									<>
-										Used in the <Code>lang</Code> attribute of the{" "}
-										<Code>&lt;html&gt;</Code> tag
-									</>
-								}
-								withArrow
-							>
-								<QuestionMarkCircleIcon className="w-4" />
-							</Tooltip>
-						</>
-					}
-					placeholder="en-US"
-					{...register("language")}
-					error={!!errors.language}
-					withAsterisk
-				/>
+							</TooltipTrigger>
+							<TooltipContent>Used for SEO and social media previews</TooltipContent>
+						</Tooltip>
+					</>
+				}
+				placeholder="This website is very awesome and fun!"
+				minRows={3}
+				maxRows={10}
+				{...register("description")}
+			/>
 
-				<Group position="apart">
-					<ThemeSwitch />
-					<SubmitButton
-						size="md"
-						leftIcon={
-							!isSubmitting &&
-							!isSubmitSuccessful && <ArrowDownOnSquareIcon className="w-5" />
-						}
-						isLoading={isSubmitting || isSubmitSuccessful}
-					>
-						Submit
-					</SubmitButton>
-				</Group>
-			</Stack>
-		</form>
+			<Input
+				label={
+					<>
+						Language&nbsp;
+						<Tooltip>
+							<TooltipTrigger>
+								<QuestionMarkCircleIcon className="w-4" />
+							</TooltipTrigger>
+							<TooltipContent>
+								Used in the <TypographyCode>lang</TypographyCode> attribute of the{" "}
+								<TypographyCode>&lt;html&gt;</TypographyCode> tag
+							</TooltipContent>
+						</Tooltip>
+					</>
+				}
+				placeholder="en-US"
+				{...register("language")}
+				error={!!errors.language}
+				withAsterisk
+			/>
+		</SinglePageForm>
 	);
 }

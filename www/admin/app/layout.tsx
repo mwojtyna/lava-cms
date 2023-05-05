@@ -5,6 +5,7 @@ import { TrpcProvider } from "@admin/src/components/providers";
 import { Body } from "@admin/src/components";
 import { ZustandProvider } from "@admin/src/components/providers";
 import { colorThemeSchema } from "@admin/src/data/stores/dashboard";
+import { TooltipProvider } from "@admin/src/components/ui/client";
 import "@admin/src/styles/globals.css";
 
 export const metadata: Metadata = {
@@ -32,7 +33,9 @@ export default async function RootLayout({ children }: { children: React.ReactNo
 		<html lang="en-US">
 			<ZustandProvider colorTheme={colorTheme} url={url}>
 				<Body fonts={[regularFont]}>
-					<TrpcProvider>{children}</TrpcProvider>
+					<TooltipProvider delayDuration={400}>
+						<TrpcProvider>{children}</TrpcProvider>
+					</TooltipProvider>
 				</Body>
 			</ZustandProvider>
 		</html>

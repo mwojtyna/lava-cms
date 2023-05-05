@@ -14,3 +14,21 @@ export function TypographyH1({
 		</h1>
 	);
 }
+
+export function TypographyCode({
+	children,
+	className,
+	...props
+}: React.ComponentPropsWithoutRef<"code">) {
+	return (
+		<code
+			className={cn(
+				"relative rounded bg-muted px-[0.3rem] py-[0.2rem] font-mono text-sm font-semibold",
+				className
+			)}
+			{...props}
+		>
+			{children}
+		</code>
+	);
+}
