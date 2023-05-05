@@ -7,8 +7,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { signIn } from "next-auth/react";
 import { z } from "zod";
 import { trpcReact } from "@admin/src/utils/trpcReact";
-import { Button, Input } from "../ui/client";
-import { SinglePageForm } from "./SinglePageForm";
+import { Button, Input } from "../../src/components/ui/client";
+import { SinglePageForm } from "../../src/components/SinglePageForm";
 
 const inputSchema = z
 	.object({

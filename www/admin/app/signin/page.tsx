@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { SignInForm } from "@admin/src/components/forms";
+import { SignInForm } from "./SignInForm";
 
 export const metadata: Metadata = {
 	title: "Lava CMS - Sign in",

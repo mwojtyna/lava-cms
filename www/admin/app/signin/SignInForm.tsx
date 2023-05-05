@@ -13,7 +13,7 @@ import { useRouter } from "next/navigation";
 import { z } from "zod";
 import { Alert, AlertTitle } from "@admin/src/components/ui/server";
 import { Input, Button } from "@admin/src/components/ui/client";
-import { SinglePageForm } from "./SinglePageForm";
+import { SinglePageForm } from "../../src/components/SinglePageForm";
 
 const schema = z.object({
 	email: z
