@@ -11,7 +11,6 @@ const config = {
 	reactStrictMode: true,
 	swcMinify: true,
 	experimental: {
-		appDir: true,
 		typedRoutes: true,
 	},
 	// Fix for `import type` not working
