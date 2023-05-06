@@ -15,6 +15,7 @@ export function ThemeSwitch() {
 			iconOn={<MoonIcon className="text-primary" />}
 			iconOff={<SunIcon className="text-primary" />}
 			data-testid="theme-switch"
+			aria-label="Toggle color theme"
 		/>
 	);
 }

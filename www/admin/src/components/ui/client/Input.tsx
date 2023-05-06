@@ -71,7 +71,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
 							<ActionIcon
 								className="absolute right-2"
 								onClick={() => setShowPassword(!showPassword)}
-								tabIndex={-1}
+								aria-label="Toggle password visibility"
 							>
 								{showPassword ? (
 									<EyeSlashIcon className="w-5" />
