@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Inter, Poppins } from "next/font/google";
 import { cookies, headers } from "next/headers";
 import { TrpcProvider } from "@admin/src/components/providers";
 import { Body } from "@admin/src/components";
@@ -21,6 +21,11 @@ const regularFont = Inter({
 	subsets: ["latin"],
 	variable: "--font-sans",
 });
+const headerFont = Poppins({
+	weight: "700",
+	subsets: ["latin"],
+	variable: "--font-header",
+});
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
 	const colorTheme = await colorThemeSchema
@@ -32,7 +37,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
 	return (
 		<html lang="en-US">
 			<ZustandProvider colorTheme={colorTheme} url={url}>
-				<Body fonts={[regularFont]}>
+				<Body fonts={[regularFont, headerFont]}>
 					<TooltipProvider delayDuration={400}>
 						<TrpcProvider>{children}</TrpcProvider>
 					</TooltipProvider>
