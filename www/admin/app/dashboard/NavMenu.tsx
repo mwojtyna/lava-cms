@@ -41,7 +41,7 @@ const LogoSVG = () => (
 
 const Menu = ({ className, version }: { className?: string; version: string }) => (
 	<nav className={cn("w-[275px] overflow-auto border-r border-r-border p-6", className)}>
-		<Link href="/dashboard" className="mb-6 flex items-center justify-center gap-2">
+		<Link href="/dashboard" className="mb-8 mt-2 flex items-center justify-center gap-2">
 			<LogoSVG />
 
 			<TypographyH1 className={cn("relative select-none text-4xl", logoFont.className)}>
