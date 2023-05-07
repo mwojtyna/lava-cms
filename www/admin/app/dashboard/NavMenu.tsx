@@ -63,7 +63,7 @@ async function Menu({ className, responsive = true, ...props }: MenuProps) {
 							<SheetTrigger asChild>
 								<ActionIcon
 									variant={"outline"}
-									className="rounded-md p-3"
+									className="p-3"
 									aria-label="Expand menu"
 								>
 									<IconArrowBarRight size={20} />

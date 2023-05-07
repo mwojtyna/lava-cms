@@ -11,7 +11,7 @@ const ActionIcon = React.forwardRef<HTMLButtonElement, ActionIconProps>(
 		return (
 			<Button
 				ref={ref}
-				className={cn("h-auto w-fit rounded-sm p-1 hover:bg-muted", className)}
+				className={cn("h-auto w-fit rounded-md p-2 hover:bg-muted", className)}
 				variant={variant}
 				{...props}
 			>
