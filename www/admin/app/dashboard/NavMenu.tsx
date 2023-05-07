@@ -1,17 +1,9 @@
 import * as React from "react";
 import Link from "next/link";
 import { Poppins } from "next/font/google";
-import { getServerSession } from "next-auth";
 import {
 	ActionIcon,
-	Avatar,
-	AvatarFallback,
 	Button,
-	DropdownMenu,
-	DropdownMenuContent,
-	DropdownMenuLabel,
-	DropdownMenuSeparator,
-	DropdownMenuTrigger,
 	Separator,
 	Sheet,
 	SheetContent,
@@ -25,9 +17,7 @@ import { TypographyH1, TypographyMuted } from "@admin/src/components/ui/server";
 import { routes } from "@admin/src/data/menuRoutes";
 import { getPathname } from "@admin/src/utils/server";
 import { cn } from "@admin/src/utils/styling";
-import { authOptions } from "@admin/src/pages/api/auth/[...nextauth]";
-import { trpc } from "@admin/src/utils/trpc";
-import { LogoutItem, ThemeSwitchItem } from "./UserMenuItems";
+import { UserMenu } from "./UserMenu";
 
 const logoFont = Poppins({
 	weight: ["600"],
@@ -134,50 +124,6 @@ async function Menu({ className, responsive = true, ...props }: MenuProps) {
 				<UserMenu responsive={responsive} />
 			</div>
 		</nav>
-	);
-}
-
-async function UserMenu({ responsive }: { responsive: boolean }) {
-	const { user } = await trpc.auth.getUser.query({
-		// set to "empty" when null, because otherwise an ambiguous error is thrown
-		id: (await getServerSession(authOptions))?.user?.id ?? "empty",
-	});
-
-	return (
-		<DropdownMenu>
-			<DropdownMenuTrigger
-				className={cn(
-					"flex w-fit items-center gap-4 outline-none",
-					responsive && "mx-auto sm:mx-0"
-				)}
-			>
-				<Avatar>
-					<AvatarFallback>
-						{user?.name.charAt(0).toUpperCase()}
-						{user?.last_name.charAt(0).toUpperCase()}
-					</AvatarFallback>
-				</Avatar>
-
-				<div className={cn("text-left", responsive && "hidden sm:block")}>
-					<p>
-						{user?.name} {user?.last_name}
-					</p>
-					<TypographyMuted>{user?.email}</TypographyMuted>
-				</div>
-			</DropdownMenuTrigger>
-
-			<DropdownMenuContent
-				sideOffset={18}
-				align="start"
-				className="w-48 sm:ml-2 sm:scale-110"
-			>
-				<DropdownMenuLabel>My Account</DropdownMenuLabel>
-				<DropdownMenuSeparator />
-
-				<ThemeSwitchItem />
-				<LogoutItem />
-			</DropdownMenuContent>
-		</DropdownMenu>
 	);
 }
 
