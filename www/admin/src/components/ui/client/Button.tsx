@@ -3,7 +3,7 @@
 import * as React from "react";
 import { Slot } from "@radix-ui/react-slot";
 import { type VariantProps, cva } from "class-variance-authority";
-import { cn } from "@admin/src/utils/styles";
+import { cn } from "@admin/src/utils/styling";
 import { Loader } from "../server/Loader";
 
 const buttonVariants = cva(

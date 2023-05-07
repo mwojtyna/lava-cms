@@ -1,3 +1,5 @@
+import Link from "next/link";
+import { Poppins } from "next/font/google";
 import {
 	Button,
 	Separator,
@@ -8,9 +10,7 @@ import {
 import { TypographyH1 } from "@admin/src/components/ui/server";
 import { routes } from "@admin/src/data/menuRoutes";
 import { getPathname } from "@admin/src/utils/server";
-import { cn } from "@admin/src/utils/styles";
-import { Poppins } from "next/font/google";
-import Link from "next/link";
+import { cn } from "@admin/src/utils/styling";
 
 const logoFont = Poppins({
 	weight: ["600"],
@@ -46,7 +46,7 @@ const Menu = ({ className, version }: { className?: string; version: string }) =
 
 			<TypographyH1 className={cn("relative select-none text-4xl", logoFont.className)}>
 				Lava
-				<p className="absolute -right-5 -top-0.5 rotate-[20deg] font-sans text-xs font-bold tracking-normal text-muted-foreground">
+				<p className="absolute -right-5 -top-[3px] rotate-[20deg] font-sans text-xs font-bold tracking-normal text-muted-foreground">
 					v{version}
 				</p>
 			</TypographyH1>

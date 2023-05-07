@@ -4,7 +4,7 @@ import * as React from "react";
 import * as SheetPrimitive from "@radix-ui/react-dialog";
 import { type VariantProps, cva } from "class-variance-authority";
 import { XMarkIcon } from "@heroicons/react/20/solid";
-import { cn } from "@admin/src/utils/styles";
+import { cn } from "@admin/src/utils/styling";
 import MediaQuery from "react-responsive";
 
 const Sheet = SheetPrimitive.Root;

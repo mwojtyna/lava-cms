@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import TextareaAutosize from "react-textarea-autosize";
-import { cn } from "@admin/src/utils/styles";
+import { cn } from "@admin/src/utils/styling";
 import { type InputBaseProps, InputWrapper } from "./Input";
 
 type TextareaProps = React.ComponentPropsWithRef<typeof TextareaAutosize> & InputBaseProps;

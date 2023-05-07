@@ -1,4 +1,4 @@
-import { cn } from "@admin/src/utils/styles";
+import { cn } from "@admin/src/utils/styling";
 
 export function TypographyH1({
 	className,

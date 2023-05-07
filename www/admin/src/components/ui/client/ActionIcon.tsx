@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { cn } from "@admin/src/utils/styles";
+import { cn } from "@admin/src/utils/styling";
 import { Button } from "./Button";
 
 type ActionIconProps = React.ComponentPropsWithoutRef<"button">;

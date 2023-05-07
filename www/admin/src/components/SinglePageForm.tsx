@@ -1,4 +1,4 @@
-import { cn } from "@admin/src/utils/styles";
+import { cn } from "@admin/src/utils/styling";
 import { ThemeSwitch } from "@admin/src/components";
 import { TypographyH1 } from "./ui/server";
 

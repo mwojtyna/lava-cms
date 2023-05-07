@@ -1,5 +1,5 @@
 import * as React from "react";
-import { cn } from "@admin/src/utils/styles";
+import { cn } from "@admin/src/utils/styling";
 
 interface StepperProps extends React.HTMLAttributes<HTMLDivElement> {
 	currentStep: number;
