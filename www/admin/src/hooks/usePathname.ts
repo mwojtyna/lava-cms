@@ -1,4 +1,4 @@
-import { usePathname } from "next/navigation";
+import { usePathname as useNextPathname } from "next/navigation";
 import { useServerUrlStore } from "../data/stores/dashboard";
 
 /**
@@ -6,9 +6,9 @@ import { useServerUrlStore } from "../data/stores/dashboard";
  * server component while waiting for the client to load.
  * Once the client loads, it returns the url from the client.
  */
-export function useUrl() {
+export function usePathname() {
 	const { url: serverUrl } = useServerUrlStore();
-	const clientUrl = usePathname()!.split("/admin")[1]!;
+	const clientUrl = useNextPathname()!.split("/admin")[1]!;
 
 	return clientUrl ?? serverUrl;
 }

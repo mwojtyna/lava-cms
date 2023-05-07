@@ -14,7 +14,7 @@ import {
 	Anchor,
 } from "@admin/src/components";
 import { getBorderColor, getCardColor, getHoverColor } from "@admin/src/utils/colors";
-import { useUrl } from "@admin/src/hooks";
+import { usePathname } from "@admin/src/hooks";
 import { routes } from "@admin/src/data/menuRoutes";
 import { useMenuStore } from "@admin/src/data/stores/dashboard";
 import logo from "@admin/public/img/logo.png";
@@ -39,7 +39,7 @@ export default function MenuLinks({ version }: { version: string }) {
 	const theme = useMantineTheme();
 	const { classes } = useStyles();
 
-	const url = useUrl();
+	const url = usePathname();
 	const { toggle } = useMenuStore();
 
 	const title = useRef<HTMLHeadingElement>(null);

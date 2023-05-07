@@ -3,7 +3,7 @@ import { Anchor, Breadcrumbs, Group, Text, type MantineTheme } from "@admin/src/
 import { getRoute } from "@admin/src/data/menuRoutes";
 import { poppins } from "@admin/app/_providers/mantine";
 import Link from "next/link";
-import { useUrl } from "@admin/src/hooks";
+import { usePathname } from "@admin/src/hooks";
 
 export default function CurrentPage({ theme }: { theme: MantineTheme }) {
 	interface Breadcrumb {
@@ -12,7 +12,7 @@ export default function CurrentPage({ theme }: { theme: MantineTheme }) {
 		hasChildren: boolean;
 	}
 
-	const url = useUrl();
+	const url = usePathname();
 	const segments = url.split("/").filter((segment) => segment !== "");
 	const breadcrumbs: Breadcrumb[] = [];
 

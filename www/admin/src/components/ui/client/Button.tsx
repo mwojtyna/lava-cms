@@ -7,7 +7,7 @@ import { cn } from "@admin/src/utils/styles";
 import { Loader } from "../server/Loader";
 
 const buttonVariants = cva(
-	"active:translate-y-px inline-flex items-center justify-center rounded-md text-base font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none ring-offset-background",
+	"active:translate-y-px inline-flex gap-3 items-center justify-center rounded-md text-base font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none ring-offset-background",
 	{
 		variants: {
 			variant: {
@@ -65,10 +65,17 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
 				disabled={loading || disabled}
 				{...props}
 			>
-				<div className="flex w-full justify-between gap-3">
-					{loading ? <Loader /> : icon}
-					<span className="mx-auto">{children}</span>
-				</div>
+				{asChild ? (
+					<span>
+						{loading ? <Loader /> : icon}
+						{children}
+					</span>
+				) : (
+					<>
+						{loading ? <Loader /> : icon}
+						{children}
+					</>
+				)}
 			</Comp>
 		);
 	}

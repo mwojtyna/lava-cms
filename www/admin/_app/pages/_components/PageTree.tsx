@@ -2,7 +2,7 @@
 
 import { useMemo, useReducer, useState } from "react";
 import { Loader, LoadingOverlay, useMantineColorScheme } from "@admin/src/components";
-import { Section } from "@admin/app/dashboard/_components/Section";
+import { Section } from "@admin/_app/_components/Section";
 import { trpcReact } from "@admin/src/utils/trpcReact";
 import type { Page as PageType } from "api/prisma/types";
 import Page from "./Page";

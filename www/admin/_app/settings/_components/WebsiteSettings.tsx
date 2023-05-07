@@ -8,7 +8,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { check } from "language-tags";
 import { trpcReact } from "@admin/src/utils/trpcReact";
-import { Section } from "@admin/app/dashboard/_components/Section";
+import { Section } from "@admin/_app/_components/Section";
 import SubmitButton from "@admin/src/components/SubmitButton";
 
 const inputSchema = z
