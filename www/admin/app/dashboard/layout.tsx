@@ -15,7 +15,7 @@ export default async function Dashboard({ children }: { children: React.ReactNod
 	});
 
 	return (
-		<div className="flex h-screen overflow-hidden">
+		<div id="content" className="flex h-screen overflow-hidden">
 			{/* <Menu version={version} />
 
 			<div className="max-h-screen w-full overflow-visible md:overflow-auto">
@@ -27,9 +27,7 @@ export default async function Dashboard({ children }: { children: React.ReactNod
 			{/* @ts-expect-error Async Server Component */}
 			<NavMenu />
 
-			<main id="content" className="flex-1 overflow-auto p-6">
-				{children}
-			</main>
+			<main className="flex-1 overflow-auto p-6">{children}</main>
 		</div>
 	);
 }
