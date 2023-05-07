@@ -39,12 +39,16 @@ const LogoSVG = () => (
 	</svg>
 );
 
-const Menu = ({ className }: { className?: string }) => (
+const Menu = ({ className, version }: { className?: string; version: string }) => (
 	<nav className={cn("w-[275px] overflow-auto border-r border-r-border p-6", className)}>
 		<Link href="/dashboard" className="mb-6 flex items-center justify-center gap-2">
 			<LogoSVG />
-			<TypographyH1 className={cn("select-none text-4xl", logoFont.className)}>
+
+			<TypographyH1 className={cn("relative select-none text-4xl", logoFont.className)}>
 				Lava
+				<p className="absolute -right-5 -top-0.5 rotate-[20deg] font-sans text-xs font-bold tracking-normal text-muted-foreground">
+					v{version}
+				</p>
 			</TypographyH1>
 		</Link>
 
@@ -57,7 +61,7 @@ const Menu = ({ className }: { className?: string }) => (
 							key={i}
 							className={cn(
 								"w-full justify-start",
-								route.path === getPathname() && "bg-slate-100"
+								route.path === getPathname() && "bg-accent"
 							)}
 							variant={"ghost"}
 							icon={route.icon}
@@ -77,7 +81,7 @@ export async function NavMenu() {
 
 	return (
 		<>
-			<Menu className="hidden sm:block" />
+			<Menu className="hidden sm:block" version={version} />
 
 			<Sheet>
 				<SheetTrigger className="sm:hidden">Open</SheetTrigger>
@@ -87,7 +91,7 @@ export async function NavMenu() {
 					className="p-0"
 					maxScreenWidth={640}
 				>
-					<Menu className="block w-screen" />
+					<Menu className="w-screen" version={version} />
 				</SheetContent>
 			</Sheet>
 		</>
