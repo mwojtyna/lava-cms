@@ -17,6 +17,7 @@ const LogoSVG = () => (
 		fill="none"
 		strokeLinecap="round"
 		strokeLinejoin="round"
+		aria-label="Logo"
 	>
 		<path stroke="none" d="M0 0h24v24H0z" fill="none" />
 		<path d="M9 8v-1a2 2 0 1 0 -4 0" />
@@ -37,18 +38,18 @@ export async function NavMenu() {
 
 	return (
 		<nav className="h-full border-r border-r-border p-6">
-			<span className="mb-6 flex items-center justify-center gap-2">
+			<Link href="/dashboard" className="mb-6 flex items-center justify-center gap-2">
 				<LogoSVG />
 				<TypographyH1 className={cn("select-none text-4xl", logoFont.className)}>
 					Lava
 				</TypographyH1>
-			</span>
+			</Link>
 
 			<div className="flex flex-col gap-2">
 				{routes.map((route, i) => (
 					<>
 						{i === 1 && <Separator />}
-						<Link href={route.path}>
+						<Link href={route.path} tabIndex={-1}>
 							<Button
 								key={i}
 								className="w-full justify-start"
