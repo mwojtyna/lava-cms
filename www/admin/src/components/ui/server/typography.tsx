@@ -29,3 +29,15 @@ export function TypographyCode({
 		</code>
 	);
 }
+
+export function TypographyMuted({
+	className,
+	children,
+	...props
+}: React.ComponentPropsWithoutRef<"p">) {
+	return (
+		<p className={cn("text-sm text-muted-foreground", className)} {...props}>
+			{children}
+		</p>
+	);
+}
