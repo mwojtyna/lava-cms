@@ -1,7 +1,13 @@
-import { SinglePageForm, ThemeSwitch } from "@admin/src/components";
-import { Button, Separator } from "@admin/src/components/ui/client";
+import {
+	Button,
+	Separator,
+	Sheet,
+	SheetContent,
+	SheetTrigger,
+} from "@admin/src/components/ui/client";
 import { TypographyH1 } from "@admin/src/components/ui/server";
 import { routes } from "@admin/src/data/menuRoutes";
+import { getPathname } from "@admin/src/utils/server";
 import { cn } from "@admin/src/utils/styles";
 import { Poppins } from "next/font/google";
 import Link from "next/link";
@@ -33,36 +39,57 @@ const LogoSVG = () => (
 	</svg>
 );
 
+const Menu = ({ className }: { className?: string }) => (
+	<nav className={cn("w-[275px] overflow-auto border-r border-r-border p-6", className)}>
+		<Link href="/dashboard" className="mb-6 flex items-center justify-center gap-2">
+			<LogoSVG />
+			<TypographyH1 className={cn("select-none text-4xl", logoFont.className)}>
+				Lava
+			</TypographyH1>
+		</Link>
+
+		<div className="flex flex-col gap-2">
+			{routes.map((route, i) => (
+				<>
+					{i === 1 && <Separator />}
+					<Link href={route.path} tabIndex={-1}>
+						<Button
+							key={i}
+							className={cn(
+								"w-full justify-start",
+								route.path === getPathname() && "bg-slate-100"
+							)}
+							variant={"ghost"}
+							icon={route.icon}
+						>
+							{route.label}
+						</Button>
+					</Link>
+					{i === 3 && <Separator />}
+				</>
+			))}
+		</div>
+	</nav>
+);
+
 export async function NavMenu() {
 	const version = (await import("@admin/../package.json")).version;
 
 	return (
-		<nav className="border-r border-r-border p-6">
-			<Link href="/dashboard" className="mb-6 flex items-center justify-center gap-2">
-				<LogoSVG />
-				<TypographyH1 className={cn("select-none text-4xl", logoFont.className)}>
-					Lava
-				</TypographyH1>
-			</Link>
+		<>
+			<Menu className="hidden sm:block" />
 
-			<div className="flex flex-col gap-2">
-				{routes.map((route, i) => (
-					<>
-						{i === 1 && <Separator />}
-						<Link href={route.path} tabIndex={-1}>
-							<Button
-								key={i}
-								className="w-full justify-start"
-								variant={"ghost"}
-								icon={route.icon}
-							>
-								{route.label}
-							</Button>
-						</Link>
-						{i === 3 && <Separator />}
-					</>
-				))}
-			</div>
-		</nav>
+			<Sheet>
+				<SheetTrigger className="sm:hidden">Open</SheetTrigger>
+				<SheetContent
+					position={"left"}
+					size={"content"}
+					className="p-0"
+					maxScreenWidth={640}
+				>
+					<Menu className="block w-screen" />
+				</SheetContent>
+			</Sheet>
+		</>
 	);
 }
