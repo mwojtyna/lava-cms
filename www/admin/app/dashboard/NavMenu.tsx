@@ -6,6 +6,11 @@ import { cn } from "@admin/src/utils/styles";
 import { Poppins } from "next/font/google";
 import Link from "next/link";
 
+const logoFont = Poppins({
+	weight: ["600"],
+	subsets: ["latin"],
+});
+
 const LogoSVG = () => (
 	<svg
 		xmlns="http://www.w3.org/2000/svg"
@@ -28,16 +33,11 @@ const LogoSVG = () => (
 	</svg>
 );
 
-const logoFont = Poppins({
-	weight: ["600"],
-	subsets: ["latin"],
-});
-
 export async function NavMenu() {
 	const version = (await import("@admin/../package.json")).version;
 
 	return (
-		<nav className="h-full border-r border-r-border p-6">
+		<nav className="border-r border-r-border p-6">
 			<Link href="/dashboard" className="mb-6 flex items-center justify-center gap-2">
 				<LogoSVG />
 				<TypographyH1 className={cn("select-none text-4xl", logoFont.className)}>
