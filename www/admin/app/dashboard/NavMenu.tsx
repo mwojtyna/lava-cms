@@ -8,6 +8,9 @@ import {
 	Sheet,
 	SheetContent,
 	SheetTrigger,
+	Tooltip,
+	TooltipContent,
+	TooltipTrigger,
 } from "@admin/src/components/ui/client";
 import { IconArrowBarRight, IconVolcano } from "@tabler/icons-react";
 import { TypographyH1 } from "@admin/src/components/ui/server";
@@ -39,8 +42,9 @@ const Menu = ({ className, version, responsive = true, ...props }: MenuProps) =>
 				"mb-8 flex items-center justify-center gap-2",
 				responsive && "hidden sm:flex"
 			)}
+			aria-label="Logo link"
 		>
-			<IconVolcano size={56} />
+			<IconVolcano size={56} aria-label="Logo image" />
 			<TypographyH1 className={cn("relative select-none text-4xl", logoFont.className)}>
 				Lava
 				<p className="absolute -right-5 -top-[3px] rotate-[20deg] font-sans text-xs font-bold tracking-normal text-muted-foreground">
@@ -51,11 +55,22 @@ const Menu = ({ className, version, responsive = true, ...props }: MenuProps) =>
 
 		{responsive && (
 			<div className="mb-4 w-fit space-y-4 sm:hidden">
-				<SheetTrigger asChild>
-					<ActionIcon variant={"outline"} className="rounded-md p-3">
-						<IconArrowBarRight size={20} />
-					</ActionIcon>
-				</SheetTrigger>
+				<Tooltip>
+					<TooltipTrigger asChild>
+						<SheetTrigger asChild>
+							<ActionIcon
+								variant={"outline"}
+								className="rounded-md p-3"
+								aria-label="Expand menu"
+							>
+								<IconArrowBarRight size={20} />
+							</ActionIcon>
+						</SheetTrigger>
+					</TooltipTrigger>
+
+					<TooltipContent>Expand menu</TooltipContent>
+				</Tooltip>
+
 				<Separator />
 			</div>
 		)}
@@ -64,21 +79,32 @@ const Menu = ({ className, version, responsive = true, ...props }: MenuProps) =>
 			{routes.map((route, i) => (
 				<React.Fragment key={i}>
 					{i === 1 && <Separator className={cn(responsive && "hidden sm:block")} />}
-					<Link href={route.path} tabIndex={-1}>
-						<Button
-							className={cn(
-								"w-full justify-start",
-								responsive && "w-fit p-3 sm:w-full sm:p-4",
-								route.path === getPathname() && "bg-accent"
-							)}
-							variant={"ghost"}
-							icon={route.icon}
-						>
-							<span className={cn(responsive && "hidden sm:block")}>
-								{route.label}
-							</span>
-						</Button>
-					</Link>
+
+					<Tooltip>
+						<TooltipTrigger asChild>
+							<Link href={route.path} tabIndex={-1}>
+								<Button
+									className={cn(
+										"w-full justify-start",
+										responsive && "w-fit p-3 sm:w-full sm:p-4",
+										route.path === getPathname() && "bg-accent"
+									)}
+									variant={"ghost"}
+									icon={route.icon}
+									aria-label={route.label}
+								>
+									<span className={cn(responsive && "hidden sm:block")}>
+										{route.label}
+									</span>
+								</Button>
+							</Link>
+						</TooltipTrigger>
+
+						{responsive && (
+							<TooltipContent className="sm:hidden">{route.label}</TooltipContent>
+						)}
+					</Tooltip>
+
 					{i === 3 && <Separator className={cn(responsive && "hidden sm:block")} />}
 				</React.Fragment>
 			))}
