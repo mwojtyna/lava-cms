@@ -10,6 +10,7 @@ import {
 export interface Route {
 	label: string;
 	path: NextRoute;
+	description: string;
 	icon?: React.ReactNode;
 	startingRoute?: boolean;
 	children?: ChildRoute[];
@@ -20,27 +21,32 @@ export const routes: Route[] = [
 	{
 		label: "Dashboard",
 		path: "/dashboard",
+		description: "asd",
 		icon: <HomeIcon className="w-5" />,
 		startingRoute: true,
 	},
 	{
 		label: "Pages",
 		path: "/dashboard/pages",
+		description: "Create and manage your pages.",
 		icon: <Square2StackIcon className="w-5" />,
 	},
 	{
 		label: "Layouts",
 		path: "/dashboard/layouts" as NextRoute,
+		description: "View your page layouts.",
 		icon: <RectangleGroupIcon className="w-5" />,
 	},
 	{
 		label: "Content",
 		path: "/dashboard/content" as NextRoute,
+		description: "Manage your content blocks.",
 		icon: <CircleStackIcon className="w-5" />,
 	},
 	{
 		label: "Settings",
 		path: "/dashboard/settings",
+		description: "Manage your website settings.",
 		icon: <Cog6ToothIcon className="w-5" />,
 	},
 ];

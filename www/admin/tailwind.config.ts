@@ -57,7 +57,7 @@ const config: Config = {
 			},
 			fontFamily: {
 				sans: ["var(--font-sans)", ...fontFamily.sans],
-				header: ["var(--font-header)", ...fontFamily.sans],
+				heading: ["var(--font-heading)", ...fontFamily.sans],
 			},
 			keyframes: {
 				"accordion-down": {

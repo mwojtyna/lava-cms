@@ -1,12 +1,19 @@
 import { cn } from "@admin/src/utils/styling";
 
-export function TypographyH1({
-	className,
-	children,
-	...props
-}: React.ComponentPropsWithoutRef<"h1">) {
+interface TypographyH1Props extends React.ComponentPropsWithoutRef<"h1"> {
+	gradient?: boolean;
+}
+export function TypographyH1({ className, children, gradient, ...props }: TypographyH1Props) {
 	return (
-		<h1 className={cn("scroll-m-20 font-header text-5xl tracking-tight", className)} {...props}>
+		<h1
+			className={cn(
+				"scroll-m-20 font-heading text-5xl tracking-tight",
+				gradient &&
+					"bg-gradient-to-b from-foreground/70 to-foreground bg-clip-text text-transparent dark:bg-gradient-to-t",
+				className
+			)}
+			{...props}
+		>
 			{children}
 		</h1>
 	);

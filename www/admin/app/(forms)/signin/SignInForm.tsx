@@ -71,6 +71,7 @@ export function SignInForm() {
 			submitButton={
 				<Button
 					type="submit"
+					size="lg"
 					icon={<ArrowRightOnRectangleIcon className="w-5" />}
 					className="ml-auto shadow-lg shadow-primary/25"
 					loading={isSubmitting || isSubmitSuccessful}
@@ -91,6 +92,7 @@ export function SignInForm() {
 				type="email"
 				label="E-mail"
 				placeholder="user@domain.com"
+				size="lg"
 				{...register("email")}
 				error={errors.email?.message}
 				icon={<EnvelopeIcon />}
@@ -100,6 +102,7 @@ export function SignInForm() {
 			<Input
 				type="password"
 				label="Password"
+				size="lg"
 				{...register("password")}
 				error={!!errors.password}
 				icon={<LockClosedIcon />}

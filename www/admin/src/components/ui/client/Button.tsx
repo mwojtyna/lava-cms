@@ -7,7 +7,7 @@ import { cn } from "@admin/src/utils/styling";
 import { Loader } from "../server/Loader";
 
 const buttonVariants = cva(
-	"active:translate-y-px inline-flex gap-3 items-center justify-center rounded-md text-base font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none ring-offset-background",
+	"active:translate-y-px inline-flex items-center justify-center rounded-md font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none ring-offset-background",
 	{
 		variants: {
 			variant: {
@@ -20,9 +20,9 @@ const buttonVariants = cva(
 				link: "underline-offset-4 hover:underline text-primary",
 			},
 			size: {
-				default: "h-11 py-2 px-4",
-				sm: "h-10 px-3 rounded-md text-sm",
-				lg: "h-12 px-8 rounded-md",
+				default: "h-10 py-2 px-4 text-sm gap-2",
+				sm: "h-9 px-3 rounded-md text-sm gap-1",
+				lg: "h-11 px-4 rounded-md text-base gap-3",
 			},
 		},
 		defaultVariants: {

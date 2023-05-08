@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline";
+import { type VariantProps, cva } from "class-variance-authority";
 import { cn } from "@admin/src/utils/styling";
 import { Label } from "../client";
 import { ActionIcon } from "./ActionIcon";
@@ -41,11 +42,28 @@ const InputWrapper = React.forwardRef<HTMLDivElement, InputWrapperProps>(
 );
 InputWrapper.displayName = "InputWrapper";
 
-interface InputProps extends Omit<InputWrapperProps, "children"> {
+const inputVariants = cva(
+	"flex w-full rounded-md border border-input bg-transparent px-3 py-2 ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50",
+	{
+		variants: {
+			size: {
+				default: "h-10 text-sm",
+				lg: "h-11 text-base",
+			},
+		},
+		defaultVariants: {
+			size: "default",
+		},
+	}
+);
+
+interface InputProps
+	extends Omit<InputWrapperProps, "children" | "size">,
+		VariantProps<typeof inputVariants> {
 	icon?: React.ReactNode;
 }
 const Input = React.forwardRef<HTMLInputElement, InputProps>(
-	({ className, type, label, icon, error, withAsterisk, ...props }, ref) => {
+	({ className, type, label, icon, error, withAsterisk, size, ...props }, ref) => {
 		const [showPassword, setShowPassword] = React.useState(false);
 
 		return (
@@ -57,8 +75,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
 							type={type === "password" ? (showPassword ? "text" : "password") : type}
 							id={inputId}
 							className={cn(
-								"flex h-full w-full rounded-md border border-input bg-transparent px-3 py-2 text-base ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50",
-								className,
+								inputVariants({ className, size }),
 								icon && "pl-10",
 								error && "border-destructive"
 							)}

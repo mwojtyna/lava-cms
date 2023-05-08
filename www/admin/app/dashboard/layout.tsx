@@ -1,24 +1,21 @@
 import type { Metadata } from "next";
 import { NavMenu } from "./NavMenu";
+import { PageTitle } from "@admin/src/components";
 
 export const metadata: Metadata = {
 	title: "Lava CMS - Admin panel",
 };
 
+export const dynamic = "force-dynamic";
+
 export default function Dashboard({ children }: { children: React.ReactNode }) {
 	return (
 		<div id="content" className="flex h-screen overflow-hidden">
-			{/* <Menu version={version} />
-
-			<div className="max-h-screen w-full overflow-visible md:overflow-auto">
-				<Header user={user} />
-
-				<main className="p-4">{children}</main>
-			</div> */}
-
 			<NavMenu />
-
-			<main className="flex-1 overflow-auto p-6">{children}</main>
+			<main className="flex flex-1 flex-col gap-8 overflow-auto p-6">
+				<PageTitle />
+				{children}
+			</main>
 		</div>
 	);
 }

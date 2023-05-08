@@ -21,6 +21,7 @@ export function NavMenuItem({ route, responsive }: { route: Route; responsive?: 
 							route.path === pathname && "bg-accent"
 						)}
 						variant={"ghost"}
+						size="lg"
 						icon={route.icon}
 						aria-label={route.label}
 					>

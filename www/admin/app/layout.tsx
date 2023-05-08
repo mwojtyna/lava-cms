@@ -24,7 +24,7 @@ const regularFont = Inter({
 const headerFont = Poppins({
 	weight: "700",
 	subsets: ["latin"],
-	variable: "--font-header",
+	variable: "--font-heading",
 });
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
