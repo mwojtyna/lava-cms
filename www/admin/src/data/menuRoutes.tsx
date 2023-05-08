@@ -7,7 +7,7 @@ import {
 	CircleStackIcon,
 } from "@heroicons/react/24/outline";
 
-interface Route {
+export interface Route {
 	label: string;
 	path: NextRoute;
 	icon?: React.ReactNode;

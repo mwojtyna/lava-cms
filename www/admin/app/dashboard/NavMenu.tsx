@@ -3,7 +3,6 @@ import Link from "next/link";
 import { Poppins } from "next/font/google";
 import {
 	ActionIcon,
-	Button,
 	Separator,
 	Sheet,
 	SheetContent,
@@ -15,9 +14,9 @@ import {
 import { IconArrowBarRight, IconVolcano } from "@tabler/icons-react";
 import { TypographyH1, TypographyMuted } from "@admin/src/components/ui/server";
 import { routes } from "@admin/src/data/menuRoutes";
-import { getPathname } from "@admin/src/utils/server";
 import { cn } from "@admin/src/utils/styling";
 import { UserMenu } from "./UserMenu";
+import { NavMenuItem } from "./NavMenuItem";
 
 const logoFont = Poppins({
 	weight: ["600"],
@@ -86,32 +85,7 @@ async function Menu({ className, responsive = true, ...props }: MenuProps) {
 								<Separator className={cn(responsive && "hidden sm:block")} />
 							)}
 
-							<Tooltip>
-								<TooltipTrigger asChild>
-									<Link href={route.path} tabIndex={-1}>
-										<Button
-											className={cn(
-												"w-full justify-start",
-												responsive && "w-fit p-3 sm:w-full sm:p-4",
-												route.path === getPathname() && "bg-accent"
-											)}
-											variant={"ghost"}
-											icon={route.icon}
-											aria-label={route.label}
-										>
-											<span className={cn(responsive && "hidden sm:block")}>
-												{route.label}
-											</span>
-										</Button>
-									</Link>
-								</TooltipTrigger>
-
-								{responsive && (
-									<TooltipContent className="sm:hidden">
-										{route.label}
-									</TooltipContent>
-								)}
-							</Tooltip>
+							<NavMenuItem route={route} responsive={responsive} />
 
 							{i === 3 && (
 								<Separator className={cn(responsive && "hidden sm:block")} />
