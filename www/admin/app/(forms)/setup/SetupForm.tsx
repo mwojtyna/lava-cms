@@ -4,18 +4,11 @@ import { useRouter } from "next/navigation";
 import { type SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { ArrowRightIcon, QuestionMarkCircleIcon } from "@heroicons/react/20/solid";
+import { ArrowRightIcon } from "@heroicons/react/20/solid";
 import { check } from "language-tags";
-import { SinglePageForm } from "@admin/src/components";
 import { trpc } from "@admin/src/utils/trpc";
-import {
-	Button,
-	Input,
-	Textarea,
-	Tooltip,
-	TooltipContent,
-	TooltipTrigger,
-} from "@admin/src/components/ui/client";
+import { InfoTooltip, SinglePageForm } from "@admin/src/components";
+import { Button, Input, Textarea } from "@admin/src/components/ui/client";
 import { TypographyCode } from "@admin/src/components/ui/server";
 
 const schema = z
@@ -85,12 +78,7 @@ export function SetupForm() {
 				label={
 					<>
 						Description&nbsp;
-						<Tooltip>
-							<TooltipTrigger>
-								<QuestionMarkCircleIcon className="w-4" />
-							</TooltipTrigger>
-							<TooltipContent>Used for SEO and social media previews</TooltipContent>
-						</Tooltip>
+						<InfoTooltip>Used for social media previews</InfoTooltip>
 					</>
 				}
 				placeholder="This website is very awesome and fun!"
@@ -103,15 +91,10 @@ export function SetupForm() {
 				label={
 					<>
 						Language&nbsp;
-						<Tooltip>
-							<TooltipTrigger>
-								<QuestionMarkCircleIcon className="w-4" />
-							</TooltipTrigger>
-							<TooltipContent>
-								Used in the <TypographyCode>lang</TypographyCode> attribute of the{" "}
-								<TypographyCode>&lt;html&gt;</TypographyCode> tag
-							</TooltipContent>
-						</Tooltip>
+						<InfoTooltip>
+							Used in the <TypographyCode>lang</TypographyCode> attribute of the{" "}
+							<TypographyCode>&lt;html&gt;</TypographyCode> tag
+						</InfoTooltip>
 					</>
 				}
 				placeholder="en-US"

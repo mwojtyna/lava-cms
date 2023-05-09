@@ -4,17 +4,10 @@ import * as React from "react";
 import { z } from "zod";
 import { check } from "language-tags";
 import { type SubmitHandler, useForm } from "react-hook-form";
-import { QuestionMarkCircleIcon } from "@heroicons/react/20/solid";
 import { trpcReact } from "@admin/src/utils/trpcReact";
 import { zodResolver } from "@hookform/resolvers/zod";
-import {
-	Button,
-	Input,
-	Textarea,
-	Popover,
-	PopoverContent,
-	PopoverTrigger,
-} from "@admin/src/components/ui/client";
+import { InfoTooltip } from "@admin/src/components";
+import { Button, Input, Textarea } from "@admin/src/components/ui/client";
 import {
 	Card,
 	CardContent,
@@ -93,14 +86,7 @@ export function WebsiteSettingsForm({ initialData }: { initialData: Inputs }) {
 						label={
 							<>
 								Description&nbsp;
-								<Popover>
-									<PopoverTrigger aria-label="?">
-										<QuestionMarkCircleIcon className="w-4" />
-									</PopoverTrigger>
-									<PopoverContent variant={"tooltip"}>
-										Used for social media previews
-									</PopoverContent>
-								</Popover>
+								<InfoTooltip>Used for social media previews</InfoTooltip>
 							</>
 						}
 						placeholder="This website is very awesome and fun!"
@@ -113,15 +99,10 @@ export function WebsiteSettingsForm({ initialData }: { initialData: Inputs }) {
 						label={
 							<>
 								Language&nbsp;
-								<Popover>
-									<PopoverTrigger aria-label="More information">
-										<QuestionMarkCircleIcon className="w-4" />
-									</PopoverTrigger>
-									<PopoverContent variant={"tooltip"}>
-										Used in the <TypographyCode>lang</TypographyCode> attribute
-										of the <TypographyCode>&lt;html&gt;</TypographyCode> tag
-									</PopoverContent>
-								</Popover>
+								<InfoTooltip>
+									Used in the <TypographyCode>lang</TypographyCode> attribute of
+									the <TypographyCode>&lt;html&gt;</TypographyCode> tag
+								</InfoTooltip>
 							</>
 						}
 						placeholder="en-US"
