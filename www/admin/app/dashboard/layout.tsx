@@ -10,7 +10,10 @@ export const dynamic = "force-dynamic";
 
 export default function Dashboard({ children }: { children: React.ReactNode }) {
 	return (
-		<div id="content" className="flex h-screen overflow-hidden">
+		<div
+			id="content"
+			className="grid h-screen grid-rows-[auto_1fr] overflow-hidden sm:grid-cols-[275px_1fr]"
+		>
 			<NavMenu />
 			<main className="flex flex-1 flex-col gap-6 overflow-auto p-4 sm:gap-8 sm:p-6">
 				<PageTitle />

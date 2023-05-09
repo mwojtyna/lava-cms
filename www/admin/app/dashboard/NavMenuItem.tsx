@@ -7,7 +7,7 @@ import { cn } from "@admin/src/utils/styling";
 import type { Route } from "@admin/src/data/menuRoutes";
 import { usePathname } from "@admin/src/hooks";
 
-export function NavMenuItem({ route, responsive }: { route: Route; responsive?: boolean }) {
+export function NavMenuItem({ route, small }: { route: Route; small?: boolean }) {
 	const pathname = usePathname();
 
 	return (
@@ -17,7 +17,7 @@ export function NavMenuItem({ route, responsive }: { route: Route; responsive?: 
 					<Button
 						className={cn(
 							"w-full justify-start",
-							responsive && "w-fit p-3 sm:w-full sm:p-4",
+							small && "p-3",
 							route.path === pathname && "bg-accent"
 						)}
 						variant={"ghost"}
@@ -25,12 +25,12 @@ export function NavMenuItem({ route, responsive }: { route: Route; responsive?: 
 						icon={route.icon}
 						aria-label={route.label}
 					>
-						<span className={cn(responsive && "hidden sm:block")}>{route.label}</span>
+						<span className={cn(small && "hidden")}>{route.label}</span>
 					</Button>
 				</Link>
 			</TooltipTrigger>
 
-			{responsive && <TooltipContent className="sm:hidden">{route.label}</TooltipContent>}
+			{small && <TooltipContent>{route.label}</TooltipContent>}
 		</Tooltip>
 	);
 }

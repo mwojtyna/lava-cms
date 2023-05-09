@@ -11,7 +11,10 @@ import {
 	TooltipContent,
 	TooltipTrigger,
 } from "@admin/src/components/ui/client";
-import { IconArrowBarRight, IconVolcano } from "@tabler/icons-react";
+import { IconVolcano } from "@tabler/icons-react";
+import { Bars3Icon } from "@heroicons/react/24/outline";
+import resolveConfig from "tailwindcss/resolveConfig";
+import tailwindConfig from "@admin/tailwind.config";
 import { TypographyH1, TypographyMuted } from "@admin/src/components/ui/server";
 import { routes } from "@admin/src/data/menuRoutes";
 import { cn } from "@admin/src/utils/styling";
@@ -23,27 +26,19 @@ const logoFont = Poppins({
 	subsets: ["latin"],
 });
 
-interface MenuProps extends React.ComponentPropsWithRef<"nav"> {
-	responsive?: boolean;
-}
-async function Menu({ className, responsive = true, ...props }: MenuProps) {
+async function Menu({ className }: { className?: string }) {
 	const version = (await import("@admin/../package.json")).version;
 
 	return (
 		<nav
 			className={cn(
-				"flex h-full w-[275px] flex-col overflow-auto border-r border-r-border p-6 py-8",
-				responsive && "w-fit p-3 py-4 sm:w-[275px] sm:p-6 sm:py-8",
+				"flex flex-col overflow-auto border-r border-r-border p-6 py-8",
 				className
 			)}
-			{...props}
 		>
 			<Link
 				href="/dashboard"
-				className={cn(
-					"mb-8 flex items-center justify-center gap-2",
-					responsive && "hidden sm:flex"
-				)}
+				className="mb-8 flex items-center justify-center gap-2"
 				aria-label="Logo link"
 			>
 				<IconVolcano size={56} aria-label="Logo image" />
@@ -55,66 +50,76 @@ async function Menu({ className, responsive = true, ...props }: MenuProps) {
 				</TypographyH1>
 			</Link>
 
-			{responsive && (
-				<div className="mb-4 w-fit space-y-4 sm:hidden">
-					<Tooltip>
-						<TooltipTrigger asChild>
-							<SheetTrigger asChild>
-								<ActionIcon
-									variant={"outline"}
-									className="p-3"
-									aria-label="Expand menu"
-								>
-									<IconArrowBarRight size={20} />
-								</ActionIcon>
-							</SheetTrigger>
-						</TooltipTrigger>
-
-						<TooltipContent>Expand menu</TooltipContent>
-					</Tooltip>
-
-					<Separator />
-				</div>
-			)}
-
 			<div className="flex flex-grow flex-col justify-between gap-8">
 				<div className="flex flex-col gap-2">
 					{routes.map((route, i) => (
 						<React.Fragment key={i}>
-							{i === 1 && (
-								<Separator className={cn(responsive && "hidden sm:block")} />
-							)}
+							{i === 1 && <Separator />}
 
-							<NavMenuItem route={route} responsive={responsive} />
+							<NavMenuItem route={route} />
 
-							{i === 3 && (
-								<Separator className={cn(responsive && "hidden sm:block")} />
-							)}
+							{i === 3 && <Separator />}
 						</React.Fragment>
 					))}
 				</div>
 
 				{/* @ts-expect-error Async Server Component */}
-				<UserMenu responsive={responsive} />
+				<UserMenu />
 			</div>
 		</nav>
 	);
 }
 
+function MenuMobile({ className }: { className?: string }) {
+	return (
+		<nav
+			className={cn(
+				"flex flex-grow items-center justify-between overflow-auto border-b border-b-border p-3 sm:hidden",
+				className
+			)}
+		>
+			<Tooltip>
+				<TooltipTrigger className="mr-4 flex w-fit gap-4" asChild>
+					<SheetTrigger asChild>
+						<ActionIcon variant={"ghost"} className="p-3" aria-label="Expand menu">
+							<Bars3Icon className="w-5 scale-[120%]" />
+						</ActionIcon>
+					</SheetTrigger>
+				</TooltipTrigger>
+
+				<TooltipContent>Expand menu</TooltipContent>
+			</Tooltip>
+
+			<div className="flex gap-0.5">
+				{routes.map((route, i) => (
+					<NavMenuItem key={i} route={route} small={true} />
+				))}
+			</div>
+
+			{/* @ts-expect-error Async Server Component */}
+			<UserMenu small={true} />
+		</nav>
+	);
+}
+
 export function NavMenu() {
+	const config = resolveConfig(tailwindConfig);
+
 	return (
 		<Sheet>
 			{/* @ts-expect-error Async Server Component */}
-			<Menu />
+			<Menu className="hidden h-screen sm:flex" />
+			<MenuMobile />
 
 			<SheetContent
 				position={"left"}
 				size={"content"}
-				className="h-full p-0"
-				maxScreenWidth={640}
+				className="h-full w-full p-0"
+				// @ts-expect-error Tailwind config types are trash
+				maxScreenWidth={config.theme.screens.sm ?? 9999}
 			>
 				{/* @ts-expect-error Async Server Component */}
-				<Menu className="w-screen" responsive={false} />
+				<Menu className="h-full" />
 			</SheetContent>
 		</Sheet>
 	);

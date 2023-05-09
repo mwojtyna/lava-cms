@@ -14,7 +14,7 @@ import { LogoutItem, ThemeSwitchItem } from "./UserMenuItems";
 import { authOptions } from "@admin/src/pages/api/auth/[...nextauth]";
 import { cn } from "@admin/src/utils/styling";
 
-export async function UserMenu({ responsive }: { responsive: boolean }) {
+export async function UserMenu({ small }: { small: boolean }) {
 	const { user } = await trpc.auth.getUser.query({
 		// set to "empty" when null, because otherwise an ambiguous error is thrown
 		id: (await getServerSession(authOptions))?.user?.id ?? "empty",
@@ -22,12 +22,7 @@ export async function UserMenu({ responsive }: { responsive: boolean }) {
 
 	return (
 		<DropdownMenu>
-			<DropdownMenuTrigger
-				className={cn(
-					"flex w-fit items-center gap-4 outline-none",
-					responsive && "mx-auto sm:mx-0"
-				)}
-			>
+			<DropdownMenuTrigger className="flex h-fit w-fit items-center gap-4 outline-none">
 				<Avatar>
 					<AvatarFallback>
 						{user?.name.charAt(0).toUpperCase()}
@@ -35,7 +30,7 @@ export async function UserMenu({ responsive }: { responsive: boolean }) {
 					</AvatarFallback>
 				</Avatar>
 
-				<div className={cn("text-left", responsive && "hidden sm:block")}>
+				<div className={cn("text-left", small && "hidden")}>
 					<p>
 						{user?.name} {user?.last_name}
 					</p>
@@ -44,7 +39,7 @@ export async function UserMenu({ responsive }: { responsive: boolean }) {
 			</DropdownMenuTrigger>
 
 			<DropdownMenuContent
-				sideOffset={18}
+				sideOffset={small ? 14 : 18}
 				align="start"
 				className="w-48 sm:ml-2 sm:scale-110"
 			>
