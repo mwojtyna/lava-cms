@@ -6,15 +6,19 @@ import { Button, Tooltip, TooltipContent, TooltipTrigger } from "@admin/src/comp
 import { cn } from "@admin/src/utils/styling";
 import type { Route } from "@admin/src/data/menuRoutes";
 import { usePathname } from "@admin/src/hooks";
+import { useMenuStore } from "@admin/src/data/stores/dashboard";
 
 export function NavMenuItem({ route, small }: { route: Route; small?: boolean }) {
 	const pathname = usePathname();
+	const menu = useMenuStore();
 
 	return (
 		<Tooltip>
 			<TooltipTrigger asChild>
 				<Link href={route.path} tabIndex={-1}>
 					<Button
+						// Wait for the button to highlight before navigating (better UX)
+						onClick={() => setTimeout(() => menu.set(false))}
 						className={cn(
 							"w-full justify-start",
 							small && "p-3",

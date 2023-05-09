@@ -141,6 +141,7 @@ export interface DialogContentProps
 		VariantProps<typeof sheetVariants> {
 	withCloseButton?: boolean;
 	maxScreenWidth?: number;
+	returnFocus?: boolean;
 }
 
 const SheetContent = React.forwardRef<
@@ -148,7 +149,17 @@ const SheetContent = React.forwardRef<
 	DialogContentProps
 >(
 	(
-		{ position, size, className, children, withCloseButton = true, maxScreenWidth, ...props },
+		{
+			position,
+			size,
+			className,
+			children,
+			withCloseButton = true,
+			maxScreenWidth,
+			returnFocus = true,
+			onCloseAutoFocus,
+			...props
+		},
 		ref
 	) => (
 		<MediaQuery maxWidth={maxScreenWidth ?? 9999}>
@@ -157,6 +168,13 @@ const SheetContent = React.forwardRef<
 				<SheetPrimitive.Content
 					ref={ref}
 					className={cn(sheetVariants({ position, size }), className)}
+					onCloseAutoFocus={(e) => {
+						if (!returnFocus) {
+							e.preventDefault();
+							return;
+						}
+						onCloseAutoFocus?.(e);
+					}}
 					{...props}
 				>
 					{children}

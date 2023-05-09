@@ -4,11 +4,11 @@ import { z } from "zod";
 
 interface MenuState {
 	isOpen: boolean;
-	toggle: () => void;
+	set: (value: boolean) => void;
 }
 export const useMenuStore = create<MenuState>((set) => ({
 	isOpen: false,
-	toggle: () => set((state) => ({ isOpen: !state.isOpen })),
+	set: (value) => set(() => ({ isOpen: value })),
 }));
 
 interface UrlState {

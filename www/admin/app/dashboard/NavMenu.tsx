@@ -1,25 +1,23 @@
+import { NavMenuLogo } from "./NavMenuLogo";
 import * as React from "react";
-import Link from "next/link";
 import { Poppins } from "next/font/google";
 import {
 	ActionIcon,
 	Separator,
-	Sheet,
 	SheetContent,
 	SheetTrigger,
 	Tooltip,
 	TooltipContent,
 	TooltipTrigger,
 } from "@admin/src/components/ui/client";
-import { IconVolcano } from "@tabler/icons-react";
 import { Bars3Icon } from "@heroicons/react/24/outline";
 import resolveConfig from "tailwindcss/resolveConfig";
 import tailwindConfig from "@admin/tailwind.config";
-import { TypographyH1, TypographyMuted } from "@admin/src/components/ui/server";
 import { routes } from "@admin/src/data/menuRoutes";
 import { cn } from "@admin/src/utils/styling";
 import { UserMenu } from "./UserMenu";
 import { NavMenuItem } from "./NavMenuItem";
+import { NavMenuWrapper } from "./NavMenuWrapper";
 
 const logoFont = Poppins({
 	weight: ["600"],
@@ -36,19 +34,7 @@ async function Menu({ className }: { className?: string }) {
 				className
 			)}
 		>
-			<Link
-				href="/dashboard"
-				className="mb-8 flex items-center justify-center gap-2"
-				aria-label="Logo link"
-			>
-				<IconVolcano size={56} aria-label="Logo image" />
-				<TypographyH1 className={cn("relative select-none text-4xl", logoFont.className)}>
-					Lava
-					<TypographyMuted className="absolute -right-5 -top-[3px] rotate-[20deg] font-sans text-xs font-bold tracking-normal">
-						v{version}
-					</TypographyMuted>
-				</TypographyH1>
-			</Link>
+			<NavMenuLogo version={version} font={logoFont} />
 
 			<div className="flex flex-grow flex-col justify-between gap-8">
 				<div className="flex flex-col gap-2">
@@ -106,7 +92,7 @@ export function NavMenu() {
 	const config = resolveConfig(tailwindConfig);
 
 	return (
-		<Sheet>
+		<NavMenuWrapper>
 			{/* @ts-expect-error Async Server Component */}
 			<Menu className="hidden h-screen sm:flex" />
 			<MenuMobile className="sm:hidden" />
@@ -117,10 +103,11 @@ export function NavMenu() {
 				className="h-full w-full p-0"
 				// @ts-expect-error Tailwind config types are trash
 				maxScreenWidth={config.theme.screens.sm ?? 9999}
+				returnFocus={false}
 			>
 				{/* @ts-expect-error Async Server Component */}
 				<Menu className="h-full" />
 			</SheetContent>
-		</Sheet>
+		</NavMenuWrapper>
 	);
 }
