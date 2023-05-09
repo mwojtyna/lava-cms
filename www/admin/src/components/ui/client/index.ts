@@ -22,6 +22,7 @@ export {
 } from "./DropdownMenu";
 export { Input, type InputBaseProps, InputWrapper } from "./Input";
 export { Label } from "./Label";
+export { Popover, PopoverTrigger, PopoverContent } from "./Popover";
 export { Separator } from "./Separator";
 export {
 	Sheet,

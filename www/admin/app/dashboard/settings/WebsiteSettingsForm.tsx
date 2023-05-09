@@ -11,9 +11,9 @@ import {
 	Button,
 	Input,
 	Textarea,
-	Tooltip,
-	TooltipContent,
-	TooltipTrigger,
+	Popover,
+	PopoverContent,
+	PopoverTrigger,
 } from "@admin/src/components/ui/client";
 import {
 	Card,
@@ -93,12 +93,14 @@ export function WebsiteSettingsForm({ initialData }: { initialData: Inputs }) {
 						label={
 							<>
 								Description&nbsp;
-								<Tooltip>
-									<TooltipTrigger>
+								<Popover>
+									<PopoverTrigger aria-label="?">
 										<QuestionMarkCircleIcon className="w-4" />
-									</TooltipTrigger>
-									<TooltipContent>Used for social media previews</TooltipContent>
-								</Tooltip>
+									</PopoverTrigger>
+									<PopoverContent variant={"tooltip"}>
+										Used for social media previews
+									</PopoverContent>
+								</Popover>
 							</>
 						}
 						placeholder="This website is very awesome and fun!"
@@ -111,15 +113,15 @@ export function WebsiteSettingsForm({ initialData }: { initialData: Inputs }) {
 						label={
 							<>
 								Language&nbsp;
-								<Tooltip>
-									<TooltipTrigger>
+								<Popover>
+									<PopoverTrigger aria-label="More information">
 										<QuestionMarkCircleIcon className="w-4" />
-									</TooltipTrigger>
-									<TooltipContent>
+									</PopoverTrigger>
+									<PopoverContent variant={"tooltip"}>
 										Used in the <TypographyCode>lang</TypographyCode> attribute
 										of the <TypographyCode>&lt;html&gt;</TypographyCode> tag
-									</TooltipContent>
-								</Tooltip>
+									</PopoverContent>
+								</Popover>
 							</>
 						}
 						placeholder="en-US"

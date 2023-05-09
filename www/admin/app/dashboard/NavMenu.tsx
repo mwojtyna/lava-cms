@@ -74,7 +74,7 @@ function MenuMobile({ className }: { className?: string }) {
 	return (
 		<nav
 			className={cn(
-				"flex flex-grow items-center justify-between overflow-auto border-b border-b-border p-3 sm:hidden",
+				"flex flex-grow items-center justify-between overflow-auto border-b border-b-border p-3",
 				className
 			)}
 		>
@@ -109,7 +109,7 @@ export function NavMenu() {
 		<Sheet>
 			{/* @ts-expect-error Async Server Component */}
 			<Menu className="hidden h-screen sm:flex" />
-			<MenuMobile />
+			<MenuMobile className="sm:hidden" />
 
 			<SheetContent
 				position={"left"}
