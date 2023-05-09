@@ -47,7 +47,7 @@ export function SetupForm() {
 
 	return (
 		<SinglePageForm
-			className="w-96" // sm
+			className="sm:w-96" // sm
 			onSubmit={handleSubmit(onSubmit)}
 			titleText={
 				<span className="bg-gradient-to-b from-foreground/70 to-foreground bg-clip-text text-transparent dark:bg-gradient-to-t">
@@ -57,6 +57,7 @@ export function SetupForm() {
 			submitButton={
 				<Button
 					type="submit"
+					size="lg"
 					icon={<ArrowRightIcon className="w-5" />}
 					className="ml-auto shadow-lg shadow-primary/25"
 					loading={isSubmitting || isSubmitSuccessful}
@@ -68,6 +69,7 @@ export function SetupForm() {
 			<Input
 				label="Title"
 				placeholder="My Awesome Website"
+				size="lg"
 				{...register("title")}
 				error={!!errors.title}
 				autoFocus
@@ -78,12 +80,13 @@ export function SetupForm() {
 				label={
 					<>
 						Description&nbsp;
-						<InfoTooltip>Used for social media previews</InfoTooltip>
+						<InfoTooltip size="lg">Used for social media previews</InfoTooltip>
 					</>
 				}
 				placeholder="This website is very awesome and fun!"
 				minRows={3}
 				maxRows={10}
+				size="lg"
 				{...register("description")}
 			/>
 
@@ -91,13 +94,14 @@ export function SetupForm() {
 				label={
 					<>
 						Language&nbsp;
-						<InfoTooltip>
+						<InfoTooltip size="lg">
 							Used in the <TypographyCode>lang</TypographyCode> attribute of the{" "}
 							<TypographyCode>&lt;html&gt;</TypographyCode> tag
 						</InfoTooltip>
 					</>
 				}
 				placeholder="en-US"
+				size="lg"
 				{...register("language")}
 				error={!!errors.language}
 				withAsterisk

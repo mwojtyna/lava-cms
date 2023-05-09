@@ -75,6 +75,7 @@ export function SignUpForm() {
 			submitButton={
 				<Button
 					type="submit"
+					size="lg"
 					icon={<ArrowRightIcon className="w-5" />}
 					className="ml-auto shadow-lg shadow-primary/25"
 					loading={isSubmitting || isSubmitSuccessful}
@@ -87,6 +88,7 @@ export function SignUpForm() {
 				type="email"
 				label="E-mail"
 				placeholder="user@domain.com"
+				size="lg"
 				{...register("email")}
 				error={errors.email?.message}
 				icon={<EnvelopeIcon className="w-5" />}
@@ -98,6 +100,7 @@ export function SignUpForm() {
 					type="text"
 					label="Name"
 					placeholder="John"
+					size="lg"
 					{...register("name")}
 					error={!!errors.name}
 					icon={<UserIcon className="w-5" />}
@@ -106,6 +109,7 @@ export function SignUpForm() {
 					type="text"
 					label="Last name"
 					placeholder="Doe"
+					size="lg"
 					{...register("lastName")}
 					error={!!errors.lastName}
 				/>
@@ -114,6 +118,7 @@ export function SignUpForm() {
 			<Input
 				type="password"
 				label="Password"
+				size="lg"
 				{...register("password")}
 				error={errors.password?.message}
 				icon={<LockClosedIcon className="w-5" />}
@@ -121,6 +126,7 @@ export function SignUpForm() {
 			<Input
 				type="password"
 				label="Repeat password"
+				size="lg"
 				{...register("repeatPassword")}
 				error={errors.repeatPassword?.message}
 				icon={<LockClosedIcon className="w-5" />}

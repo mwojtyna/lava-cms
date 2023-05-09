@@ -28,7 +28,7 @@ type TextareaProps = React.ComponentPropsWithRef<typeof TextareaAutosize> &
 const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
 	({ className, label, error, withAsterisk, size, ...props }, ref) => {
 		return (
-			<InputWrapper label={label} error={error} withAsterisk={withAsterisk}>
+			<InputWrapper label={label} error={error} withAsterisk={withAsterisk} size={size}>
 				{(inputId, errorId) => (
 					<TextareaAutosize
 						id={inputId}

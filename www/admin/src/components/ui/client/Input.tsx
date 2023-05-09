@@ -7,7 +7,9 @@ import { cn } from "@admin/src/utils/styling";
 import { Label } from "../client";
 import { ActionIcon } from "./ActionIcon";
 
-interface InputWrapperProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, "children"> {
+interface InputWrapperProps
+	extends Omit<React.InputHTMLAttributes<HTMLInputElement>, "children" | "size">,
+		VariantProps<typeof inputVariants> {
 	label?: React.ReactNode;
 	error?: React.ReactNode;
 	withAsterisk?: boolean;
@@ -16,14 +18,14 @@ interface InputWrapperProps extends Omit<React.InputHTMLAttributes<HTMLInputElem
 type InputBaseProps = Omit<InputWrapperProps, "children">;
 
 const InputWrapper = React.forwardRef<HTMLDivElement, InputWrapperProps>(
-	({ className, label, error, children, withAsterisk, ...props }, ref) => {
+	({ className, label, error, children, withAsterisk, size, ...props }, ref) => {
 		const inputId = React.useId();
 		const errorId = React.useId();
 
 		return (
 			<div ref={ref} className={cn("flex flex-col gap-1.5", className)} {...props}>
 				{label && (
-					<Label htmlFor={inputId} className="flex">
+					<Label htmlFor={inputId} className="flex" size={size}>
 						<span className="flex items-center">{label}</span>
 						{withAsterisk && <span className="text-destructive">&nbsp;*</span>}
 					</Label>
@@ -67,7 +69,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
 		const [showPassword, setShowPassword] = React.useState(false);
 
 		return (
-			<InputWrapper label={label} error={error} withAsterisk={withAsterisk}>
+			<InputWrapper label={label} error={error} withAsterisk={withAsterisk} size={size}>
 				{(inputId, errorId) => (
 					<div className="relative flex h-11 w-full items-center justify-center">
 						{icon && <div className="absolute left-3 w-5">{icon}</div>}
