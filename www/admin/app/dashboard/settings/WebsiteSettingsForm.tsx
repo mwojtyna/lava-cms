@@ -23,6 +23,7 @@ import {
 	CardTitle,
 	TypographyCode,
 } from "@admin/src/components/ui/server";
+import { useToast } from "@admin/src/hooks";
 
 const schema = z
 	.object({
@@ -38,6 +39,7 @@ type Inputs = z.infer<typeof schema>;
 export function WebsiteSettingsForm({ initialData }: { initialData: Inputs }) {
 	const data = trpcReact.config.getConfig.useQuery().data ?? initialData;
 	const mutation = trpcReact.config.setConfig.useMutation();
+	const { toast } = useToast();
 
 	const {
 		register,
@@ -52,26 +54,21 @@ export function WebsiteSettingsForm({ initialData }: { initialData: Inputs }) {
 				description: data.description,
 				language: data.language,
 			});
-			// notifications.show({
-			// 	title: "Success",
-			// 	message: "Website settings saved.",
-			// 	color: "green",
-			// });
+			toast({
+				title: "Success",
+				description: "Website settings saved.",
+			});
 		} catch (error) {
 			if (error instanceof Error) {
-				// notifications.show({
-				// 	title: "Error",
-				// 	message: <pre>{error.message.trim()}</pre>,
-				// 	color: "red",
-				// 	autoClose: false,
-				// 	sx: {
-				// 		overflow: "auto",
-				// 		pre: {
-				// 			margin: 0,
-				// 			overflow: "auto",
-				// 		},
-				// 	},
-				// });
+				toast({
+					title: "Error",
+					description: (
+						<TypographyCode className="bg-[hsl(0_100%_75%)] dark:bg-[hsl(0_73%_75%)]">
+							{error.message.trim()}
+						</TypographyCode>
+					),
+					variant: "destructive",
+				});
 			}
 		}
 	};

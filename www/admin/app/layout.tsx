@@ -5,7 +5,7 @@ import { TrpcProvider } from "@admin/src/components/providers";
 import { Body } from "@admin/src/components";
 import { ZustandProvider } from "@admin/src/components/providers";
 import { colorThemeSchema } from "@admin/src/data/stores/dashboard";
-import { TooltipProvider } from "@admin/src/components/ui/client";
+import { Toaster, TooltipProvider } from "@admin/src/components/ui/client";
 import "@admin/src/styles/globals.css";
 
 export const metadata: Metadata = {
@@ -41,6 +41,8 @@ export default async function RootLayout({ children }: { children: React.ReactNo
 					<TooltipProvider delayDuration={400}>
 						<TrpcProvider>{children}</TrpcProvider>
 					</TooltipProvider>
+
+					<Toaster />
 				</Body>
 			</ZustandProvider>
 		</html>
