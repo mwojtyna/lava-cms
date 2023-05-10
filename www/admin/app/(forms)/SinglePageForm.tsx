@@ -1,6 +1,6 @@
 import { cn } from "@admin/src/utils/styling";
-import { ThemeSwitch } from "@admin/src/components";
-import { TypographyH1 } from "./ui/server";
+import { ThemeSwitch } from "./ThemeSwitch";
+import { TypographyH1 } from "@admin/src/components/ui/server";
 
 interface Props extends React.ComponentPropsWithoutRef<"form"> {
 	/** Contents of a `TypographyH1` element */

@@ -9,7 +9,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { trpc } from "@admin/src/utils/trpc";
 import { Button, Input } from "@admin/src/components/ui/client";
-import { SinglePageForm } from "@admin/src/components";
+import { SinglePageForm } from "../SinglePageForm";
 
 const inputSchema = z
 	.object({

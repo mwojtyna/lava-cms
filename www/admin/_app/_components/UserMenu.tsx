@@ -13,7 +13,7 @@ import {
 } from "@admin/src/components";
 import { useClickOutside, useDisclosure, useElementSize, useHotkeys } from "@mantine/hooks";
 import { ChevronRightIcon, ArrowLeftOnRectangleIcon } from "@heroicons/react/24/solid";
-import ThemeSwitch from "@admin/src/components/ThemeSwitch";
+import ThemeSwitch from "@admin/app/(forms)/ThemeSwitch";
 import { getBorderColor, getCardColor, getHoverColor } from "@admin/src/utils/colors";
 import type { User } from "api/prisma/types";
 

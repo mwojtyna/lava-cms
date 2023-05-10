@@ -7,9 +7,10 @@ import { z } from "zod";
 import { ArrowRightIcon } from "@heroicons/react/20/solid";
 import { check } from "language-tags";
 import { trpc } from "@admin/src/utils/trpc";
-import { InfoTooltip, SinglePageForm } from "@admin/src/components";
+import { InfoTooltip } from "@admin/src/components";
 import { Button, Input, Textarea } from "@admin/src/components/ui/client";
 import { TypographyCode } from "@admin/src/components/ui/server";
+import { SinglePageForm } from "../SinglePageForm";
 
 const schema = z
 	.object({

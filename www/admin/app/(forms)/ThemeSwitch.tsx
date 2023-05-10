@@ -2,9 +2,9 @@
 
 import * as React from "react";
 import { MoonIcon, SunIcon } from "@heroicons/react/24/outline";
-import { Switch } from "./ui/client";
+import { Switch } from "../../src/components/ui/client";
 import { useColorThemeStore } from "@admin/src/data/stores/dashboard";
-import { cn } from "../utils/styling";
+import { cn } from "../../src/utils/styling";
 
 export const ThemeSwitch = React.forwardRef<
 	HTMLButtonElement,
