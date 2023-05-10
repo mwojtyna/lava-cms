@@ -2,7 +2,7 @@
 
 import { usePathname } from "@admin/src/hooks";
 import { TypographyH1, TypographyMuted } from "./ui/server";
-import { getRoute } from "@admin/src/data/menuRoutes";
+import { getRoute } from "@admin/src/data/routes/navMenu";
 
 export function PageTitle() {
 	const pathname = usePathname();

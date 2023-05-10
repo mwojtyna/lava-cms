@@ -13,7 +13,7 @@ import {
 import { Bars3Icon } from "@heroicons/react/24/outline";
 import resolveConfig from "tailwindcss/resolveConfig";
 import tailwindConfig from "@admin/tailwind.config";
-import { routes } from "@admin/src/data/menuRoutes";
+import { routes } from "@admin/src/data/routes/navMenu";
 import { cn } from "@admin/src/utils/styling";
 import { UserMenu } from "./UserMenu";
 import { NavMenuItem } from "./NavMenuItem";

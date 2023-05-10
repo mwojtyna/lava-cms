@@ -7,17 +7,16 @@ import {
 	CircleStackIcon,
 } from "@heroicons/react/24/outline";
 
-export interface Route {
+export interface NavMenuRoute {
 	label: string;
 	path: NextRoute;
 	description: string;
 	icon?: React.ReactNode;
 	startingRoute?: boolean;
-	children?: ChildRoute[];
+	hasChildren?: boolean;
 }
-type ChildRoute = Omit<Route, "children">;
 
-export const routes: Route[] = [
+export const routes: NavMenuRoute[] = [
 	{
 		label: "Dashboard",
 		path: "/dashboard",
@@ -48,17 +47,18 @@ export const routes: Route[] = [
 		path: "/dashboard/settings",
 		description: "Manage your website settings.",
 		icon: <Cog6ToothIcon className="w-5" />,
+		hasChildren: true,
 	},
 ];
 
-export function getRoute(path: string): Route | undefined {
+export function getRoute(path: string): NavMenuRoute | undefined {
 	for (const route of routes) {
-		if (route.path === path) return route;
+		if (route.path === path) {
+			return route;
+		}
 
-		if (route.children) {
-			for (const child of route.children) {
-				if (child.path === path) return child;
-			}
+		if (route.hasChildren && path.startsWith(route.path)) {
+			return route;
 		}
 	}
 }

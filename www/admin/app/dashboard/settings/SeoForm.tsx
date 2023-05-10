@@ -29,7 +29,7 @@ const schema = z
 	});
 type Inputs = z.infer<typeof schema>;
 
-export function WebsiteSettingsForm({ initialData }: { initialData: Inputs }) {
+export function SeoForm({ initialData }: { initialData: Inputs }) {
 	const data = trpcReact.config.getConfig.useQuery().data ?? initialData;
 	const mutation = trpcReact.config.setConfig.useMutation();
 	const { toast } = useToast();
@@ -67,7 +67,7 @@ export function WebsiteSettingsForm({ initialData }: { initialData: Inputs }) {
 	};
 
 	return (
-		<Card className="max-w-md">
+		<Card className="max-w-md flex-grow">
 			<CardHeader>
 				<CardTitle>SEO</CardTitle>
 				<CardDescription>Search Engine Optimization</CardDescription>
