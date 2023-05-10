@@ -94,15 +94,15 @@ export function NavMenu() {
 	return (
 		<NavMenuWrapper>
 			{/* @ts-expect-error Async Server Component */}
-			<Menu className="hidden h-screen sm:flex" />
-			<MenuMobile className="sm:hidden" />
+			<Menu className="hidden h-screen md:flex" />
+			<MenuMobile className="md:hidden" />
 
 			<SheetContent
 				position={"left"}
 				size={"content"}
-				className="h-full w-full p-0"
+				className="w-full p-0 sm:w-96"
 				// @ts-expect-error Tailwind config types are trash
-				maxScreenWidth={config.theme.screens.sm ?? 9999}
+				maxScreenWidth={config.theme.screens.md ?? 9999}
 				returnFocus={false}
 			>
 				{/* @ts-expect-error Async Server Component */}

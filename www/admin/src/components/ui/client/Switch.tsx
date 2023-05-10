@@ -11,7 +11,7 @@ const switchVariants = cva(
 		variants: {
 			size: {
 				default: "h-8 w-16",
-				sm: "h-6 w-11",
+				md: "h-6 w-11",
 			},
 		},
 		defaultVariants: {

@@ -61,7 +61,7 @@ const sheetVariants = cva(
 			size: {
 				content: "",
 				default: "",
-				sm: "",
+				md: "",
 				lg: "",
 				xl: "",
 				full: "",
@@ -80,7 +80,7 @@ const sheetVariants = cva(
 			},
 			{
 				position: ["top", "bottom"],
-				size: "sm",
+				size: "md",
 				class: "h-1/4",
 			},
 			{
@@ -110,7 +110,7 @@ const sheetVariants = cva(
 			},
 			{
 				position: ["right", "left"],
-				size: "sm",
+				size: "md",
 				class: "w-1/4",
 			},
 			{
@@ -192,13 +192,13 @@ const SheetContent = React.forwardRef<
 SheetContent.displayName = SheetPrimitive.Content.displayName;
 
 const SheetHeader = ({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) => (
-	<div className={cn("flex flex-col space-y-2 text-center sm:text-left", className)} {...props} />
+	<div className={cn("flex flex-col space-y-2 text-center md:text-left", className)} {...props} />
 );
 SheetHeader.displayName = "SheetHeader";
 
 const SheetFooter = ({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) => (
 	<div
-		className={cn("flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-2", className)}
+		className={cn("flex flex-col-reverse md:flex-row md:justify-end md:space-x-2", className)}
 		{...props}
 	/>
 );

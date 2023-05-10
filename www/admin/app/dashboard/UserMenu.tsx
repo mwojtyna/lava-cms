@@ -41,7 +41,7 @@ export async function UserMenu({ small }: { small: boolean }) {
 			<DropdownMenuContent
 				sideOffset={small ? 14 : 18}
 				align="start"
-				className="w-48 sm:ml-2 sm:scale-110"
+				className="w-48 md:ml-2 md:scale-110"
 			>
 				<DropdownMenuLabel>My Account</DropdownMenuLabel>
 				<DropdownMenuSeparator />

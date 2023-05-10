@@ -12,7 +12,7 @@ export function SettingsMenu() {
 	const lastSegment = segments[segments.length - 1];
 
 	return (
-		<div className="flex w-fit gap-2 overflow-x-auto overflow-y-hidden sm:flex-col">
+		<div className="flex w-fit gap-2 overflow-x-auto overflow-y-hidden md:flex-col">
 			{routes.map((route, i) => (
 				<Link
 					key={i}

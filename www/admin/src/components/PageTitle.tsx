@@ -10,7 +10,7 @@ export function PageTitle() {
 
 	return (
 		<header className="flex flex-col gap-1">
-			<TypographyH1 className="text-3xl sm:text-4xl">{route.label}</TypographyH1>
+			<TypographyH1 className="text-3xl md:text-4xl">{route.label}</TypographyH1>
 			<TypographyMuted className="text-base">{route.description}</TypographyMuted>
 		</header>
 	);
