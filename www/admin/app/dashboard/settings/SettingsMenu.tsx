@@ -1,9 +1,9 @@
 "use client";
 
 import type { Route } from "next";
+import Link from "next/link";
 import { Button } from "@admin/src/components/ui/client";
 import { routes } from "@admin/src/data/routes/settings";
-import Link from "next/link";
 import { cn } from "@admin/src/utils/styling";
 import { usePathname } from "@admin/src/hooks";
 

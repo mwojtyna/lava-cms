@@ -12,7 +12,6 @@ export interface NavMenuRoute {
 	path: NextRoute;
 	description: string;
 	icon?: React.ReactNode;
-	startingRoute?: boolean;
 	hasChildren?: boolean;
 }
 
@@ -22,7 +21,6 @@ export const routes: NavMenuRoute[] = [
 		path: "/dashboard",
 		description: "asd",
 		icon: <HomeIcon className="w-5" />,
-		startingRoute: true,
 	},
 	{
 		label: "Pages",
