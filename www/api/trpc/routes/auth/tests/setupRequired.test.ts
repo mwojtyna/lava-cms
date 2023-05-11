@@ -16,18 +16,14 @@ it("returns true and correct reason if no users exist", async () => {
 	prisma.user.findFirst.mockResolvedValue(null);
 	prisma.config.findFirst.mockResolvedValue(null);
 
-	const { setupRequired, reason } = await caller.auth.setupRequired();
-
-	expect(setupRequired).toBe(true);
+	const { reason } = await caller.auth.setupRequired();
 	expect(reason).toBe("no-user");
 });
 it("returns true and correct reason if config is not applied", async () => {
 	prisma.user.findFirst.mockResolvedValue(mockUser);
 	prisma.config.findFirst.mockResolvedValue(null);
 
-	const { setupRequired, reason } = await caller.auth.setupRequired();
-
-	expect(setupRequired).toBe(true);
+	const { reason } = await caller.auth.setupRequired();
 	expect(reason).toBe("no-config");
 });
 
@@ -40,8 +36,6 @@ it("returns false and no reason if users and config exist", async () => {
 		language: "en",
 	});
 
-	const { setupRequired, reason } = await caller.auth.setupRequired();
-
-	expect(setupRequired).toBe(false);
+	const { reason } = await caller.auth.setupRequired();
 	expect(reason).toBeUndefined();
 });

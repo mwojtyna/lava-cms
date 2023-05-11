@@ -3,8 +3,8 @@ import {
 	HomeIcon,
 	Cog6ToothIcon,
 	Square2StackIcon,
-	RectangleGroupIcon,
 	CircleStackIcon,
+	CubeIcon,
 } from "@heroicons/react/24/outline";
 
 export interface NavMenuRoute {
@@ -29,15 +29,15 @@ export const routes: NavMenuRoute[] = [
 		icon: <Square2StackIcon className="w-5" />,
 	},
 	{
-		label: "Layouts",
-		path: "/dashboard/layouts" as NextRoute,
-		description: "View your page layouts.",
-		icon: <RectangleGroupIcon className="w-5" />,
+		label: "Components",
+		path: "/dashboard/components" as NextRoute,
+		description: "",
+		icon: <CubeIcon className="w-5" />,
 	},
 	{
-		label: "Content",
-		path: "/dashboard/content" as NextRoute,
-		description: "Manage your content blocks.",
+		label: "Data",
+		path: "/dashboard/data" as NextRoute,
+		description: "data",
 		icon: <CircleStackIcon className="w-5" />,
 	},
 	{

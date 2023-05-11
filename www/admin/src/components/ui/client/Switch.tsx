@@ -33,7 +33,7 @@ const Switch = React.forwardRef<React.ElementRef<typeof SwitchPrimitives.Root>, 
 			<span
 				className={cn(
 					"absolute left-4 top-1/2 w-5 -translate-x-1/2 -translate-y-1/2",
-					size === "sm" && "left-[10px] w-4"
+					size === "md" && "left-[10px] w-4"
 				)}
 			>
 				{iconOn}
@@ -41,14 +41,14 @@ const Switch = React.forwardRef<React.ElementRef<typeof SwitchPrimitives.Root>, 
 			<SwitchPrimitives.Thumb
 				className={cn(
 					"pointer-events-none z-10 block h-6 w-6 rounded-full bg-background shadow-lg ring-0 transition-transform data-[state=checked]:translate-x-[34px] data-[state=unchecked]:translate-x-[2px]",
-					size === "sm" &&
+					size === "md" &&
 						"h-5 w-5 data-[state=checked]:translate-x-5 data-[state=unchecked]:translate-x-0"
 				)}
 			/>
 			<span
 				className={cn(
 					"absolute left-11 top-1/2 w-5 -translate-x-1/2 -translate-y-1/2",
-					size === "sm" && "left-[30px] w-4"
+					size === "md" && "left-[30px] w-4"
 				)}
 			>
 				{iconOff}
