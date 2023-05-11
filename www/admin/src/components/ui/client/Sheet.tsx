@@ -5,7 +5,6 @@ import * as SheetPrimitive from "@radix-ui/react-dialog";
 import { type VariantProps, cva } from "class-variance-authority";
 import { XMarkIcon } from "@heroicons/react/20/solid";
 import { cn } from "@admin/src/utils/styling";
-import MediaQuery from "react-responsive";
 
 const Sheet = SheetPrimitive.Root;
 const SheetTrigger = SheetPrimitive.Trigger;
@@ -142,6 +141,7 @@ export interface DialogContentProps
 	withCloseButton?: boolean;
 	maxScreenWidth?: number;
 	returnFocus?: boolean;
+	breakpoint?: string;
 }
 
 const SheetContent = React.forwardRef<
@@ -158,35 +158,34 @@ const SheetContent = React.forwardRef<
 			maxScreenWidth,
 			returnFocus = true,
 			onCloseAutoFocus,
+			breakpoint,
 			...props
 		},
 		ref
 	) => (
-		<MediaQuery maxWidth={maxScreenWidth ?? 9999}>
-			<SheetPortal position={position}>
-				<SheetOverlay />
-				<SheetPrimitive.Content
-					ref={ref}
-					className={cn(sheetVariants({ position, size }), className)}
-					onCloseAutoFocus={(e) => {
-						if (!returnFocus) {
-							e.preventDefault();
-							return;
-						}
-						onCloseAutoFocus?.(e);
-					}}
-					{...props}
-				>
-					{children}
-					{withCloseButton && (
-						<SheetPrimitive.Close className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-secondary">
-							<XMarkIcon className="h-4 w-4" />
-							<span className="sr-only">Close</span>
-						</SheetPrimitive.Close>
-					)}
-				</SheetPrimitive.Content>
-			</SheetPortal>
-		</MediaQuery>
+		<SheetPortal position={position}>
+			<SheetOverlay className={breakpoint} />
+			<SheetPrimitive.Content
+				ref={ref}
+				className={cn(sheetVariants({ position, size }), className, breakpoint)}
+				onCloseAutoFocus={(e) => {
+					if (!returnFocus) {
+						e.preventDefault();
+						return;
+					}
+					onCloseAutoFocus?.(e);
+				}}
+				{...props}
+			>
+				{children}
+				{withCloseButton && (
+					<SheetPrimitive.Close className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-secondary">
+						<XMarkIcon className="h-4 w-4" />
+						<span className="sr-only">Close</span>
+					</SheetPrimitive.Close>
+				)}
+			</SheetPrimitive.Content>
+		</SheetPortal>
 	)
 );
 SheetContent.displayName = SheetPrimitive.Content.displayName;

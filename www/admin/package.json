@@ -47,7 +47,6 @@
 		"react": "^18.2.0",
 		"react-dom": "^18.2.0",
 		"react-hook-form": "^7.43.9",
-		"react-responsive": "^9.0.2",
 		"react-textarea-autosize": "^8.4.1",
 		"sharp": "^0.32.0",
 		"slugify": "^1.6.6",

@@ -11,8 +11,6 @@ import {
 	TooltipTrigger,
 } from "@admin/src/components/ui/client";
 import { Bars3Icon } from "@heroicons/react/24/outline";
-import resolveConfig from "tailwindcss/resolveConfig";
-import tailwindConfig from "@admin/tailwind.config";
 import { routes } from "@admin/src/data/routes/navMenu";
 import { cn } from "@admin/src/utils/styling";
 import { UserMenu } from "./UserMenu";
@@ -89,8 +87,6 @@ function MenuMobile({ className }: { className?: string }) {
 }
 
 export function NavMenu() {
-	const config = resolveConfig(tailwindConfig);
-
 	return (
 		<NavMenuWrapper>
 			{/* @ts-expect-error Async Server Component */}
@@ -100,9 +96,8 @@ export function NavMenu() {
 			<SheetContent
 				position={"left"}
 				size={"content"}
-				className="w-full p-0 sm:w-96"
-				// @ts-expect-error Tailwind config types are trash
-				maxScreenWidth={config.theme.screens.md ?? 9999}
+				className="w-full p-0 sm:w-96 md:hidden"
+				breakpoint="md:hidden"
 				returnFocus={false}
 			>
 				{/* @ts-expect-error Async Server Component */}

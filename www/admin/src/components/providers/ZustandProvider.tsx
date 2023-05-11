@@ -18,5 +18,5 @@ export function ZustandProvider(props: Props) {
 		initialized.current = true;
 	}
 
-	return props.children;
+	return <>{props.children}</>;
 }
