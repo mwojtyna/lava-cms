@@ -1,12 +1,13 @@
 "use client";
 
-import type { Page } from "@admin/../api/prisma/types";
+import type { Page } from "api/prisma/types";
 import { DocumentIcon, FolderIcon } from "@heroicons/react/24/outline";
 import type { ColumnDef } from "@tanstack/react-table";
 
 export const columns: ColumnDef<Page>[] = [
 	{
 		header: "Name",
+		accessorKey: "name",
 		cell: ({ row }) => {
 			return (
 				<span className="flex items-center gap-3">
