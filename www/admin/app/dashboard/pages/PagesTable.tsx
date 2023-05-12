@@ -42,16 +42,14 @@ export function PagesTable<TData, TValue>({ columns, data }: DataTableProps<TDat
 
 	return (
 		<div className="flex flex-col gap-4">
-			<div className="flex justify-between">
-				<div className="flex gap-3">
-					<Input
-						value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
-						onChange={(e) => table.getColumn("name")?.setFilterValue(e.target.value)}
-						icon={<MagnifyingGlassIcon className="w-4" />}
-					/>
-				</div>
+			<div className="flex justify-between gap-2">
+				<Input
+					value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
+					onChange={(e) => table.getColumn("name")?.setFilterValue(e.target.value)}
+					icon={<MagnifyingGlassIcon className="w-4" />}
+				/>
 
-				<div className="flex gap-3">
+				<div className="flex gap-2">
 					<Button icon={<DocumentPlusIcon className="w-5" />}>Page</Button>
 					<Button variant={"secondary"} icon={<FolderPlusIcon className="w-5" />}>
 						Group
@@ -85,10 +83,13 @@ export function PagesTable<TData, TValue>({ columns, data }: DataTableProps<TDat
 									key={row.id}
 									data-state={row.getIsSelected() && "selected"}
 								>
-									{row.getVisibleCells().map((cell, i) => (
+									{row.getVisibleCells().map((cell, i, cells) => (
 										<TableCell
 											key={cell.id}
-											className={cn(i > 0 && "text-muted-foreground")}
+											className={cn(
+												i > 0 && "text-muted-foreground",
+												i === cells.length - 1 && "py-0"
+											)}
 										>
 											{flexRender(
 												cell.column.columnDef.cell,

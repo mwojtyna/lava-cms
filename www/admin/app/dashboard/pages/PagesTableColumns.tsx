@@ -1,8 +1,21 @@
 "use client";
 
 import type { Page } from "api/prisma/types";
-import { DocumentIcon, FolderIcon } from "@heroicons/react/24/outline";
+import {
+	DocumentIcon,
+	FolderIcon,
+	FolderArrowDownIcon,
+	TrashIcon,
+} from "@heroicons/react/24/outline";
 import type { ColumnDef } from "@tanstack/react-table";
+import {
+	ActionIcon,
+	DropdownMenu,
+	DropdownMenuContent,
+	DropdownMenuItem,
+	DropdownMenuTrigger,
+} from "@admin/src/components/ui/client";
+import { EllipsisHorizontalIcon } from "@heroicons/react/20/solid";
 
 export const columns: ColumnDef<Page>[] = [
 	{
@@ -38,5 +51,26 @@ export const columns: ColumnDef<Page>[] = [
 			};
 			return new Intl.DateTimeFormat("en-GB", options).format(page.last_update);
 		},
+	},
+	{
+		id: "actions",
+		cell: ({ row }) => (
+			<DropdownMenu>
+				<DropdownMenuTrigger asChild>
+					<ActionIcon>
+						<EllipsisHorizontalIcon className="w-5" />
+					</ActionIcon>
+				</DropdownMenuTrigger>
+
+				<DropdownMenuContent>
+					<DropdownMenuItem>
+						<FolderArrowDownIcon className="w-4" /> Move
+					</DropdownMenuItem>
+					<DropdownMenuItem className="text-destructive">
+						<TrashIcon className="w-4" /> Delete
+					</DropdownMenuItem>
+				</DropdownMenuContent>
+			</DropdownMenu>
+		),
 	},
 ];
