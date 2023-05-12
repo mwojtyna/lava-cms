@@ -15,7 +15,6 @@ it("updates the page's url and its children's urls", async () => {
 		id: ID,
 		name: "Old Name",
 		url: "/old-name",
-		order: 0,
 		parent_id: null,
 	});
 
@@ -59,7 +58,6 @@ it("throws a trpc 409 'CONFLICT' error if the new url is already taken", async (
 		id: ID,
 		name: NEW_NAME,
 		url: "/" + NEW_SLUG,
-		order: 0,
 		parent_id: null,
 	});
 
@@ -90,7 +88,6 @@ it("throws a trpc 500 'INTERNAL_SERVER_ERROR' error if the database throws an un
 		id: ID,
 		name: NEW_NAME,
 		url: "/" + NEW_SLUG,
-		order: 0,
 		parent_id: null,
 	});
 

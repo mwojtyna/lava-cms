@@ -37,9 +37,8 @@ export function SetupForm() {
 				...data,
 			}),
 			trpc.pages.addPage.mutate({
-				name: "Root",
+				name: "Home",
 				url: "/",
-				order: 0,
 			}),
 		]);
 

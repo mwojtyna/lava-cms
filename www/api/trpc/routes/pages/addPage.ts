@@ -11,7 +11,6 @@ export const addPage = publicProcedure
 			name: z.string(),
 			url: z.string().regex(url),
 			parent_id: z.string().cuid().optional(),
-			order: z.number().int(),
 		})
 	)
 	.mutation(async ({ input }) => {
@@ -21,7 +20,6 @@ export const addPage = publicProcedure
 					name: input.name,
 					url: input.url,
 					parent_id: input.parent_id ?? null,
-					order: input.order,
 				},
 			});
 		} catch (error) {

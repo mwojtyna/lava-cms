@@ -9,7 +9,6 @@ vi.mock("@api/prisma/client");
 const PAGE: Omit<Prisma.PageCreateInput, "id"> = {
 	name: "Page",
 	url: "/page",
-	order: 0,
 };
 
 it("adds a page", async () => {

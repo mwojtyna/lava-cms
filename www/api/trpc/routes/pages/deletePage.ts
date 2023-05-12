@@ -11,22 +11,7 @@ export const deletePage = publicProcedure
 		})
 	)
 	.mutation(async ({ input }) => {
-		prisma.$transaction([
-			prisma.page.delete({
-				where: { id: input.id },
-			}),
-			prisma.page.updateMany({
-				where: {
-					parent_id: input.parent_id,
-					order: {
-						gt: input.order,
-					},
-				},
-				data: {
-					order: {
-						decrement: 1,
-					},
-				},
-			}),
-		]);
+		prisma.page.delete({
+			where: { id: input.id },
+		});
 	});

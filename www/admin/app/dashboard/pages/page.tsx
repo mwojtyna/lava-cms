@@ -1,5 +1,7 @@
-import * as React from "react";
+import { trpc } from "@admin/src/utils/trpc";
 
-export default function Pages() {
-	return <div>Pages</div>;
+export default async function Pages() {
+	const page = await trpc.pages.getTopLevelPages.query();
+
+	return <div>{JSON.stringify(page)}</div>;
 }
