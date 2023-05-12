@@ -31,6 +31,7 @@
 		"@radix-ui/react-tooltip": "^1.0.5",
 		"@tabler/icons-react": "^2.17.0",
 		"@tanstack/react-query": "^4.29.5",
+		"@tanstack/react-table": "^8.9.1",
 		"@trpc/react-query": "^10.21.1",
 		"api": "workspace:*",
 		"class-variance-authority": "^0.6.0",

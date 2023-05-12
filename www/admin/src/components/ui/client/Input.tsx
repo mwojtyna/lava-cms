@@ -33,7 +33,7 @@ const InputWrapper = React.forwardRef<HTMLDivElement, InputWrapperProps>(
 
 				{children(inputId, errorId)}
 
-				{typeof error !== "boolean" && (
+				{error && typeof error !== "boolean" && (
 					<p id={errorId} className="text-sm text-destructive">
 						{error}
 					</p>
@@ -49,6 +49,7 @@ const inputVariants = cva(
 	{
 		variants: {
 			size: {
+				sm: "h-9 text-sm",
 				default: "h-10 text-sm",
 				lg: "h-11 text-base",
 			},
@@ -71,7 +72,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
 		return (
 			<InputWrapper label={label} error={error} withAsterisk={withAsterisk} size={size}>
 				{(inputId, errorId) => (
-					<div className="relative flex h-11 w-full items-center justify-center">
+					<div className="relative flex w-full items-center justify-center">
 						{icon && <div className="absolute left-3 w-5">{icon}</div>}
 						<input
 							type={type === "password" ? (showPassword ? "text" : "password") : type}

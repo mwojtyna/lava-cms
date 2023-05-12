@@ -21,7 +21,7 @@ export function SinglePageForm({
 			<div className="flex flex-col gap-5">
 				<TypographyH1 className="mb-4">{titleText}</TypographyH1>
 
-				{children}
+				<div className="space-y-6">{children}</div>
 
 				<div className="flex items-center">
 					<ThemeSwitch />
