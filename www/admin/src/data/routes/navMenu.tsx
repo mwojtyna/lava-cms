@@ -27,6 +27,7 @@ export const routes: NavMenuRoute[] = [
 		path: "/dashboard/pages",
 		description: "Create and manage your pages.",
 		icon: <Square2StackIcon className="w-5" />,
+		hasChildren: true,
 	},
 	{
 		label: "Components",
