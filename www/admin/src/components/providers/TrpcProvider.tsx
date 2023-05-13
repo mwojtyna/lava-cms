@@ -4,6 +4,7 @@ import { useState } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { httpBatchLink, httpLink, loggerLink } from "@trpc/client";
 import { SessionProvider } from "next-auth/react";
+import SuperJSON from "superjson";
 import { trpcReact } from "@admin/src/utils/trpcReact";
 import { env } from "@admin/src/env/client.mjs";
 
@@ -25,6 +26,7 @@ export function TrpcProvider(props: { children: React.ReactNode }) {
 							url: "/admin/api/trpc",
 					  }),
 			],
+			transformer: SuperJSON,
 		})
 	);
 	return (
