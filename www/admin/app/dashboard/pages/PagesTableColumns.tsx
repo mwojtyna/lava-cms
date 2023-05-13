@@ -31,7 +31,7 @@ export const columns: ColumnDef<Page>[] = [
 					) : (
 						<DocumentIcon className="w-5 text-muted-foreground" />
 					)}
-					<Button variant={"link"} asChild>
+					<Button variant={"link"} className="font-normal" asChild>
 						<Link
 							href={
 								row.original.is_group

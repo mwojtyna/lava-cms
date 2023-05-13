@@ -7,5 +7,5 @@ export const dynamic = "force-dynamic";
 export default async function Pages() {
 	const pages = await trpc.pages.getTopLevelPages.query();
 
-	return <PagesTable columns={columns} data={pages} />;
+	return <PagesTable columns={columns} data={pages} breadcrumbs={[]} />;
 }

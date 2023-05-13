@@ -10,6 +10,7 @@ import {
 	getFilteredRowModel,
 } from "@tanstack/react-table";
 import {
+	Stepper,
 	Table,
 	TableBody,
 	TableCell,
@@ -17,16 +18,29 @@ import {
 	TableHeader,
 	TableRow,
 } from "@admin/src/components/ui/server";
+import { ChevronRightIcon } from "@heroicons/react/20/solid";
+import type { Page } from "api/prisma/types";
 import { cn } from "@admin/src/utils/styling";
-import { Button, Input } from "@admin/src/components/ui/client";
-import { DocumentPlusIcon, FolderPlusIcon, MagnifyingGlassIcon } from "@heroicons/react/24/outline";
+import { ActionIcon, Button, Input } from "@admin/src/components/ui/client";
+import {
+	DocumentPlusIcon,
+	FolderPlusIcon,
+	HomeIcon,
+	MagnifyingGlassIcon,
+} from "@heroicons/react/24/outline";
+import Link from "next/link";
 
-interface DataTableProps<TData, TValue> {
+interface PagesTableProps<TData, TValue> {
 	columns: ColumnDef<TData, TValue>[];
 	data: TData[];
+	breadcrumbs: Page[];
 }
 
-export function PagesTable<TData, TValue>({ columns, data }: DataTableProps<TData, TValue>) {
+export function PagesTable<TData, TValue>({
+	columns,
+	data,
+	breadcrumbs,
+}: PagesTableProps<TData, TValue>) {
 	const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
 
 	const table = useReactTable({
@@ -41,8 +55,8 @@ export function PagesTable<TData, TValue>({ columns, data }: DataTableProps<TDat
 	});
 
 	return (
-		<div className="flex flex-col gap-4">
-			<div className="flex justify-between gap-2">
+		<div className="flex flex-col gap-2">
+			<div className="mb-2 flex justify-between gap-2">
 				<Input
 					value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
 					onChange={(e) => table.getColumn("name")?.setFilterValue(e.target.value)}
@@ -56,6 +70,35 @@ export function PagesTable<TData, TValue>({ columns, data }: DataTableProps<TDat
 					</Button>
 				</div>
 			</div>
+
+			{breadcrumbs.length > 0 && (
+				<Stepper
+					steps={[
+						<Link key={0} href={"/dashboard/pages"}>
+							<ActionIcon className="-mr-2">
+								<HomeIcon className="w-5 text-foreground" />
+							</ActionIcon>
+						</Link>,
+						...breadcrumbs.map((breadcrumb, i) => (
+							<Button
+								key={i + 1}
+								asChild
+								variant={"link"}
+								className={cn(
+									"whitespace-nowrap font-normal",
+									i < breadcrumbs.length - 1 && "text-muted-foreground"
+								)}
+							>
+								<Link key={i} href={`/dashboard/pages/${breadcrumb.id}`}>
+									{breadcrumb.name}
+								</Link>
+							</Button>
+						)),
+					]}
+					currentStep={breadcrumbs.length}
+					separator={<ChevronRightIcon className="w-4" />}
+				/>
+			)}
 
 			<div className="rounded-md border">
 				<Table>
@@ -87,6 +130,7 @@ export function PagesTable<TData, TValue>({ columns, data }: DataTableProps<TDat
 										<TableCell
 											key={cell.id}
 											className={cn(
+												"whitespace-nowrap",
 												i > 0 && "text-muted-foreground",
 												i === cells.length - 1 && "py-0"
 											)}

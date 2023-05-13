@@ -47,7 +47,7 @@ export function SetupForm() {
 
 	return (
 		<SinglePageForm
-			className="sm:w-96" // sm
+			className="sm:w-96"
 			onSubmit={handleSubmit(onSubmit)}
 			titleText={
 				<span className="bg-gradient-to-b from-foreground/70 to-foreground bg-clip-text text-transparent dark:bg-gradient-to-t">
