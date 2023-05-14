@@ -4,6 +4,15 @@ export { ActionIcon } from "./ActionIcon";
 export { Avatar, AvatarFallback, AvatarImage } from "./Avatar";
 export { Button, buttonVariants } from "./Button";
 export {
+	Dialog,
+	DialogTrigger,
+	DialogContent,
+	DialogHeader,
+	DialogFooter,
+	DialogTitle,
+	DialogDescription,
+} from "./Dialog";
+export {
 	DropdownMenu,
 	DropdownMenuCheckboxItem,
 	DropdownMenuContent,

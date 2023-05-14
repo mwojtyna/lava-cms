@@ -29,8 +29,8 @@ const schema = z
 	});
 type Inputs = z.infer<typeof schema>;
 
-export function SeoForm({ initialData }: { initialData: Inputs }) {
-	const data = trpcReact.config.getConfig.useQuery().data ?? initialData;
+export function SeoForm({ serverData }: { serverData: Inputs }) {
+	const data = trpcReact.config.getConfig.useQuery().data ?? serverData;
 	const mutation = trpcReact.config.setConfig.useMutation();
 	const { toast } = useToast();
 

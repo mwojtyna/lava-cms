@@ -1,5 +1,6 @@
 "use client";
 
+import * as React from "react";
 import Link from "next/link";
 import type { Page } from "api/prisma/types";
 import {
@@ -12,12 +13,20 @@ import type { ColumnDef } from "@tanstack/react-table";
 import {
 	ActionIcon,
 	Button,
+	Dialog,
+	DialogContent,
+	DialogTrigger,
 	DropdownMenu,
 	DropdownMenuContent,
 	DropdownMenuItem,
 	DropdownMenuTrigger,
+	DialogDescription,
+	DialogFooter,
+	DialogHeader,
+	DialogTitle,
 } from "@admin/src/components/ui/client";
 import { EllipsisHorizontalIcon } from "@heroicons/react/20/solid";
+import { trpcReact } from "@admin/src/utils/trpcReact";
 
 export const columns: ColumnDef<Page>[] = [
 	{
@@ -72,7 +81,22 @@ export const columns: ColumnDef<Page>[] = [
 	},
 	{
 		id: "actions",
-		cell: ({ row }) => (
+		cell: ({ row }) => <PagesTableActions page={row.original} />,
+	},
+];
+
+function PagesTableActions({ page }: { page: Page }) {
+	const [openDelete, setOpenDelete] = React.useState<boolean>();
+	const deleteMutation = trpcReact.pages.deletePage.useMutation();
+	async function handleDelete() {
+		await deleteMutation.mutateAsync({
+			id: page.id,
+		});
+		setOpenDelete(false);
+	}
+
+	return (
+		<Dialog open={openDelete} defaultOpen={false}>
 			<DropdownMenu>
 				<DropdownMenuTrigger asChild>
 					<ActionIcon>
@@ -84,11 +108,37 @@ export const columns: ColumnDef<Page>[] = [
 					<DropdownMenuItem>
 						<FolderArrowDownIcon className="w-4" /> Move
 					</DropdownMenuItem>
-					<DropdownMenuItem className="text-destructive">
-						<TrashIcon className="w-4" /> Delete
-					</DropdownMenuItem>
+
+					<DialogTrigger asChild>
+						<DropdownMenuItem className="text-destructive">
+							<TrashIcon className="w-4" /> Delete
+						</DropdownMenuItem>
+					</DialogTrigger>
 				</DropdownMenuContent>
 			</DropdownMenu>
-		),
-	},
-];
+
+			<DialogContent className="!max-w-md">
+				<DialogHeader>
+					<DialogTitle>Delete {page.is_group ? "group" : "page"}?</DialogTitle>
+					<DialogDescription>
+						{page.is_group
+							? "Are you sure you want to delete the group and all its pages? This action cannot be undone!"
+							: "Are you sure you want to delete the page? This action cannot be undone!"}
+					</DialogDescription>
+				</DialogHeader>
+
+				<DialogFooter>
+					<Button variant={"ghost"}>No, don&apos;t delete</Button>
+					<Button
+						loading={deleteMutation.isLoading || deleteMutation.isSuccess}
+						type="submit"
+						variant={"destructive"}
+						onClick={handleDelete}
+					>
+						Delete
+					</Button>
+				</DialogFooter>
+			</DialogContent>
+		</Dialog>
+	);
+}
