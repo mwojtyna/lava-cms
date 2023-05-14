@@ -8,6 +8,7 @@ import {
 	FolderIcon,
 	FolderArrowDownIcon,
 	TrashIcon,
+	PencilSquareIcon,
 } from "@heroicons/react/24/outline";
 import type { ColumnDef } from "@tanstack/react-table";
 import {
@@ -106,12 +107,19 @@ function PagesTableActions({ page }: { page: Page }) {
 
 				<DropdownMenuContent>
 					<DropdownMenuItem>
-						<FolderArrowDownIcon className="w-4" /> Move
+						<PencilSquareIcon className="w-4" />
+						<span>Edit details</span>
+					</DropdownMenuItem>
+
+					<DropdownMenuItem>
+						<FolderArrowDownIcon className="w-4" />
+						<span>Move</span>
 					</DropdownMenuItem>
 
 					<DialogTrigger asChild>
 						<DropdownMenuItem className="text-destructive">
-							<TrashIcon className="w-4" /> Delete
+							<TrashIcon className="w-4" />
+							<span>Delete</span>
 						</DropdownMenuItem>
 					</DialogTrigger>
 				</DropdownMenuContent>
