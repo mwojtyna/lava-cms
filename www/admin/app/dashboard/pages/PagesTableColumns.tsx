@@ -86,7 +86,7 @@ export const columns: ColumnDef<Page>[] = [
 ];
 
 function PagesTableActions({ page }: { page: Page }) {
-	const [openDelete, setOpenDelete] = React.useState<boolean>();
+	const [openDelete, setOpenDelete] = React.useState<boolean>(false);
 	const deleteMutation = trpcReact.pages.deletePage.useMutation();
 	async function handleDelete() {
 		await deleteMutation.mutateAsync({
@@ -96,7 +96,7 @@ function PagesTableActions({ page }: { page: Page }) {
 	}
 
 	return (
-		<Dialog open={openDelete} defaultOpen={false}>
+		<Dialog open={openDelete} onOpenChange={setOpenDelete}>
 			<DropdownMenu>
 				<DropdownMenuTrigger asChild>
 					<ActionIcon>
@@ -128,7 +128,9 @@ function PagesTableActions({ page }: { page: Page }) {
 				</DialogHeader>
 
 				<DialogFooter>
-					<Button variant={"ghost"}>No, don&apos;t delete</Button>
+					<Button variant={"ghost"} onClick={() => setOpenDelete(false)}>
+						No, don&apos;t delete
+					</Button>
 					<Button
 						loading={deleteMutation.isLoading}
 						type="submit"
