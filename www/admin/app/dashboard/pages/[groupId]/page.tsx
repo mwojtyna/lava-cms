@@ -11,5 +11,12 @@ export default async function Group({ params }: { params: { groupId: string } })
 		return notFound();
 	}
 
-	return <PagesTable columns={columns} data={pages} breadcrumbs={breadcrumbs} />;
+	return (
+		<PagesTable
+			columns={columns}
+			pages={pages}
+			breadcrumbs={breadcrumbs}
+			groupId={params.groupId}
+		/>
+	);
 }

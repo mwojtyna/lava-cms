@@ -130,7 +130,7 @@ function PagesTableActions({ page }: { page: Page }) {
 				<DialogFooter>
 					<Button variant={"ghost"}>No, don&apos;t delete</Button>
 					<Button
-						loading={deleteMutation.isLoading || deleteMutation.isSuccess}
+						loading={deleteMutation.isLoading}
 						type="submit"
 						variant={"destructive"}
 						onClick={handleDelete}

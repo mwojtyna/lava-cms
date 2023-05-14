@@ -5,7 +5,7 @@ import { columns } from "./PagesTableColumns";
 export const dynamic = "force-dynamic";
 
 export default async function Pages() {
-	const pages = await trpc.pages.getTopLevelPages.query();
+	const data = await trpc.pages.getGroup.query();
 
-	return <PagesTable columns={columns} data={pages} breadcrumbs={[]} />;
+	return <PagesTable columns={columns} pages={data.pages} breadcrumbs={[]} />;
 }

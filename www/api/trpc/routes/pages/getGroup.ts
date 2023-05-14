@@ -4,8 +4,20 @@ import { publicProcedure } from "@api/trpc";
 import { z } from "zod";
 
 export const getGroup = publicProcedure
-	.input(z.object({ id: z.string() }))
-	.query(async ({ input }) => {
+	.input(z.object({ id: z.string() }).nullish())
+	.query(async ({ input }): Promise<{ breadcrumbs: Page[]; pages: Page[] }> => {
+		// Return top-level pages if no ID is provided
+		if (!input) {
+			return {
+				breadcrumbs: [],
+				pages: await prisma.page.findMany({
+					where: {
+						parent_id: null,
+					},
+				}),
+			};
+		}
+
 		const group = await prisma.page.findFirst({
 			where: {
 				id: input.id,

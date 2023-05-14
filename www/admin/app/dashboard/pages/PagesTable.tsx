@@ -29,23 +29,24 @@ import {
 	MagnifyingGlassIcon,
 } from "@heroicons/react/24/outline";
 import Link from "next/link";
+import { trpcReact } from "@admin/src/utils/trpcReact";
 
-interface PagesTableProps<TData, TValue> {
-	columns: ColumnDef<TData, TValue>[];
-	data: TData[];
+interface PagesTableProps {
+	columns: ColumnDef<Page>[];
+	pages: Page[];
 	breadcrumbs: Page[];
+	groupId?: string;
 }
 
-export function PagesTable<TData, TValue>({
-	columns,
-	data,
-	breadcrumbs,
-}: PagesTableProps<TData, TValue>) {
+export function PagesTable(props: PagesTableProps) {
+	const clientData = trpcReact.pages.getGroup.useQuery(
+		props.groupId ? { id: props.groupId } : null
+	);
 	const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
 
 	const table = useReactTable({
-		data,
-		columns,
+		data: clientData.data?.pages ?? props.pages,
+		columns: props.columns,
 		getCoreRowModel: getCoreRowModel(),
 		onColumnFiltersChange: setColumnFilters,
 		getFilteredRowModel: getFilteredRowModel(),
@@ -71,7 +72,7 @@ export function PagesTable<TData, TValue>({
 				</div>
 			</div>
 
-			{breadcrumbs.length > 0 && (
+			{props.breadcrumbs.length > 0 && (
 				<Stepper
 					steps={[
 						<Link key={0} href={"/dashboard/pages"}>
@@ -79,14 +80,14 @@ export function PagesTable<TData, TValue>({
 								<HomeIcon className="w-5 text-foreground" />
 							</ActionIcon>
 						</Link>,
-						...breadcrumbs.map((breadcrumb, i) => (
+						...props.breadcrumbs.map((breadcrumb, i) => (
 							<Button
 								key={i + 1}
 								asChild
 								variant={"link"}
 								className={cn(
 									"whitespace-nowrap font-normal",
-									i < breadcrumbs.length - 1 && "text-muted-foreground"
+									i < props.breadcrumbs.length - 1 && "text-muted-foreground"
 								)}
 							>
 								<Link key={i} href={`/dashboard/pages/${breadcrumb.id}`}>
@@ -95,7 +96,7 @@ export function PagesTable<TData, TValue>({
 							</Button>
 						)),
 					]}
-					currentStep={breadcrumbs.length}
+					currentStep={props.breadcrumbs.length}
 					separator={<ChevronRightIcon className="w-4" />}
 				/>
 			)}
@@ -145,7 +146,10 @@ export function PagesTable<TData, TValue>({
 							))
 						) : (
 							<TableRow>
-								<TableCell colSpan={columns.length} className="h-24 text-center">
+								<TableCell
+									colSpan={props.columns.length}
+									className="h-24 text-center"
+								>
 									No results.
 								</TableCell>
 							</TableRow>
