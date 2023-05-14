@@ -14,20 +14,13 @@ import type { ColumnDef } from "@tanstack/react-table";
 import {
 	ActionIcon,
 	Button,
-	Dialog,
-	DialogContent,
-	DialogTrigger,
 	DropdownMenu,
 	DropdownMenuContent,
 	DropdownMenuItem,
 	DropdownMenuTrigger,
-	DialogDescription,
-	DialogFooter,
-	DialogHeader,
-	DialogTitle,
 } from "@admin/src/components/ui/client";
 import { EllipsisHorizontalIcon } from "@heroicons/react/20/solid";
-import { trpcReact } from "@admin/src/utils/trpcReact";
+import { DeletePageDialog } from "./dialogs";
 
 export const columns: ColumnDef<Page>[] = [
 	{
@@ -87,17 +80,10 @@ export const columns: ColumnDef<Page>[] = [
 ];
 
 function PagesTableActions({ page }: { page: Page }) {
-	const [openDelete, setOpenDelete] = React.useState<boolean>(false);
-	const deleteMutation = trpcReact.pages.deletePage.useMutation();
-	async function handleDelete() {
-		await deleteMutation.mutateAsync({
-			id: page.id,
-		});
-		setOpenDelete(false);
-	}
+	const [openDelete, setOpenDelete] = React.useState(false);
 
 	return (
-		<Dialog open={openDelete} onOpenChange={setOpenDelete}>
+		<>
 			<DropdownMenu>
 				<DropdownMenuTrigger asChild>
 					<ActionIcon>
@@ -116,39 +102,17 @@ function PagesTableActions({ page }: { page: Page }) {
 						<span>Move</span>
 					</DropdownMenuItem>
 
-					<DialogTrigger asChild>
-						<DropdownMenuItem className="text-destructive">
-							<TrashIcon className="w-4" />
-							<span>Delete</span>
-						</DropdownMenuItem>
-					</DialogTrigger>
+					<DropdownMenuItem
+						className="text-destructive"
+						onClick={() => setOpenDelete(true)}
+					>
+						<TrashIcon className="w-4" />
+						<span>Delete</span>
+					</DropdownMenuItem>
 				</DropdownMenuContent>
 			</DropdownMenu>
 
-			<DialogContent className="!max-w-md">
-				<DialogHeader>
-					<DialogTitle>Delete {page.is_group ? "group" : "page"}?</DialogTitle>
-					<DialogDescription>
-						{page.is_group
-							? "Are you sure you want to delete the group and all its pages? This action cannot be undone!"
-							: "Are you sure you want to delete the page? This action cannot be undone!"}
-					</DialogDescription>
-				</DialogHeader>
-
-				<DialogFooter>
-					<Button variant={"ghost"} onClick={() => setOpenDelete(false)}>
-						No, don&apos;t delete
-					</Button>
-					<Button
-						loading={deleteMutation.isLoading}
-						type="submit"
-						variant={"destructive"}
-						onClick={handleDelete}
-					>
-						Delete
-					</Button>
-				</DialogFooter>
-			</DialogContent>
-		</Dialog>
+			<DeletePageDialog page={page} open={openDelete} setOpen={setOpenDelete} />
+		</>
 	);
 }
