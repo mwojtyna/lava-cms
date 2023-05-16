@@ -12,6 +12,7 @@ import {
 	DialogTitle,
 } from "@admin/src/components/ui/client";
 import { trpcReact } from "@admin/src/utils/trpcReact";
+import { TrashIcon } from "@heroicons/react/24/outline";
 
 interface DialogProps {
 	page: Page;
@@ -48,6 +49,7 @@ export function DeletePageDialog(props: DialogProps) {
 						loading={mutation.isLoading}
 						type="submit"
 						variant={"destructive"}
+						icon={<TrashIcon className="w-5" />}
 						onClick={handleSubmit}
 					>
 						Delete
