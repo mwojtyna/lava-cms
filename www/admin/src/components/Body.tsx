@@ -33,7 +33,8 @@ export function Body({ children, fonts, ...props }: Props) {
 		<body
 			className={cn(
 				store.colorTheme,
-				fonts.map((font) => font.variable)
+				fonts.map((font) => font.variable),
+				"antialiased"
 			)}
 			{...props}
 		>
