@@ -20,7 +20,7 @@ import {
 	DropdownMenuTrigger,
 } from "@admin/src/components/ui/client";
 import { EllipsisHorizontalIcon } from "@heroicons/react/20/solid";
-import { DeletePageDialog } from "./dialogs";
+import { DeletePageDialog, MovePageDialog } from "./dialogs";
 
 export const columns: ColumnDef<Page>[] = [
 	{
@@ -81,6 +81,7 @@ export const columns: ColumnDef<Page>[] = [
 
 function PagesTableActions({ page }: { page: Page }) {
 	const [openDelete, setOpenDelete] = React.useState(false);
+	const [openMove, setOpenMove] = React.useState(false);
 
 	return (
 		<>
@@ -97,7 +98,7 @@ function PagesTableActions({ page }: { page: Page }) {
 						<span>Edit details</span>
 					</DropdownMenuItem>
 
-					<DropdownMenuItem>
+					<DropdownMenuItem onClick={() => setOpenMove(true)} disabled={page.url === "/"}>
 						<FolderArrowDownIcon className="w-4" />
 						<span>Move</span>
 					</DropdownMenuItem>
@@ -113,6 +114,7 @@ function PagesTableActions({ page }: { page: Page }) {
 			</DropdownMenu>
 
 			<DeletePageDialog page={page} open={openDelete} setOpen={setOpenDelete} />
+			<MovePageDialog page={page} open={openMove} setOpen={setOpenMove} />
 		</>
 	);
 }

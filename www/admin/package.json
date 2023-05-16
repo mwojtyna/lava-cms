@@ -32,6 +32,7 @@
 		"api": "workspace:*",
 		"class-variance-authority": "^0.6.0",
 		"clsx": "^1.2.1",
+		"cmdk": "^0.2.0",
 		"cookies-next": "^2.1.1",
 		"dotenv": "^16.0.3",
 		"language-tags": "^1.0.8",

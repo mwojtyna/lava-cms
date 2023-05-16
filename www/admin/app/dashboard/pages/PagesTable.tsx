@@ -39,7 +39,7 @@ interface PagesTableProps {
 }
 
 export function PagesTable(props: PagesTableProps) {
-	const clientData = trpcReact.pages.getGroup.useQuery(
+	const clientData = trpcReact.pages.getGroupContents.useQuery(
 		props.groupId ? { id: props.groupId } : null
 	);
 	const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);

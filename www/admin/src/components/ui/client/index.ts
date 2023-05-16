@@ -4,6 +4,17 @@ export { ActionIcon } from "./ActionIcon";
 export { Avatar, AvatarFallback, AvatarImage } from "./Avatar";
 export { Button, buttonVariants } from "./Button";
 export {
+	Command,
+	CommandDialog,
+	CommandInput,
+	CommandList,
+	CommandEmpty,
+	CommandGroup,
+	CommandItem,
+	CommandShortcut,
+	CommandSeparator,
+} from "./Command";
+export {
 	Dialog,
 	DialogTrigger,
 	DialogContent,

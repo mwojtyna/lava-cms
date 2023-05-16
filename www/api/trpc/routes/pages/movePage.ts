@@ -8,7 +8,6 @@ export const movePage = publicProcedure
 	.input(
 		z.object({
 			id: z.string().cuid(),
-			slug: z.string(),
 			newParentId: z.string().cuid(),
 		})
 	)
@@ -30,7 +29,7 @@ export const movePage = publicProcedure
 			await caller.pages.editPage({
 				id: input.id,
 				newName: page.name,
-				newUrl: parentPage.url + (parentPage.url === "/" ? "" : "/") + input.slug,
+				newUrl: parentPage.url + "/" + page.url.split("/").pop(),
 			});
 			await tx.page.update({
 				where: { id: input.id },

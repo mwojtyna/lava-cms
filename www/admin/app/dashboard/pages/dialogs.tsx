@@ -12,7 +12,9 @@ import {
 	DialogTitle,
 } from "@admin/src/components/ui/client";
 import { trpcReact } from "@admin/src/utils/trpcReact";
-import { TrashIcon } from "@heroicons/react/24/outline";
+import { FolderArrowDownIcon, TrashIcon } from "@heroicons/react/24/outline";
+import { Combobox } from "@admin/src/components";
+import { TypographyMuted } from "@admin/src/components/ui/server";
 
 interface DialogProps {
 	page: Page;
@@ -31,7 +33,7 @@ export function DeletePageDialog(props: DialogProps) {
 
 	return (
 		<Dialog open={props.open} onOpenChange={props.setOpen}>
-			<DialogContent className="!max-w-md" withCloseButton={false}>
+			<DialogContent className="!max-w-sm" withCloseButton={false}>
 				<DialogHeader>
 					<DialogTitle>Delete {props.page.is_group ? "group" : "page"}?</DialogTitle>
 					<DialogDescription>
@@ -53,6 +55,56 @@ export function DeletePageDialog(props: DialogProps) {
 						onClick={handleSubmit}
 					>
 						Delete
+					</Button>
+				</DialogFooter>
+			</DialogContent>
+		</Dialog>
+	);
+}
+
+export function MovePageDialog(props: DialogProps) {
+	const allGroups = trpcReact.pages.getGroup.useQuery().data as Page[] | undefined;
+	const mutation = trpcReact.pages.movePage.useMutation();
+
+	const [newParentId, setNewParentId] = React.useState("");
+
+	async function handleSubmit() {
+		await mutation.mutateAsync({
+			id: props.page.id,
+			newParentId,
+		});
+		props.setOpen(false);
+	}
+
+	return (
+		<Dialog open={props.open} onOpenChange={props.setOpen}>
+			<DialogContent className="!max-w-sm">
+				<DialogHeader>
+					<DialogTitle>Move page</DialogTitle>
+				</DialogHeader>
+
+				<Combobox
+					className="w-full"
+					contentProps={{ align: "start", className: "w-[335px]" }}
+					data={
+						allGroups?.map((group) => ({
+							label: (
+								<span className="flex items-baseline gap-2">
+									<span>{group.name}</span>{" "}
+									<TypographyMuted className="text-xs">
+										{group.url}
+									</TypographyMuted>
+								</span>
+							),
+							value: group.id,
+						})) ?? []
+					}
+					onValueChange={setNewParentId}
+				/>
+
+				<DialogFooter>
+					<Button onClick={handleSubmit} icon={<FolderArrowDownIcon className="w-5" />}>
+						Move
 					</Button>
 				</DialogFooter>
 			</DialogContent>
