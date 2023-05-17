@@ -1,5 +1,4 @@
 import { z } from "zod";
-import { Prisma } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
 import { prisma } from "@api/prisma/client";
 import { publicProcedure } from "@api/trpc";
@@ -21,29 +20,18 @@ export const editPage = publicProcedure
 		if (!page) {
 			throw new TRPCError({ code: "NOT_FOUND" });
 		}
-
-		try {
-			await prisma.$transaction([
-				prisma.page.update({
-					where: { id: input.id },
-					data: {
-						name: input.newName,
-						url: input.newUrl,
-					},
-				}),
-				prisma.$executeRaw`UPDATE frontend.page SET "url" = REPLACE("url", ${page.url} || '/', ${input.newUrl} || '/') WHERE "url" LIKE ${page.url} || '/%';`,
-			]);
-		} catch (error) {
-			if (error instanceof Prisma.PrismaClientKnownRequestError) {
-				if (error.code === "P2002") {
-					throw new TRPCError({
-						code: "CONFLICT",
-					});
-				}
-			}
-
-			throw new TRPCError({
-				code: "INTERNAL_SERVER_ERROR",
-			});
+		if (await prisma.page.findFirst({ where: { url: input.newUrl, id: { not: input.id } } })) {
+			throw new TRPCError({ code: "CONFLICT" });
 		}
+
+		await prisma.$transaction([
+			prisma.page.update({
+				where: { id: input.id },
+				data: {
+					name: input.newName,
+					url: input.newUrl,
+				},
+			}),
+			prisma.$executeRaw`UPDATE frontend.page SET "url" = REPLACE("url", ${page.url} || '/', ${input.newUrl} || '/') WHERE "url" LIKE ${page.url} || '/%';`,
+		]);
 	});
