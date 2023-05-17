@@ -111,7 +111,11 @@ export function MovePageDialog(props: DialogProps) {
 				/>
 
 				<DialogFooter>
-					<Button onClick={handleSubmit} icon={<FolderArrowDownIcon className="w-5" />}>
+					<Button
+						loading={mutation.isLoading}
+						onClick={handleSubmit}
+						icon={<FolderArrowDownIcon className="w-5" />}
+					>
 						Move
 					</Button>
 				</DialogFooter>

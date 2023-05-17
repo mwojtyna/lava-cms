@@ -40,6 +40,7 @@ model Page {
     parent_id   String?
     children    Page[]   @relation("Tree")
     is_group    Boolean  @default(false)
+    is_index    Boolean  @default(false)
     last_update DateTime @default(now())
 
     @@map("page")
