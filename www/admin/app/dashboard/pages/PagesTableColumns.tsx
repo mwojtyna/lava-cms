@@ -98,7 +98,7 @@ function PagesTableActions({ page }: { page: Page }) {
 						<span>Edit details</span>
 					</DropdownMenuItem>
 
-					<DropdownMenuItem onClick={() => setOpenMove(true)} disabled={page.url === "/"}>
+					<DropdownMenuItem onClick={() => setOpenMove(true)}>
 						<FolderArrowDownIcon className="w-4" />
 						<span>Move</span>
 					</DropdownMenuItem>

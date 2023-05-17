@@ -105,6 +105,7 @@ export function MovePageDialog(props: DialogProps) {
 								</span>
 							),
 							value: group.id,
+							filterValue: group.name,
 						})) ?? []
 					}
 					onValueChange={setNewParentId}
