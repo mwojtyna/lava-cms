@@ -12,7 +12,7 @@ export const movePage = publicProcedure
 		})
 	)
 	.mutation(async ({ input }) => {
-		const [page, parentPage] = await prisma.$transaction([
+		const [page, parentGroup] = await prisma.$transaction([
 			prisma.page.findFirst({
 				where: { id: input.id },
 			}),
@@ -21,7 +21,7 @@ export const movePage = publicProcedure
 			}),
 		]);
 
-		if (!page || !parentPage) {
+		if (!page || !parentGroup) {
 			throw new TRPCError({ code: "NOT_FOUND" });
 		}
 
@@ -29,7 +29,10 @@ export const movePage = publicProcedure
 			await caller.pages.editPage({
 				id: input.id,
 				newName: page.name,
-				newUrl: parentPage.url + "/" + page.url.split("/").pop(),
+				newUrl:
+					parentGroup.url +
+					(parentGroup.parent_id !== null ? "/" : "") +
+					page.url.split("/").pop(),
 			});
 			await tx.page.update({
 				where: { id: input.id },

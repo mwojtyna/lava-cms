@@ -42,7 +42,12 @@ export async function init(mockHandlers?: MockHandler[]) {
 
 	app.get("/trpcadmin", (_, res) => {
 		if (env.NODE_ENV === "development") {
-			res.send(renderTrpcPanel(appRouter, { url: "http://localhost:4000/trpc" }));
+			res.send(
+				renderTrpcPanel(appRouter, {
+					url: "http://localhost:4000/trpc",
+					transformer: "superjson",
+				})
+			);
 		}
 	});
 

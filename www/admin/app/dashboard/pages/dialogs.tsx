@@ -64,10 +64,13 @@ export function DeletePageDialog(props: DialogProps) {
 
 export function MovePageDialog(props: DialogProps) {
 	const allGroups = trpcReact.pages.getGroup.useQuery().data as Page[] | undefined;
+	const allGroupsSorted = React.useMemo(
+		() => allGroups?.sort((a, b) => a.url.localeCompare(b.url)),
+		[allGroups]
+	);
 	const mutation = trpcReact.pages.movePage.useMutation();
 
 	const [newParentId, setNewParentId] = React.useState("");
-
 	async function handleSubmit() {
 		await mutation.mutateAsync({
 			id: props.page.id,
@@ -85,9 +88,14 @@ export function MovePageDialog(props: DialogProps) {
 
 				<Combobox
 					className="w-full"
-					contentProps={{ align: "start", className: "w-[335px]" }}
+					contentProps={{
+						align: "start",
+						className: "w-[335px]",
+						placeholder: "Search groups...",
+					}}
+					placeholder="Select a group..."
 					data={
-						allGroups?.map((group) => ({
+						allGroupsSorted?.map((group) => ({
 							label: (
 								<span className="flex items-baseline gap-2">
 									<span>{group.name}</span>{" "}

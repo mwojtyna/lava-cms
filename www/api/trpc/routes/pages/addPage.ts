@@ -10,7 +10,8 @@ export const addPage = publicProcedure
 		z.object({
 			name: z.string(),
 			url: z.string().regex(url),
-			parent_id: z.string().cuid().optional(),
+			parent_id: z.string().cuid().nullable(),
+			is_group: z.boolean().optional(),
 		})
 	)
 	.mutation(async ({ input }) => {
@@ -19,7 +20,11 @@ export const addPage = publicProcedure
 				data: {
 					name: input.name,
 					url: input.url,
-					parent_id: input.parent_id ?? null,
+					parent_id:
+						input.parent_id === undefined
+							? (await prisma.page.findFirst({ where: { parent_id: null } }))!.id
+							: input.parent_id,
+					is_group: input.is_group ?? false,
 				},
 			});
 		} catch (error) {

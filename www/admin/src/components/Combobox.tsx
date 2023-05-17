@@ -21,7 +21,14 @@ interface ComboboxProps extends React.ComponentPropsWithoutRef<typeof Button> {
 	contentProps?: React.ComponentPropsWithoutRef<typeof PopoverContent>;
 	onValueChange?: (value: string) => void;
 }
-function Combobox({ data, className, contentProps, onValueChange, ...props }: ComboboxProps) {
+function Combobox({
+	data,
+	className,
+	contentProps,
+	onValueChange,
+	placeholder,
+	...props
+}: ComboboxProps) {
 	const [open, setOpen] = React.useState(false);
 	const [value, setValue] = React.useState("");
 
@@ -35,9 +42,7 @@ function Combobox({ data, className, contentProps, onValueChange, ...props }: Co
 					className={cn("w-[200px] justify-between active:translate-y-0", className)}
 					{...props}
 				>
-					{value
-						? data.find((item) => item.value === value)?.label
-						: "Select framework..."}
+					{value ? data.find((item) => item.value === value)?.label : placeholder}
 					<ChevronUpDownIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
 				</Button>
 			</PopoverTrigger>
@@ -47,7 +52,7 @@ function Combobox({ data, className, contentProps, onValueChange, ...props }: Co
 				className={cn("w-full !p-0", contentProps?.className)}
 			>
 				<Command>
-					<CommandInput placeholder="Search framework..." />
+					<CommandInput placeholder={contentProps?.placeholder} />
 					<CommandEmpty>No framework found.</CommandEmpty>
 					<CommandGroup>
 						{data.map((item, i) => (
