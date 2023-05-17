@@ -35,12 +35,11 @@ model Config {
 model Page {
     id          String   @id @default(cuid())
     name        String
-    url         String   @unique
+    url         String
     parent      Page?    @relation("Tree", fields: [parent_id], references: [id], onDelete: Cascade)
     parent_id   String?
     children    Page[]   @relation("Tree")
     is_group    Boolean  @default(false)
-    is_index    Boolean  @default(false)
     last_update DateTime @default(now())
 
     @@map("page")

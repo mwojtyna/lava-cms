@@ -41,11 +41,12 @@ interface PagesTableProps {
 export function PagesTable(props: PagesTableProps) {
 	const clientData = trpcReact.pages.getGroupContents.useQuery(
 		props.groupId ? { id: props.groupId } : null
-	);
-	const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
+	).data;
+	const data = clientData ?? { pages: props.pages, breadcrumbs: props.breadcrumbs };
 
+	const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
 	const table = useReactTable({
-		data: clientData.data?.pages ?? props.pages,
+		data: data.pages,
 		columns: props.columns,
 		getCoreRowModel: getCoreRowModel(),
 		onColumnFiltersChange: setColumnFilters,
@@ -72,7 +73,7 @@ export function PagesTable(props: PagesTableProps) {
 				</div>
 			</div>
 
-			{props.breadcrumbs.length > 0 && (
+			{data.breadcrumbs.length > 0 && (
 				<Stepper
 					steps={[
 						<Link key={0} href={"/dashboard/pages"}>
@@ -80,14 +81,14 @@ export function PagesTable(props: PagesTableProps) {
 								<HomeIcon className="w-5 text-foreground" />
 							</ActionIcon>
 						</Link>,
-						...props.breadcrumbs.map((breadcrumb, i) => (
+						...data.breadcrumbs.map((breadcrumb, i) => (
 							<Button
 								key={i + 1}
 								asChild
 								variant={"link"}
 								className={cn(
 									"whitespace-nowrap font-normal",
-									i < props.breadcrumbs.length - 1 && "text-muted-foreground"
+									i < data.breadcrumbs.length - 1 && "text-muted-foreground"
 								)}
 							>
 								<Link key={i} href={`/dashboard/pages/${breadcrumb.id}`}>
@@ -96,7 +97,7 @@ export function PagesTable(props: PagesTableProps) {
 							</Button>
 						)),
 					]}
-					currentStep={props.breadcrumbs.length}
+					currentStep={data.breadcrumbs.length}
 					separator={<ChevronRightIcon className="w-4" />}
 				/>
 			)}

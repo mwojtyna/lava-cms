@@ -1,7 +1,6 @@
 import { z } from "zod";
 import { prisma } from "@api/prisma/client";
 import { publicProcedure } from "@api/trpc";
-import { TRPCError } from "@trpc/server";
 
 export const getPage = publicProcedure
 	.input(
@@ -16,13 +15,9 @@ export const getPage = publicProcedure
 			return prisma.page.findMany({ where: { is_group: false } });
 		}
 
-		const page = await prisma.page.findUnique({
+		const page = await prisma.page.findFirst({
 			where: { url: input.url },
-			include: { children: true },
 		});
-		if (!page) {
-			throw new TRPCError({ code: "NOT_FOUND" });
-		}
 
-		return { page, children: page.children };
+		return { page };
 	});

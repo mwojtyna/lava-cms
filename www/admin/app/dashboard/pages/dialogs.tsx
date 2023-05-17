@@ -64,9 +64,18 @@ export function DeletePageDialog(props: DialogProps) {
 
 export function MovePageDialog(props: DialogProps) {
 	const allGroups = trpcReact.pages.getGroup.useQuery().data as Page[] | undefined;
-	const allGroupsSorted = React.useMemo(
-		() => allGroups?.sort((a, b) => a.url.localeCompare(b.url)),
-		[allGroups]
+	const groups = React.useMemo(
+		() =>
+			allGroups
+				?.filter((group) => {
+					return (
+						props.page.parent_id !== group.id &&
+						props.page.id !== group.id &&
+						!group.url.startsWith(props.page.url + "/")
+					);
+				})
+				.sort((a, b) => a.url.localeCompare(b.url)),
+		[allGroups, props.page]
 	);
 	const mutation = trpcReact.pages.movePage.useMutation();
 
@@ -95,7 +104,7 @@ export function MovePageDialog(props: DialogProps) {
 					}}
 					placeholder="Select a group..."
 					data={
-						allGroupsSorted?.map((group) => ({
+						groups?.map((group) => ({
 							label: (
 								<span className="flex items-baseline gap-2">
 									<span>{group.name}</span>{" "}
