@@ -20,7 +20,16 @@ export const editPage = publicProcedure
 		if (!page) {
 			throw new TRPCError({ code: "NOT_FOUND" });
 		}
-		if (await prisma.page.findFirst({ where: { url: input.newUrl, id: { not: input.id } } })) {
+		if (
+			await prisma.page.findFirst({
+				where: {
+					url: input.newUrl,
+					id: { not: input.id },
+					// Only check pages that are not the root group, which is invisible to the user
+					parent_id: { not: null },
+				},
+			})
+		) {
 			throw new TRPCError({ code: "CONFLICT" });
 		}
 
