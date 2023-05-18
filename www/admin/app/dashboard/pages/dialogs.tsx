@@ -16,9 +16,14 @@ import {
 	Input,
 } from "@admin/src/components/ui/client";
 import { trpcReact } from "@admin/src/utils/trpcReact";
-import { FolderArrowDownIcon, PencilSquareIcon, TrashIcon } from "@heroicons/react/24/outline";
+import {
+	ExclamationCircleIcon,
+	FolderArrowDownIcon,
+	PencilSquareIcon,
+	TrashIcon,
+} from "@heroicons/react/24/outline";
 import { Combobox } from "@admin/src/components";
-import { TypographyMuted } from "@admin/src/components/ui/server";
+import { Alert, TypographyMuted } from "@admin/src/components/ui/server";
 import slugify from "slugify";
 import { TRPCClientError } from "@trpc/client";
 
@@ -86,13 +91,48 @@ export function MoveDialog(props: DialogProps) {
 	const mutation = trpcReact.pages.movePage.useMutation();
 
 	const [newParentId, setNewParentId] = React.useState("");
+	const [error, setError] = React.useState<{
+		message: React.ReactNode;
+		unexpected: boolean;
+	} | null>();
+
 	async function handleSubmit() {
-		await mutation.mutateAsync({
-			id: props.page.id,
-			newParentId,
-		});
-		props.setOpen(false);
+		try {
+			await mutation.mutateAsync({
+				id: props.page.id,
+				newParentId,
+			});
+			props.setOpen(false);
+		} catch (error) {
+			if (error instanceof TRPCClientError && error.data.code === "CONFLICT") {
+				const destinationUrl = groups!.find((group) => group.id === newParentId)!.url;
+
+				const newPath =
+					destinationUrl +
+					(destinationUrl === "/" ? "" : "/") +
+					props.page.url.split("/").pop()!;
+
+				setError({
+					message: (
+						<>
+							A page with path <strong>{newPath}</strong> already exists! Either
+							change the slug or move it somewhere else.
+						</>
+					),
+					unexpected: false,
+				});
+			} else {
+				setError({
+					message: "An unexpected error occurred.",
+					unexpected: true,
+				});
+			}
+		}
 	}
+
+	React.useEffect(() => {
+		setError(null);
+	}, [props.open]);
 
 	return (
 		<Dialog open={props.open} onOpenChange={props.setOpen}>
@@ -100,6 +140,17 @@ export function MoveDialog(props: DialogProps) {
 				<DialogHeader>
 					<DialogTitle>Move page</DialogTitle>
 				</DialogHeader>
+
+				{error && (
+					<Alert
+						className="text-sm"
+						color="red"
+						variant={"destructive"}
+						icon={<ExclamationCircleIcon className="w-5" />}
+					>
+						{error.message}
+					</Alert>
+				)}
 
 				<Combobox
 					className="w-full"
