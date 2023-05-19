@@ -184,7 +184,7 @@ export function MoveDialog(props: DialogProps) {
 	);
 }
 
-const editSchema = z.object({
+const editDialogSchema = z.object({
 	name: z.string().nonempty(),
 	slug: z
 		.string()
@@ -193,7 +193,7 @@ const editSchema = z.object({
 			message: "Invalid slug.",
 		}),
 });
-type EditDialogInputs = z.infer<typeof editSchema>;
+type EditDialogInputs = z.infer<typeof editDialogSchema>;
 
 const slugifyOptions: Parameters<typeof slugify>[1] = {
 	lower: true,
@@ -223,8 +223,7 @@ export function EditDetailsDialog(props: DialogProps) {
 		setError,
 		formState: { errors },
 	} = useForm<EditDialogInputs>({
-		defaultValues: { name: props.page.name, slug: getSlugFromUrl(props.page.url) },
-		resolver: zodResolver(editSchema),
+		resolver: zodResolver(editDialogSchema),
 	});
 	const onSubmit: SubmitHandler<EditDialogInputs> = async (data) => {
 		if (data.slug === "/" && props.page.is_group) {
