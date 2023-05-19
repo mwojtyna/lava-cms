@@ -182,7 +182,9 @@ const editSchema = z.object({
 	slug: z
 		.string()
 		.nonempty({ message: " " })
-		.refine((slug) => slugify(slug, slugifyOptions) === slug),
+		.refine((slug) => "/" + slugify(slug, slugifyOptions) === slug, {
+			message: "Invalid slug.",
+		}),
 });
 type EditDialogInputs = z.infer<typeof editSchema>;
 
@@ -194,7 +196,7 @@ const slugifyOptions: Parameters<typeof slugify>[1] = {
 };
 function getSlugFromUrl(path: string) {
 	const split = path.split("/");
-	return split[split.length - 1]!;
+	return "/" + split[split.length - 1]!;
 }
 
 export function EditDetailsDialog(props: DialogProps) {
@@ -213,9 +215,9 @@ export function EditDetailsDialog(props: DialogProps) {
 	});
 	const onSubmit: SubmitHandler<EditDialogInputs> = async (data) => {
 		const split = props.page.url.split("/");
-		split[split.length - 1] = data.slug;
+		split[split.length - 1] = data.slug.slice(1);
 
-		const newUrl = props.page.url === "/" ? "/" : split.join("/");
+		const newUrl = split.join("/");
 
 		try {
 			await mutation.mutateAsync({
@@ -228,7 +230,11 @@ export function EditDetailsDialog(props: DialogProps) {
 			if (error instanceof TRPCClientError && error.data.code === "CONFLICT") {
 				setError("slug", {
 					type: "manual",
-					message: `A page with path ${newUrl} already exists.`,
+					message: (
+						<>
+							A page with path <strong>{newUrl}</strong> already exists.
+						</>
+					) as unknown as string,
 				});
 			}
 		}
@@ -255,10 +261,11 @@ export function EditDetailsDialog(props: DialogProps) {
 						label="Name"
 						{...register("name", {
 							onChange: (e: React.ChangeEvent<HTMLInputElement>) =>
-								setValue("slug", slugify(e.target.value, slugifyOptions)),
+								setValue("slug", "/" + slugify(e.target.value, slugifyOptions)),
 						})}
 						error={!!errors.name}
 					/>
+
 					<Input
 						className="flex-row"
 						label="Slug"
