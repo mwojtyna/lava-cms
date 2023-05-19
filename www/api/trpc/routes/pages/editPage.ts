@@ -39,8 +39,9 @@ export const editPage = publicProcedure
 				data: {
 					name: input.newName,
 					url: input.newUrl,
+					last_update: new Date(),
 				},
 			}),
-			prisma.$executeRaw`UPDATE frontend.page SET "url" = REPLACE("url", ${page.url} || '/', ${input.newUrl} || '/') WHERE "url" LIKE ${page.url} || '/%';`,
+			prisma.$executeRaw`UPDATE frontend.page SET "url" = REPLACE("url", ${page.url} || '/', ${input.newUrl} || '/'), "last_update" = Now() WHERE "url" LIKE ${page.url} || '/%';`,
 		]);
 	});
