@@ -15,6 +15,7 @@ export const ThemeSwitch = React.forwardRef<
 	return (
 		<Switch
 			ref={ref}
+			size="lg"
 			className={cn("!bg-input", className)}
 			checked={store.colorTheme === "dark"}
 			onCheckedChange={(checked) => store.set(checked ? "dark" : "light")}

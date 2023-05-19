@@ -14,24 +14,27 @@ interface InputWrapperProps
 	error?: React.ReactNode;
 	withAsterisk?: boolean;
 	children: (inputId: string, errorId: string) => React.ReactNode;
+	row?: boolean;
 }
 type InputBaseProps = Omit<InputWrapperProps, "children">;
 
 const InputWrapper = React.forwardRef<HTMLDivElement, InputWrapperProps>(
-	({ className, label, error, children, withAsterisk, size, ...props }, ref) => {
+	({ className, label, error, children, withAsterisk, size, row, ...props }, ref) => {
 		const inputId = React.useId();
 		const errorId = React.useId();
 
 		return (
 			<div ref={ref} className={cn("flex flex-col gap-1.5", className)} {...props}>
-				{label && (
-					<Label htmlFor={inputId} className="flex" size={size}>
-						<span className="flex items-center">{label}</span>
-						{withAsterisk && <span className="text-destructive">&nbsp;*</span>}
-					</Label>
-				)}
+				<div className={cn("flex flex-col gap-1.5", row && "flex-row")}>
+					{label && (
+						<Label htmlFor={inputId} className="flex" size={size}>
+							<span className="flex items-center">{label}</span>
+							{withAsterisk && <span className="text-destructive">&nbsp;*</span>}
+						</Label>
+					)}
 
-				{children(inputId, errorId)}
+					{children(inputId, errorId)}
+				</div>
 
 				{error && typeof error !== "boolean" && (
 					<p id={errorId} className="text-sm text-destructive">
