@@ -214,9 +214,13 @@ export function EditDetailsDialog(props: DialogProps) {
 		resolver: zodResolver(editSchema),
 	});
 	const onSubmit: SubmitHandler<EditDialogInputs> = async (data) => {
+		if (data.slug === "/" && props.page.is_group) {
+			setError("slug", { message: "Groups cannot have slugs containing only '/'." });
+			return;
+		}
+
 		const split = props.page.url.split("/");
 		split[split.length - 1] = data.slug.slice(1);
-
 		const newUrl = split.join("/");
 
 		try {
