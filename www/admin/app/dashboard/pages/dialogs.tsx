@@ -16,14 +16,9 @@ import {
 	Input,
 } from "@admin/src/components/ui/client";
 import { trpcReact } from "@admin/src/utils/trpcReact";
-import {
-	ExclamationCircleIcon,
-	FolderArrowDownIcon,
-	PencilSquareIcon,
-	TrashIcon,
-} from "@heroicons/react/24/outline";
+import { FolderArrowDownIcon, PencilSquareIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { Combobox } from "@admin/src/components";
-import { Alert, TypographyMuted } from "@admin/src/components/ui/server";
+import { TypographyMuted } from "@admin/src/components/ui/server";
 import slugify from "slugify";
 import { TRPCClientError } from "@trpc/client";
 
@@ -141,17 +136,6 @@ export function MoveDialog(props: DialogProps) {
 					<DialogTitle>Move page</DialogTitle>
 				</DialogHeader>
 
-				{error && (
-					<Alert
-						className="text-sm"
-						color="red"
-						variant={"destructive"}
-						icon={<ExclamationCircleIcon className="w-5" />}
-					>
-						{error.message}
-					</Alert>
-				)}
-
 				<Combobox
 					className="w-full"
 					contentProps={{
@@ -175,6 +159,7 @@ export function MoveDialog(props: DialogProps) {
 						})) ?? []
 					}
 					onValueChange={setNewParentId}
+					error={error?.message}
 				/>
 
 				<DialogFooter>

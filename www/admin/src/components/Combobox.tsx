@@ -10,6 +10,7 @@ import {
 	CommandGroup,
 	CommandInput,
 	CommandItem,
+	InputWrapper,
 	Popover,
 	PopoverContent,
 	PopoverTrigger,
@@ -20,6 +21,9 @@ interface ComboboxProps extends React.ComponentPropsWithoutRef<typeof Button> {
 	data: ComboboxData;
 	contentProps?: React.ComponentPropsWithoutRef<typeof PopoverContent>;
 	onValueChange?: (value: string) => void;
+	label?: string;
+	error?: React.ReactNode;
+	withAsterisk?: boolean;
 }
 function Combobox({
 	data,
@@ -27,6 +31,9 @@ function Combobox({
 	contentProps,
 	onValueChange,
 	placeholder,
+	label,
+	error,
+	withAsterisk,
 	...props
 }: ComboboxProps) {
 	const [open, setOpen] = React.useState(false);
@@ -34,60 +41,75 @@ function Combobox({
 	const [search, setSearch] = React.useState("");
 
 	return (
-		<Popover open={open} onOpenChange={setOpen}>
-			<PopoverTrigger asChild>
-				<Button
-					variant="outline"
-					role="combobox"
-					aria-expanded={open}
-					className={cn("w-[200px] justify-between active:translate-y-0", className)}
-					{...props}
-				>
-					{value ? data.find((item) => item.value === value)?.label : placeholder}
-					<ChevronUpDownIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-				</Button>
-			</PopoverTrigger>
+		<InputWrapper label={label} error={error} withAsterisk={withAsterisk}>
+			{() => (
+				<Popover open={open} onOpenChange={setOpen}>
+					<PopoverTrigger asChild>
+						<Button
+							variant="outline"
+							role="combobox"
+							aria-expanded={open}
+							className={cn(
+								"w-[200px] justify-between active:translate-y-0",
+								className
+							)}
+							{...props}
+						>
+							{value ? data.find((item) => item.value === value)?.label : placeholder}
+							<ChevronUpDownIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+						</Button>
+					</PopoverTrigger>
 
-			<PopoverContent
-				{...contentProps}
-				className={cn("w-full !p-0", contentProps?.className)}
-			>
-				<Command shouldFilter={false}>
-					<CommandInput
-						placeholder={contentProps?.placeholder}
-						value={search}
-						onValueChange={(value) => setSearch(value)}
-					/>
-					<CommandEmpty>No framework found.</CommandEmpty>
-					<CommandGroup>
-						{data.map((item, i) => {
-							if (!item.filterValue.toLowerCase().includes(search.toLowerCase()))
-								return null;
+					<PopoverContent
+						{...contentProps}
+						className={cn("w-full !p-0", contentProps?.className)}
+					>
+						<Command shouldFilter={false}>
+							<CommandInput
+								placeholder={contentProps?.placeholder}
+								value={search}
+								onValueChange={(value) => setSearch(value)}
+							/>
+							<CommandEmpty>No framework found.</CommandEmpty>
+							<CommandGroup>
+								{data.map((item, i) => {
+									if (
+										!item.filterValue
+											.toLowerCase()
+											.includes(search.toLowerCase())
+									)
+										return null;
 
-							return (
-								<CommandItem
-									key={i}
-									value={item.value}
-									onSelect={(currentValue) => {
-										setValue(currentValue === value ? "" : currentValue);
-										onValueChange?.(currentValue);
-										setOpen(false);
-									}}
-								>
-									<CheckIcon
-										className={cn(
-											"mr-2 h-4 w-4",
-											value === item.value ? "opacity-100" : "opacity-0"
-										)}
-									/>
-									{item.label}
-								</CommandItem>
-							);
-						})}
-					</CommandGroup>
-				</Command>
-			</PopoverContent>
-		</Popover>
+									return (
+										<CommandItem
+											key={i}
+											value={item.value}
+											onSelect={(currentValue) => {
+												setValue(
+													currentValue === value ? "" : currentValue
+												);
+												onValueChange?.(currentValue);
+												setOpen(false);
+											}}
+										>
+											<CheckIcon
+												className={cn(
+													"mr-2 h-4 w-4",
+													value === item.value
+														? "opacity-100"
+														: "opacity-0"
+												)}
+											/>
+											{item.label}
+										</CommandItem>
+									);
+								})}
+							</CommandGroup>
+						</Command>
+					</PopoverContent>
+				</Popover>
+			)}
+		</InputWrapper>
 	);
 }
 
