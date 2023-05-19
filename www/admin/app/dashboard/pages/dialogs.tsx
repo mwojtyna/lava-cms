@@ -16,7 +16,13 @@ import {
 	Input,
 } from "@admin/src/components/ui/client";
 import { trpcReact } from "@admin/src/utils/trpcReact";
-import { FolderArrowDownIcon, PencilSquareIcon, TrashIcon } from "@heroicons/react/24/outline";
+import {
+	FolderArrowDownIcon,
+	LockClosedIcon,
+	LockOpenIcon,
+	PencilSquareIcon,
+	TrashIcon,
+} from "@heroicons/react/24/outline";
 import { Combobox } from "@admin/src/components";
 import { TypographyMuted } from "@admin/src/components/ui/server";
 import slugify from "slugify";
@@ -201,6 +207,7 @@ function getSlugFromUrl(path: string) {
 
 export function EditDetailsDialog(props: DialogProps) {
 	const mutation = trpcReact.pages.editPage.useMutation();
+	const [lockSlug, setLockSlug] = React.useState(false);
 
 	const {
 		register,
@@ -264,8 +271,10 @@ export function EditDetailsDialog(props: DialogProps) {
 						className="flex-row"
 						label="Name"
 						{...register("name", {
-							onChange: (e: React.ChangeEvent<HTMLInputElement>) =>
-								setValue("slug", "/" + slugify(e.target.value, slugifyOptions)),
+							onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
+								if (!lockSlug)
+									setValue("slug", "/" + slugify(e.target.value, slugifyOptions));
+							},
 						})}
 						error={!!errors.name}
 					/>
@@ -275,6 +284,9 @@ export function EditDetailsDialog(props: DialogProps) {
 						label="Slug"
 						{...register("slug")}
 						error={errors.slug?.message}
+						rightButtonIconOn={<LockClosedIcon className="w-4" />}
+						rightButtonIconOff={<LockOpenIcon className="w-4" />}
+						onRightButtonClick={(state) => setLockSlug(state)}
 					/>
 
 					<DialogFooter>

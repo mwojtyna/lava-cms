@@ -53,12 +53,12 @@ const inputVariants = cva(
 		variants: {
 			size: {
 				sm: "h-9 text-sm",
-				default: "h-10 text-sm",
+				md: "h-10 text-sm",
 				lg: "h-11 text-base",
 			},
 		},
 		defaultVariants: {
-			size: "default",
+			size: "md",
 		},
 	}
 );
@@ -67,10 +67,28 @@ interface InputProps
 	extends Omit<InputWrapperProps, "children" | "size">,
 		VariantProps<typeof inputVariants> {
 	icon?: React.ReactNode;
+	rightButtonIconOn?: React.ReactNode;
+	rightButtonIconOff?: React.ReactNode;
+	onRightButtonClick?: (state: boolean) => void;
 }
 const Input = React.forwardRef<HTMLInputElement, InputProps>(
-	({ className, type, label, icon, error, withAsterisk, size, ...props }, ref) => {
-		const [showPassword, setShowPassword] = React.useState(false);
+	(
+		{
+			className,
+			type,
+			label,
+			icon,
+			error,
+			withAsterisk,
+			size,
+			rightButtonIconOff,
+			rightButtonIconOn,
+			onRightButtonClick,
+			...props
+		},
+		ref
+	) => {
+		const [rightIconState, setRightIconState] = React.useState(false);
 
 		return (
 			<InputWrapper label={label} error={error} withAsterisk={withAsterisk} size={size}>
@@ -78,7 +96,9 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
 					<div className="relative flex w-full items-center justify-center">
 						{icon && <div className="absolute left-3 w-5">{icon}</div>}
 						<input
-							type={type === "password" ? (showPassword ? "text" : "password") : type}
+							type={
+								type === "password" ? (rightIconState ? "text" : "password") : type
+							}
 							id={inputId}
 							className={cn(
 								inputVariants({ className, size }),
@@ -90,18 +110,33 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
 							aria-invalid={!!error}
 							aria-describedby={error ? errorId : undefined}
 						/>
-						{type === "password" && (
+						{type === "password" ? (
 							<ActionIcon
 								className="absolute right-2"
-								onClick={() => setShowPassword(!showPassword)}
+								onClick={() => setRightIconState(!rightIconState)}
+								size={size}
 								aria-label="Toggle password visibility"
 							>
-								{showPassword ? (
+								{rightIconState ? (
 									<EyeSlashIcon className="w-5" />
 								) : (
 									<EyeIcon className="w-5" />
 								)}
 							</ActionIcon>
+						) : (
+							rightButtonIconOn &&
+							rightButtonIconOff && (
+								<ActionIcon
+									className="absolute right-2"
+									onClick={() => {
+										setRightIconState(!rightIconState);
+										onRightButtonClick?.(!rightIconState);
+									}}
+									size={size}
+								>
+									{rightIconState ? rightButtonIconOn : rightButtonIconOff}
+								</ActionIcon>
+							)
 						)}
 					</div>
 				)}
