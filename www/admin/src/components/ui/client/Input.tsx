@@ -4,7 +4,7 @@ import * as React from "react";
 import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline";
 import { type VariantProps, cva } from "class-variance-authority";
 import { cn } from "@admin/src/utils/styling";
-import { Label } from "../client";
+import { Label, Tooltip, TooltipContent, TooltipTrigger } from "../client";
 import { ActionIcon } from "./ActionIcon";
 
 interface InputWrapperProps
@@ -69,7 +69,9 @@ interface InputProps
 	icon?: React.ReactNode;
 	rightButtonIconOn?: React.ReactNode;
 	rightButtonIconOff?: React.ReactNode;
+	rightButtonTooltip?: React.ReactNode;
 	onRightButtonClick?: (state: boolean) => void;
+	initialRightButtonState?: boolean;
 }
 const Input = React.forwardRef<HTMLInputElement, InputProps>(
 	(
@@ -83,12 +85,14 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
 			size,
 			rightButtonIconOff,
 			rightButtonIconOn,
+			rightButtonTooltip,
 			onRightButtonClick,
+			initialRightButtonState,
 			...props
 		},
 		ref
 	) => {
-		const [rightIconState, setRightIconState] = React.useState(false);
+		const [rightIconState, setRightIconState] = React.useState(initialRightButtonState);
 
 		return (
 			<InputWrapper label={label} error={error} withAsterisk={withAsterisk} size={size}>
@@ -126,16 +130,24 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
 						) : (
 							rightButtonIconOn &&
 							rightButtonIconOff && (
-								<ActionIcon
-									className="absolute right-2"
-									onClick={() => {
-										setRightIconState(!rightIconState);
-										onRightButtonClick?.(!rightIconState);
-									}}
-									size={size}
-								>
-									{rightIconState ? rightButtonIconOn : rightButtonIconOff}
-								</ActionIcon>
+								<Tooltip>
+									<TooltipTrigger asChild>
+										<ActionIcon
+											className="absolute right-2"
+											onClick={() => {
+												setRightIconState(!rightIconState);
+												onRightButtonClick?.(!rightIconState);
+											}}
+											size={size}
+										>
+											{rightIconState
+												? rightButtonIconOn
+												: rightButtonIconOff}
+										</ActionIcon>
+									</TooltipTrigger>
+
+									<TooltipContent>{rightButtonTooltip}</TooltipContent>
+								</Tooltip>
 							)
 						)}
 					</div>

@@ -27,6 +27,7 @@ import { Combobox } from "@admin/src/components";
 import { TypographyMuted } from "@admin/src/components/ui/server";
 import slugify from "slugify";
 import { TRPCClientError } from "@trpc/client";
+import { useLocalStorage } from "@mantine/hooks";
 
 interface DialogProps {
 	page: Page;
@@ -207,7 +208,12 @@ function getSlugFromUrl(path: string) {
 
 export function EditDetailsDialog(props: DialogProps) {
 	const mutation = trpcReact.pages.editPage.useMutation();
-	const [lockSlug, setLockSlug] = React.useState(false);
+	const [slugLocked, setSlugLocked] = useLocalStorage({
+		key: "slug-locked",
+		defaultValue: {
+			[props.page.id]: false,
+		},
+	});
 
 	const {
 		register,
@@ -272,7 +278,7 @@ export function EditDetailsDialog(props: DialogProps) {
 						label="Name"
 						{...register("name", {
 							onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
-								if (!lockSlug)
+								if (!slugLocked[props.page.id])
 									setValue("slug", "/" + slugify(e.target.value, slugifyOptions));
 							},
 						})}
@@ -286,7 +292,14 @@ export function EditDetailsDialog(props: DialogProps) {
 						error={errors.slug?.message}
 						rightButtonIconOn={<LockClosedIcon className="w-4" />}
 						rightButtonIconOff={<LockOpenIcon className="w-4" />}
-						onRightButtonClick={(state) => setLockSlug(state)}
+						onRightButtonClick={(state) =>
+							setSlugLocked({
+								...slugLocked,
+								[props.page.id]: state,
+							})
+						}
+						initialRightButtonState={slugLocked[props.page.id]}
+						rightButtonTooltip="Toggle lock slug autofill"
 					/>
 
 					<DialogFooter>
