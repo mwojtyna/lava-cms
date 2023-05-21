@@ -40,6 +40,16 @@ export {
 	DropdownMenuSubTrigger,
 	DropdownMenuTrigger,
 } from "./DropdownMenu";
+export {
+	useFormField,
+	Form,
+	FormItem,
+	FormLabel,
+	FormControl,
+	FormDescription,
+	FormMessage,
+	FormField,
+} from "./Form";
 export { Input, type InputBaseProps, InputWrapper } from "./Input";
 export { Label } from "./Label";
 export { Popover, PopoverTrigger, PopoverContent } from "./Popover";

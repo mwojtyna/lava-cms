@@ -64,7 +64,7 @@ const inputVariants = cva(
 );
 
 interface InputProps
-	extends Omit<InputWrapperProps, "children" | "size">,
+	extends Omit<React.InputHTMLAttributes<HTMLInputElement>, "children" | "size">,
 		VariantProps<typeof inputVariants> {
 	icon?: React.ReactNode;
 	rightButtonIconOn?: React.ReactNode;
@@ -78,10 +78,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
 		{
 			className,
 			type,
-			label,
 			icon,
-			error,
-			withAsterisk,
 			size,
 			rightButtonIconOff,
 			rightButtonIconOn,
@@ -95,64 +92,51 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
 		const [rightIconState, setRightIconState] = React.useState(initialRightButtonState);
 
 		return (
-			<InputWrapper label={label} error={error} withAsterisk={withAsterisk} size={size}>
-				{(inputId, errorId) => (
-					<div className="relative flex w-full items-center justify-center">
-						{icon && <div className="absolute left-3 w-5">{icon}</div>}
-						<input
-							type={
-								type === "password" ? (rightIconState ? "text" : "password") : type
-							}
-							id={inputId}
-							className={cn(
-								inputVariants({ className, size }),
-								icon && "pl-10",
-								error && "border-destructive"
-							)}
-							ref={ref}
-							{...props}
-							aria-invalid={!!error}
-							aria-describedby={error ? errorId : undefined}
-						/>
-						{type === "password" ? (
-							<ActionIcon
-								className="absolute right-2"
-								onClick={() => setRightIconState(!rightIconState)}
-								size={size}
-								aria-label="Toggle password visibility"
-							>
-								{rightIconState ? (
-									<EyeSlashIcon className="w-5" />
-								) : (
-									<EyeIcon className="w-5" />
-								)}
-							</ActionIcon>
-						) : (
-							rightButtonIconOn &&
-							rightButtonIconOff && (
-								<Tooltip>
-									<TooltipTrigger asChild>
-										<ActionIcon
-											className="absolute right-2"
-											onClick={() => {
-												setRightIconState(!rightIconState);
-												onRightButtonClick?.(!rightIconState);
-											}}
-											size={size}
-										>
-											{rightIconState
-												? rightButtonIconOn
-												: rightButtonIconOff}
-										</ActionIcon>
-									</TooltipTrigger>
+			<div className="relative flex w-full items-center justify-center">
+				{icon && <div className="absolute left-3 w-5">{icon}</div>}
 
-									<TooltipContent>{rightButtonTooltip}</TooltipContent>
-								</Tooltip>
-							)
+				<input
+					type={type === "password" ? (rightIconState ? "text" : "password") : type}
+					className={cn(inputVariants({ className, size }), icon && "pl-10")}
+					ref={ref}
+					{...props}
+				/>
+
+				{type === "password" ? (
+					<ActionIcon
+						className="absolute right-2"
+						onClick={() => setRightIconState(!rightIconState)}
+						size={size}
+						aria-label="Toggle password visibility"
+					>
+						{rightIconState ? (
+							<EyeSlashIcon className="w-5" />
+						) : (
+							<EyeIcon className="w-5" />
 						)}
-					</div>
+					</ActionIcon>
+				) : (
+					rightButtonIconOn &&
+					rightButtonIconOff && (
+						<Tooltip>
+							<TooltipTrigger asChild>
+								<ActionIcon
+									className="absolute right-2"
+									onClick={() => {
+										setRightIconState(!rightIconState);
+										onRightButtonClick?.(!rightIconState);
+									}}
+									size={size}
+								>
+									{rightIconState ? rightButtonIconOn : rightButtonIconOff}
+								</ActionIcon>
+							</TooltipTrigger>
+
+							<TooltipContent>{rightButtonTooltip}</TooltipContent>
+						</Tooltip>
+					)
 				)}
-			</InputWrapper>
+			</div>
 		);
 	}
 );
