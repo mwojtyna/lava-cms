@@ -8,14 +8,22 @@ import { ArrowRightIcon } from "@heroicons/react/20/solid";
 import { check } from "language-tags";
 import { trpc } from "@admin/src/utils/trpc";
 import { InfoTooltip } from "@admin/src/components";
-import { Button, Input, Textarea } from "@admin/src/components/ui/client";
+import {
+	Button,
+	FormControl,
+	FormField,
+	FormItem,
+	FormLabel,
+	Input,
+	Textarea,
+} from "@admin/src/components/ui/client";
 import { TypographyCode } from "@admin/src/components/ui/server";
 import { SinglePageForm } from "../SinglePageForm";
 
 const schema = z
 	.object({
 		title: z.string().nonempty(),
-		description: z.string(),
+		description: z.string().optional(),
 		language: z.string().nonempty(),
 	})
 	.refine((data) => check(data.language), {
@@ -26,15 +34,12 @@ type Inputs = z.infer<typeof schema>;
 export function SetupForm() {
 	const router = useRouter();
 
-	const {
-		register,
-		handleSubmit,
-		formState: { errors, isSubmitting, isSubmitSuccessful },
-	} = useForm<Inputs>({ mode: "onChange", resolver: zodResolver(schema) });
+	const form = useForm<Inputs>({ resolver: zodResolver(schema) });
 	const onSubmit: SubmitHandler<Inputs> = async (data) => {
 		await Promise.all([
 			trpc.config.setConfig.mutate({
 				...data,
+				description: data.description ?? "",
 			}),
 			trpc.pages.addPage.mutate({ name: "Root", url: "/", is_group: true, parent_id: null }),
 		]);
@@ -45,7 +50,7 @@ export function SetupForm() {
 	return (
 		<SinglePageForm
 			className="sm:w-96"
-			onSubmit={handleSubmit(onSubmit)}
+			onSubmit={form.handleSubmit(onSubmit)}
 			titleText={
 				<span className="bg-gradient-to-b from-foreground/70 to-foreground bg-clip-text text-transparent dark:bg-gradient-to-t">
 					Set up website
@@ -57,51 +62,67 @@ export function SetupForm() {
 					size="lg"
 					icon={<ArrowRightIcon className="w-5" />}
 					className="ml-auto shadow-lg shadow-primary/25"
-					loading={isSubmitting || isSubmitSuccessful}
+					loading={form.formState.isSubmitting || form.formState.isSubmitSuccessful}
 				>
 					Finish
 				</Button>
 			}
+			formData={form}
 		>
-			<Input
-				label="Title"
-				placeholder="My Awesome Website"
-				size="lg"
-				{...register("title")}
-				error={!!errors.title}
-				autoFocus
-				withAsterisk
+			<FormField
+				control={form.control}
+				name="title"
+				render={({ field }) => (
+					<FormItem>
+						<FormLabel size="lg" withAsterisk>
+							Title
+						</FormLabel>
+						<FormControl>
+							<Input size="lg" placeholder="My awesome website" {...field} />
+						</FormControl>
+					</FormItem>
+				)}
 			/>
 
-			<Textarea
-				label={
-					<>
-						Description&nbsp;
-						<InfoTooltip size="lg">Used for social media previews</InfoTooltip>
-					</>
-				}
-				placeholder="This website is very awesome and fun!"
-				minRows={3}
-				maxRows={10}
-				size="lg"
-				{...register("description")}
+			<FormField
+				control={form.control}
+				name="description"
+				render={({ field }) => (
+					<FormItem>
+						<FormLabel size="lg">
+							Description&nbsp;
+							<InfoTooltip>Used for social media previews</InfoTooltip>
+						</FormLabel>
+						<FormControl>
+							<Textarea
+								placeholder="This website is very awesome and fun!"
+								minRows={3}
+								maxRows={10}
+								size="lg"
+								{...field}
+							/>
+						</FormControl>
+					</FormItem>
+				)}
 			/>
 
-			<Input
-				label={
-					<>
-						Language&nbsp;
-						<InfoTooltip size="lg">
-							Used in the <TypographyCode>lang</TypographyCode> attribute of the{" "}
-							<TypographyCode>&lt;html&gt;</TypographyCode> tag
-						</InfoTooltip>
-					</>
-				}
-				placeholder="en-US"
-				size="lg"
-				{...register("language")}
-				error={!!errors.language}
-				withAsterisk
+			<FormField
+				control={form.control}
+				name="language"
+				render={({ field }) => (
+					<FormItem>
+						<FormLabel size="lg" withAsterisk>
+							Language&nbsp;
+							<InfoTooltip>
+								Used in the <TypographyCode>lang</TypographyCode> attribute of the{" "}
+								<TypographyCode>&lt;html&gt;</TypographyCode> tag
+							</InfoTooltip>
+						</FormLabel>
+						<FormControl>
+							<Input size="lg" placeholder="en-US" {...field} />
+						</FormControl>
+					</FormItem>
+				)}
 			/>
 		</SinglePageForm>
 	);

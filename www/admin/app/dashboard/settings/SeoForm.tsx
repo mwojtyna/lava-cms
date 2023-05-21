@@ -30,7 +30,7 @@ import { useToast } from "@admin/src/hooks";
 const schema = z
 	.object({
 		title: z.string().nonempty(),
-		description: z.string(),
+		description: z.string().optional(),
 		language: z.string().nonempty(),
 	})
 	.refine((data) => check(data.language), {
@@ -48,7 +48,7 @@ export function SeoForm({ serverData }: { serverData: Inputs }) {
 		try {
 			await mutation.mutateAsync({
 				title: data.title,
-				description: data.description,
+				description: data.description ?? "",
 				language: data.language,
 			});
 			toast({
