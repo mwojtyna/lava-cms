@@ -8,7 +8,15 @@ import { type SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { trpc } from "@admin/src/utils/trpc";
-import { Button, Input } from "@admin/src/components/ui/client";
+import {
+	Button,
+	FormControl,
+	FormError,
+	FormField,
+	FormItem,
+	FormLabel,
+	Input,
+} from "@admin/src/components/ui/client";
 import { SinglePageForm } from "../SinglePageForm";
 
 const inputSchema = z
@@ -20,7 +28,7 @@ const inputSchema = z
 			.nonempty({ message: " " })
 			.email({ message: "The e-mail you provided is invalid." }),
 		password: z
-			.string()
+			.string({ required_error: " " })
 			.min(8, { message: "The password must be at least 8 characters long." })
 			.regex(/[a-z]/, {
 				message: "The password must contain at least one lowercase letter.",
@@ -31,7 +39,7 @@ const inputSchema = z
 			.regex(/[0-9]/, {
 				message: "The password must contain at least one digit.",
 			}),
-		repeatPassword: z.string(),
+		repeatPassword: z.string({ required_error: " " }),
 	})
 	.refine((data) => data.password === data.repeatPassword && data.password !== "", {
 		path: ["repeatPassword"],
@@ -40,14 +48,9 @@ const inputSchema = z
 type Inputs = z.infer<typeof inputSchema>;
 
 export function SignUpForm() {
-	const {
-		register,
-		handleSubmit,
-		formState: { errors, isSubmitting, isSubmitSuccessful },
-	} = useForm<Inputs>({ mode: "onSubmit", resolver: zodResolver(inputSchema) });
-
 	const router = useRouter();
 
+	const form = useForm<Inputs>({ mode: "onSubmit", resolver: zodResolver(inputSchema) });
 	const onSubmit: SubmitHandler<Inputs> = async (data) => {
 		await trpc.auth.signUp.mutate({
 			name: data.name,
@@ -65,8 +68,8 @@ export function SignUpForm() {
 
 	return (
 		<SinglePageForm
-			className="max-w-md"
-			onSubmit={handleSubmit(onSubmit)}
+			className="max-w-sm"
+			onSubmit={form.handleSubmit(onSubmit)}
 			titleText={
 				<span className="bg-gradient-to-b from-foreground/70 to-foreground bg-clip-text text-transparent dark:bg-gradient-to-t">
 					Add admin user
@@ -78,58 +81,102 @@ export function SignUpForm() {
 					size="lg"
 					icon={<ArrowRightIcon className="w-5" />}
 					className="ml-auto shadow-lg shadow-primary/25"
-					loading={isSubmitting || isSubmitSuccessful}
+					loading={form.formState.isSubmitting || form.formState.isSubmitSuccessful}
 				>
 					Continue
 				</Button>
 			}
+			formData={form}
 		>
-			<Input
-				type="email"
-				label="E-mail"
-				placeholder="user@domain.com"
-				size="lg"
-				{...register("email")}
-				error={errors.email?.message}
-				icon={<EnvelopeIcon className="w-5" />}
-				autoFocus
+			<FormField
+				control={form.control}
+				name="email"
+				render={({ field }) => (
+					<FormItem>
+						<FormLabel size="lg">E-mail</FormLabel>
+						<FormControl>
+							<Input
+								type="email"
+								placeholder="user@domain.com"
+								size="lg"
+								icon={<EnvelopeIcon className="w-5" />}
+								autoFocus
+								{...field}
+							/>
+						</FormControl>
+						<FormError />
+					</FormItem>
+				)}
 			/>
 
 			<div className="flex gap-4">
-				<Input
-					type="text"
-					label="Name"
-					placeholder="John"
-					size="lg"
-					{...register("name")}
-					error={!!errors.name}
-					icon={<UserIcon className="w-5" />}
+				<FormField
+					control={form.control}
+					name="name"
+					render={({ field }) => (
+						<FormItem>
+							<FormLabel size="lg">Name</FormLabel>
+							<FormControl>
+								<Input
+									type="text"
+									placeholder="John"
+									size="lg"
+									icon={<UserIcon className="w-5" />}
+									{...field}
+								/>
+							</FormControl>
+						</FormItem>
+					)}
 				/>
-				<Input
-					type="text"
-					label="Last name"
-					placeholder="Doe"
-					size="lg"
-					{...register("lastName")}
-					error={!!errors.lastName}
+				<FormField
+					control={form.control}
+					name="lastName"
+					render={({ field }) => (
+						<FormItem>
+							<FormLabel size="lg">Last name</FormLabel>
+							<FormControl>
+								<Input type="text" placeholder="Doe" size="lg" {...field} />
+							</FormControl>
+						</FormItem>
+					)}
 				/>
 			</div>
 
-			<Input
-				type="password"
-				label="Password"
-				size="lg"
-				{...register("password")}
-				error={errors.password?.message}
-				icon={<LockClosedIcon className="w-5" />}
+			<FormField
+				control={form.control}
+				name="password"
+				render={({ field }) => (
+					<FormItem>
+						<FormLabel size="lg">Password</FormLabel>
+						<FormControl>
+							<Input
+								type="password"
+								size="lg"
+								icon={<LockClosedIcon className="w-5" />}
+								{...field}
+							/>
+						</FormControl>
+						<FormError />
+					</FormItem>
+				)}
 			/>
-			<Input
-				type="password"
-				label="Repeat password"
-				size="lg"
-				{...register("repeatPassword")}
-				error={errors.repeatPassword?.message}
-				icon={<LockClosedIcon className="w-5" />}
+			<FormField
+				control={form.control}
+				name="repeatPassword"
+				render={({ field }) => (
+					<FormItem>
+						<FormLabel size="lg">Repeat password</FormLabel>
+						<FormControl>
+							<Input
+								type="password"
+								size="lg"
+								icon={<LockClosedIcon className="w-5" />}
+								{...field}
+							/>
+						</FormControl>
+						<FormError />
+					</FormItem>
+				)}
 			/>
 		</SinglePageForm>
 	);
