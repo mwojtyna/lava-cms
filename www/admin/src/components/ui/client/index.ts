@@ -47,7 +47,7 @@ export {
 	FormLabel,
 	FormControl,
 	FormDescription,
-	FormMessage,
+	FormError,
 	FormField,
 } from "./Form";
 export { Input, type InputBaseProps, InputWrapper } from "./Input";

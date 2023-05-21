@@ -19,7 +19,6 @@ import {
 	FormItem,
 	FormLabel,
 	FormControl,
-	FormMessage,
 } from "@admin/src/components/ui/client";
 import { SinglePageForm } from "../SinglePageForm";
 
@@ -107,7 +106,6 @@ export function SignInForm() {
 								{...field}
 							/>
 						</FormControl>
-						<FormMessage noMessage />
 					</FormItem>
 				)}
 			/>
@@ -121,7 +119,6 @@ export function SignInForm() {
 						<FormControl>
 							<Input type="password" size="lg" icon={<LockClosedIcon />} {...field} />
 						</FormControl>
-						<FormMessage noMessage />
 					</FormItem>
 				)}
 			/>

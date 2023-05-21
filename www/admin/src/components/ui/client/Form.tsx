@@ -105,9 +105,7 @@ const FormControl = React.forwardRef<
 			ref={ref}
 			id={formItemId}
 			className={cn(className, error && "border-destructive")}
-			aria-describedby={
-				!error ? `${formDescriptionId}` : `${formDescriptionId} ${formMessageId}`
-			}
+			aria-describedby={!error ? formDescriptionId : `${formDescriptionId} ${formMessageId}`}
 			aria-invalid={!!error}
 			{...props}
 		/>
@@ -132,31 +130,28 @@ const FormDescription = React.forwardRef<
 });
 FormDescription.displayName = "FormDescription";
 
-interface FormMessageProps extends React.HTMLAttributes<HTMLParagraphElement> {
-	noMessage?: boolean;
-}
-const FormMessage = React.forwardRef<HTMLParagraphElement, FormMessageProps>(
-	({ className, children, noMessage, ...props }, ref) => {
-		const { error, formMessageId } = useFormField();
-		const body = error ? String(error?.message) : children;
+const FormError = React.forwardRef<
+	HTMLParagraphElement,
+	React.HTMLAttributes<HTMLParagraphElement>
+>(({ className, children, ...props }, ref) => {
+	const { error, formMessageId } = useFormField();
 
-		if (!body) {
-			return null;
-		}
-
-		return (
-			<p
-				ref={ref}
-				id={formMessageId}
-				className={cn("text-sm font-medium text-destructive", className)}
-				{...props}
-			>
-				{!noMessage && body}
-			</p>
-		);
+	if (!error) {
+		return null;
 	}
-);
-FormMessage.displayName = "FormMessage";
+
+	return (
+		<p
+			ref={ref}
+			id={formMessageId}
+			className={cn("text-sm text-destructive", className)}
+			{...props}
+		>
+			{error.message}
+		</p>
+	);
+});
+FormError.displayName = "FormMessage";
 
 export {
 	useFormField,
@@ -165,6 +160,6 @@ export {
 	FormLabel,
 	FormControl,
 	FormDescription,
-	FormMessage,
+	FormError,
 	FormField,
 };

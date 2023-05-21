@@ -13,6 +13,12 @@ import {
 	DialogFooter,
 	DialogHeader,
 	DialogTitle,
+	Form,
+	FormControl,
+	FormError,
+	FormField,
+	FormItem,
+	FormLabel,
 	Input,
 } from "@admin/src/components/ui/client";
 import { trpcReact } from "@admin/src/utils/trpcReact";
@@ -215,19 +221,12 @@ export function EditDetailsDialog(props: DialogProps) {
 		},
 	});
 
-	const {
-		register,
-		handleSubmit,
-		setValue,
-		clearErrors,
-		setError,
-		formState: { errors },
-	} = useForm<EditDialogInputs>({
+	const form = useForm<EditDialogInputs>({
 		resolver: zodResolver(editDialogSchema),
 	});
 	const onSubmit: SubmitHandler<EditDialogInputs> = async (data) => {
 		if (data.slug === "/" && props.page.is_group) {
-			setError("slug", { message: "Groups cannot have slugs containing only '/'." });
+			form.setError("slug", { message: "Groups cannot have slugs containing only '/'." });
 			return;
 		}
 
@@ -244,7 +243,7 @@ export function EditDetailsDialog(props: DialogProps) {
 			props.setOpen(false);
 		} catch (error) {
 			if (error instanceof TRPCClientError && error.data.code === "CONFLICT") {
-				setError("slug", {
+				form.setError("slug", {
 					type: "manual",
 					message: (
 						<>
@@ -258,11 +257,11 @@ export function EditDetailsDialog(props: DialogProps) {
 
 	React.useEffect(() => {
 		if (props.open) {
-			setValue("name", props.page.name);
-			setValue("slug", getSlugFromUrl(props.page.url));
-			clearErrors();
+			form.setValue("name", props.page.name);
+			form.setValue("slug", getSlugFromUrl(props.page.url));
+			form.clearErrors();
 		}
-	}, [props.open, props.page.name, props.page.url, setValue, clearErrors]);
+	}, [props.open, props.page.name, props.page.url, form]);
 
 	return (
 		<Dialog open={props.open} onOpenChange={props.setOpen}>
@@ -271,46 +270,68 @@ export function EditDetailsDialog(props: DialogProps) {
 					<DialogTitle>Edit details</DialogTitle>
 				</DialogHeader>
 
-				<form className="flex flex-col gap-4" onSubmit={handleSubmit(onSubmit)}>
-					<Input
-						className="flex-row"
-						label="Name"
-						{...register("name", {
-							onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
-								if (!slugLocked[props.page.id])
-									setValue("slug", "/" + slugify(e.target.value, slugifyOptions));
-							},
-						})}
-						error={!!errors.name}
-					/>
+				<Form {...form}>
+					<form className="flex flex-col gap-4" onSubmit={form.handleSubmit(onSubmit)}>
+						<FormField
+							control={form.control}
+							name="name"
+							rules={{
+								onChange: (e) => {
+									if (!slugLocked[props.page.id])
+										form.setValue(
+											"slug",
+											"/" + slugify(e.target.value, slugifyOptions)
+										);
+								},
+							}}
+							render={({ field }) => (
+								<FormItem>
+									<FormLabel>Name</FormLabel>
+									<FormControl>
+										<Input className="flex-row" {...field} />
+									</FormControl>
+								</FormItem>
+							)}
+						/>
 
-					<Input
-						className="flex-row"
-						label="Slug"
-						{...register("slug")}
-						error={errors.slug?.message}
-						rightButtonIconOn={<LockClosedIcon className="w-4" />}
-						rightButtonIconOff={<LockOpenIcon className="w-4" />}
-						onRightButtonClick={(state) =>
-							setSlugLocked({
-								...slugLocked,
-								[props.page.id]: state,
-							})
-						}
-						initialRightButtonState={slugLocked[props.page.id]}
-						rightButtonTooltip="Toggle lock slug autofill"
-					/>
+						<FormField
+							control={form.control}
+							name="slug"
+							render={({ field }) => (
+								<FormItem>
+									<FormLabel>Slug</FormLabel>
+									<FormControl>
+										<Input
+											className="flex-row"
+											rightButtonIconOn={<LockClosedIcon className="w-4" />}
+											rightButtonIconOff={<LockOpenIcon className="w-4" />}
+											onRightButtonClick={(state) =>
+												setSlugLocked({
+													...slugLocked,
+													[props.page.id]: state,
+												})
+											}
+											initialRightButtonState={slugLocked[props.page.id]}
+											rightButtonTooltip="Toggle lock slug autofill"
+											{...field}
+										/>
+									</FormControl>
+									<FormError />
+								</FormItem>
+							)}
+						/>
 
-					<DialogFooter>
-						<Button
-							type="submit"
-							loading={mutation.isLoading}
-							icon={<PencilSquareIcon className="w-5" />}
-						>
-							Save
-						</Button>
-					</DialogFooter>
-				</form>
+						<DialogFooter>
+							<Button
+								type="submit"
+								loading={mutation.isLoading}
+								icon={<PencilSquareIcon className="w-5" />}
+							>
+								Save
+							</Button>
+						</DialogFooter>
+					</form>
+				</Form>
 			</DialogContent>
 		</Dialog>
 	);
