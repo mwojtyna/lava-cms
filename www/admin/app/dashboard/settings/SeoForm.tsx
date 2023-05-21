@@ -84,7 +84,7 @@ export function SeoForm({ serverData }: { serverData: Inputs }) {
 							name="title"
 							render={({ field }) => (
 								<FormItem>
-									<FormLabel>Title</FormLabel>
+									<FormLabel withAsterisk>Title</FormLabel>
 									<FormControl>
 										<Input placeholder="My awesome website" {...field} />
 									</FormControl>
@@ -118,7 +118,7 @@ export function SeoForm({ serverData }: { serverData: Inputs }) {
 							name="language"
 							render={({ field }) => (
 								<FormItem>
-									<FormLabel>
+									<FormLabel withAsterisk>
 										Language&nbsp;
 										<InfoTooltip>
 											Used in the <TypographyCode>lang</TypographyCode>{" "}

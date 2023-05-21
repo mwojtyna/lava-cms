@@ -79,17 +79,20 @@ FormItem.displayName = "FormItem";
 
 const FormLabel = React.forwardRef<
 	React.ElementRef<typeof Label>,
-	React.ComponentPropsWithoutRef<typeof Label>
->(({ className, ...props }, ref) => {
+	React.ComponentPropsWithoutRef<typeof Label> & { withAsterisk?: boolean }
+>(({ className, withAsterisk, ...props }, ref) => {
 	const { formItemId } = useFormField();
 
 	return (
-		<Label
-			ref={ref}
-			className={cn("flex items-center", className)}
-			htmlFor={formItemId}
-			{...props}
-		/>
+		<span className="flex">
+			<Label
+				ref={ref}
+				className={cn("flex items-center", className)}
+				htmlFor={formItemId}
+				{...props}
+			/>
+			{withAsterisk && <span className="text-destructive">&nbsp;*</span>}
+		</span>
 	);
 });
 FormLabel.displayName = "FormLabel";
