@@ -29,9 +29,9 @@ interface InputProps
 	icon?: React.ReactNode;
 	rightButtonIconOn?: React.ReactNode;
 	rightButtonIconOff?: React.ReactNode;
+	rightButtonState?: boolean;
+	setRightButtonState?: (state: boolean) => void;
 	rightButtonTooltip?: React.ReactNode;
-	onRightButtonClick?: (state: boolean) => void;
-	initialRightButtonState?: boolean;
 }
 const Input = React.forwardRef<HTMLInputElement, InputProps>(
 	(
@@ -43,20 +43,20 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
 			rightButtonIconOff,
 			rightButtonIconOn,
 			rightButtonTooltip,
-			onRightButtonClick,
-			initialRightButtonState,
+			rightButtonState,
+			setRightButtonState,
 			...props
 		},
 		ref
 	) => {
-		const [rightIconState, setRightIconState] = React.useState(initialRightButtonState);
+		const [passwordVisible, setPasswordVisible] = React.useState(false);
 
 		return (
 			<div className="relative flex w-full items-center justify-center">
 				{icon && <div className="absolute left-3 w-5">{icon}</div>}
 
 				<input
-					type={type === "password" ? (rightIconState ? "text" : "password") : type}
+					type={type === "password" ? (passwordVisible ? "text" : "password") : type}
 					className={cn(inputVariants({ className, size }), icon && "pl-10")}
 					ref={ref}
 					{...props}
@@ -65,11 +65,11 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
 				{type === "password" ? (
 					<ActionIcon
 						className="absolute right-2"
-						onClick={() => setRightIconState(!rightIconState)}
+						onClick={() => setPasswordVisible(!passwordVisible)}
 						size={size}
 						aria-label="Toggle password visibility"
 					>
-						{rightIconState ? (
+						{passwordVisible ? (
 							<EyeSlashIcon className="w-5" />
 						) : (
 							<EyeIcon className="w-5" />
@@ -77,18 +77,19 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
 					</ActionIcon>
 				) : (
 					rightButtonIconOn &&
-					rightButtonIconOff && (
+					rightButtonIconOff &&
+					rightButtonState !== undefined &&
+					setRightButtonState !== undefined && (
 						<Tooltip>
 							<TooltipTrigger asChild>
 								<ActionIcon
 									className="absolute right-2"
 									onClick={() => {
-										setRightIconState(!rightIconState);
-										onRightButtonClick?.(!rightIconState);
+										setRightButtonState(!rightButtonState);
 									}}
 									size={size}
 								>
-									{rightIconState ? rightButtonIconOn : rightButtonIconOff}
+									{rightButtonState ? rightButtonIconOn : rightButtonIconOff}
 								</ActionIcon>
 							</TooltipTrigger>
 
