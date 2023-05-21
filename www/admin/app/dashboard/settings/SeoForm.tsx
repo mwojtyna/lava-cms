@@ -9,7 +9,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { InfoTooltip } from "@admin/src/components";
 import {
 	Button,
-	Form,
+	FormProvider,
 	FormControl,
 	FormField,
 	FormItem,
@@ -77,7 +77,7 @@ export function SeoForm({ serverData }: { serverData: Inputs }) {
 				<CardDescription>Search Engine Optimization</CardDescription>
 			</CardHeader>
 			<CardContent>
-				<Form {...form}>
+				<FormProvider {...form}>
 					<form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-4">
 						<FormField
 							control={form.control}
@@ -137,7 +137,7 @@ export function SeoForm({ serverData }: { serverData: Inputs }) {
 							Save
 						</Button>
 					</form>
-				</Form>
+				</FormProvider>
 			</CardContent>
 		</Card>
 	);

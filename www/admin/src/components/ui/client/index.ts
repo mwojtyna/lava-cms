@@ -42,7 +42,7 @@ export {
 } from "./DropdownMenu";
 export {
 	useFormField,
-	Form,
+	FormProvider,
 	FormItem,
 	FormLabel,
 	FormControl,
@@ -50,7 +50,7 @@ export {
 	FormError,
 	FormField,
 } from "./Form";
-export { Input, type InputBaseProps, InputWrapper } from "./Input";
+export { Input } from "./Input";
 export { Label } from "./Label";
 export { Popover, PopoverTrigger, PopoverContent } from "./Popover";
 export { Separator } from "./Separator";

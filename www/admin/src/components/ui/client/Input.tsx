@@ -4,48 +4,8 @@ import * as React from "react";
 import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline";
 import { type VariantProps, cva } from "class-variance-authority";
 import { cn } from "@admin/src/utils/styling";
-import { Label, Tooltip, TooltipContent, TooltipTrigger } from "../client";
+import { Tooltip, TooltipContent, TooltipTrigger } from "../client";
 import { ActionIcon } from "./ActionIcon";
-
-interface InputWrapperProps
-	extends Omit<React.InputHTMLAttributes<HTMLInputElement>, "children" | "size">,
-		VariantProps<typeof inputVariants> {
-	label?: React.ReactNode;
-	error?: React.ReactNode;
-	withAsterisk?: boolean;
-	children: (inputId: string, errorId: string) => React.ReactNode;
-	row?: boolean;
-}
-type InputBaseProps = Omit<InputWrapperProps, "children">;
-
-const InputWrapper = React.forwardRef<HTMLDivElement, InputWrapperProps>(
-	({ className, label, error, children, withAsterisk, size, row, ...props }, ref) => {
-		const inputId = React.useId();
-		const errorId = React.useId();
-
-		return (
-			<div ref={ref} className={cn("flex flex-col gap-1.5", className)} {...props}>
-				<div className={cn("flex flex-col gap-1.5", row && "flex-row")}>
-					{label && (
-						<Label htmlFor={inputId} className="flex" size={size}>
-							<span className="flex items-center">{label}</span>
-							{withAsterisk && <span className="text-destructive">&nbsp;*</span>}
-						</Label>
-					)}
-
-					{children(inputId, errorId)}
-				</div>
-
-				{error && typeof error !== "boolean" && (
-					<p id={errorId} className="text-sm text-destructive">
-						{error}
-					</p>
-				)}
-			</div>
-		);
-	}
-);
-InputWrapper.displayName = "InputWrapper";
 
 const inputVariants = cva(
 	"flex w-full rounded-md border border-input bg-transparent px-3 py-2 ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50",
@@ -142,4 +102,4 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
 );
 Input.displayName = "Input";
 
-export { Input, InputWrapper, type InputBaseProps };
+export { Input };

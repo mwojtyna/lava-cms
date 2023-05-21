@@ -13,7 +13,7 @@ import {
 	DialogFooter,
 	DialogHeader,
 	DialogTitle,
-	Form,
+	FormProvider,
 	FormControl,
 	FormError,
 	FormField,
@@ -81,6 +81,9 @@ export function DeleteDialog(props: DialogProps) {
 	);
 }
 
+interface MoveDialogInputs {
+	newParentId: string;
+}
 export function MoveDialog(props: DialogProps) {
 	const allGroups = trpcReact.pages.getGroup.useQuery().data as Page[] | undefined;
 	const groups = React.useMemo(
@@ -98,49 +101,42 @@ export function MoveDialog(props: DialogProps) {
 	);
 	const mutation = trpcReact.pages.movePage.useMutation();
 
-	const [newParentId, setNewParentId] = React.useState("");
-	const [error, setError] = React.useState<{
-		message: React.ReactNode;
-		unexpected: boolean;
-	} | null>();
-
-	async function handleSubmit() {
+	const form = useForm<MoveDialogInputs>();
+	const onSubmit: SubmitHandler<MoveDialogInputs> = async (data) => {
 		try {
 			await mutation.mutateAsync({
 				id: props.page.id,
-				newParentId,
+				newParentId: data.newParentId,
 			});
 			props.setOpen(false);
 		} catch (error) {
 			if (error instanceof TRPCClientError && error.data.code === "CONFLICT") {
-				const destinationUrl = groups!.find((group) => group.id === newParentId)!.url;
+				const destinationUrl = groups!.find((group) => group.id === data.newParentId)!.url;
 
 				const newPath =
 					destinationUrl +
 					(destinationUrl === "/" ? "" : "/") +
 					props.page.url.split("/").pop()!;
 
-				setError({
+				form.setError("newParentId", {
 					message: (
 						<>
 							A page with path <strong>{newPath}</strong> already exists! Either
 							change the slug or move it somewhere else.
 						</>
-					),
-					unexpected: false,
+					) as unknown as string,
 				});
 			} else {
-				setError({
+				form.setError("newParentId", {
 					message: "An unexpected error occurred.",
-					unexpected: true,
 				});
 			}
 		}
-	}
+	};
 
 	React.useEffect(() => {
-		setError(null);
-	}, [props.open]);
+		form.clearErrors();
+	}, [props.open, form]);
 
 	return (
 		<Dialog open={props.open} onOpenChange={props.setOpen}>
@@ -149,42 +145,56 @@ export function MoveDialog(props: DialogProps) {
 					<DialogTitle>Move page</DialogTitle>
 				</DialogHeader>
 
-				<Combobox
-					className="w-full"
-					contentProps={{
-						align: "start",
-						className: "w-[335px]",
-						placeholder: "Search groups...",
-					}}
-					placeholder="Select a group..."
-					data={
-						groups?.map((group) => ({
-							label: (
-								<span className="flex items-baseline gap-2">
-									<span>{group.name}</span>{" "}
-									<TypographyMuted className="text-xs">
-										{group.url}
-									</TypographyMuted>
-								</span>
-							),
-							value: group.id,
-							filterValue: group.name,
-						})) ?? []
-					}
-					onValueChange={setNewParentId}
-					error={error?.message}
-				/>
+				<FormProvider {...form}>
+					<form className="flex flex-col gap-4" onSubmit={form.handleSubmit(onSubmit)}>
+						<FormField
+							control={form.control}
+							name="newParentId"
+							render={({ field }) => (
+								<FormItem>
+									<FormControl>
+										<Combobox
+											className="w-full"
+											contentProps={{
+												align: "start",
+												className: "w-[335px]",
+												placeholder: "Search groups...",
+											}}
+											placeholder="Select a group..."
+											notFoundContent="No groups found."
+											data={
+												groups?.map((group) => ({
+													label: (
+														<span className="flex items-baseline gap-2">
+															<span>{group.name}</span>{" "}
+															<TypographyMuted className="text-xs">
+																{group.url}
+															</TypographyMuted>
+														</span>
+													),
+													value: group.id,
+													filterValue: group.name,
+												})) ?? []
+											}
+											{...field}
+										/>
+									</FormControl>
+									<FormError />
+								</FormItem>
+							)}
+						/>
 
-				<DialogFooter>
-					<Button
-						disabled={!newParentId}
-						loading={mutation.isLoading}
-						onClick={handleSubmit}
-						icon={<FolderArrowDownIcon className="w-5" />}
-					>
-						Move
-					</Button>
-				</DialogFooter>
+						<DialogFooter>
+							<Button
+								type="submit"
+								loading={mutation.isLoading}
+								icon={<FolderArrowDownIcon className="w-5" />}
+							>
+								Move
+							</Button>
+						</DialogFooter>
+					</form>
+				</FormProvider>
 			</DialogContent>
 		</Dialog>
 	);
@@ -270,7 +280,7 @@ export function EditDetailsDialog(props: DialogProps) {
 					<DialogTitle>Edit details</DialogTitle>
 				</DialogHeader>
 
-				<Form {...form}>
+				<FormProvider {...form}>
 					<form className="flex flex-col gap-4" onSubmit={form.handleSubmit(onSubmit)}>
 						<FormField
 							control={form.control}
@@ -331,7 +341,7 @@ export function EditDetailsDialog(props: DialogProps) {
 							</Button>
 						</DialogFooter>
 					</form>
-				</Form>
+				</FormProvider>
 			</DialogContent>
 		</Dialog>
 	);

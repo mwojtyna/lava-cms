@@ -1,7 +1,7 @@
 import { cn } from "@admin/src/utils/styling";
 import { ThemeSwitch } from "./ThemeSwitch";
 import { TypographyH1 } from "@admin/src/components/ui/server";
-import { Form } from "@admin/src/components/ui/client";
+import { FormProvider } from "@admin/src/components/ui/client";
 import type { UseFormReturn } from "react-hook-form";
 
 interface Props extends React.ComponentPropsWithoutRef<"form"> {
@@ -22,7 +22,7 @@ export function SinglePageForm({
 	...props
 }: Props) {
 	return (
-		<Form {...formData}>
+		<FormProvider {...formData}>
 			<form onSubmit={onSubmit} className={cn("w-full", className)} {...props}>
 				<div className="flex flex-col gap-5">
 					<TypographyH1 className="mb-4">{titleText}</TypographyH1>
@@ -35,6 +35,6 @@ export function SinglePageForm({
 					</div>
 				</div>
 			</form>
-		</Form>
+		</FormProvider>
 	);
 }

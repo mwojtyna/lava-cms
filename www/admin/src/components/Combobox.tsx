@@ -10,7 +10,7 @@ import {
 	CommandGroup,
 	CommandInput,
 	CommandItem,
-	InputWrapper,
+	FormControl,
 	Popover,
 	PopoverContent,
 	PopoverTrigger,
@@ -20,32 +20,24 @@ type ComboboxData = { value: string; label: React.ReactNode; filterValue: string
 interface ComboboxProps extends React.ComponentPropsWithoutRef<typeof Button> {
 	data: ComboboxData;
 	contentProps?: React.ComponentPropsWithoutRef<typeof PopoverContent>;
-	onValueChange?: (value: string) => void;
-	label?: string;
-	error?: React.ReactNode;
-	withAsterisk?: boolean;
+	notFoundContent?: React.ReactNode;
+	value: string;
+	onChange: (...event: unknown[]) => void;
 }
-function Combobox({
-	data,
-	className,
-	contentProps,
-	onValueChange,
-	placeholder,
-	label,
-	error,
-	withAsterisk,
-	...props
-}: ComboboxProps) {
-	const [open, setOpen] = React.useState(false);
-	const [value, setValue] = React.useState("");
-	const [search, setSearch] = React.useState("");
+const Combobox = React.forwardRef<React.ComponentRef<typeof Button>, ComboboxProps>(
+	(
+		{ data, className, contentProps, placeholder, notFoundContent, value, onChange, ...props },
+		ref
+	) => {
+		const [open, setOpen] = React.useState(false);
+		const [search, setSearch] = React.useState("");
 
-	return (
-		<InputWrapper label={label} error={error} withAsterisk={withAsterisk}>
-			{() => (
-				<Popover open={open} onOpenChange={setOpen}>
-					<PopoverTrigger asChild>
+		return (
+			<Popover open={open} onOpenChange={setOpen}>
+				<PopoverTrigger asChild>
+					<FormControl>
 						<Button
+							ref={ref}
 							variant="outline"
 							role="combobox"
 							aria-expanded={open}
@@ -58,59 +50,51 @@ function Combobox({
 							{value ? data.find((item) => item.value === value)?.label : placeholder}
 							<ChevronUpDownIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
 						</Button>
-					</PopoverTrigger>
+					</FormControl>
+				</PopoverTrigger>
 
-					<PopoverContent
-						{...contentProps}
-						className={cn("w-full !p-0", contentProps?.className)}
-					>
-						<Command shouldFilter={false}>
-							<CommandInput
-								placeholder={contentProps?.placeholder}
-								value={search}
-								onValueChange={(value) => setSearch(value)}
-							/>
-							<CommandEmpty>No framework found.</CommandEmpty>
-							<CommandGroup>
-								{data.map((item, i) => {
-									if (
-										!item.filterValue
-											.toLowerCase()
-											.includes(search.toLowerCase())
-									)
-										return null;
+				<PopoverContent
+					{...contentProps}
+					className={cn("w-full !p-0", contentProps?.className)}
+				>
+					<Command shouldFilter={false}>
+						<CommandInput
+							placeholder={contentProps?.placeholder}
+							value={search}
+							onValueChange={(value) => setSearch(value)}
+						/>
+						<CommandEmpty>{notFoundContent}</CommandEmpty>
+						<CommandGroup>
+							{data.map((item, i) => {
+								if (!item.filterValue.toLowerCase().includes(search.toLowerCase()))
+									return null;
 
-									return (
-										<CommandItem
-											key={i}
-											value={item.value}
-											onSelect={(currentValue) => {
-												setValue(
-													currentValue === value ? "" : currentValue
-												);
-												onValueChange?.(currentValue);
-												setOpen(false);
-											}}
-										>
-											<CheckIcon
-												className={cn(
-													"mr-2 h-4 w-4",
-													value === item.value
-														? "opacity-100"
-														: "opacity-0"
-												)}
-											/>
-											{item.label}
-										</CommandItem>
-									);
-								})}
-							</CommandGroup>
-						</Command>
-					</PopoverContent>
-				</Popover>
-			)}
-		</InputWrapper>
-	);
-}
+								return (
+									<CommandItem
+										key={i}
+										value={item.value}
+										onSelect={(currentValue) => {
+											onChange(currentValue === value ? "" : currentValue);
+											setOpen(false);
+										}}
+									>
+										<CheckIcon
+											className={cn(
+												"mr-2 h-4 w-4",
+												value === item.value ? "opacity-100" : "opacity-0"
+											)}
+										/>
+										{item.label}
+									</CommandItem>
+								);
+							})}
+						</CommandGroup>
+					</Command>
+				</PopoverContent>
+			</Popover>
+		);
+	}
+);
+Combobox.displayName = "Combobox";
 
 export { Combobox, type ComboboxData };

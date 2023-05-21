@@ -11,8 +11,6 @@ import {
 import { cn } from "@admin/src/utils/styling";
 import { Label } from "@admin/src/components/ui/client";
 
-const Form = FormProvider;
-
 type FormFieldContextValue<
 	TFieldValues extends FieldValues = FieldValues,
 	TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>
@@ -158,7 +156,7 @@ FormError.displayName = "FormMessage";
 
 export {
 	useFormField,
-	Form,
+	FormProvider,
 	FormItem,
 	FormLabel,
 	FormControl,

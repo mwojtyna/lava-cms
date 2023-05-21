@@ -3,7 +3,6 @@
 import * as React from "react";
 import TextareaAutosize from "react-textarea-autosize";
 import { cn } from "@admin/src/utils/styling";
-import { type InputBaseProps, InputWrapper } from "./Input";
 import { type VariantProps, cva } from "class-variance-authority";
 
 const textAreaVariants = cva(
@@ -22,27 +21,16 @@ const textAreaVariants = cva(
 );
 
 type TextareaProps = React.ComponentPropsWithRef<typeof TextareaAutosize> &
-	InputBaseProps &
 	VariantProps<typeof textAreaVariants>;
 
 const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
-	({ className, label, error, withAsterisk, size, ...props }, ref) => {
+	({ className, size, ...props }, ref) => {
 		return (
-			<InputWrapper label={label} error={error} withAsterisk={withAsterisk} size={size}>
-				{(inputId, errorId) => (
-					<TextareaAutosize
-						id={inputId}
-						className={cn(
-							error && "border-destructive",
-							textAreaVariants({ className, size })
-						)}
-						ref={ref}
-						{...props}
-						aria-invalid={!!error}
-						aria-describedby={error ? errorId : undefined}
-					/>
-				)}
-			</InputWrapper>
+			<TextareaAutosize
+				className={cn(textAreaVariants({ className, size }))}
+				ref={ref}
+				{...props}
+			/>
 		);
 	}
 );
