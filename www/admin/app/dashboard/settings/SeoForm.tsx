@@ -7,7 +7,16 @@ import { type SubmitHandler, useForm } from "react-hook-form";
 import { trpcReact } from "@admin/src/utils/trpcReact";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { InfoTooltip } from "@admin/src/components";
-import { Button, Input, Textarea } from "@admin/src/components/ui/client";
+import {
+	Button,
+	Form,
+	FormControl,
+	FormField,
+	FormItem,
+	FormLabel,
+	Input,
+	Textarea,
+} from "@admin/src/components/ui/client";
 import {
 	Card,
 	CardContent,
@@ -34,12 +43,7 @@ export function SeoForm({ serverData }: { serverData: Inputs }) {
 	const mutation = trpcReact.config.setConfig.useMutation();
 	const { toast } = useToast();
 
-	const {
-		register,
-		handleSubmit,
-		formState: { errors },
-	} = useForm<Inputs>({ resolver: zodResolver(schema) });
-
+	const form = useForm<Inputs>({ resolver: zodResolver(schema), defaultValues: data });
 	const onSubmit: SubmitHandler<Inputs> = async (data) => {
 		try {
 			await mutation.mutateAsync({
@@ -73,48 +77,67 @@ export function SeoForm({ serverData }: { serverData: Inputs }) {
 				<CardDescription>Search Engine Optimization</CardDescription>
 			</CardHeader>
 			<CardContent>
-				<form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
-					<Input
-						label="Title"
-						placeholder="My awesome website"
-						defaultValue={data.title}
-						{...register("title")}
-						error={!!errors.title}
-						withAsterisk
-					/>
-					<Textarea
-						label={
-							<>
-								Description&nbsp;
-								<InfoTooltip>Used for social media previews</InfoTooltip>
-							</>
-						}
-						placeholder="This website is very awesome and fun!"
-						defaultValue={data.description}
-						minRows={3}
-						maxRows={10}
-						{...register("description")}
-					/>
-					<Input
-						label={
-							<>
-								Language&nbsp;
-								<InfoTooltip>
-									Used in the <TypographyCode>lang</TypographyCode> attribute of
-									the <TypographyCode>&lt;html&gt;</TypographyCode> tag
-								</InfoTooltip>
-							</>
-						}
-						placeholder="en-US"
-						defaultValue={data.language}
-						{...register("language")}
-						error={!!errors.language}
-						withAsterisk
-					/>
-					<Button type="submit" className="ml-auto" loading={mutation.isLoading}>
-						Save
-					</Button>
-				</form>
+				<Form {...form}>
+					<form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-4">
+						<FormField
+							control={form.control}
+							name="title"
+							render={({ field }) => (
+								<FormItem>
+									<FormLabel>Title</FormLabel>
+									<FormControl>
+										<Input placeholder="My awesome website" {...field} />
+									</FormControl>
+								</FormItem>
+							)}
+						/>
+
+						<FormField
+							control={form.control}
+							name="description"
+							render={({ field }) => (
+								<FormItem>
+									<FormLabel>
+										Description&nbsp;
+										<InfoTooltip>Used for social media previews</InfoTooltip>
+									</FormLabel>
+									<FormControl>
+										<Textarea
+											placeholder="This website is very awesome and fun!"
+											minRows={3}
+											maxRows={10}
+											{...field}
+										/>
+									</FormControl>
+								</FormItem>
+							)}
+						/>
+
+						<FormField
+							control={form.control}
+							name="language"
+							render={({ field }) => (
+								<FormItem>
+									<FormLabel>
+										Language&nbsp;
+										<InfoTooltip>
+											Used in the <TypographyCode>lang</TypographyCode>{" "}
+											attribute of the{" "}
+											<TypographyCode>&lt;html&gt;</TypographyCode> tag
+										</InfoTooltip>
+									</FormLabel>
+									<FormControl>
+										<Input placeholder="en-US" {...field} />
+									</FormControl>
+								</FormItem>
+							)}
+						/>
+
+						<Button type="submit" className="ml-auto" loading={mutation.isLoading}>
+							Save
+						</Button>
+					</form>
+				</Form>
 			</CardContent>
 		</Card>
 	);
