@@ -60,6 +60,7 @@ export function PagesTable(props: PagesTableProps) {
 		<div className="flex flex-col gap-2">
 			<div className="mb-2 flex justify-between gap-2">
 				<Input
+					className="mr-auto w-fit"
 					value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
 					onChange={(e) => table.getColumn("name")?.setFilterValue(e.target.value)}
 					icon={<MagnifyingGlassIcon className="w-4" />}
@@ -84,12 +85,12 @@ export function PagesTable(props: PagesTableProps) {
 						...data.breadcrumbs.map((breadcrumb, i) => (
 							<Button
 								key={i + 1}
-								asChild
 								variant={"link"}
 								className={cn(
 									"whitespace-nowrap font-normal",
 									i < data.breadcrumbs.length - 1 && "text-muted-foreground"
 								)}
+								asChild
 							>
 								<Link key={i} href={`/dashboard/pages/${breadcrumb.id}`}>
 									{breadcrumb.name}
