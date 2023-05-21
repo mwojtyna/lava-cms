@@ -33,7 +33,7 @@ import { Combobox } from "@admin/src/components";
 import { TypographyMuted } from "@admin/src/components/ui/server";
 import slugify from "slugify";
 import { TRPCClientError } from "@trpc/client";
-import { useLocalStorage } from "@mantine/hooks";
+import { usePagePreferences } from "@admin/src/hooks";
 
 interface DialogProps {
 	page: Page;
@@ -43,10 +43,13 @@ interface DialogProps {
 
 export function DeleteDialog(props: DialogProps) {
 	const mutation = trpcReact.pages.deletePage.useMutation();
+	const { preferences, setPreferences } = usePagePreferences(props.page.id);
+
 	async function handleSubmit() {
 		await mutation.mutateAsync({
 			id: props.page.id,
 		});
+		setPreferences({ ...preferences, [props.page.id]: undefined });
 		props.setOpen(false);
 	}
 
@@ -224,12 +227,7 @@ function getSlugFromUrl(path: string) {
 
 export function EditDetailsDialog(props: DialogProps) {
 	const mutation = trpcReact.pages.editPage.useMutation();
-	const [slugLocked, setSlugLocked] = useLocalStorage({
-		key: "slug-locked",
-		defaultValue: {
-			[props.page.id]: false,
-		},
-	});
+	const { preferences, setPreferences } = usePagePreferences(props.page.id);
 
 	const form = useForm<EditDialogInputs>({
 		resolver: zodResolver(editDialogSchema),
@@ -287,7 +285,7 @@ export function EditDetailsDialog(props: DialogProps) {
 							name="name"
 							rules={{
 								onChange: (e) => {
-									if (!slugLocked[props.page.id])
+									if (!preferences[props.page.id])
 										form.setValue(
 											"slug",
 											"/" + slugify(e.target.value, slugifyOptions)
@@ -316,12 +314,12 @@ export function EditDetailsDialog(props: DialogProps) {
 											rightButtonIconOn={<LockClosedIcon className="w-4" />}
 											rightButtonIconOff={<LockOpenIcon className="w-4" />}
 											onRightButtonClick={(state) =>
-												setSlugLocked({
-													...slugLocked,
+												setPreferences({
+													...preferences,
 													[props.page.id]: state,
 												})
 											}
-											initialRightButtonState={slugLocked[props.page.id]}
+											initialRightButtonState={preferences[props.page.id]}
 											rightButtonTooltip="Toggle lock slug autofill"
 											{...field}
 										/>
