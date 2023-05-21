@@ -34,7 +34,10 @@ type Inputs = z.infer<typeof schema>;
 export function SignInForm() {
 	const router = useRouter();
 
-	const form = useForm<Inputs>({ resolver: zodResolver(schema) });
+	const form = useForm<Inputs>({
+		resolver: zodResolver(schema),
+		defaultValues: { email: "", password: "" },
+	});
 	const onSubmit: SubmitHandler<Inputs> = async (data) => {
 		const res = await signIn("credentials", {
 			redirect: false,
