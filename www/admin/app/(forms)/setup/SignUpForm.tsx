@@ -13,11 +13,11 @@ import { SinglePageForm } from "../SinglePageForm";
 
 const inputSchema = z
 	.object({
-		name: z.string().min(1),
-		lastName: z.string().min(1),
+		name: z.string().nonempty(),
+		lastName: z.string().nonempty(),
 		email: z
 			.string()
-			.min(1, { message: " " })
+			.nonempty({ message: " " })
 			.email({ message: "The e-mail you provided is invalid." }),
 		password: z
 			.string()

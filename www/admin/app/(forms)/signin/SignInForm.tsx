@@ -18,9 +18,9 @@ import { SinglePageForm } from "../SinglePageForm";
 const schema = z.object({
 	email: z
 		.string()
-		.min(1, { message: " " })
+		.nonempty({ message: " " })
 		.email({ message: "The e-mail you provided is invalid." }),
-	password: z.string().min(1),
+	password: z.string().nonempty(),
 });
 type Inputs = z.infer<typeof schema>;
 

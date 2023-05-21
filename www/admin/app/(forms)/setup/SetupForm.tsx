@@ -14,9 +14,9 @@ import { SinglePageForm } from "../SinglePageForm";
 
 const schema = z
 	.object({
-		title: z.string().min(1),
+		title: z.string().nonempty(),
 		description: z.string(),
-		language: z.string().min(1),
+		language: z.string().nonempty(),
 	})
 	.refine((data) => check(data.language), {
 		path: ["language"],
@@ -37,7 +37,6 @@ export function SetupForm() {
 				...data,
 			}),
 			trpc.pages.addPage.mutate({ name: "Root", url: "/", is_group: true, parent_id: null }),
-			// TODO: Add index page capability eg. /blog/(no slug), required for home page, eg. /(no slug)
 		]);
 
 		router.push("/dashboard");

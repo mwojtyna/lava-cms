@@ -20,9 +20,9 @@ import { useToast } from "@admin/src/hooks";
 
 const schema = z
 	.object({
-		title: z.string().min(1),
+		title: z.string().nonempty(),
 		description: z.string(),
-		language: z.string().min(1),
+		language: z.string().nonempty(),
 	})
 	.refine((data) => check(data.language), {
 		path: ["language"],
