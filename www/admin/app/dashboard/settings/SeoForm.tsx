@@ -86,7 +86,11 @@ export function SeoForm({ serverData }: { serverData: Inputs }) {
 								<FormItem>
 									<FormLabel withAsterisk>Title</FormLabel>
 									<FormControl>
-										<Input placeholder="My awesome website" {...field} />
+										<Input
+											placeholder="My awesome website"
+											aria-required
+											{...field}
+										/>
 									</FormControl>
 								</FormItem>
 							)}
@@ -127,7 +131,7 @@ export function SeoForm({ serverData }: { serverData: Inputs }) {
 										</InfoTooltip>
 									</FormLabel>
 									<FormControl>
-										<Input placeholder="en-US" {...field} />
+										<Input placeholder="en-US" aria-required {...field} />
 									</FormControl>
 								</FormItem>
 							)}

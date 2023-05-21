@@ -78,7 +78,12 @@ export function SetupForm() {
 							Title
 						</FormLabel>
 						<FormControl>
-							<Input size="lg" placeholder="My awesome website" {...field} />
+							<Input
+								size="lg"
+								placeholder="My awesome website"
+								aria-required
+								{...field}
+							/>
 						</FormControl>
 					</FormItem>
 				)}
@@ -119,7 +124,7 @@ export function SetupForm() {
 							</InfoTooltip>
 						</FormLabel>
 						<FormControl>
-							<Input size="lg" placeholder="en-US" {...field} />
+							<Input size="lg" placeholder="en-US" aria-required {...field} />
 						</FormControl>
 					</FormItem>
 				)}

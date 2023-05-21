@@ -106,6 +106,7 @@ export function SignInForm() {
 								size="lg"
 								icon={<EnvelopeIcon />}
 								autoFocus
+								aria-required
 								{...field}
 							/>
 						</FormControl>
@@ -120,7 +121,13 @@ export function SignInForm() {
 					<FormItem>
 						<FormLabel size="lg">Password</FormLabel>
 						<FormControl>
-							<Input type="password" size="lg" icon={<LockClosedIcon />} {...field} />
+							<Input
+								type="password"
+								size="lg"
+								icon={<LockClosedIcon />}
+								aria-required
+								{...field}
+							/>
 						</FormControl>
 					</FormItem>
 				)}

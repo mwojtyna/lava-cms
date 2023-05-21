@@ -179,6 +179,7 @@ export function MoveDialog(props: DialogProps) {
 													filterValue: group.name,
 												})) ?? []
 											}
+											aria-required
 											{...field}
 										/>
 									</FormControl>
@@ -190,6 +191,7 @@ export function MoveDialog(props: DialogProps) {
 						<DialogFooter>
 							<Button
 								type="submit"
+								disabled={form.watch("newParentId") === undefined}
 								loading={mutation.isLoading}
 								icon={<FolderArrowDownIcon className="w-5" />}
 							>
@@ -296,7 +298,7 @@ export function EditDetailsDialog(props: DialogProps) {
 								<FormItem>
 									<FormLabel>Name</FormLabel>
 									<FormControl>
-										<Input className="flex-row" {...field} />
+										<Input className="flex-row" aria-required {...field} />
 									</FormControl>
 								</FormItem>
 							)}
@@ -321,6 +323,7 @@ export function EditDetailsDialog(props: DialogProps) {
 											}
 											initialRightButtonState={preferences[props.page.id]}
 											rightButtonTooltip="Toggle lock slug autofill"
+											aria-required
 											{...field}
 										/>
 									</FormControl>

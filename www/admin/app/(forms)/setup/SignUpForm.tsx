@@ -101,6 +101,7 @@ export function SignUpForm() {
 								size="lg"
 								icon={<EnvelopeIcon className="w-5" />}
 								autoFocus
+								aria-required
 								{...field}
 							/>
 						</FormControl>
@@ -122,6 +123,7 @@ export function SignUpForm() {
 									placeholder="John"
 									size="lg"
 									icon={<UserIcon className="w-5" />}
+									aria-required
 									{...field}
 								/>
 							</FormControl>
@@ -135,7 +137,13 @@ export function SignUpForm() {
 						<FormItem>
 							<FormLabel size="lg">Last name</FormLabel>
 							<FormControl>
-								<Input type="text" placeholder="Doe" size="lg" {...field} />
+								<Input
+									type="text"
+									placeholder="Doe"
+									size="lg"
+									aria-required
+									{...field}
+								/>
 							</FormControl>
 						</FormItem>
 					)}
@@ -153,6 +161,7 @@ export function SignUpForm() {
 								type="password"
 								size="lg"
 								icon={<LockClosedIcon className="w-5" />}
+								aria-required
 								{...field}
 							/>
 						</FormControl>
@@ -171,6 +180,7 @@ export function SignUpForm() {
 								type="password"
 								size="lg"
 								icon={<LockClosedIcon className="w-5" />}
+								aria-required
 								{...field}
 							/>
 						</FormControl>
