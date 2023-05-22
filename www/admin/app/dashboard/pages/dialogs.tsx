@@ -217,7 +217,7 @@ export function MoveDialog(props: EditDialogProps) {
 const editDialogSchema = z.object({
 	name: z.string().nonempty(),
 	slug: z
-		.string()
+		.string({ required_error: " " })
 		.nonempty({ message: " " })
 		.refine((slug) => "/" + slugify(slug, slugifyOptions) === slug, {
 			message: "Invalid slug.",
