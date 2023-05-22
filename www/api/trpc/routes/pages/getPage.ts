@@ -4,20 +4,12 @@ import { publicProcedure } from "@api/trpc";
 
 export const getPage = publicProcedure
 	.input(
-		z
-			.object({
-				url: z.string(),
-			})
-			.nullish()
+		z.object({
+			url: z.string(),
+		})
 	)
 	.query(async ({ input }) => {
-		if (!input) {
-			return prisma.page.findMany({ where: { is_group: false } });
-		}
-
-		const page = await prisma.page.findFirst({
+		return prisma.page.findFirst({
 			where: { url: input.url },
 		});
-
-		return { page };
 	});

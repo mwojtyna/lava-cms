@@ -30,17 +30,18 @@ import {
 } from "@heroicons/react/24/outline";
 import Link from "next/link";
 import { trpcReact } from "@admin/src/utils/trpcReact";
+import { AddDialog } from "./dialogs";
 
 interface PagesTableProps {
 	columns: ColumnDef<Page>[];
+	group: Page;
 	pages: Page[];
 	breadcrumbs: Page[];
-	groupId?: string;
 }
 
 export function PagesTable(props: PagesTableProps) {
 	const clientData = trpcReact.pages.getGroupContents.useQuery(
-		props.groupId ? { id: props.groupId } : null
+		props.breadcrumbs.length > 0 ? { id: props.group.id } : null
 	).data;
 	const data = clientData ?? { pages: props.pages, breadcrumbs: props.breadcrumbs };
 
@@ -56,109 +57,120 @@ export function PagesTable(props: PagesTableProps) {
 		},
 	});
 
-	return (
-		<div className="flex flex-col gap-2">
-			<div className="mb-2 flex justify-between gap-2">
-				<Input
-					className="mr-auto w-fit"
-					value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
-					onChange={(e) => table.getColumn("name")?.setFilterValue(e.target.value)}
-					icon={<MagnifyingGlassIcon className="w-4" />}
-				/>
+	const [openAdd, setOpenAdd] = React.useState(false);
 
-				<div className="flex gap-2">
-					<Button icon={<DocumentPlusIcon className="w-5" />}>Page</Button>
-					<Button variant={"secondary"} icon={<FolderPlusIcon className="w-5" />}>
-						Group
-					</Button>
+	return (
+		<>
+			<div className="flex flex-col gap-2">
+				<div className="mb-2 flex justify-between gap-2">
+					<Input
+						className="mr-auto w-fit"
+						value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
+						onChange={(e) => table.getColumn("name")?.setFilterValue(e.target.value)}
+						icon={<MagnifyingGlassIcon className="w-4" />}
+					/>
+
+					<div className="flex gap-2">
+						<Button
+							onClick={() => setOpenAdd(true)}
+							icon={<DocumentPlusIcon className="w-5" />}
+						>
+							Page
+						</Button>
+						<Button variant={"secondary"} icon={<FolderPlusIcon className="w-5" />}>
+							Group
+						</Button>
+					</div>
+				</div>
+
+				{data.breadcrumbs.length > 0 && (
+					<Stepper
+						steps={[
+							<Link key={0} href={"/dashboard/pages"}>
+								<ActionIcon className="-mr-2">
+									<HomeIcon className="w-5 text-foreground" />
+								</ActionIcon>
+							</Link>,
+							...data.breadcrumbs.map((breadcrumb, i) => (
+								<Button
+									key={i + 1}
+									variant={"link"}
+									className={cn(
+										"whitespace-nowrap font-normal",
+										i < data.breadcrumbs.length - 1 && "text-muted-foreground"
+									)}
+									asChild
+								>
+									<Link key={i} href={`/dashboard/pages/${breadcrumb.id}`}>
+										{breadcrumb.name}
+									</Link>
+								</Button>
+							)),
+						]}
+						currentStep={data.breadcrumbs.length}
+						separator={<ChevronRightIcon className="w-4" />}
+					/>
+				)}
+
+				<div className="rounded-md border">
+					<Table>
+						<TableHeader>
+							{table.getHeaderGroups().map((headerGroup) => (
+								<TableRow key={headerGroup.id}>
+									{headerGroup.headers.map((header) => (
+										<TableHead key={header.id}>
+											{header.isPlaceholder
+												? null
+												: flexRender(
+														header.column.columnDef.header,
+														header.getContext()
+												  )}
+										</TableHead>
+									))}
+								</TableRow>
+							))}
+						</TableHeader>
+
+						<TableBody>
+							{table.getRowModel().rows?.length ? (
+								table.getRowModel().rows.map((row) => (
+									<TableRow
+										key={row.id}
+										data-state={row.getIsSelected() && "selected"}
+									>
+										{row.getVisibleCells().map((cell, i, cells) => (
+											<TableCell
+												key={cell.id}
+												className={cn(
+													"whitespace-nowrap",
+													i > 0 && "text-muted-foreground",
+													i === cells.length - 1 && "py-0"
+												)}
+											>
+												{flexRender(
+													cell.column.columnDef.cell,
+													cell.getContext()
+												)}
+											</TableCell>
+										))}
+									</TableRow>
+								))
+							) : (
+								<TableRow>
+									<TableCell
+										colSpan={props.columns.length}
+										className="h-24 text-center"
+									>
+										No results.
+									</TableCell>
+								</TableRow>
+							)}
+						</TableBody>
+					</Table>
 				</div>
 			</div>
 
-			{data.breadcrumbs.length > 0 && (
-				<Stepper
-					steps={[
-						<Link key={0} href={"/dashboard/pages"}>
-							<ActionIcon className="-mr-2">
-								<HomeIcon className="w-5 text-foreground" />
-							</ActionIcon>
-						</Link>,
-						...data.breadcrumbs.map((breadcrumb, i) => (
-							<Button
-								key={i + 1}
-								variant={"link"}
-								className={cn(
-									"whitespace-nowrap font-normal",
-									i < data.breadcrumbs.length - 1 && "text-muted-foreground"
-								)}
-								asChild
-							>
-								<Link key={i} href={`/dashboard/pages/${breadcrumb.id}`}>
-									{breadcrumb.name}
-								</Link>
-							</Button>
-						)),
-					]}
-					currentStep={data.breadcrumbs.length}
-					separator={<ChevronRightIcon className="w-4" />}
-				/>
-			)}
-
-			<div className="rounded-md border">
-				<Table>
-					<TableHeader>
-						{table.getHeaderGroups().map((headerGroup) => (
-							<TableRow key={headerGroup.id}>
-								{headerGroup.headers.map((header) => (
-									<TableHead key={header.id}>
-										{header.isPlaceholder
-											? null
-											: flexRender(
-													header.column.columnDef.header,
-													header.getContext()
-											  )}
-									</TableHead>
-								))}
-							</TableRow>
-						))}
-					</TableHeader>
-
-					<TableBody>
-						{table.getRowModel().rows?.length ? (
-							table.getRowModel().rows.map((row) => (
-								<TableRow
-									key={row.id}
-									data-state={row.getIsSelected() && "selected"}
-								>
-									{row.getVisibleCells().map((cell, i, cells) => (
-										<TableCell
-											key={cell.id}
-											className={cn(
-												"whitespace-nowrap",
-												i > 0 && "text-muted-foreground",
-												i === cells.length - 1 && "py-0"
-											)}
-										>
-											{flexRender(
-												cell.column.columnDef.cell,
-												cell.getContext()
-											)}
-										</TableCell>
-									))}
-								</TableRow>
-							))
-						) : (
-							<TableRow>
-								<TableCell
-									colSpan={props.columns.length}
-									className="h-24 text-center"
-								>
-									No results.
-								</TableCell>
-							</TableRow>
-						)}
-					</TableBody>
-				</Table>
-			</div>
-		</div>
+			<AddDialog group={props.group} open={openAdd} setOpen={setOpenAdd} />
+		</>
 	);
 }

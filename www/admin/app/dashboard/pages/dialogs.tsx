@@ -23,6 +23,7 @@ import {
 } from "@admin/src/components/ui/client";
 import { trpcReact } from "@admin/src/utils/trpcReact";
 import {
+	DocumentPlusIcon,
 	FolderArrowDownIcon,
 	LockClosedIcon,
 	LockOpenIcon,
@@ -35,13 +36,18 @@ import slugify from "slugify";
 import { TRPCClientError } from "@trpc/client";
 import { usePagePreferences } from "@admin/src/hooks";
 
-interface DialogProps {
+interface AddDialogProps {
+	group: Page;
+	open: boolean;
+	setOpen: React.Dispatch<React.SetStateAction<boolean>>;
+}
+interface EditDialogProps {
 	page: Page;
 	open: boolean;
 	setOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export function DeleteDialog(props: DialogProps) {
+export function DeleteDialog(props: EditDialogProps) {
 	const mutation = trpcReact.pages.deletePage.useMutation();
 	const { preferences, setPreferences } = usePagePreferences(props.page.id);
 
@@ -87,8 +93,10 @@ export function DeleteDialog(props: DialogProps) {
 interface MoveDialogInputs {
 	newParentId: string;
 }
-export function MoveDialog(props: DialogProps) {
-	const allGroups = trpcReact.pages.getGroup.useQuery().data as Page[] | undefined;
+export function MoveDialog(props: EditDialogProps) {
+	const allGroups = trpcReact.pages.getAllGroups.useQuery(undefined, {
+		refetchOnWindowFocus: false,
+	}).data;
 	const groups = React.useMemo(
 		() =>
 			allGroups
@@ -227,7 +235,7 @@ function getSlugFromUrl(path: string) {
 	return "/" + split[split.length - 1]!;
 }
 
-export function EditDetailsDialog(props: DialogProps) {
+export function EditDetailsDialog(props: EditDialogProps) {
 	const mutation = trpcReact.pages.editPage.useMutation();
 	const { preferences, setPreferences } = usePagePreferences(props.page.id);
 
@@ -315,13 +323,13 @@ export function EditDetailsDialog(props: DialogProps) {
 											className="flex-row"
 											rightButtonIconOn={<LockClosedIcon className="w-4" />}
 											rightButtonIconOff={<LockOpenIcon className="w-4" />}
-											onRightButtonClick={(state) =>
+											rightButtonState={preferences[props.page.id]}
+											setRightButtonState={(state) =>
 												setPreferences({
 													...preferences,
 													[props.page.id]: state,
 												})
 											}
-											initialRightButtonState={preferences[props.page.id]}
 											rightButtonTooltip="Toggle lock slug autofill"
 											aria-required
 											{...field}
@@ -339,6 +347,120 @@ export function EditDetailsDialog(props: DialogProps) {
 								icon={<PencilSquareIcon className="w-5" />}
 							>
 								Save
+							</Button>
+						</DialogFooter>
+					</form>
+				</FormProvider>
+			</DialogContent>
+		</Dialog>
+	);
+}
+
+export function AddDialog(props: AddDialogProps) {
+	const mutation = trpcReact.pages.addPage.useMutation();
+	const { preferences, setPreferences } = usePagePreferences(props.group.id);
+	const [slugLocked, setSlugLocked] = React.useState(false);
+
+	const form = useForm<EditDialogInputs>({
+		resolver: zodResolver(editDialogSchema),
+	});
+	const onSubmit: SubmitHandler<EditDialogInputs> = async (data) => {
+		const url = props.group.url + (props.group.url !== "/" ? "/" : "") + data.slug.slice(1);
+
+		try {
+			const id = await mutation.mutateAsync({
+				name: data.name,
+				url,
+				parent_id: props.group.id,
+			});
+
+			if (slugLocked) {
+				setPreferences({
+					...preferences,
+					[id]: slugLocked,
+				});
+			}
+			props.setOpen(false);
+		} catch (error) {
+			if (error instanceof TRPCClientError && error.data.code === "CONFLICT") {
+				form.setError("slug", {
+					type: "manual",
+					message: (
+						<>
+							A page with path <strong>{url}</strong> already exists.
+						</>
+					) as unknown as string,
+				});
+			}
+		}
+	};
+
+	React.useEffect(() => {
+		setSlugLocked(false);
+	}, [props.open]);
+
+	return (
+		<Dialog open={props.open} onOpenChange={props.setOpen}>
+			<DialogContent className="!max-w-sm">
+				<DialogHeader>
+					<DialogTitle>Add page</DialogTitle>
+				</DialogHeader>
+
+				<FormProvider {...form}>
+					<form className="flex flex-col gap-4" onSubmit={form.handleSubmit(onSubmit)}>
+						<FormField
+							control={form.control}
+							name="name"
+							rules={{
+								onChange: (e) => {
+									if (!slugLocked) {
+										form.setValue(
+											"slug",
+											"/" + slugify(e.target.value, slugifyOptions)
+										);
+									}
+								},
+							}}
+							render={({ field }) => (
+								<FormItem>
+									<FormLabel>Name</FormLabel>
+									<FormControl>
+										<Input className="flex-row" aria-required {...field} />
+									</FormControl>
+								</FormItem>
+							)}
+						/>
+
+						<FormField
+							control={form.control}
+							name="slug"
+							render={({ field }) => (
+								<FormItem>
+									<FormLabel>Slug</FormLabel>
+									<FormControl>
+										<Input
+											className="flex-row"
+											rightButtonIconOn={<LockClosedIcon className="w-4" />}
+											rightButtonIconOff={<LockOpenIcon className="w-4" />}
+											rightButtonState={slugLocked}
+											setRightButtonState={(state) => setSlugLocked(state)}
+											rightButtonTooltip="Toggle lock slug autofill"
+											aria-required
+											{...field}
+										/>
+									</FormControl>
+									<FormError />
+								</FormItem>
+							)}
+						/>
+
+						<DialogFooter>
+							<Button
+								type="submit"
+								loading={mutation.isLoading}
+								icon={<DocumentPlusIcon className="w-5" />}
+							>
+								Add
 							</Button>
 						</DialogFooter>
 					</form>

@@ -7,7 +7,7 @@ import { z } from "zod";
 export const getGroupContents = publicProcedure
 	.input(z.object({ id: z.string() }).nullish())
 	.query(async ({ input }): Promise<{ breadcrumbs: Page[]; pages: Page[] }> => {
-		// Return top-level pages if no ID is provided
+		// Return root group contents if no input is provided
 		if (!input) {
 			return {
 				breadcrumbs: [],

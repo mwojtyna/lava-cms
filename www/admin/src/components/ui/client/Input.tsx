@@ -77,15 +77,13 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
 					</ActionIcon>
 				) : (
 					rightButtonIconOn &&
-					rightButtonIconOff &&
-					rightButtonState !== undefined &&
-					setRightButtonState !== undefined && (
+					rightButtonIconOff && (
 						<Tooltip>
 							<TooltipTrigger asChild>
 								<ActionIcon
 									className="absolute right-2"
 									onClick={() => {
-										setRightButtonState(!rightButtonState);
+										setRightButtonState!(!rightButtonState);
 									}}
 									size={size}
 								>
