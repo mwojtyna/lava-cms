@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/playwright:v1.33.0
+FROM mcr.microsoft.com/playwright:v1.34.0
 
 WORKDIR /
 SHELL ["/bin/bash", "-c"]
