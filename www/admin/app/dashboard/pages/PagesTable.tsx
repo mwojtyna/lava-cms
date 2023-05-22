@@ -57,7 +57,8 @@ export function PagesTable(props: PagesTableProps) {
 		},
 	});
 
-	const [openAdd, setOpenAdd] = React.useState(false);
+	const [openAddPage, setOpenAddPage] = React.useState(false);
+	const [openAddGroup, setOpenAddGroup] = React.useState(false);
 
 	return (
 		<>
@@ -72,12 +73,16 @@ export function PagesTable(props: PagesTableProps) {
 
 					<div className="flex gap-2">
 						<Button
-							onClick={() => setOpenAdd(true)}
+							onClick={() => setOpenAddPage(true)}
 							icon={<DocumentPlusIcon className="w-5" />}
 						>
 							Page
 						</Button>
-						<Button variant={"secondary"} icon={<FolderPlusIcon className="w-5" />}>
+						<Button
+							onClick={() => setOpenAddGroup(true)}
+							variant={"secondary"}
+							icon={<FolderPlusIcon className="w-5" />}
+						>
 							Group
 						</Button>
 					</div>
@@ -170,7 +175,18 @@ export function PagesTable(props: PagesTableProps) {
 				</div>
 			</div>
 
-			<AddDialog group={props.group} open={openAdd} setOpen={setOpenAdd} />
+			<AddDialog
+				isGroup={false}
+				group={props.group}
+				open={openAddPage}
+				setOpen={setOpenAddPage}
+			/>
+			<AddDialog
+				isGroup={true}
+				group={props.group}
+				open={openAddGroup}
+				setOpen={setOpenAddGroup}
+			/>
 		</>
 	);
 }

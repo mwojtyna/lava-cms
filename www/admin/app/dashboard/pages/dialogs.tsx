@@ -25,6 +25,7 @@ import { trpcReact } from "@admin/src/utils/trpcReact";
 import {
 	DocumentPlusIcon,
 	FolderArrowDownIcon,
+	FolderPlusIcon,
 	LockClosedIcon,
 	LockOpenIcon,
 	PencilSquareIcon,
@@ -356,7 +357,7 @@ export function EditDetailsDialog(props: EditDialogProps) {
 	);
 }
 
-export function AddDialog(props: AddDialogProps) {
+export function AddDialog(props: AddDialogProps & { isGroup: boolean }) {
 	const mutation = trpcReact.pages.addPage.useMutation();
 	const { preferences, setPreferences } = usePagePreferences(props.group.id);
 	const [slugLocked, setSlugLocked] = React.useState(false);
@@ -372,6 +373,7 @@ export function AddDialog(props: AddDialogProps) {
 				name: data.name,
 				url,
 				parent_id: props.group.id,
+				is_group: props.isGroup,
 			});
 
 			if (slugLocked) {
@@ -387,7 +389,8 @@ export function AddDialog(props: AddDialogProps) {
 					type: "manual",
 					message: (
 						<>
-							A page with path <strong>{url}</strong> already exists.
+							A {props.isGroup ? "group" : "page"} with path <strong>{url}</strong>{" "}
+							already exists.
 						</>
 					) as unknown as string,
 				});
@@ -403,7 +406,7 @@ export function AddDialog(props: AddDialogProps) {
 		<Dialog open={props.open} onOpenChange={props.setOpen}>
 			<DialogContent className="!max-w-sm">
 				<DialogHeader>
-					<DialogTitle>Add page</DialogTitle>
+					<DialogTitle>Add {props.isGroup ? "group" : "page"}</DialogTitle>
 				</DialogHeader>
 
 				<FormProvider {...form}>
@@ -458,7 +461,13 @@ export function AddDialog(props: AddDialogProps) {
 							<Button
 								type="submit"
 								loading={mutation.isLoading}
-								icon={<DocumentPlusIcon className="w-5" />}
+								icon={
+									props.isGroup ? (
+										<FolderPlusIcon className="w-5" />
+									) : (
+										<DocumentPlusIcon className="w-5" />
+									)
+								}
 							>
 								Add
 							</Button>
