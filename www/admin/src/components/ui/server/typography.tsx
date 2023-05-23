@@ -1,3 +1,4 @@
+import * as React from "react";
 import { cn } from "@admin/src/utils/styling";
 
 interface TypographyH1Props extends React.ComponentPropsWithoutRef<"h1"> {
@@ -37,14 +38,14 @@ export function TypographyCode({
 	);
 }
 
-export function TypographyMuted({
-	className,
-	children,
-	...props
-}: React.ComponentPropsWithoutRef<"p">) {
+export const TypographyMuted = React.forwardRef<
+	HTMLParagraphElement,
+	React.ComponentPropsWithoutRef<"p">
+>(({ className, children, ...props }) => {
 	return (
 		<p className={cn("text-sm text-muted-foreground", className)} {...props}>
 			{children}
 		</p>
 	);
-}
+});
+TypographyMuted.displayName = "TypographyMuted";

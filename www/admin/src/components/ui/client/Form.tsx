@@ -10,6 +10,7 @@ import {
 } from "react-hook-form";
 import { cn } from "@admin/src/utils/styling";
 import { Label } from "@admin/src/components/ui/client";
+import { TypographyMuted } from "../server";
 
 type FormFieldContextValue<
 	TFieldValues extends FieldValues = FieldValues,
@@ -115,19 +116,11 @@ const FormControl = React.forwardRef<
 FormControl.displayName = "FormControl";
 
 const FormDescription = React.forwardRef<
-	HTMLParagraphElement,
+	React.ComponentRef<typeof TypographyMuted>,
 	React.HTMLAttributes<HTMLParagraphElement>
->(({ className, ...props }, ref) => {
+>(({ ...props }, ref) => {
 	const { formDescriptionId } = useFormField();
-
-	return (
-		<p
-			ref={ref}
-			id={formDescriptionId}
-			className={cn("text-sm text-muted-foreground", className)}
-			{...props}
-		/>
-	);
+	return <TypographyMuted ref={ref} id={formDescriptionId} {...props} />;
 });
 FormDescription.displayName = "FormDescription";
 

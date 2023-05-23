@@ -6,7 +6,6 @@ import { check } from "language-tags";
 import { type SubmitHandler, useForm } from "react-hook-form";
 import { trpcReact } from "@admin/src/utils/trpcReact";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { InfoTooltip } from "@admin/src/components";
 import {
 	Button,
 	FormProvider,
@@ -16,6 +15,7 @@ import {
 	FormLabel,
 	Input,
 	Textarea,
+	FormDescription,
 } from "@admin/src/components/ui/client";
 import {
 	Card,
@@ -101,10 +101,7 @@ export function SeoForm({ serverData }: { serverData: Inputs }) {
 							name="description"
 							render={({ field }) => (
 								<FormItem>
-									<FormLabel>
-										Description&nbsp;
-										<InfoTooltip>Used for social media previews</InfoTooltip>
-									</FormLabel>
+									<FormLabel>Description</FormLabel>
 									<FormControl>
 										<Textarea
 											placeholder="This website is very awesome and fun!"
@@ -113,6 +110,9 @@ export function SeoForm({ serverData }: { serverData: Inputs }) {
 											{...field}
 										/>
 									</FormControl>
+									<FormDescription>
+										Used for social media previews
+									</FormDescription>
 								</FormItem>
 							)}
 						/>
@@ -122,17 +122,14 @@ export function SeoForm({ serverData }: { serverData: Inputs }) {
 							name="language"
 							render={({ field }) => (
 								<FormItem>
-									<FormLabel withAsterisk>
-										Language&nbsp;
-										<InfoTooltip>
-											Used in the <TypographyCode>lang</TypographyCode>{" "}
-											attribute of the{" "}
-											<TypographyCode>&lt;html&gt;</TypographyCode> tag
-										</InfoTooltip>
-									</FormLabel>
+									<FormLabel withAsterisk>Language</FormLabel>
 									<FormControl>
 										<Input placeholder="en-US" aria-required {...field} />
 									</FormControl>
+									<FormDescription>
+										Used in the <TypographyCode>lang</TypographyCode> attribute
+										of the <TypographyCode>&lt;html&gt;</TypographyCode> tag
+									</FormDescription>
 								</FormItem>
 							)}
 						/>
