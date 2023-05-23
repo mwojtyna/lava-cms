@@ -200,7 +200,7 @@ export function MoveDialog(props: EditDialogProps) {
 						<DialogFooter>
 							<Button
 								type="submit"
-								disabled={form.watch("newParentId") === undefined}
+								disabled={!form.watch("newParentId")}
 								loading={mutation.isLoading}
 								icon={<FolderArrowDownIcon className="w-5" />}
 							>
