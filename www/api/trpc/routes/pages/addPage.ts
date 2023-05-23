@@ -14,7 +14,7 @@ export const addPage = publicProcedure
 		})
 	)
 	.mutation(async ({ input }) => {
-		if (await prisma.page.findFirst({ where: { url: input.url } })) {
+		if (await prisma.page.findFirst({ where: { url: input.url, parent_id: { not: null } } })) {
 			throw new TRPCError({
 				code: "CONFLICT",
 			});
