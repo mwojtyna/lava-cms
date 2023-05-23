@@ -24,8 +24,8 @@ export function SinglePageForm({
 	return (
 		<FormProvider {...formData}>
 			<form onSubmit={onSubmit} className={cn("w-full", className)} {...props}>
-				<div className="flex flex-col gap-5">
-					<TypographyH1 className="mb-4">{titleText}</TypographyH1>
+				<div className="flex flex-col gap-6">
+					<TypographyH1 className="mb-2">{titleText}</TypographyH1>
 
 					<div className="space-y-6">{children}</div>
 

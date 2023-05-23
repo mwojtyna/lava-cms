@@ -78,7 +78,7 @@ export function SeoForm({ serverData }: { serverData: Inputs }) {
 			</CardHeader>
 			<CardContent>
 				<FormProvider {...form}>
-					<form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-4">
+					<form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-6">
 						<FormField
 							control={form.control}
 							name="title"
