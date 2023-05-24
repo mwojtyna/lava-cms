@@ -80,8 +80,8 @@ export function PagesTable(props: PagesTableProps) {
 
 	return (
 		<>
-			<div className="flex flex-col gap-2">
-				<div className="mb-2 flex justify-between gap-2">
+			<div className="flex flex-col gap-4">
+				<div className="flex justify-between gap-2">
 					<Input
 						className="mr-auto max-w-xs"
 						value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
@@ -191,9 +191,8 @@ export function PagesTable(props: PagesTableProps) {
 						</TableBody>
 					</Table>
 				</div>
+				<DataTablePagination table={table} />
 			</div>
-
-			<DataTablePagination table={table} />
 
 			<AddDialog
 				isGroup={false}
