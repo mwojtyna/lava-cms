@@ -41,9 +41,9 @@ export function TypographyCode({
 export const TypographyMuted = React.forwardRef<
 	HTMLParagraphElement,
 	React.ComponentPropsWithoutRef<"p">
->(({ className, children, ...props }) => {
+>(({ className, children, ...props }, ref) => {
 	return (
-		<p className={cn("text-sm text-muted-foreground", className)} {...props}>
+		<p ref={ref} className={cn("text-sm text-muted-foreground", className)} {...props}>
 			{children}
 		</p>
 	);
