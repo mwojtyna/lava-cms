@@ -5,11 +5,13 @@ import {
 	type ColumnDef,
 	type ColumnFiltersState,
 	type SortingState,
+	type PaginationState,
 	flexRender,
 	getCoreRowModel,
 	useReactTable,
 	getFilteredRowModel,
 	getSortedRowModel,
+	getPaginationRowModel,
 } from "@tanstack/react-table";
 import {
 	Stepper,
@@ -33,6 +35,7 @@ import {
 import Link from "next/link";
 import { trpcReact } from "@admin/src/utils/trpcReact";
 import { AddDialog } from "./dialogs";
+import { DataTablePagination } from "@admin/src/components";
 
 interface PagesTableProps {
 	columns: ColumnDef<Page>[];
@@ -49,6 +52,10 @@ export function PagesTable(props: PagesTableProps) {
 
 	const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
 	const [sorting, setSorting] = React.useState<SortingState>([]);
+	const [pagination, setPagination] = React.useState<PaginationState>({
+		pageIndex: 0,
+		pageSize: 10,
+	});
 
 	const table = useReactTable({
 		data: data.pages,
@@ -58,9 +65,13 @@ export function PagesTable(props: PagesTableProps) {
 		getFilteredRowModel: getFilteredRowModel(),
 		onSortingChange: setSorting,
 		getSortedRowModel: getSortedRowModel(),
+		getPaginationRowModel: getPaginationRowModel(),
+		onPaginationChange: setPagination,
+		autoResetPageIndex: false,
 		state: {
 			columnFilters,
 			sorting,
+			pagination,
 		},
 	});
 
@@ -181,6 +192,8 @@ export function PagesTable(props: PagesTableProps) {
 					</Table>
 				</div>
 			</div>
+
+			<DataTablePagination table={table} />
 
 			<AddDialog
 				isGroup={false}

@@ -128,7 +128,7 @@ function PagesTableActions({ page }: { page: Page }) {
 	);
 }
 
-const SortableHeader = ({ column, name }: { column: Column<Page, unknown>; name: string }) => {
+function SortableHeader({ column, name }: { column: Column<Page, unknown>; name: string }) {
 	return (
 		<Button
 			className="-ml-3 h-fit px-3 py-2"
@@ -147,4 +147,4 @@ const SortableHeader = ({ column, name }: { column: Column<Page, unknown>; name:
 			)}
 		</Button>
 	);
-};
+}

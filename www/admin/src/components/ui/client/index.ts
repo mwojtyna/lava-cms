@@ -53,6 +53,16 @@ export {
 export { Input } from "./Input";
 export { Label } from "./Label";
 export { Popover, PopoverTrigger, PopoverContent } from "./Popover";
+export {
+	Select,
+	SelectGroup,
+	SelectValue,
+	SelectTrigger,
+	SelectContent,
+	SelectLabel,
+	SelectItem,
+	SelectSeparator,
+} from "./Select";
 export { Separator } from "./Separator";
 export {
 	Sheet,
