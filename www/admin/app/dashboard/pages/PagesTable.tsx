@@ -4,10 +4,12 @@ import * as React from "react";
 import {
 	type ColumnDef,
 	type ColumnFiltersState,
+	type SortingState,
 	flexRender,
 	getCoreRowModel,
 	useReactTable,
 	getFilteredRowModel,
+	getSortedRowModel,
 } from "@tanstack/react-table";
 import {
 	Stepper,
@@ -46,14 +48,19 @@ export function PagesTable(props: PagesTableProps) {
 	const data = clientData ?? { pages: props.pages, breadcrumbs: props.breadcrumbs };
 
 	const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
+	const [sorting, setSorting] = React.useState<SortingState>([]);
+
 	const table = useReactTable({
 		data: data.pages,
 		columns: props.columns,
 		getCoreRowModel: getCoreRowModel(),
 		onColumnFiltersChange: setColumnFilters,
 		getFilteredRowModel: getFilteredRowModel(),
+		onSortingChange: setSorting,
+		getSortedRowModel: getSortedRowModel(),
 		state: {
 			columnFilters,
+			sorting,
 		},
 	});
 
@@ -121,7 +128,7 @@ export function PagesTable(props: PagesTableProps) {
 					<Table>
 						<TableHeader>
 							{table.getHeaderGroups().map((headerGroup) => (
-								<TableRow key={headerGroup.id}>
+								<TableRow key={headerGroup.id} className="hover:bg-inherit">
 									{headerGroup.headers.map((header) => (
 										<TableHead key={header.id}>
 											{header.isPlaceholder

@@ -10,7 +10,7 @@ import {
 	TrashIcon,
 	PencilSquareIcon,
 } from "@heroicons/react/24/outline";
-import type { ColumnDef } from "@tanstack/react-table";
+import type { Column, ColumnDef } from "@tanstack/react-table";
 import {
 	ActionIcon,
 	Button,
@@ -19,12 +19,17 @@ import {
 	DropdownMenuItem,
 	DropdownMenuTrigger,
 } from "@admin/src/components/ui/client";
-import { EllipsisHorizontalIcon } from "@heroicons/react/20/solid";
+import {
+	ChevronDownIcon,
+	ChevronUpDownIcon,
+	ChevronUpIcon,
+	EllipsisHorizontalIcon,
+} from "@heroicons/react/20/solid";
 import { DeleteDialog, EditDetailsDialog, MoveDialog } from "./dialogs";
 
 export const columns: ColumnDef<Page>[] = [
 	{
-		header: "Name",
+		header: ({ column }) => <SortableHeader column={column} name="Name" />,
 		accessorKey: "name",
 		cell: ({ row }) => {
 			return (
@@ -50,17 +55,19 @@ export const columns: ColumnDef<Page>[] = [
 		},
 	},
 	{
-		header: "Path",
+		header: ({ column }) => <SortableHeader column={column} name="Path" />,
 		accessorKey: "url",
 	},
 	{
-		header: "Type",
+		id: "type",
+		header: ({ column }) => <SortableHeader column={column} name="Type" />,
 		accessorFn: (page) => {
 			return page.is_group ? "Group" : "Page";
 		},
 	},
 	{
-		header: "Last update",
+		id: "last_updated",
+		header: ({ column }) => <SortableHeader column={column} name="Last Updated" />,
 		accessorFn: (page) => {
 			const options: Intl.DateTimeFormatOptions = {
 				year: "numeric",
@@ -120,3 +127,24 @@ function PagesTableActions({ page }: { page: Page }) {
 		</>
 	);
 }
+
+const SortableHeader = ({ column, name }: { column: Column<Page, unknown>; name: string }) => {
+	return (
+		<Button
+			className="-ml-3 h-fit px-3 py-2"
+			variant={"ghost"}
+			onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+		>
+			{name}{" "}
+			{column.getIsSorted() ? (
+				column.getIsSorted() === "desc" ? (
+					<ChevronUpIcon className="w-4" />
+				) : (
+					<ChevronDownIcon className="w-4" />
+				)
+			) : (
+				<ChevronUpDownIcon className="w-4" />
+			)}
+		</Button>
+	);
+};
