@@ -6,12 +6,12 @@ import {
 	type ColumnFiltersState,
 	type SortingState,
 	type PaginationState,
-	flexRender,
 	getCoreRowModel,
 	useReactTable,
 	getFilteredRowModel,
 	getSortedRowModel,
 	getPaginationRowModel,
+	flexRender,
 } from "@tanstack/react-table";
 import {
 	Stepper,
@@ -36,11 +36,14 @@ import Link from "next/link";
 import { trpcReact } from "@admin/src/utils/trpcReact";
 import { AddDialog } from "./dialogs";
 import { DataTablePagination } from "@admin/src/components";
+import { useSearchParams } from "@admin/src/hooks/useSearchParams";
+import type { SearchParams } from "./page";
 
 interface PagesTableProps {
 	columns: ColumnDef<Page>[];
 	group: Page;
 	data: { pages: Page[]; breadcrumbs: Page[] };
+	searchParams: SearchParams;
 }
 
 export function PagesTable(props: PagesTableProps) {
@@ -50,13 +53,28 @@ export function PagesTable(props: PagesTableProps) {
 	const data: typeof props.data = clientData ?? props.data;
 
 	// TODO: pass sorting and pagination data from server to default useState value
-	// TODO: set searchParams when sorting and pagination change
+	// // TODO: set searchParams when pagination change
+	// TODO: set cookies when sorting change
 	const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
 	const [sorting, setSorting] = React.useState<SortingState>([]);
 	const [pagination, setPagination] = React.useState<PaginationState>({
-		pageIndex: 0,
+		pageIndex: props.searchParams?.pageIndex ?? 0,
 		pageSize: 10,
 	});
+
+	const { setSearchParams } = useSearchParams({
+		onChanged: (searchParams) => {
+			setPagination((pagination) => ({
+				...pagination,
+				pageIndex: parseInt(searchParams.get("pageIndex") ?? "0"),
+			}));
+		},
+	});
+	React.useEffect(() => {
+		setSearchParams({
+			pageIndex: pagination.pageIndex === 0 ? undefined : pagination.pageIndex,
+		} satisfies SearchParams);
+	}, [pagination, props.searchParams, setSearchParams]);
 
 	const table = useReactTable({
 		data: data.pages,

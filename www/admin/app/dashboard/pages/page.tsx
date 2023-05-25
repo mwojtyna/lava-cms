@@ -4,7 +4,13 @@ import { columns } from "./PagesTableColumns";
 
 export const dynamic = "force-dynamic";
 
-export default async function Pages() {
+export type SearchParams =
+	| {
+			pageIndex?: number;
+	  }
+	| undefined;
+
+export default async function Pages({ searchParams }: { searchParams: SearchParams }) {
 	const rootGroup = await trpc.pages.getGroup.query();
 	const data = await trpc.pages.getGroupContents.query();
 
@@ -13,6 +19,7 @@ export default async function Pages() {
 			columns={columns}
 			data={{ pages: data.pages, breadcrumbs: [] }}
 			group={rootGroup!}
+			searchParams={searchParams}
 		/>
 	);
 }
