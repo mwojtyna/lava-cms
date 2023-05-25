@@ -12,5 +12,5 @@ export default async function Group({ params }: { params: { groupId: string } })
 	}
 	const { breadcrumbs, pages } = await trpc.pages.getGroupContents.query({ id: params.groupId });
 
-	return <PagesTable columns={columns} group={group} pages={pages} breadcrumbs={breadcrumbs} />;
+	return <PagesTable columns={columns} data={{ pages, breadcrumbs }} group={group} />;
 }

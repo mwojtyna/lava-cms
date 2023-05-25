@@ -40,16 +40,17 @@ import { DataTablePagination } from "@admin/src/components";
 interface PagesTableProps {
 	columns: ColumnDef<Page>[];
 	group: Page;
-	pages: Page[];
-	breadcrumbs: Page[];
+	data: { pages: Page[]; breadcrumbs: Page[] };
 }
 
 export function PagesTable(props: PagesTableProps) {
 	const clientData = trpcReact.pages.getGroupContents.useQuery(
-		props.breadcrumbs.length > 0 ? { id: props.group.id } : null
+		props.data.breadcrumbs.length > 0 ? { id: props.group.id } : null
 	).data;
-	const data = clientData ?? { pages: props.pages, breadcrumbs: props.breadcrumbs };
+	const data: typeof props.data = clientData ?? props.data;
 
+	// TODO: pass sorting and pagination data from server to default useState value
+	// TODO: set searchParams when sorting and pagination change
 	const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
 	const [sorting, setSorting] = React.useState<SortingState>([]);
 	const [pagination, setPagination] = React.useState<PaginationState>({
