@@ -127,6 +127,7 @@ export function PagesTable(props: PagesTableProps) {
 
 				{data.breadcrumbs.length > 0 && (
 					<Stepper
+						className="-mb-2"
 						steps={[
 							<Link key={0} href={"/dashboard/pages"}>
 								<ActionIcon className="-mr-2">
