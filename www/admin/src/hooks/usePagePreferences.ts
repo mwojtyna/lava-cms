@@ -8,5 +8,5 @@ export const usePagePreferences = (pageId: string) => {
 		},
 	});
 
-	return { preferences: slugLocked, setPreferences: setSlugLocked };
+	return [slugLocked, setSlugLocked] as const;
 };

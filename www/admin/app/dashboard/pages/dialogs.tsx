@@ -50,7 +50,7 @@ interface EditDialogProps {
 
 export function DeleteDialog(props: EditDialogProps) {
 	const mutation = trpcReact.pages.deletePage.useMutation();
-	const { preferences, setPreferences } = usePagePreferences(props.page.id);
+	const [preferences, setPreferences] = usePagePreferences(props.page.id);
 
 	async function handleSubmit() {
 		await mutation.mutateAsync({
@@ -238,7 +238,7 @@ function getSlugFromUrl(path: string) {
 
 export function EditDetailsDialog(props: EditDialogProps) {
 	const mutation = trpcReact.pages.editPage.useMutation();
-	const { preferences, setPreferences } = usePagePreferences(props.page.id);
+	const [preferences, setPreferences] = usePagePreferences(props.page.id);
 
 	const form = useForm<EditDialogInputs>({
 		resolver: zodResolver(editDialogSchema),
@@ -359,7 +359,7 @@ export function EditDetailsDialog(props: EditDialogProps) {
 
 export function AddDialog(props: AddDialogProps & { isGroup: boolean }) {
 	const mutation = trpcReact.pages.addPage.useMutation();
-	const { preferences, setPreferences } = usePagePreferences(props.group.id);
+	const [preferences, setPreferences] = usePagePreferences(props.group.id);
 	const [slugLocked, setSlugLocked] = React.useState(false);
 
 	const form = useForm<EditDialogInputs>({
