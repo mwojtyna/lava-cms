@@ -10,7 +10,7 @@ import {
 	TrashIcon,
 	PencilSquareIcon,
 } from "@heroicons/react/24/outline";
-import type { Column, ColumnDef } from "@tanstack/react-table";
+import { type Column, type ColumnDef, sortingFns } from "@tanstack/react-table";
 import {
 	ActionIcon,
 	Button,
@@ -31,6 +31,7 @@ export const columns: ColumnDef<Page>[] = [
 	{
 		header: ({ column }) => <SortableHeader column={column} name="Name" />,
 		accessorKey: "name",
+		sortingFn: sortingFns.alphanumericCaseSensitive,
 		cell: ({ row }) => {
 			return (
 				<div className="flex items-center gap-3">
@@ -68,6 +69,7 @@ export const columns: ColumnDef<Page>[] = [
 	{
 		id: "last_updated",
 		header: ({ column }) => <SortableHeader column={column} name="Last Updated" />,
+		sortingFn: sortingFns.datetime,
 		accessorFn: (page) => {
 			const options: Intl.DateTimeFormatOptions = {
 				year: "numeric",
