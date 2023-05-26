@@ -6,6 +6,7 @@ import {
 	type ColumnFiltersState,
 	type SortingState,
 	type PaginationState,
+	type ColumnSort,
 	getCoreRowModel,
 	useReactTable,
 	getFilteredRowModel,
@@ -13,6 +14,7 @@ import {
 	getPaginationRowModel,
 	flexRender,
 } from "@tanstack/react-table";
+import { getCookie, setCookie } from "cookies-next";
 import {
 	Stepper,
 	Table,
@@ -43,7 +45,8 @@ interface PagesTableProps {
 	columns: ColumnDef<Page>[];
 	group: Page;
 	data: { pages: Page[]; breadcrumbs: Page[] };
-	searchParams: SearchParams;
+	pagination: SearchParams;
+	sorting: ColumnSort | null;
 }
 
 export function PagesTable(props: PagesTableProps) {
@@ -52,16 +55,17 @@ export function PagesTable(props: PagesTableProps) {
 	).data;
 	const data: typeof props.data = clientData ?? props.data;
 
-	// TODO: pass sorting and pagination data from server to default useState value
-	// // TODO: set searchParams when pagination change
-	// TODO: set cookies when sorting change
 	const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
-	const [sorting, setSorting] = React.useState<SortingState>([]);
+	const [sorting, setSorting] = React.useState<SortingState>([
+		!getCookie("pages-table")?.toString()
+			? props.sorting ?? { id: "name", desc: false }
+			: JSON.parse(getCookie("pages-table")!.toString()),
+	]);
+
 	const [pagination, setPagination] = React.useState<PaginationState>({
-		pageIndex: props.searchParams?.pageIndex ?? 0,
+		pageIndex: props.pagination?.pageIndex ?? 0,
 		pageSize: 10,
 	});
-
 	const { setSearchParams } = useSearchParams({
 		onChanged: (searchParams) => {
 			setPagination((pagination) => ({
@@ -74,7 +78,7 @@ export function PagesTable(props: PagesTableProps) {
 		setSearchParams({
 			pageIndex: pagination.pageIndex === 0 ? undefined : pagination.pageIndex,
 		} satisfies SearchParams);
-	}, [pagination, props.searchParams, setSearchParams]);
+	}, [pagination, props.pagination, setSearchParams]);
 
 	const table = useReactTable({
 		data: data.pages,
@@ -82,7 +86,13 @@ export function PagesTable(props: PagesTableProps) {
 		getCoreRowModel: getCoreRowModel(),
 		onColumnFiltersChange: setColumnFilters,
 		getFilteredRowModel: getFilteredRowModel(),
-		onSortingChange: setSorting,
+		onSortingChange: (value) => {
+			setSorting(value);
+			setCookie("pages-table", JSON.stringify(value()[0]), {
+				maxAge: new Date(2100, 12).getTime(),
+				sameSite: "lax",
+			});
+		},
 		getSortedRowModel: getSortedRowModel(),
 		getPaginationRowModel: getPaginationRowModel(),
 		onPaginationChange: setPagination,
