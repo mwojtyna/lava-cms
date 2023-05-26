@@ -14,7 +14,7 @@ import {
 	getPaginationRowModel,
 	flexRender,
 } from "@tanstack/react-table";
-import { getCookie, setCookie } from "cookies-next";
+import { setCookie } from "cookies-next";
 import {
 	Stepper,
 	Table,
@@ -40,6 +40,7 @@ import { AddDialog } from "./dialogs";
 import { DataTablePagination } from "@admin/src/components";
 import { useSearchParams } from "@admin/src/hooks/useSearchParams";
 import type { SearchParams } from "./page";
+import { getParsedCookie } from "@admin/src/utils/cookies";
 
 interface PagesTableProps {
 	columns: ColumnDef<Page>[];
@@ -57,9 +58,7 @@ export function PagesTable(props: PagesTableProps) {
 
 	const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
 	const [sorting, setSorting] = React.useState<SortingState>([
-		!getCookie("pages-table")?.toString()
-			? props.sorting ?? { id: "name", desc: false }
-			: JSON.parse(getCookie("pages-table")!.toString()),
+		getParsedCookie("pages-table", props.sorting ?? { id: "name", desc: false }),
 	]);
 
 	const [pagination, setPagination] = React.useState<PaginationState>({

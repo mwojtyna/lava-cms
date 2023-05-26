@@ -4,7 +4,7 @@ import { PagesTable } from "../PagesTable";
 import { columns } from "../PagesTableColumns";
 import { notFound } from "next/navigation";
 import type { SearchParams } from "../page";
-import { tableSortingSchema } from "@admin/src/types/cookies";
+import { type CookieName, tableSortingSchema } from "@admin/src/utils/cookies";
 
 export const dynamic = "force-dynamic";
 
@@ -21,7 +21,7 @@ export default async function Group({
 	}
 	const { breadcrumbs, pages } = await trpc.pages.getGroupContents.query({ id: params.groupId });
 
-	const rawCookie = cookies().get("pages-table")?.value;
+	const rawCookie = cookies().get("pages-table" as CookieName)?.value;
 	const cookie = rawCookie ? await tableSortingSchema.parseAsync(JSON.parse(rawCookie)) : null;
 
 	return (
