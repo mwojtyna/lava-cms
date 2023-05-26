@@ -6,6 +6,7 @@ import { Body } from "@admin/src/components";
 import { ZustandProvider } from "@admin/src/components/providers";
 import { colorThemeSchema } from "@admin/src/data/stores/dashboard";
 import { Toaster, TooltipProvider } from "@admin/src/components/ui/client";
+import type { CookieName } from "@admin/src/utils/cookies";
 import "@admin/src/styles/globals.css";
 
 export const metadata: Metadata = {
@@ -30,7 +31,7 @@ const headerFont = Poppins({
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
 	const colorTheme = await colorThemeSchema
 		.optional()
-		.parseAsync(cookies().get("color-theme")?.value);
+		.parseAsync(cookies().get("color-theme" as CookieName)?.value);
 
 	const url = headers().get("x-url")!.split("/admin")[1]!.split("?")[0]!;
 

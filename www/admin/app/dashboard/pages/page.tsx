@@ -2,7 +2,7 @@ import { cookies } from "next/headers";
 import { trpc } from "@admin/src/utils/trpc";
 import { PagesTable } from "./PagesTable";
 import { columns } from "./PagesTableColumns";
-import { type CookieName, tableSortingSchema } from "@admin/src/utils/cookies";
+import { type CookieName, tableCookieSchema } from "@admin/src/utils/cookies";
 
 export const dynamic = "force-dynamic";
 
@@ -17,7 +17,7 @@ export default async function Pages({ searchParams }: { searchParams: SearchPara
 	const data = await trpc.pages.getGroupContents.query();
 
 	const rawCookie = cookies().get("pages-table" as CookieName)?.value;
-	const cookie = rawCookie ? await tableSortingSchema.parseAsync(JSON.parse(rawCookie)) : null;
+	const cookie = rawCookie ? await tableCookieSchema.parseAsync(JSON.parse(rawCookie)) : null;
 
 	return (
 		<PagesTable
@@ -25,7 +25,7 @@ export default async function Pages({ searchParams }: { searchParams: SearchPara
 			data={{ pages: data.pages, breadcrumbs: [] }}
 			group={rootGroup!}
 			pagination={searchParams}
-			sorting={cookie}
+			cookie={cookie}
 		/>
 	);
 }

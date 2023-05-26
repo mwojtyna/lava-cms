@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import { setCookie } from "cookies-next";
 import { z } from "zod";
+import type { CookieName } from "@admin/src/utils/cookies";
 
 interface MenuState {
 	isOpen: boolean;
@@ -22,6 +23,9 @@ export const useColorThemeStore = create<ColorThemeState>((set) => ({
 	colorTheme: undefined,
 	set: (theme) => {
 		set({ colorTheme: theme });
-		setCookie("color-theme", theme, { expires: new Date(2999, 12), sameSite: "lax" });
+		setCookie("color-theme" as CookieName, theme, {
+			expires: new Date(2999, 12),
+			sameSite: "lax",
+		});
 	},
 }));

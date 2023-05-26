@@ -6,7 +6,6 @@ import {
 	type ColumnFiltersState,
 	type SortingState,
 	type PaginationState,
-	type ColumnSort,
 	getCoreRowModel,
 	useReactTable,
 	getFilteredRowModel,
@@ -40,14 +39,14 @@ import { AddDialog } from "./dialogs";
 import { DataTablePagination } from "@admin/src/components";
 import { useSearchParams } from "@admin/src/hooks/useSearchParams";
 import type { SearchParams } from "./page";
-import { getParsedCookie } from "@admin/src/utils/cookies";
+import { type CookieName, type TableCookie, getParsedCookie } from "@admin/src/utils/cookies";
 
 interface PagesTableProps {
 	columns: ColumnDef<Page>[];
 	group: Page;
 	data: { pages: Page[]; breadcrumbs: Page[] };
 	pagination: SearchParams;
-	sorting: ColumnSort | null;
+	cookie: TableCookie | null;
 }
 
 export function PagesTable(props: PagesTableProps) {
@@ -55,16 +54,24 @@ export function PagesTable(props: PagesTableProps) {
 		props.data.breadcrumbs.length > 0 ? { id: props.group.id } : null
 	).data;
 	const data: typeof props.data = clientData ?? props.data;
+	const cookie = React.useMemo(
+		() =>
+			getParsedCookie<NonNullable<TableCookie>>(
+				"pages-table",
+				props.cookie ?? { id: "name", desc: false, pageSize: 10 }
+			),
+		[props.cookie]
+	);
 
 	const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
-	const [sorting, setSorting] = React.useState<SortingState>([
-		getParsedCookie("pages-table", props.sorting ?? { id: "name", desc: false }),
+	const [sorting, setSorting] = React.useState<SortingState>(() => [
+		{ id: cookie.id, desc: cookie.desc },
 	]);
 
-	const [pagination, setPagination] = React.useState<PaginationState>({
+	const [pagination, setPagination] = React.useState<PaginationState>(() => ({
 		pageIndex: props.pagination?.pageIndex ?? 0,
-		pageSize: 10,
-	});
+		pageSize: cookie.pageSize ?? props.cookie?.pageSize ?? 10,
+	}));
 	const { setSearchParams } = useSearchParams({
 		onChanged: (searchParams) => {
 			setPagination((pagination) => ({
@@ -73,11 +80,22 @@ export function PagesTable(props: PagesTableProps) {
 			}));
 		},
 	});
+
 	React.useEffect(() => {
 		setSearchParams({
 			pageIndex: pagination.pageIndex === 0 ? undefined : pagination.pageIndex,
 		} satisfies SearchParams);
-	}, [pagination, props.pagination, setSearchParams]);
+	}, [pagination.pageIndex, setSearchParams]);
+	React.useEffect(() => {
+		setCookie(
+			"pages-table" as CookieName,
+			JSON.stringify({ ...sorting[0], pageSize: pagination.pageSize } as TableCookie),
+			{
+				maxAge: new Date(2100, 12).getTime(),
+				sameSite: "lax",
+			}
+		);
+	}, [pagination, sorting]);
 
 	const table = useReactTable({
 		data: data.pages,
@@ -87,10 +105,15 @@ export function PagesTable(props: PagesTableProps) {
 		getFilteredRowModel: getFilteredRowModel(),
 		onSortingChange: (value) => {
 			setSorting(value);
-			setCookie("pages-table", JSON.stringify(value()[0]), {
-				maxAge: new Date(2100, 12).getTime(),
-				sameSite: "lax",
-			});
+			setCookie(
+				"pages-table" as CookieName,
+				// @ts-expect-error `value` type is broken
+				JSON.stringify({ ...value()[0], pageSize: pagination.pageSize } as TableCookie),
+				{
+					maxAge: new Date(2100, 12).getTime(),
+					sameSite: "lax",
+				}
+			);
 		},
 		getSortedRowModel: getSortedRowModel(),
 		getPaginationRowModel: getPaginationRowModel(),
