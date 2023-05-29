@@ -9,9 +9,11 @@ export const deletePage = publicProcedure
 		})
 	)
 	.mutation(async ({ input }) => {
-		await prisma.page.deleteMany({
+		// This deletes the page and also all of its children
+		// thanks to the `Cascade` setting in the Prisma schema
+		await prisma.page.delete({
 			where: {
-				OR: [{ id: input.id }, { parent_id: input.id }],
+				id: input.id,
 			},
 		});
 	});

@@ -47,6 +47,12 @@ interface EditDialogProps {
 	open: boolean;
 	setOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }
+interface BulkEditDialogProps {
+	pages: Page[];
+	open: boolean;
+	setOpen: React.Dispatch<React.SetStateAction<boolean>>;
+	onSubmit: () => void;
+}
 
 export function DeleteDialog(props: EditDialogProps) {
 	const mutation = trpcReact.pages.deletePage.useMutation();
@@ -78,6 +84,55 @@ export function DeleteDialog(props: EditDialogProps) {
 					</Button>
 					<Button
 						loading={mutation.isLoading}
+						type="submit"
+						variant={"destructive"}
+						icon={<TrashIcon className="w-5" />}
+						onClick={handleSubmit}
+					>
+						Delete
+					</Button>
+				</DialogFooter>
+			</DialogContent>
+		</Dialog>
+	);
+}
+export function BulkDeleteDialog(props: BulkEditDialogProps) {
+	const mutation = trpcReact.pages.deletePage.useMutation();
+	const [isLoading, setIsLoading] = React.useState(false);
+	// const [preferences, setPreferences] = usePagePreferences(props.pages[0].id);
+
+	async function handleSubmit() {
+		setIsLoading(true);
+		const promises = props.pages.map((page) =>
+			mutation.mutateAsync({
+				id: page.id,
+			})
+		);
+		await Promise.all(promises);
+		// setPreferences({ ...preferences, [props.pages[0].id]: undefined });
+
+		props.setOpen(false);
+		props.onSubmit();
+		setIsLoading(false);
+	}
+
+	return (
+		<Dialog open={props.open} onOpenChange={props.setOpen}>
+			<DialogContent className="!max-w-sm" withCloseButton={false}>
+				<DialogHeader>
+					<DialogTitle>Delete {props.pages.length} items?</DialogTitle>
+					<DialogDescription>
+						Are you sure you want to delete {props.pages.length} items? This action
+						cannot be undone!
+					</DialogDescription>
+				</DialogHeader>
+
+				<DialogFooter>
+					<Button variant={"ghost"} onClick={() => props.setOpen(false)}>
+						No, don&apos;t delete
+					</Button>
+					<Button
+						loading={isLoading}
 						type="submit"
 						variant={"destructive"}
 						icon={<TrashIcon className="w-5" />}

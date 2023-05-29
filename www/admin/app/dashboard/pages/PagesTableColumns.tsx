@@ -26,7 +26,7 @@ import {
 	ChevronUpIcon,
 	EllipsisHorizontalIcon,
 } from "@heroicons/react/20/solid";
-import { DeleteDialog, EditDetailsDialog, MoveDialog } from "./dialogs";
+import { BulkDeleteDialog, DeleteDialog, EditDetailsDialog, MoveDialog } from "./dialogs";
 
 export const columns: ColumnDef<Page>[] = [
 	{
@@ -107,14 +107,21 @@ export const columns: ColumnDef<Page>[] = [
 	},
 	{
 		id: "actions",
+		header: ({ table }) =>
+			table.getIsSomeRowsSelected() && (
+				<PagesTableBulkActions
+					pages={table.getSelectedRowModel().flatRows.map((row) => row.original)}
+					onSubmit={table.resetRowSelection}
+				/>
+			),
 		cell: ({ row }) => <PagesTableActions page={row.original} />,
 	},
 ];
 
 function PagesTableActions({ page }: { page: Page }) {
-	const [openDelete, setOpenDelete] = React.useState(false);
-	const [openMove, setOpenMove] = React.useState(false);
 	const [openEdit, setOpenEdit] = React.useState(false);
+	const [openMove, setOpenMove] = React.useState(false);
+	const [openDelete, setOpenDelete] = React.useState(false);
 
 	return (
 		<>
@@ -149,6 +156,44 @@ function PagesTableActions({ page }: { page: Page }) {
 			<EditDetailsDialog page={page} open={openEdit} setOpen={setOpenEdit} />
 			<MoveDialog page={page} open={openMove} setOpen={setOpenMove} />
 			<DeleteDialog page={page} open={openDelete} setOpen={setOpenDelete} />
+		</>
+	);
+}
+function PagesTableBulkActions({ pages, onSubmit }: { pages: Page[]; onSubmit: () => void }) {
+	const [openMove, setOpenMove] = React.useState(false);
+	const [openDelete, setOpenDelete] = React.useState(false);
+
+	return (
+		<>
+			<DropdownMenu>
+				<DropdownMenuTrigger asChild>
+					<ActionIcon>
+						<EllipsisHorizontalIcon className="w-5" />
+					</ActionIcon>
+				</DropdownMenuTrigger>
+
+				<DropdownMenuContent>
+					<DropdownMenuItem onClick={() => setOpenMove(true)}>
+						<FolderArrowDownIcon className="w-4" />
+						<span>Move</span>
+					</DropdownMenuItem>
+
+					<DropdownMenuItem
+						className="text-destructive"
+						onClick={() => setOpenDelete(true)}
+					>
+						<TrashIcon className="w-4" />
+						<span>Delete</span>
+					</DropdownMenuItem>
+				</DropdownMenuContent>
+			</DropdownMenu>
+
+			<BulkDeleteDialog
+				pages={pages}
+				open={openDelete}
+				setOpen={setOpenDelete}
+				onSubmit={onSubmit}
+			/>
 		</>
 	);
 }
