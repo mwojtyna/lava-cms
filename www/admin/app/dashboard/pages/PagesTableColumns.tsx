@@ -26,7 +26,13 @@ import {
 	ChevronUpIcon,
 	EllipsisHorizontalIcon,
 } from "@heroicons/react/20/solid";
-import { BulkDeleteDialog, DeleteDialog, EditDetailsDialog, MoveDialog } from "./dialogs";
+import {
+	BulkDeleteDialog,
+	BulkMoveDialog,
+	DeleteDialog,
+	EditDetailsDialog,
+	MoveDialog,
+} from "./dialogs";
 
 export const columns: ColumnDef<Page>[] = [
 	{
@@ -188,6 +194,12 @@ function PagesTableBulkActions({ pages, onSubmit }: { pages: Page[]; onSubmit: (
 				</DropdownMenuContent>
 			</DropdownMenu>
 
+			<BulkMoveDialog
+				pages={pages}
+				open={openMove}
+				setOpen={setOpenMove}
+				onSubmit={onSubmit}
+			/>
 			<BulkDeleteDialog
 				pages={pages}
 				open={openDelete}

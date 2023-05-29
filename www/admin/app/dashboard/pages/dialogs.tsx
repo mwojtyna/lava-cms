@@ -98,11 +98,9 @@ export function DeleteDialog(props: EditDialogProps) {
 }
 export function BulkDeleteDialog(props: BulkEditDialogProps) {
 	const mutation = trpcReact.pages.deletePage.useMutation();
-	const [isLoading, setIsLoading] = React.useState(false);
 	// const [preferences, setPreferences] = usePagePreferences(props.pages[0].id);
 
 	async function handleSubmit() {
-		setIsLoading(true);
 		const promises = props.pages.map((page) =>
 			mutation.mutateAsync({
 				id: page.id,
@@ -113,7 +111,6 @@ export function BulkDeleteDialog(props: BulkEditDialogProps) {
 
 		props.setOpen(false);
 		props.onSubmit();
-		setIsLoading(false);
 	}
 
 	return (
@@ -132,7 +129,7 @@ export function BulkDeleteDialog(props: BulkEditDialogProps) {
 						No, don&apos;t delete
 					</Button>
 					<Button
-						loading={isLoading}
+						loading={mutation.isLoading}
 						type="submit"
 						variant={"destructive"}
 						icon={<TrashIcon className="w-5" />}
@@ -188,8 +185,9 @@ export function MoveDialog(props: EditDialogProps) {
 				form.setError("newParentId", {
 					message: (
 						<>
-							A page with path <strong>{newPath}</strong> already exists! Either
-							change the slug or move it somewhere else.
+							A page with path{" "}
+							<strong className="whitespace-nowrap">{newPath}</strong> already exists!
+							Either change the slug or move it somewhere else.
 						</>
 					) as unknown as string,
 				});
@@ -210,6 +208,122 @@ export function MoveDialog(props: EditDialogProps) {
 			<DialogContent className="!max-w-sm">
 				<DialogHeader>
 					<DialogTitle>Move page</DialogTitle>
+				</DialogHeader>
+
+				<FormProvider {...form}>
+					<form className="flex flex-col gap-4" onSubmit={form.handleSubmit(onSubmit)}>
+						<FormField
+							control={form.control}
+							name="newParentId"
+							render={({ field }) => (
+								<FormItem>
+									<FormControl>
+										<Combobox
+											className="w-full"
+											contentProps={{
+												align: "start",
+												className: "w-[335px]",
+												placeholder: "Search groups...",
+											}}
+											placeholder="Select a group..."
+											notFoundContent="No groups found."
+											data={
+												groups?.map((group) => ({
+													label: (
+														<span className="flex items-baseline gap-2">
+															<span>{group.name}</span>{" "}
+															<TypographyMuted className="text-xs">
+																{group.url}
+															</TypographyMuted>
+														</span>
+													),
+													value: group.id,
+													filterValue: group.name,
+												})) ?? []
+											}
+											aria-required
+											{...field}
+										/>
+									</FormControl>
+									<FormError />
+								</FormItem>
+							)}
+						/>
+
+						<DialogFooter>
+							<Button
+								type="submit"
+								disabled={!form.watch("newParentId")}
+								loading={mutation.isLoading}
+								icon={<FolderArrowDownIcon className="w-5" />}
+							>
+								Move
+							</Button>
+						</DialogFooter>
+					</form>
+				</FormProvider>
+			</DialogContent>
+		</Dialog>
+	);
+}
+export function BulkMoveDialog(props: BulkEditDialogProps) {
+	const allGroups = trpcReact.pages.getAllGroups.useQuery(undefined, {
+		refetchOnWindowFocus: false,
+	}).data;
+	const groups = React.useMemo(
+		() =>
+			allGroups
+				?.filter((group) => {
+					return (
+						props.pages.every(
+							(page) => page.parent_id !== group.id && page.id !== group.id
+						) &&
+						props.pages.reduce(
+							(acc, curr) => acc && !group.url.startsWith(curr.url + "/"),
+							true
+						)
+					);
+				})
+				.sort((a, b) => a.url.localeCompare(b.url)),
+		[allGroups, props.pages]
+	);
+	const mutation = trpcReact.pages.movePage.useMutation();
+
+	const form = useForm<MoveDialogInputs>();
+	const onSubmit: SubmitHandler<MoveDialogInputs> = async (data) => {
+		try {
+			for (const page of props.pages) {
+				await mutation.mutateAsync({
+					id: page.id,
+					newParentId: data.newParentId,
+				});
+			}
+
+			props.setOpen(false);
+			props.onSubmit();
+		} catch (error) {
+			if (error instanceof TRPCClientError && error.data.code === "CONFLICT") {
+				form.setError("newParentId", {
+					message:
+						"A page in the target group has the same slug as one of the selected pages.",
+				});
+			} else {
+				form.setError("newParentId", {
+					message: "An unexpected error occurred.",
+				});
+			}
+		}
+	};
+
+	React.useEffect(() => {
+		form.clearErrors();
+	}, [props.open, form]);
+
+	return (
+		<Dialog open={props.open} onOpenChange={props.setOpen}>
+			<DialogContent className="!max-w-sm">
+				<DialogHeader>
+					<DialogTitle>Move {props.pages.length} items</DialogTitle>
 				</DialogHeader>
 
 				<FormProvider {...form}>
