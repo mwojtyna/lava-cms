@@ -14,6 +14,7 @@ import { type Column, type ColumnDef, sortingFns } from "@tanstack/react-table";
 import {
 	ActionIcon,
 	Button,
+	Checkbox,
 	DropdownMenu,
 	DropdownMenuContent,
 	DropdownMenuItem,
@@ -28,6 +29,28 @@ import {
 import { DeleteDialog, EditDetailsDialog, MoveDialog } from "./dialogs";
 
 export const columns: ColumnDef<Page>[] = [
+	{
+		id: "select",
+		header: ({ table }) => (
+			<Checkbox
+				className="grid place-items-center"
+				checked={table.getIsAllPageRowsSelected()}
+				onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+				aria-label="Select all"
+			/>
+		),
+		cell: ({ row }) => (
+			<Checkbox
+				className="grid place-items-center"
+				checked={row.getIsSelected()}
+				onCheckedChange={(value) => row.toggleSelected(!!value)}
+				aria-label="Select row"
+			/>
+		),
+		enableSorting: false,
+		enableColumnFilter: false,
+		enableGlobalFilter: false,
+	},
 	{
 		header: ({ column }) => <SortableHeader column={column} name="Name" />,
 		accessorKey: "name",
