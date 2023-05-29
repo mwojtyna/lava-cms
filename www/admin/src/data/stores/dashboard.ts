@@ -23,7 +23,7 @@ export const useColorThemeStore = create<ColorThemeState>((set) => ({
 	colorTheme: undefined,
 	set: (theme) => {
 		set({ colorTheme: theme });
-		setCookie("color-theme" as CookieName, theme, {
+		setCookie("color-theme" satisfies CookieName, theme, {
 			expires: new Date(2999, 12),
 			sameSite: "lax",
 		});

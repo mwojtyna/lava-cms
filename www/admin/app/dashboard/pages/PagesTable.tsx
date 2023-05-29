@@ -70,7 +70,7 @@ export function PagesTable(props: PagesTableProps) {
 
 	const [pagination, setPagination] = React.useState<PaginationState>(() => ({
 		pageIndex: props.pagination?.pageIndex ?? 0,
-		pageSize: cookie.pageSize ?? props.cookie?.pageSize ?? 10,
+		pageSize: cookie.pageSize ?? 10,
 	}));
 	const { setSearchParams } = useSearchParams({
 		onChanged: (searchParams) => {
@@ -88,7 +88,7 @@ export function PagesTable(props: PagesTableProps) {
 	}, [pagination.pageIndex, setSearchParams]);
 	React.useEffect(() => {
 		setCookie(
-			"pages-table" as CookieName,
+			"pages-table" satisfies CookieName,
 			JSON.stringify({ ...sorting[0], pageSize: pagination.pageSize } as TableCookie),
 			{
 				maxAge: new Date(2100, 12).getTime(),
@@ -106,7 +106,7 @@ export function PagesTable(props: PagesTableProps) {
 		onSortingChange: (value) => {
 			setSorting(value);
 			setCookie(
-				"pages-table" as CookieName,
+				"pages-table" satisfies CookieName,
 				// @ts-expect-error `value` type is broken
 				JSON.stringify({ ...value()[0], pageSize: pagination.pageSize } as TableCookie),
 				{
@@ -243,6 +243,7 @@ export function PagesTable(props: PagesTableProps) {
 						</TableBody>
 					</Table>
 				</div>
+
 				<DataTablePagination table={table} />
 			</div>
 

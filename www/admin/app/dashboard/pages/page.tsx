@@ -16,7 +16,7 @@ export default async function Pages({ searchParams }: { searchParams: SearchPara
 	const rootGroup = await trpc.pages.getGroup.query();
 	const data = await trpc.pages.getGroupContents.query();
 
-	const rawCookie = cookies().get("pages-table" as CookieName)?.value;
+	const rawCookie = cookies().get("pages-table" satisfies CookieName)?.value;
 	const cookie = rawCookie ? await tableCookieSchema.parseAsync(JSON.parse(rawCookie)) : null;
 
 	return (

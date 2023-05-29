@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { getCookie } from "cookies-next";
 
-export type CookieName = "cookie-theme" | "pages-table";
+export type CookieName = "color-theme" | "pages-table";
 
 export function getParsedCookie<T>(name: CookieName, fallback: T) {
 	const cookie = getCookie(name)?.toString();

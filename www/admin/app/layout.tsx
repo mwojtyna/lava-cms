@@ -31,7 +31,7 @@ const headerFont = Poppins({
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
 	const colorTheme = await colorThemeSchema
 		.optional()
-		.parseAsync(cookies().get("color-theme" as CookieName)?.value);
+		.parseAsync(cookies().get("color-theme" satisfies CookieName)?.value);
 
 	const url = headers().get("x-url")!.split("/admin")[1]!.split("?")[0]!;
 

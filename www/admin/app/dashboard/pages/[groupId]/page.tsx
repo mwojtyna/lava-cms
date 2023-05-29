@@ -21,7 +21,7 @@ export default async function Group({
 	}
 	const { breadcrumbs, pages } = await trpc.pages.getGroupContents.query({ id: params.groupId });
 
-	const rawCookie = cookies().get("pages-table" as CookieName)?.value;
+	const rawCookie = cookies().get("pages-table" satisfies CookieName)?.value;
 	const cookie = rawCookie ? await tableCookieSchema.parseAsync(JSON.parse(rawCookie)) : null;
 
 	return (
