@@ -114,7 +114,7 @@ export const columns: ColumnDef<Page>[] = [
 	{
 		id: "actions",
 		header: ({ table }) =>
-			table.getIsSomeRowsSelected() && (
+			(table.getIsSomePageRowsSelected() || table.getIsAllPageRowsSelected()) && (
 				<PagesTableBulkActions
 					pages={table.getSelectedRowModel().flatRows.map((row) => row.original)}
 					onSubmit={table.resetRowSelection}
