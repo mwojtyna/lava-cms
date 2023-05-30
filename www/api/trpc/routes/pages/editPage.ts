@@ -25,8 +25,6 @@ export const editPage = publicProcedure
 				where: {
 					url: input.newUrl,
 					id: { not: input.id },
-					// Only check pages that are not the root group, which is invisible to the user
-					parent_id: { not: null },
 				},
 			})
 		) {

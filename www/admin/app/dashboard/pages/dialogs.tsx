@@ -36,6 +36,7 @@ import { TypographyMuted } from "@admin/src/components/ui/server";
 import slugify from "slugify";
 import { TRPCClientError } from "@trpc/client";
 import { usePagePreferences } from "@admin/src/hooks";
+import { trpc } from "@admin/src/utils/trpc";
 
 interface AddDialogProps {
 	group: Page;
@@ -292,26 +293,29 @@ export function BulkMoveDialog(props: BulkEditDialogProps) {
 	const form = useForm<MoveDialogInputs>();
 	const onSubmit: SubmitHandler<MoveDialogInputs> = async (data) => {
 		try {
-			for (const page of props.pages) {
-				await mutation.mutateAsync({
-					id: page.id,
-					newParentId: data.newParentId,
-				});
-			}
-
-			props.setOpen(false);
-			props.onSubmit();
-		} catch (error) {
-			if (error instanceof TRPCClientError && error.data.code === "CONFLICT") {
+			const { conflict } = await trpc.pages.checkConflict.query({
+				newParentId: data.newParentId,
+				originalUrls: props.pages.map((page) => page.url),
+			});
+			if (conflict) {
 				form.setError("newParentId", {
 					message:
 						"A page in the target group has the same slug as one of the selected pages.",
 				});
-			} else {
-				form.setError("newParentId", {
-					message: "An unexpected error occurred.",
-				});
+				return;
 			}
+
+			const promises = props.pages.map((page) =>
+				mutation.mutateAsync({ id: page.id, newParentId: data.newParentId })
+			);
+			await Promise.all(promises);
+
+			props.setOpen(false);
+			props.onSubmit();
+		} catch (error) {
+			form.setError("newParentId", {
+				message: "An unexpected error occurred.",
+			});
 		}
 	};
 
