@@ -118,7 +118,9 @@ export function BulkDeleteDialog(props: BulkEditDialogProps) {
 		<Dialog open={props.open} onOpenChange={props.setOpen}>
 			<DialogContent className="!max-w-sm" withCloseButton={false}>
 				<DialogHeader>
-					<DialogTitle>Delete {props.pages.length} items?</DialogTitle>
+					<DialogTitle>
+						Delete {props.pages.length} item{props.pages.length > 1 && ""}?
+					</DialogTitle>
 					<DialogDescription>
 						Are you sure you want to delete {props.pages.length} items? This action
 						cannot be undone!
@@ -327,7 +329,9 @@ export function BulkMoveDialog(props: BulkEditDialogProps) {
 		<Dialog open={props.open} onOpenChange={props.setOpen}>
 			<DialogContent className="!max-w-sm">
 				<DialogHeader>
-					<DialogTitle>Move {props.pages.length} items</DialogTitle>
+					<DialogTitle>
+						Move {props.pages.length} item{props.pages.length > 1 && "s"}
+					</DialogTitle>
 				</DialogHeader>
 
 				<FormProvider {...form}>
