@@ -41,7 +41,7 @@ export function SetupForm() {
 				...data,
 				description: data.description ?? "",
 			}),
-			trpc.pages.addPage.mutate({ name: "Root", url: "/", is_group: true, parent_id: null }),
+			trpc.pages.addPage.mutate({ name: "Root", url: "", is_group: true, parent_id: null }),
 		]);
 
 		router.push("/dashboard");

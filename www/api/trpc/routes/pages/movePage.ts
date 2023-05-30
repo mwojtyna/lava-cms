@@ -13,10 +13,10 @@ export const movePage = publicProcedure
 	)
 	.mutation(async ({ input }) => {
 		const [page, parentGroup] = await prisma.$transaction([
-			prisma.page.findFirst({
+			prisma.page.findUnique({
 				where: { id: input.id },
 			}),
-			prisma.page.findFirst({
+			prisma.page.findUnique({
 				where: { id: input.newParentId },
 			}),
 		]);
@@ -29,10 +29,7 @@ export const movePage = publicProcedure
 			await caller.pages.editPage({
 				id: input.id,
 				newName: page.name,
-				newUrl:
-					parentGroup.url +
-					(parentGroup.parent_id !== null ? "/" : "") +
-					page.url.split("/").pop(),
+				newUrl: parentGroup.url + "/" + page.url.split("/").pop(),
 			});
 			await tx.page.update({
 				where: { id: input.id },

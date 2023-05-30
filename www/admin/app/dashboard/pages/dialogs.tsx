@@ -233,7 +233,7 @@ export function MoveDialog(props: EditDialogProps) {
 														<span className="flex items-baseline gap-2">
 															<span>{group.name}</span>{" "}
 															<TypographyMuted className="text-xs">
-																{group.url}
+																{group.url === "" ? "/" : group.url}
 															</TypographyMuted>
 														</span>
 													),
@@ -349,7 +349,7 @@ export function BulkMoveDialog(props: BulkEditDialogProps) {
 														<span className="flex items-baseline gap-2">
 															<span>{group.name}</span>{" "}
 															<TypographyMuted className="text-xs">
-																{group.url}
+																{group.url === "" ? "/" : group.url}
 															</TypographyMuted>
 														</span>
 													),

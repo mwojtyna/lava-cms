@@ -9,7 +9,7 @@ export const getPage = publicProcedure
 		})
 	)
 	.query(async ({ input }) => {
-		return prisma.page.findFirst({
+		return prisma.page.findUnique({
 			where: { url: input.url },
 		});
 	});
