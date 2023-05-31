@@ -692,7 +692,9 @@ export function DuplicateDialog(props: EditDialogProps) {
 		resolver: zodResolver(duplicateDialogSchema),
 	});
 	const onSubmit: SubmitHandler<DuplicateDialogInputs> = async (data) => {
-		const newUrl = editUrl(props.page.url, data.slug);
+		const newParent = groups?.find((group) => group.id === data.newParentId);
+		const newUrl = newParent?.url + getSlugFromUrl(props.page.url);
+
 		try {
 			await mutation.mutateAsync({
 				pageId: props.page.id,
