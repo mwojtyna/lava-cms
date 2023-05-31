@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { type SubmitHandler, useForm } from "react-hook-form";
+import { type SubmitHandler, useForm, type UseFormReturn } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import type { Page } from "api/prisma/types";
@@ -149,6 +149,54 @@ export function BulkDeleteDialog(props: BulkEditDialogProps) {
 interface MoveDialogInputs {
 	newParentId: string;
 }
+function NewParentSelect({
+	form,
+	groups,
+}: {
+	form: UseFormReturn<MoveDialogInputs>;
+	groups?: Page[];
+}) {
+	return (
+		<FormField
+			control={form.control}
+			name="newParentId"
+			render={({ field }) => (
+				<FormItem>
+					<FormControl>
+						<Combobox
+							className="w-full"
+							contentProps={{
+								align: "start",
+								className: "w-[335px]",
+								placeholder: "Search groups...",
+							}}
+							placeholder="Select a group..."
+							notFoundContent="No groups found."
+							data={
+								groups?.map((group) => ({
+									label: (
+										<span className="flex items-baseline gap-2">
+											<span>{group.name}</span>{" "}
+											<TypographyMuted className="text-xs">
+												{group.url === "" ? "/" : group.url}
+											</TypographyMuted>
+										</span>
+									),
+									value: group.id,
+									filterValue: group.name,
+								})) ?? []
+							}
+							aria-required
+							{...field}
+						/>
+					</FormControl>
+					<FormError />
+				</FormItem>
+			)}
+		/>
+	);
+}
+
 export function MoveDialog(props: EditDialogProps) {
 	const allGroups = trpcReact.pages.getAllGroups.useQuery(undefined, {
 		refetchOnWindowFocus: false,
@@ -215,43 +263,7 @@ export function MoveDialog(props: EditDialogProps) {
 
 				<FormProvider {...form}>
 					<form className="flex flex-col gap-4" onSubmit={form.handleSubmit(onSubmit)}>
-						<FormField
-							control={form.control}
-							name="newParentId"
-							render={({ field }) => (
-								<FormItem>
-									<FormControl>
-										<Combobox
-											className="w-full"
-											contentProps={{
-												align: "start",
-												className: "w-[335px]",
-												placeholder: "Search groups...",
-											}}
-											placeholder="Select a group..."
-											notFoundContent="No groups found."
-											data={
-												groups?.map((group) => ({
-													label: (
-														<span className="flex items-baseline gap-2">
-															<span>{group.name}</span>{" "}
-															<TypographyMuted className="text-xs">
-																{group.url === "" ? "/" : group.url}
-															</TypographyMuted>
-														</span>
-													),
-													value: group.id,
-													filterValue: group.name,
-												})) ?? []
-											}
-											aria-required
-											{...field}
-										/>
-									</FormControl>
-									<FormError />
-								</FormItem>
-							)}
-						/>
+						<NewParentSelect form={form} groups={groups} />
 
 						<DialogFooter>
 							<Button
@@ -336,43 +348,7 @@ export function BulkMoveDialog(props: BulkEditDialogProps) {
 
 				<FormProvider {...form}>
 					<form className="flex flex-col gap-4" onSubmit={form.handleSubmit(onSubmit)}>
-						<FormField
-							control={form.control}
-							name="newParentId"
-							render={({ field }) => (
-								<FormItem>
-									<FormControl>
-										<Combobox
-											className="w-full"
-											contentProps={{
-												align: "start",
-												className: "w-[335px]",
-												placeholder: "Search groups...",
-											}}
-											placeholder="Select a group..."
-											notFoundContent="No groups found."
-											data={
-												groups?.map((group) => ({
-													label: (
-														<span className="flex items-baseline gap-2">
-															<span>{group.name}</span>{" "}
-															<TypographyMuted className="text-xs">
-																{group.url === "" ? "/" : group.url}
-															</TypographyMuted>
-														</span>
-													),
-													value: group.id,
-													filterValue: group.name,
-												})) ?? []
-											}
-											aria-required
-											{...field}
-										/>
-									</FormControl>
-									<FormError />
-								</FormItem>
-							)}
-						/>
+						<NewParentSelect form={form} groups={groups} />
 
 						<DialogFooter>
 							<Button
