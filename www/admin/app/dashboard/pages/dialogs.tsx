@@ -1,7 +1,13 @@
 "use client";
 
 import * as React from "react";
-import { type SubmitHandler, useForm, type UseFormReturn, FieldValues } from "react-hook-form";
+import {
+	type SubmitHandler,
+	useForm,
+	type UseFormReturn,
+	type Path,
+	type PathValue,
+} from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import type { Page } from "api/prisma/types";
@@ -151,19 +157,19 @@ export function BulkDeleteDialog(props: BulkEditDialogProps) {
 interface MoveDialogInputs {
 	newParentId: string;
 }
-function NewParentSelect({
+function NewParentSelect<T extends MoveDialogInputs>({
 	form,
 	groups,
 	label,
 }: {
-	form: UseFormReturn<any>;
+	form: UseFormReturn<T>;
 	groups?: Page[];
 	label?: React.ReactNode;
 }) {
 	return (
 		<FormField
 			control={form.control}
-			name="newParentId"
+			name={"newParentId" as Path<T>}
 			render={({ field }) => (
 				<FormItem>
 					{label && <FormLabel>{label}</FormLabel>}
@@ -408,12 +414,12 @@ function editUrl(url: string, newSlug: string) {
 	return split.join("/");
 }
 
-function NameSlugInput({
+function NameSlugInput<T extends EditDialogInputs>({
 	form,
 	page,
 	shouldSetPreferences,
 }: {
-	form: UseFormReturn<any>;
+	form: UseFormReturn<T>;
 	page: Page;
 	shouldSetPreferences?: boolean;
 }) {
@@ -423,11 +429,17 @@ function NameSlugInput({
 		<>
 			<FormField
 				control={form.control}
-				name="name"
+				name={"name" as Path<T>}
 				rules={{
 					onChange: (e) => {
 						if (!preferences[page.id])
-							form.setValue("slug", "/" + slugify(e.target.value, slugifyOptions));
+							form.setValue(
+								"slug" as Path<T>,
+								("/" + slugify(e.target.value, slugifyOptions)) as PathValue<
+									T,
+									Path<T>
+								>
+							);
 					},
 				}}
 				render={({ field }) => (
@@ -442,7 +454,7 @@ function NameSlugInput({
 
 			<FormField
 				control={form.control}
-				name="slug"
+				name={"slug" as Path<T>}
 				render={({ field }) => (
 					<FormItem>
 						<FormLabel>Slug</FormLabel>
@@ -565,7 +577,7 @@ export function AddDialog(props: AddDialogProps) {
 			if (slugLocked) {
 				setPreferences({
 					...preferences,
-					[id]: slugLocked,
+					[id!]: slugLocked,
 				});
 			}
 			props.setOpen(false);
