@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { type SubmitHandler, useForm, type UseFormReturn } from "react-hook-form";
+import { type SubmitHandler, useForm, type UseFormReturn, FieldValues } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import type { Page } from "api/prisma/types";
@@ -23,6 +23,7 @@ import {
 } from "@admin/src/components/ui/client";
 import { trpcReact } from "@admin/src/utils/trpcReact";
 import {
+	DocumentDuplicateIcon,
 	DocumentPlusIcon,
 	FolderArrowDownIcon,
 	FolderPlusIcon,
@@ -153,9 +154,11 @@ interface MoveDialogInputs {
 function NewParentSelect({
 	form,
 	groups,
+	label,
 }: {
-	form: UseFormReturn<MoveDialogInputs>;
+	form: UseFormReturn<any>;
 	groups?: Page[];
+	label?: React.ReactNode;
 }) {
 	return (
 		<FormField
@@ -163,6 +166,7 @@ function NewParentSelect({
 			name="newParentId"
 			render={({ field }) => (
 				<FormItem>
+					{label && <FormLabel>{label}</FormLabel>}
 					<FormControl>
 						<Combobox
 							className="w-full"
@@ -303,6 +307,7 @@ export function BulkMoveDialog(props: BulkEditDialogProps) {
 				.sort((a, b) => a.url.localeCompare(b.url)),
 		[allGroups, props.pages]
 	);
+
 	const mutation = trpcReact.pages.movePage.useMutation();
 	const [isConflictChecking, setIsConflictChecking] = React.useState(false);
 
@@ -397,10 +402,79 @@ function getSlugFromUrl(path: string) {
 	const split = path.split("/");
 	return "/" + split[split.length - 1]!;
 }
+function editUrl(url: string, newSlug: string) {
+	const split = url.split("/");
+	split[split.length - 1] = newSlug.slice(1);
+	return split.join("/");
+}
+
+function NameSlugInput({
+	form,
+	page,
+	shouldSetPreferences,
+}: {
+	form: UseFormReturn<any>;
+	page: Page;
+	shouldSetPreferences?: boolean;
+}) {
+	const [preferences, setPreferences] = usePagePreferences(page.id);
+
+	return (
+		<>
+			<FormField
+				control={form.control}
+				name="name"
+				rules={{
+					onChange: (e) => {
+						if (!preferences[page.id])
+							form.setValue("slug", "/" + slugify(e.target.value, slugifyOptions));
+					},
+				}}
+				render={({ field }) => (
+					<FormItem>
+						<FormLabel>Name</FormLabel>
+						<FormControl>
+							<Input className="flex-row" aria-required {...field} />
+						</FormControl>
+					</FormItem>
+				)}
+			/>
+
+			<FormField
+				control={form.control}
+				name="slug"
+				render={({ field }) => (
+					<FormItem>
+						<FormLabel>Slug</FormLabel>
+						<FormControl>
+							<Input
+								className="flex-row"
+								rightButtonIconOn={<LockClosedIcon className="w-4" />}
+								rightButtonIconOff={<LockOpenIcon className="w-4" />}
+								rightButtonState={preferences[page.id]}
+								setRightButtonState={(state) => {
+									if (shouldSetPreferences) {
+										setPreferences({
+											...preferences,
+											[page.id]: state,
+										});
+									}
+								}}
+								rightButtonTooltip="Toggle lock slug autofill"
+								aria-required
+								{...field}
+							/>
+						</FormControl>
+						<FormError />
+					</FormItem>
+				)}
+			/>
+		</>
+	);
+}
 
 export function EditDetailsDialog(props: EditDialogProps) {
 	const mutation = trpcReact.pages.editPage.useMutation();
-	const [preferences, setPreferences] = usePagePreferences(props.page.id);
 
 	const form = useForm<EditDialogInputs>({
 		resolver: zodResolver(editDialogSchema),
@@ -411,9 +485,7 @@ export function EditDetailsDialog(props: EditDialogProps) {
 			return;
 		}
 
-		const split = props.page.url.split("/");
-		split[split.length - 1] = data.slug.slice(1);
-		const newUrl = split.join("/");
+		const newUrl = editUrl(props.page.url, data.slug);
 
 		try {
 			await mutation.mutateAsync({
@@ -453,55 +525,7 @@ export function EditDetailsDialog(props: EditDialogProps) {
 
 				<FormProvider {...form}>
 					<form className="flex flex-col gap-4" onSubmit={form.handleSubmit(onSubmit)}>
-						<FormField
-							control={form.control}
-							name="name"
-							rules={{
-								onChange: (e) => {
-									if (!preferences[props.page.id])
-										form.setValue(
-											"slug",
-											"/" + slugify(e.target.value, slugifyOptions)
-										);
-								},
-							}}
-							render={({ field }) => (
-								<FormItem>
-									<FormLabel>Name</FormLabel>
-									<FormControl>
-										<Input className="flex-row" aria-required {...field} />
-									</FormControl>
-								</FormItem>
-							)}
-						/>
-
-						<FormField
-							control={form.control}
-							name="slug"
-							render={({ field }) => (
-								<FormItem>
-									<FormLabel>Slug</FormLabel>
-									<FormControl>
-										<Input
-											className="flex-row"
-											rightButtonIconOn={<LockClosedIcon className="w-4" />}
-											rightButtonIconOff={<LockOpenIcon className="w-4" />}
-											rightButtonState={preferences[props.page.id]}
-											setRightButtonState={(state) =>
-												setPreferences({
-													...preferences,
-													[props.page.id]: state,
-												})
-											}
-											rightButtonTooltip="Toggle lock slug autofill"
-											aria-required
-											{...field}
-										/>
-									</FormControl>
-									<FormError />
-								</FormItem>
-							)}
-						/>
+						<NameSlugInput form={form} page={props.page} shouldSetPreferences />
 
 						<DialogFooter>
 							<Button
@@ -641,4 +665,77 @@ export function AddDialog(props: AddDialogProps) {
 	);
 }
 
-export function CopyDialog(props: EditDialogProps) {}
+const duplicateDialogSchema = editDialogSchema.extend({
+	newParentId: z.string().nonempty().cuid(),
+});
+type DuplicateDialogInputs = z.infer<typeof duplicateDialogSchema>;
+
+export function DuplicateDialog(props: EditDialogProps) {
+	const groups = trpcReact.pages.getAllGroups.useQuery(undefined, {
+		refetchOnWindowFocus: false,
+	}).data;
+	const mutation = trpcReact.pages.duplicatePage.useMutation();
+
+	const form = useForm<DuplicateDialogInputs>({
+		resolver: zodResolver(duplicateDialogSchema),
+	});
+	const onSubmit: SubmitHandler<DuplicateDialogInputs> = async (data) => {
+		const newUrl = editUrl(props.page.url, data.slug);
+		try {
+			await mutation.mutateAsync({
+				pageId: props.page.id,
+				newName: data.name,
+				newUrl,
+				newParentId: data.newParentId,
+			});
+			props.setOpen(false);
+		} catch (error) {
+			if (error instanceof TRPCClientError && error.data.code === "CONFLICT") {
+				form.setError("slug", {
+					type: "manual",
+					message: (
+						<>
+							A page with path <strong>{newUrl}</strong> already exists.
+						</>
+					) as unknown as string,
+				});
+			}
+		}
+	};
+
+	React.useEffect(() => {
+		if (props.open) {
+			form.setValue("name", props.page.name);
+			form.setValue("slug", getSlugFromUrl(props.page.url));
+			form.setValue("newParentId", props.page.parent_id!);
+			form.clearErrors();
+		}
+	}, [form, props.open, props.page]);
+
+	return (
+		<Dialog open={props.open} onOpenChange={props.setOpen}>
+			<DialogContent className="!max-w-sm">
+				<DialogHeader>
+					<DialogTitle>Duplicate page</DialogTitle>
+				</DialogHeader>
+
+				<FormProvider {...form}>
+					<form className="flex flex-col gap-4" onSubmit={form.handleSubmit(onSubmit)}>
+						<NameSlugInput form={form} page={props.page} />
+						<NewParentSelect form={form} groups={groups} label="Group" />
+
+						<DialogFooter>
+							<Button
+								type="submit"
+								loading={mutation.isLoading}
+								icon={<DocumentDuplicateIcon className="w-5" />}
+							>
+								Duplicate
+							</Button>
+						</DialogFooter>
+					</form>
+				</FormProvider>
+			</DialogContent>
+		</Dialog>
+	);
+}

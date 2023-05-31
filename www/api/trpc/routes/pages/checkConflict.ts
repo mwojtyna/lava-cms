@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { prisma } from "@api/prisma/client";
 import { publicProcedure } from "@api/trpc";
-import { url as urlRegex } from "@api/trpc/regex";
+import { urlRegex } from "@api/trpc/regex";
 
 export const checkConflict = publicProcedure
 	.input(

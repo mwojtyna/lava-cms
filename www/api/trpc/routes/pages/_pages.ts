@@ -8,17 +8,19 @@ import { getGroupContents } from "./getGroupContents";
 import { getGroup } from "./getGroup";
 import { getAllGroups } from "./getAllGroups";
 import { checkConflict } from "./checkConflict";
+import { duplicatePage } from "./duplicatePage";
 
 export const pagesRouter = router({
 	addPage,
 	checkConflict,
-	getPage,
-	editPage,
 	deletePage,
-	movePage,
-	getGroupContents,
-	getGroup,
+	getPage,
+	duplicatePage,
+	editPage,
 	getAllGroups,
+	getGroup,
+	getGroupContents,
+	movePage,
 });
 
 export type PagesRouter = typeof pagesRouter;

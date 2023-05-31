@@ -9,6 +9,7 @@ import {
 	FolderArrowDownIcon,
 	TrashIcon,
 	PencilSquareIcon,
+	DocumentDuplicateIcon,
 } from "@heroicons/react/24/outline";
 import { type Column, type ColumnDef, sortingFns } from "@tanstack/react-table";
 import {
@@ -30,6 +31,7 @@ import {
 	BulkDeleteDialog,
 	BulkMoveDialog,
 	DeleteDialog,
+	DuplicateDialog,
 	EditDetailsDialog,
 	MoveDialog,
 } from "./dialogs";
@@ -126,6 +128,7 @@ export const columns: ColumnDef<Page>[] = [
 
 function PagesTableActions({ page }: { page: Page }) {
 	const [openEdit, setOpenEdit] = React.useState(false);
+	const [openDuplicate, setOpenDuplicate] = React.useState(false);
 	const [openMove, setOpenMove] = React.useState(false);
 	const [openDelete, setOpenDelete] = React.useState(false);
 
@@ -149,6 +152,13 @@ function PagesTableActions({ page }: { page: Page }) {
 						<span>Move</span>
 					</DropdownMenuItem>
 
+					{!page.is_group && (
+						<DropdownMenuItem onClick={() => setOpenDuplicate(true)}>
+							<DocumentDuplicateIcon className="w-4" />
+							<span>Duplicate</span>
+						</DropdownMenuItem>
+					)}
+
 					<DropdownMenuItem
 						className="text-destructive"
 						onClick={() => setOpenDelete(true)}
@@ -161,6 +171,7 @@ function PagesTableActions({ page }: { page: Page }) {
 
 			<EditDetailsDialog page={page} open={openEdit} setOpen={setOpenEdit} />
 			<MoveDialog page={page} open={openMove} setOpen={setOpenMove} />
+			<DuplicateDialog page={page} open={openDuplicate} setOpen={setOpenDuplicate} />
 			<DeleteDialog page={page} open={openDelete} setOpen={setOpenDelete} />
 		</>
 	);
