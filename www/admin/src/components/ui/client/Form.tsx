@@ -140,14 +140,14 @@ const FormError = React.forwardRef<
 	}
 
 	return (
-		<p
+		<span
 			ref={ref}
 			id={formMessageId}
 			className={cn("text-sm text-destructive", className)}
 			{...props}
 		>
 			{error.message}
-		</p>
+		</span>
 	);
 });
 FormError.displayName = "FormMessage";

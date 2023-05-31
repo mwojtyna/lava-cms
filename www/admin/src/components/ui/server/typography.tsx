@@ -49,3 +49,17 @@ export const TypographyMuted = React.forwardRef<
 	);
 });
 TypographyMuted.displayName = "TypographyMuted";
+
+export const TypographyList = React.forwardRef<
+	HTMLUListElement,
+	React.ComponentPropsWithoutRef<"ul"> & { items: string[] }
+>(({ className, children, items, ...props }, ref) => {
+	return (
+		<ul ref={ref} className={cn("ml-6 list-disc [&>li]:mt-2", className)} {...props}>
+			{items.map((item, i) => (
+				<li key={i}>{item}</li>
+			))}
+		</ul>
+	);
+});
+TypographyList.displayName = "TypographyList";

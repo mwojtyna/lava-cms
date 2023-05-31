@@ -32,7 +32,7 @@ import {
 	TrashIcon,
 } from "@heroicons/react/24/outline";
 import { Combobox } from "@admin/src/components";
-import { TypographyMuted } from "@admin/src/components/ui/server";
+import { TypographyList, TypographyMuted } from "@admin/src/components/ui/server";
 import slugify from "slugify";
 import { TRPCClientError } from "@trpc/client";
 import { usePagePreferences } from "@admin/src/hooks";
@@ -40,6 +40,7 @@ import { trpc } from "@admin/src/utils/trpc";
 
 interface AddDialogProps {
 	group: Page;
+	isGroup: boolean;
 	open: boolean;
 	setOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }
@@ -303,18 +304,26 @@ export function BulkMoveDialog(props: BulkEditDialogProps) {
 		[allGroups, props.pages]
 	);
 	const mutation = trpcReact.pages.movePage.useMutation();
+	const [isConflictChecking, setIsConflictChecking] = React.useState(false);
 
 	const form = useForm<MoveDialogInputs>();
 	const onSubmit: SubmitHandler<MoveDialogInputs> = async (data) => {
 		try {
-			const { conflict } = await trpc.pages.checkConflict.query({
+			setIsConflictChecking(true);
+			const { conflict, urls } = await trpc.pages.checkConflict.query({
 				newParentId: data.newParentId,
 				originalUrls: props.pages.map((page) => page.url),
 			});
+			setIsConflictChecking(false);
+
 			if (conflict) {
 				form.setError("newParentId", {
-					message:
-						"A page in the target group has the same slug as one of the selected pages.",
+					message: (
+						<>
+							The following pages already exist in the destination group:
+							<TypographyList items={urls!} />
+						</>
+					) as unknown as string,
 				});
 				return;
 			}
@@ -354,7 +363,7 @@ export function BulkMoveDialog(props: BulkEditDialogProps) {
 							<Button
 								type="submit"
 								disabled={!form.watch("newParentId")}
-								loading={mutation.isLoading}
+								loading={mutation.isLoading || isConflictChecking}
 								icon={<FolderArrowDownIcon className="w-5" />}
 							>
 								Move
@@ -510,7 +519,7 @@ export function EditDetailsDialog(props: EditDialogProps) {
 	);
 }
 
-export function AddDialog(props: AddDialogProps & { isGroup: boolean }) {
+export function AddDialog(props: AddDialogProps) {
 	const mutation = trpcReact.pages.addPage.useMutation();
 	const [preferences, setPreferences] = usePagePreferences(props.group.id);
 	const [slugLocked, setSlugLocked] = React.useState(false);
@@ -631,3 +640,5 @@ export function AddDialog(props: AddDialogProps & { isGroup: boolean }) {
 		</Dialog>
 	);
 }
+
+export function CopyDialog(props: EditDialogProps) {}

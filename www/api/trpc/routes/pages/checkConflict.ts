@@ -10,7 +10,9 @@ export const checkConflict = publicProcedure
 			originalUrls: z.array(z.string().regex(urlRegex)),
 		})
 	)
-	.query(async ({ input }): Promise<{ conflict: boolean }> => {
+	.query(async ({ input }): Promise<{ conflict: boolean; urls?: string[] }> => {
+		const conflicts = [];
+
 		for (const newUrl of input.originalUrls) {
 			const existingPage = await prisma.page.findFirst({
 				where: {
@@ -20,9 +22,13 @@ export const checkConflict = publicProcedure
 			});
 
 			if (existingPage) {
-				return { conflict: true };
+				conflicts.push(existingPage.url);
 			}
 		}
 
-		return { conflict: false };
+		if (conflicts.length > 0) {
+			return { conflict: true, urls: conflicts };
+		} else {
+			return { conflict: false };
+		}
 	});
