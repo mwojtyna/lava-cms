@@ -416,15 +416,13 @@ function editUrl(url: string, newSlug: string) {
 
 function NameSlugInput<T extends EditDialogInputs>({
 	form,
-	page,
-	shouldSetPreferences,
+	slugLocked,
+	setSlugLocked,
 }: {
 	form: UseFormReturn<T>;
-	page: Page;
-	shouldSetPreferences?: boolean;
+	slugLocked: boolean | undefined;
+	setSlugLocked: (value: boolean) => void;
 }) {
-	const [preferences, setPreferences] = usePagePreferences(page.id);
-
 	return (
 		<>
 			<FormField
@@ -432,7 +430,7 @@ function NameSlugInput<T extends EditDialogInputs>({
 				name={"name" as Path<T>}
 				rules={{
 					onChange: (e) => {
-						if (!preferences[page.id])
+						if (!slugLocked)
 							form.setValue(
 								"slug" as Path<T>,
 								("/" + slugify(e.target.value, slugifyOptions)) as PathValue<
@@ -463,15 +461,8 @@ function NameSlugInput<T extends EditDialogInputs>({
 								className="flex-row"
 								rightButtonIconOn={<LockClosedIcon className="w-4" />}
 								rightButtonIconOff={<LockOpenIcon className="w-4" />}
-								rightButtonState={preferences[page.id]}
-								setRightButtonState={(state) => {
-									if (shouldSetPreferences) {
-										setPreferences({
-											...preferences,
-											[page.id]: state,
-										});
-									}
-								}}
+								rightButtonState={slugLocked}
+								setRightButtonState={setSlugLocked}
 								rightButtonTooltip="Toggle lock slug autofill"
 								aria-required
 								{...field}
@@ -487,6 +478,7 @@ function NameSlugInput<T extends EditDialogInputs>({
 
 export function EditDetailsDialog(props: EditDialogProps) {
 	const mutation = trpcReact.pages.editPage.useMutation();
+	const [preferences, setPreferences] = usePagePreferences(props.page.id);
 
 	const form = useForm<EditDialogInputs>({
 		resolver: zodResolver(editDialogSchema),
@@ -538,7 +530,13 @@ export function EditDetailsDialog(props: EditDialogProps) {
 
 				<FormProvider {...form}>
 					<form className="flex flex-col gap-4" onSubmit={form.handleSubmit(onSubmit)}>
-						<NameSlugInput form={form} page={props.page} shouldSetPreferences />
+						<NameSlugInput
+							form={form}
+							slugLocked={preferences[props.page.id]}
+							setSlugLocked={(value) =>
+								setPreferences({ ...preferences, [props.page.id]: value })
+							}
+						/>
 
 						<DialogFooter>
 							<Button
@@ -610,50 +608,10 @@ export function AddDialog(props: AddDialogProps) {
 
 				<FormProvider {...form}>
 					<form className="flex flex-col gap-4" onSubmit={form.handleSubmit(onSubmit)}>
-						<FormField
-							control={form.control}
-							name="name"
-							rules={{
-								onChange: (e) => {
-									if (!slugLocked) {
-										form.setValue(
-											"slug",
-											"/" + slugify(e.target.value, slugifyOptions)
-										);
-									}
-								},
-							}}
-							render={({ field }) => (
-								<FormItem>
-									<FormLabel>Name</FormLabel>
-									<FormControl>
-										<Input className="flex-row" aria-required {...field} />
-									</FormControl>
-								</FormItem>
-							)}
-						/>
-
-						<FormField
-							control={form.control}
-							name="slug"
-							render={({ field }) => (
-								<FormItem>
-									<FormLabel>Slug</FormLabel>
-									<FormControl>
-										<Input
-											className="flex-row"
-											rightButtonIconOn={<LockClosedIcon className="w-4" />}
-											rightButtonIconOff={<LockOpenIcon className="w-4" />}
-											rightButtonState={slugLocked}
-											setRightButtonState={(state) => setSlugLocked(state)}
-											rightButtonTooltip="Toggle lock slug autofill"
-											aria-required
-											{...field}
-										/>
-									</FormControl>
-									<FormError />
-								</FormItem>
-							)}
+						<NameSlugInput
+							form={form}
+							slugLocked={slugLocked}
+							setSlugLocked={setSlugLocked}
 						/>
 
 						<DialogFooter>
@@ -688,6 +646,8 @@ export function DuplicateDialog(props: EditDialogProps) {
 		refetchOnWindowFocus: false,
 	}).data;
 	const mutation = trpcReact.pages.addPage.useMutation();
+	const [preferences, setPreferences] = usePagePreferences(props.page.id);
+	const [slugLocked, setSlugLocked] = React.useState(false);
 
 	const form = useForm<DuplicateDialogInputs>({
 		resolver: zodResolver(duplicateDialogSchema),
@@ -697,12 +657,19 @@ export function DuplicateDialog(props: EditDialogProps) {
 		const url = newParent?.url + data.slug;
 
 		try {
-			await mutation.mutateAsync({
+			const id = await mutation.mutateAsync({
 				name: data.name,
 				url: url,
 				parent_id: data.newParentId,
 				is_group: false,
 			});
+
+			if (slugLocked) {
+				setPreferences({
+					...preferences,
+					[id!]: slugLocked,
+				});
+			}
 			props.setOpen(false);
 		} catch (error) {
 			if (error instanceof TRPCClientError && error.data.code === "CONFLICT") {
@@ -738,7 +705,11 @@ export function DuplicateDialog(props: EditDialogProps) {
 
 				<FormProvider {...form}>
 					<form className="flex flex-col gap-4" onSubmit={form.handleSubmit(onSubmit)}>
-						<NameSlugInput form={form} page={props.page} />
+						<NameSlugInput
+							form={form}
+							slugLocked={slugLocked}
+							setSlugLocked={setSlugLocked}
+						/>
 						<NewParentSelect form={form} groups={groups} label="Group" />
 
 						<DialogFooter>
