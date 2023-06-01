@@ -10,11 +10,9 @@ export function getParsedCookie<T>(name: CookieName, fallback: T) {
 	return JSON.parse(cookie) as T;
 }
 
-export const tableCookieSchema = z
-	.object({
-		id: z.string(),
-		desc: z.boolean(),
-		pageSize: z.number(),
-	})
-	.nullable();
+export const tableCookieSchema = z.object({
+	id: z.string(),
+	desc: z.boolean(),
+	pageSize: z.number(),
+});
 export type TableCookie = z.infer<typeof tableCookieSchema>;

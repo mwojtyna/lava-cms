@@ -645,6 +645,11 @@ export function DuplicateDialog(props: EditDialogProps) {
 	const groups = trpcReact.pages.getAllGroups.useQuery(undefined, {
 		refetchOnWindowFocus: false,
 	}).data;
+	const sortedGroups = React.useMemo(
+		() => groups?.sort((a, b) => a.url.localeCompare(b.url)),
+		[groups]
+	);
+
 	const mutation = trpcReact.pages.addPage.useMutation();
 	const [preferences, setPreferences] = usePagePreferences(props.page.id);
 	const [slugLocked, setSlugLocked] = React.useState(false);
@@ -710,7 +715,7 @@ export function DuplicateDialog(props: EditDialogProps) {
 							slugLocked={slugLocked}
 							setSlugLocked={setSlugLocked}
 						/>
-						<NewParentSelect form={form} groups={groups} label="Group" />
+						<NewParentSelect form={form} groups={sortedGroups} label="Group" />
 
 						<DialogFooter>
 							<Button
