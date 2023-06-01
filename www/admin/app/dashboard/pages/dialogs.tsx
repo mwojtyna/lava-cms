@@ -512,7 +512,8 @@ export function EditDetailsDialog(props: EditDialogProps) {
 					type: "manual",
 					message: (
 						<>
-							A page with path <strong>{newUrl}</strong> already exists.
+							A page with path <strong className="whitespace-nowrap">{newUrl}</strong>{" "}
+							already exists.
 						</>
 					) as unknown as string,
 				});
@@ -686,21 +687,21 @@ export function DuplicateDialog(props: EditDialogProps) {
 	const groups = trpcReact.pages.getAllGroups.useQuery(undefined, {
 		refetchOnWindowFocus: false,
 	}).data;
-	const mutation = trpcReact.pages.duplicatePage.useMutation();
+	const mutation = trpcReact.pages.addPage.useMutation();
 
 	const form = useForm<DuplicateDialogInputs>({
 		resolver: zodResolver(duplicateDialogSchema),
 	});
 	const onSubmit: SubmitHandler<DuplicateDialogInputs> = async (data) => {
 		const newParent = groups?.find((group) => group.id === data.newParentId);
-		const newUrl = newParent?.url + getSlugFromUrl(props.page.url);
+		const url = newParent?.url + data.slug;
 
 		try {
 			await mutation.mutateAsync({
-				pageId: props.page.id,
-				newName: data.name,
-				newUrl,
-				newParentId: data.newParentId,
+				name: data.name,
+				url: url,
+				parent_id: data.newParentId,
+				is_group: false,
 			});
 			props.setOpen(false);
 		} catch (error) {
@@ -709,7 +710,8 @@ export function DuplicateDialog(props: EditDialogProps) {
 					type: "manual",
 					message: (
 						<>
-							A page with path <strong>{newUrl}</strong> already exists.
+							A page with path <strong className="whitespace-nowrap">{url}</strong>{" "}
+							already exists.
 						</>
 					) as unknown as string,
 				});
@@ -724,7 +726,8 @@ export function DuplicateDialog(props: EditDialogProps) {
 			form.setValue("newParentId", props.page.parent_id!);
 			form.clearErrors();
 		}
-	}, [form, props.open, props.page]);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [props.open, form]);
 
 	return (
 		<Dialog open={props.open} onOpenChange={props.setOpen}>
