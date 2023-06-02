@@ -56,7 +56,7 @@ export function PagesTable(props: PagesTableProps) {
 	const data: typeof props.data = clientData ?? props.data;
 	const cookie = React.useMemo(
 		() =>
-			getParsedCookie<NonNullable<TableCookie>>(
+			getParsedCookie<TableCookie>(
 				"pages-table",
 				props.cookie ?? { id: "name", desc: false, pageSize: 10 }
 			),
@@ -193,7 +193,10 @@ export function PagesTable(props: PagesTableProps) {
 							{table.getHeaderGroups().map((headerGroup) => (
 								<TableRow key={headerGroup.id} className="hover:bg-inherit">
 									{headerGroup.headers.map((header) => (
-										<TableHead key={header.id}>
+										<TableHead
+											key={header.id}
+											style={{ width: header.getSize() + "px" }}
+										>
 											{header.isPlaceholder
 												? null
 												: flexRender(

@@ -58,6 +58,7 @@ export const columns: ColumnDef<Page>[] = [
 		enableSorting: false,
 		enableColumnFilter: false,
 		enableGlobalFilter: false,
+		size: 0,
 	},
 	{
 		header: ({ column }) => <SortableHeader column={column} name="Name" />,
@@ -89,6 +90,7 @@ export const columns: ColumnDef<Page>[] = [
 	{
 		header: ({ column }) => <SortableHeader column={column} name="Path" />,
 		accessorKey: "url",
+		size: 500,
 	},
 	{
 		id: "type",
@@ -123,6 +125,7 @@ export const columns: ColumnDef<Page>[] = [
 				/>
 			),
 		cell: ({ row }) => <PagesTableActions page={row.original} />,
+		size: 0,
 	},
 ];
 
