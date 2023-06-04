@@ -5,7 +5,7 @@ exports[`updates the page's url and its children's urls 1`] = `
   [
     "UPDATE frontend.page SET \\"url\\" = REPLACE(\\"url\\", ",
     " || '/', ",
-    " || '/') WHERE \\"url\\" LIKE ",
+    " || '/'), \\"last_update\\" = Now() WHERE \\"url\\" LIKE ",
     " || '/%';",
   ],
   "/old-name",

@@ -11,7 +11,7 @@ export const addPage = publicProcedure
 			name: z.string(),
 			url: z.string().regex(urlRegex),
 			parent_id: z.string().cuid().nullable(),
-			is_group: z.boolean().optional(),
+			is_group: z.boolean(),
 		})
 	)
 	.mutation(async ({ input }) => {
@@ -21,10 +21,9 @@ export const addPage = publicProcedure
 					name: input.name,
 					url: input.url,
 					parent_id:
-						input.parent_id === undefined
-							? (await prisma.page.findFirst({ where: { parent_id: null } }))!.id
-							: input.parent_id,
-					is_group: input.is_group ?? false,
+						input.parent_id ??
+						(await prisma.page.findFirst({ where: { parent_id: null } }))!.id,
+					is_group: input.is_group,
 				},
 			});
 			return page.id;
@@ -33,6 +32,6 @@ export const addPage = publicProcedure
 				if (error.code === "P2002") {
 					throw new TRPCError({ code: "CONFLICT" });
 				}
-			}
+			} else throw new TRPCError({ code: "INTERNAL_SERVER_ERROR" });
 		}
 	});

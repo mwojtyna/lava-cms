@@ -37,5 +37,5 @@ it("returns false and no reason if users and config exist", async () => {
 	});
 
 	const { reason } = await caller.auth.setupRequired();
-	expect(reason).toBeUndefined();
+	expect(reason).toBeNull();
 });
