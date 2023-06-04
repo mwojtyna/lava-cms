@@ -14,7 +14,7 @@ export const addPage = publicProcedure
 			is_group: z.boolean(),
 		})
 	)
-	.mutation(async ({ input }) => {
+	.mutation(async ({ input }): Promise<string | undefined> => {
 		try {
 			const page = await prisma.page.create({
 				data: {

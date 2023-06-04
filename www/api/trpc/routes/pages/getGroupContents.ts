@@ -14,8 +14,7 @@ export const getGroupContents = publicProcedure
 				pages: await prisma.page
 					.findFirst({ where: { parent_id: null } })
 					.then((rootGroup) => {
-						if (!rootGroup) return [];
-						return prisma.page.findMany({ where: { parent_id: rootGroup.id } });
+						return prisma.page.findMany({ where: { parent_id: rootGroup!.id } });
 					}),
 			};
 		}
@@ -38,14 +37,11 @@ export const getGroupContents = publicProcedure
 		};
 	});
 
-async function getBreadcrumbs(page: Page | null) {
-	if (!page) return [];
+async function getBreadcrumbs(group: Page) {
+	const breadcrumbs = [group];
+	let parent = await prisma.page.findUnique({ where: { id: group.parent_id ?? "" } });
 
-	const breadcrumbs = [page];
-	let parent = await prisma.page.findUnique({ where: { id: page.parent_id ?? "" } });
-
-	if (!parent) return breadcrumbs;
-
+	// Ignore root group so we can add a custom breadcrumb for it
 	while (parent && parent.parent_id) {
 		breadcrumbs.push(parent);
 		parent = await prisma.page.findUnique({ where: { id: parent.parent_id ?? "" } });
