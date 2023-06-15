@@ -42,13 +42,13 @@ export const authedPage = async (
 
 	if (typeof storageState !== "string" && typeof storageState !== "undefined") {
 		const cookies = storageState.cookies;
-		const expiredCookies = cookies.filter((cookie) => {
-			return cookie.expires !== -1 && cookie.expires * 1000 < Date.now();
-		});
+		const expiredCookies = cookies.filter(
+			(cookie) => cookie.expires !== -1 && cookie.expires * 1000 < Date.now()
+		);
 
 		if (expiredCookies.length > 0) {
 			await saveSignedInState(browser);
-			console.log("Cookies expired; saved signed in state ");
+			console.log("Cookies expired; saved signed in state.");
 		}
 	} else {
 		throw new Error("Could not parse storage state");
@@ -77,7 +77,9 @@ async function saveSignedInState(browser: Browser) {
 
 	if (!server) {
 		await start(await init());
-	} else wasAlreadyStarted = true;
+	} else {
+		wasAlreadyStarted = true;
+	}
 
 	const page = await browser.newPage();
 
