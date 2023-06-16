@@ -7,6 +7,25 @@ export default withAuth(
 		const url = request.nextUrl.clone();
 		const { reason } = await trpc.auth.setupRequired.query();
 
+		// Add the url to the request headers
+		// so it can be used in server components
+		const headers = new Headers(request.headers);
+		headers.set("x-url", request.url);
+
+		// Protect the api when not signed in
+		// Account for when the user is setting up the CMS for the first time
+		if (url.pathname.startsWith("/trpc")) {
+			if (!request.nextauth.token && !reason) {
+				return new NextResponse("Unauthorized", { status: 401 });
+			} else {
+				return NextResponse.next({
+					request: {
+						headers: headers,
+					},
+				});
+			}
+		}
+
 		if (reason) {
 			if (url.pathname !== "/setup") {
 				// Redirect to sign up page if opening the dashboard for the first time
@@ -30,11 +49,6 @@ export default withAuth(
 				return NextResponse.redirect(url);
 			}
 		}
-
-		// Add the url to the request headers
-		// so it can be used in server components
-		const headers = new Headers(request.headers);
-		headers.set("x-url", request.url);
 
 		return NextResponse.next({
 			request: {

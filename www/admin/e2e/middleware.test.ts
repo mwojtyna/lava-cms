@@ -47,8 +47,7 @@ test("redirects to dashboard when user is signed in", async ({ authedPage }) => 
 	await expect(authedPage.locator("#content").first()).toBeInViewport();
 });
 
-// Fix these tests when we migrate to lucia auth
-test.fixme("returns 401 when trying to access /api/trpc when not signed in", async ({ page }) => {
+test("returns 401 when trying to access /trpc when not signed in", async ({ page }) => {
 	const app = await init([
 		trpcMsw.auth.setupRequired.query((_, res, ctx) => {
 			return res(ctx.data({ reason: null }));
@@ -56,26 +55,35 @@ test.fixme("returns 401 when trying to access /api/trpc when not signed in", asy
 	]);
 	await start(app);
 
-	const res = await page.goto("/admin/api/trpc");
-	expect(page.url()).toMatch(/\/admin\/api\/trpc/);
+	const res = await page.goto("/admin/trpc");
+	expect(page.url()).toMatch(/\/admin\/trpc$/);
 	expect(res?.status()).toBe(401);
-	expect(await res?.headerValue("content-type")).toMatch(/text\/plain/);
-	expect(await res?.text()).toBe("Unauthorized");
 });
 
-test.fixme(
-	"returns json when trying to access /api/trpc when signed in",
-	async ({ authedPage }) => {
-		const app = await init([
-			trpcMsw.auth.setupRequired.query((_, res, ctx) => {
-				return res(ctx.data({ reason: null }));
-			}),
-		]);
-		await start(app);
+test("returns json when trying to access /trpc when signed in", async ({ authedPage }) => {
+	const app = await init([
+		trpcMsw.auth.setupRequired.query((_, res, ctx) => {
+			return res(ctx.data({ reason: null }));
+		}),
+	]);
+	await start(app);
 
-		const res = await authedPage.goto("/admin/api/trpc/random.endpoint");
-		expect(authedPage.url()).toMatch(/\/admin\/api\/trpc/);
-		expect(await res?.headerValue("content-type")).toMatch(/application\/json/);
-		expect(await res?.json()).toBeDefined();
-	}
-);
+	const res = await authedPage.goto("/admin/trpc/random.endpoint");
+	expect(authedPage.url()).toMatch(/\/admin\/trpc/);
+	expect(await res?.headerValue("content-type")).toMatch(/application\/json/);
+	expect(await res?.json()).toBeDefined();
+});
+
+test("returns json when trying to access /trpc when no user signed up", async ({ authedPage }) => {
+	const app = await init([
+		trpcMsw.auth.setupRequired.query((_, res, ctx) => {
+			return res(ctx.data({ reason: "no-user" }));
+		}),
+	]);
+	await start(app);
+
+	const res = await authedPage.goto("/admin/trpc/random.endpoint");
+	expect(authedPage.url()).toMatch(/\/admin\/trpc/);
+	expect(await res?.headerValue("content-type")).toMatch(/application\/json/);
+	expect(await res?.json()).toBeDefined();
+});

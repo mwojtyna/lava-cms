@@ -29,7 +29,7 @@ const config = {
 	rewrites: async () => {
 		return [
 			{
-				source: "/api/trpc/:path*",
+				source: "/trpc/:path*",
 				destination: "http://localhost:4000/trpc/:path*",
 			},
 		];

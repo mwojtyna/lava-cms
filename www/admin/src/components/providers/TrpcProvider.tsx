@@ -20,10 +20,10 @@ export function TrpcProvider(props: { children: React.ReactNode }) {
 				!!env.NEXT_PUBLIC_DEV
 					? // Use httpLink in dev so tests work
 					  httpLink({
-							url: "/admin/api/trpc",
+							url: "/admin/trpc",
 					  })
 					: httpBatchLink({
-							url: "/admin/api/trpc",
+							url: "/admin/trpc",
 					  }),
 			],
 			transformer: SuperJSON,
