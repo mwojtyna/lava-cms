@@ -19,14 +19,12 @@ import {
 	FormItem,
 	FormLabel,
 	FormControl,
+	FormError,
 } from "@admin/src/components/ui/client";
 import { SinglePageForm } from "../SinglePageForm";
 
 const schema = z.object({
-	email: z
-		.string()
-		.nonempty({ message: " " })
-		.email({ message: "The e-mail you provided is invalid." }),
+	email: z.string().nonempty(" ").email("The e-mail you provided is invalid."),
 	password: z.string().nonempty(),
 });
 type Inputs = z.infer<typeof schema>;
@@ -108,6 +106,7 @@ export function SignInForm() {
 								{...field}
 							/>
 						</FormControl>
+						<FormError />
 					</FormItem>
 				)}
 			/>

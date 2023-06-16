@@ -57,21 +57,21 @@ test("shows error when invalid credentials", async ({ page }) => {
 	await emailInput.type("wrong@email.com");
 	await passwordInput.type(userPasswordDecrypted);
 	await submitButton.click();
-	await expect(page.locator("text=The credentials are invalid.")).toBeInViewport();
+	await expect(page.locator("text=Your credentials are invalid.")).toBeInViewport();
 	await clearInputs();
 
 	// Wrong password
 	await emailInput.type(userMock.email);
 	await passwordInput.type("wrongpassword");
 	await submitButton.click();
-	await expect(page.locator("text=The credentials are invalid.")).toBeInViewport();
+	await expect(page.locator("text=Your credentials are invalid.")).toBeInViewport();
 	await clearInputs();
 
 	// Both wrong
 	await emailInput.type("wrong@email.com");
 	await passwordInput.type("wrongpassword");
 	await submitButton.click();
-	await expect(page.locator("text=The credentials are invalid.")).toBeInViewport();
+	await expect(page.locator("text=Your credentials are invalid.")).toBeInViewport();
 
 	await expect(page).toHaveScreenshot();
 
@@ -95,7 +95,9 @@ test("shows error when server error", async ({ page }) => {
 	);
 	await page.locator("button[type='submit']").click();
 
-	await expect(page.getByRole("alert")).toContainText("Something went wrong. Try again later.");
+	await expect(page.getByRole("alert").first()).toContainText(
+		"Something went wrong. Try again later."
+	);
 	await expect(page).toHaveScreenshot();
 });
 

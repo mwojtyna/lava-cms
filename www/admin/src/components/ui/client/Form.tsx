@@ -135,7 +135,7 @@ const FormError = React.forwardRef<
 >(({ className, children, ...props }, ref) => {
 	const { error, formMessageId } = useFormField();
 
-	if (!error) {
+	if (error === undefined) {
 		return null;
 	}
 
