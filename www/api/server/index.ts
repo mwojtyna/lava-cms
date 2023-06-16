@@ -22,7 +22,9 @@ export async function init(mockHandlers?: MockHandler[]) {
 	app.use(
 		cors({
 			origin(requestOrigin, callback) {
-				if (!requestOrigin) return callback(null, true);
+				if (!requestOrigin) {
+					return callback(null, true);
+				}
 
 				if (whiteList.includes(requestOrigin)) {
 					callback(null, true);

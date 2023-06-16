@@ -36,7 +36,6 @@ export function SignInForm() {
 
 	const form = useForm<Inputs>({
 		resolver: zodResolver(schema),
-		defaultValues: { email: "", password: "" },
 	});
 	const onSubmit: SubmitHandler<Inputs> = async (data) => {
 		const res = await signIn("credentials", {
@@ -48,11 +47,11 @@ export function SignInForm() {
 			router.push("/dashboard");
 		} else if (res?.error === "CredentialsSignin") {
 			// "CredentialsSignin" is the error message when the user inputs wrong credentials
-			form.setError("root.invalidCredentials", {
+			form.setError("root", {
 				message: "Your credentials are invalid.",
 			});
 		} else {
-			form.setError("root.invalidCredentials", {
+			form.setError("root", {
 				message: "Something went wrong. Try again later.",
 			});
 		}
@@ -84,12 +83,11 @@ export function SignInForm() {
 				</Button>
 			}
 			formData={form}
+			data-testid="sign-in"
 		>
-			{form.formState.errors.root?.invalidCredentials && (
+			{form.formState.errors.root && (
 				<Alert variant="destructive" icon={<ExclamationCircleIcon className="w-5" />}>
-					<AlertTitle className="mb-0">
-						{form.formState.errors.root?.invalidCredentials.message}
-					</AlertTitle>
+					<AlertTitle className="mb-0">{form.formState.errors.root.message}</AlertTitle>
 				</Alert>
 			)}
 

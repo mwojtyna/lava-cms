@@ -86,7 +86,14 @@ async function saveSignedInState(browser: Browser) {
 	await page.goto("/admin");
 	await page.locator("input[name='email']").type(userMock.email);
 	await page.locator("input[name='password']").type(userPasswordDecrypted);
-	await page.locator("button[type='submit']").click();
+
+	const submitBtn = page.locator("button[type='submit']");
+	await submitBtn.click();
+	await submitBtn.evaluate((node) => node.removeAttribute("disabled"));
+	await page.waitForTimeout(1000);
+	await submitBtn.click();
+	await page.waitForResponse((res) => res.url().includes("/api/auth/callback/credentials"));
+
 	await page.waitForURL(/\/admin\/dashboard/);
 
 	const cookies = await page.context().cookies();

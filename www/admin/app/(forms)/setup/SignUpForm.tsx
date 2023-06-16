@@ -87,6 +87,7 @@ export function SignUpForm() {
 				</Button>
 			}
 			formData={form}
+			data-testid="sign-up"
 		>
 			<FormField
 				control={form.control}
