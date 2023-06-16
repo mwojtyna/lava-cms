@@ -20,9 +20,7 @@ export const addPage = publicProcedure
 				data: {
 					name: input.name,
 					url: input.url,
-					parent_id:
-						input.parent_id ??
-						(await prisma.page.findFirst({ where: { parent_id: null } }))!.id,
+					parent_id: input.parent_id,
 					is_group: input.is_group,
 				},
 			});

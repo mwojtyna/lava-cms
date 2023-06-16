@@ -82,24 +82,18 @@ async function saveSignedInState(browser: Browser) {
 
 	const page = await browser.newPage();
 
-	await page.goto("/admin");
+	await page.goto("/admin/signin", { waitUntil: "networkidle" });
 	await page.locator("input[name='email']").type(userMock.email);
 	await page.locator("input[name='password']").type(userPasswordDecrypted);
-
-	const submitBtn = page.locator("button[type='submit']");
-	await submitBtn.click();
-	await submitBtn.evaluate((node) => node.removeAttribute("disabled"));
-	await page.waitForTimeout(1000);
-	await submitBtn.click();
-	await page.waitForResponse((res) => res.url().includes("/api/auth/callback/credentials"));
+	await page.locator("button[type='submit']").click();
 
 	await page.waitForURL(/\/admin\/dashboard/);
 
 	const cookies = await page.context().cookies();
-	const names = ["next-auth.csrf-token", "next-auth.callback-url", "next-auth.session-token"];
+	const whitelist = ["next-auth.csrf-token", "next-auth.callback-url", "next-auth.session-token"];
 
 	const cookiesToDelete = cookies
-		.filter((cookie) => !names.includes(cookie.name))
+		.filter((cookie) => !whitelist.includes(cookie.name))
 		.map((cookie) => cookies.indexOf(cookie));
 
 	cookiesToDelete.forEach((index) => cookies.splice(index, 1));

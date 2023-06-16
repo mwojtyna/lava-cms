@@ -110,10 +110,11 @@ test("shows error when email invalid", async ({ page }) => {
 });
 
 test("signs in when credentials are valid", async ({ page }) => {
-	await page.goto("/admin/signin");
+	await page.goto("/admin/signin", { waitUntil: "networkidle" });
 	await page.locator("input[type='email']").type(userMock.email);
 	await page.locator("input[type='password']").type(userPasswordDecrypted);
 	await page.locator("button[type='submit']").click();
+
 	await page.waitForURL(/\/admin\/dashboard/);
 
 	expect(page.url()).toMatch(/\/admin\/dashboard/);

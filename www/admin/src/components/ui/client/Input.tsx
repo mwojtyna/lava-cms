@@ -37,7 +37,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
 	(
 		{
 			className,
-			type,
+			type = "text",
 			icon,
 			size,
 			rightButtonIconOff,
