@@ -1,5 +1,4 @@
-import type { Browser } from "playwright";
-import type { BrowserContextOptions, Page } from "@playwright/test";
+import type { BrowserContextOptions, Page, Browser } from "@playwright/test";
 import fs from "node:fs";
 import { prisma } from "api/prisma/client";
 import { init } from "api/server";
