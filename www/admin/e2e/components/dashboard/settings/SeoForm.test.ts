@@ -5,7 +5,7 @@ import { start, stop } from "@admin/e2e/mocks/trpc";
 import { websiteSettingsMock } from "@admin/e2e/mocks/data";
 import { trpc } from "@admin/src/utils/trpc";
 
-const TEST_ID = "website-settings";
+const TEST_ID = "seo-form";
 
 test.beforeAll(async () => {
 	await start(await init());
@@ -49,31 +49,32 @@ test("website config updates", async ({ authedPage: page }) => {
 	await element.locator("input[type='text']").last().fill("pl");
 	await element.locator("button[type='submit']").click();
 
-	await page.waitForResponse((res) => res.url().includes("/api/trpc/config"));
+	await page.waitForResponse((res) => res.url().includes("/trpc/config"));
 
 	const config = await trpc.config.getConfig.query();
 	expect(config.title).toBe("My new website");
 	expect(config.description).toBe("My new website description");
 	expect(config.language).toBe("pl");
 
-	await expect(page.locator("role=alert")).toContainText("Success");
+	await expect(page.locator("li[role=status]")).toContainText("Success");
 });
 
 test("notification shows error when error occurs", async ({ authedPage: page }) => {
 	await page.goto("/admin/dashboard/settings", { waitUntil: "networkidle" });
 
-	await page.route("**/api/trpc/config**", (route) => route.fulfill({ status: 500 }));
+	await page.route("**/trpc/config**", (route) => route.fulfill({ status: 500 }));
 	const element = page.getByTestId(TEST_ID);
 	await element.locator("input[type='text']").first().fill("My new website");
 	await element.locator("textarea").fill("My new website description");
 	await element.locator("input[type='text']").last().fill("pl");
 	await element.locator("button[type='submit']").click();
 
-	await expect(page.locator("role=alert")).toContainText("Error");
+	await expect(page.locator("li[role=alert]")).toContainText("Error");
 });
 test("shows field required errors", async ({ authedPage: page }) => {
 	await page.goto("/admin/dashboard/settings", { waitUntil: "networkidle" });
 	const element = page.getByTestId(TEST_ID);
+
 	await element.locator("input[type='text']").first().fill("");
 	await element.locator("textarea").fill("");
 	await element.locator("input[type='text']").last().fill("");
@@ -87,12 +88,15 @@ test("shows field required errors", async ({ authedPage: page }) => {
 		"aria-invalid",
 		"true"
 	);
+
+	await expect(element).toHaveScreenshot();
 });
 test("shows error when language code invalid", async ({ authedPage: page }) => {
 	await page.goto("/admin/dashboard/settings", { waitUntil: "networkidle" });
 
 	const languageInput = page.locator("input[type='text']").nth(1);
 	await languageInput.fill("invalid");
+	await page.locator("button[type='submit']").click();
 
 	await expect(languageInput).toHaveAttribute("aria-invalid", "true");
 });

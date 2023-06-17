@@ -71,7 +71,7 @@ export function SeoForm({ serverData }: { serverData: Inputs }) {
 	};
 
 	return (
-		<Card className="max-w-md flex-grow">
+		<Card className="max-w-md flex-grow" data-testid="seo-form">
 			<CardHeader>
 				<CardTitle>SEO</CardTitle>
 				<CardDescription>Search Engine Optimization</CardDescription>
