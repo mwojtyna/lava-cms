@@ -1,5 +1,4 @@
 import * as React from "react";
-import type { Route } from "next";
 import { useRouter } from "next/navigation";
 import { useSearchParams as useNextSearchParams } from "next/navigation";
 import { usePathname } from "./usePathname";
@@ -27,10 +26,10 @@ export const useSearchParams = (callbacks?: Callbacks) => {
 			const queryString = createQueryString(values);
 			// If the query string is empty, remove it from the URL
 			if (queryString === "") {
-				router.push(pathname as Route);
+				router.push(pathname);
 				return;
 			}
-			router.push(`${pathname}?${queryString}` as Route);
+			router.push(`${pathname}?${queryString}`);
 
 			// Get a new searchParams string by merging the current
 			// searchParams with a provided key/value pair

@@ -1,6 +1,5 @@
 "use client";
 
-import type { Route } from "next";
 import Link from "next/link";
 import { Button } from "@admin/src/components/ui/client";
 import { routes } from "@admin/src/data/routes/settings";
@@ -16,7 +15,7 @@ export function SettingsMenu() {
 			{routes.map((route, i) => (
 				<Link
 					key={i}
-					href={("/dashboard/settings/" + route.slug) as Route}
+					href={"/dashboard/settings/" + route.slug}
 					className="w-full"
 					tabIndex={-1}
 				>

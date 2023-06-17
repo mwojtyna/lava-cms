@@ -10,9 +10,6 @@ const config = {
 	basePath: "/admin",
 	reactStrictMode: true,
 	swcMinify: true,
-	experimental: {
-		typedRoutes: true,
-	},
 	// Fix for `import type` not working
 	transpilePackages: ["api"],
 	compress: true,

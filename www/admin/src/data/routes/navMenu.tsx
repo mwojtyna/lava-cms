@@ -1,4 +1,3 @@
-import type { Route as NextRoute } from "next";
 import {
 	HomeIcon,
 	Cog6ToothIcon,
@@ -9,7 +8,7 @@ import {
 
 export interface NavMenuRoute {
 	label: string;
-	path: NextRoute;
+	path: string;
 	description: string;
 	icon?: React.ReactNode;
 	hasChildren?: boolean;
@@ -31,13 +30,13 @@ export const routes: NavMenuRoute[] = [
 	},
 	{
 		label: "Components",
-		path: "/dashboard/components" as NextRoute,
+		path: "/dashboard/components",
 		description: "",
 		icon: <CubeIcon className="w-5" />,
 	},
 	{
 		label: "Data",
-		path: "/dashboard/data" as NextRoute,
+		path: "/dashboard/data",
 		description: "data",
 		icon: <CircleStackIcon className="w-5" />,
 	},
