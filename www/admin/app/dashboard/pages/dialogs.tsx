@@ -127,7 +127,7 @@ export function BulkDeleteDialog(props: BulkEditDialogProps) {
 			<DialogContent className="!max-w-sm" withCloseButton={false}>
 				<DialogHeader>
 					<DialogTitle>
-						Delete {props.pages.length} item{props.pages.length > 1 && ""}?
+						Delete {props.pages.length} item{props.pages.length > 1 && "s"}?
 					</DialogTitle>
 					<DialogDescription>
 						Are you sure you want to delete {props.pages.length} items? This action
