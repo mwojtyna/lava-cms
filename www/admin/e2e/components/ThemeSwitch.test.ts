@@ -1,13 +1,11 @@
-import { test, expect, type Page, type BrowserContext } from "@playwright/test";
+import { test, expect, type BrowserContext } from "@playwright/test";
 import { init } from "api/server";
 import { start, stop } from "../mocks/trpc";
 import { type ColorTheme, colorThemeSchema } from "@admin/src/data/stores/dashboard";
 import type { CookieName } from "@admin/src/utils/cookies";
+import { getColorScheme } from "../utils";
 
 const TEST_ID = "theme-switch";
-
-const getColorScheme = (page: Page): Promise<ColorTheme> =>
-	page.locator("body").evaluate((node) => (node.classList.contains("dark") ? "dark" : "light"));
 
 const getCookie = (context: BrowserContext): Promise<ColorTheme | undefined> =>
 	context

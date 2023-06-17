@@ -22,7 +22,10 @@ export async function UserMenu({ small }: { small: boolean }) {
 
 	return (
 		<DropdownMenu>
-			<DropdownMenuTrigger className="flex h-fit w-fit items-center gap-4 rounded-sm outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-8 focus-visible:ring-offset-background">
+			<DropdownMenuTrigger
+				className="flex h-fit w-fit items-center gap-4 rounded-sm outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-8 focus-visible:ring-offset-background"
+				data-testid="user-menu"
+			>
 				<Avatar>
 					<AvatarFallback>
 						{user?.name.charAt(0).toUpperCase()}
@@ -42,6 +45,7 @@ export async function UserMenu({ small }: { small: boolean }) {
 				sideOffset={small ? 14 : 18}
 				align="start"
 				className="w-48 md:ml-2 md:scale-110"
+				data-testid="user-menu-dropdown"
 			>
 				<DropdownMenuLabel>My Account</DropdownMenuLabel>
 				<DropdownMenuSeparator />
