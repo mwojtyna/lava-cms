@@ -137,6 +137,7 @@ test.describe("setup website step", () => {
 
 	test("shows error when language code invalid", async ({ page }) => {
 		await page.goto("/admin/setup");
+		await page.locator("input[type='text']").first().type("My website");
 
 		const languageInput = page.locator("input[type='text']").nth(1);
 		await languageInput.type("invalid");

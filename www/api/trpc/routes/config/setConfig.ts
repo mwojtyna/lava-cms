@@ -1,6 +1,8 @@
 import { publicProcedure } from "@api/trpc";
 import { z } from "zod";
 import { prisma } from "@api/prisma/client";
+import tags from "language-tags";
+import { TRPCError } from "@trpc/server";
 
 export const setConfig = publicProcedure
 	.input(
@@ -11,26 +13,24 @@ export const setConfig = publicProcedure
 		})
 	)
 	.mutation(async ({ input }) => {
-		const config = await prisma.config.findFirst();
-
-		if (!config) {
-			await prisma.config.create({
-				data: {
-					title: input.title,
-					description: input.description,
-					language: input.language,
-				},
-			});
-		} else {
-			await prisma.config.update({
-				where: {
-					id: config.id,
-				},
-				data: {
-					title: input.title,
-					description: input.description,
-					language: input.language,
-				},
-			});
+		if (!tags.check(input.language)) {
+			throw new TRPCError({ code: "BAD_REQUEST" });
 		}
+
+		const config = await prisma.config.findFirst();
+		await prisma.config.upsert({
+			where: {
+				id: config?.id ?? "",
+			},
+			create: {
+				title: input.title,
+				description: input.description,
+				language: input.language,
+			},
+			update: {
+				title: input.title,
+				description: input.description,
+				language: input.language,
+			},
+		});
 	});

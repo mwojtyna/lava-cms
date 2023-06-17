@@ -5,7 +5,6 @@ import { type SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { ArrowRightIcon } from "@heroicons/react/20/solid";
-import { check } from "language-tags";
 import { trpc } from "@admin/src/utils/trpc";
 import { InfoTooltip } from "@admin/src/components";
 import {
@@ -19,16 +18,15 @@ import {
 } from "@admin/src/components/ui/client";
 import { TypographyCode } from "@admin/src/components/ui/server";
 import { SinglePageForm } from "../SinglePageForm";
+import { TRPCClientError } from "@trpc/client";
+import type { TRPC_ERROR_CODE_KEY } from "@trpc/server/rpc";
 
-const schema = z
-	.object({
-		title: z.string().nonempty(),
-		description: z.string().optional(),
-		language: z.string().nonempty(),
-	})
-	.refine((data) => check(data.language), {
-		path: ["language"],
-	});
+const schema = z.object({
+	title: z.string().nonempty(),
+	description: z.string().optional(),
+	language: z.string().nonempty(),
+});
+
 type Inputs = z.infer<typeof schema>;
 
 export function SetupForm() {
@@ -36,13 +34,20 @@ export function SetupForm() {
 
 	const form = useForm<Inputs>({ resolver: zodResolver(schema) });
 	const onSubmit: SubmitHandler<Inputs> = async (data) => {
-		await Promise.all([
-			trpc.config.setConfig.mutate({
+		try {
+			await trpc.config.setConfig.mutate({
 				...data,
 				description: data.description ?? "",
-			}),
-			trpc.pages.addPage.mutate({ name: "Root", url: "", is_group: true, parent_id: null }),
-		]);
+			});
+		} catch (error) {
+			if (
+				error instanceof TRPCClientError &&
+				error.data?.code === ("BAD_REQUEST" satisfies TRPC_ERROR_CODE_KEY)
+			) {
+				form.setError("language", {});
+			}
+		}
+		await trpc.pages.addPage.mutate({ name: "Root", url: "", is_group: true, parent_id: null });
 
 		router.push("/dashboard");
 	};

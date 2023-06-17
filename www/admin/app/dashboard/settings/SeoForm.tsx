@@ -2,7 +2,6 @@
 
 import * as React from "react";
 import { z } from "zod";
-import { check } from "language-tags";
 import { type SubmitHandler, useForm } from "react-hook-form";
 import { trpcReact } from "@admin/src/utils/trpcReact";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -26,16 +25,14 @@ import {
 	TypographyCode,
 } from "@admin/src/components/ui/server";
 import { useToast } from "@admin/src/hooks";
+import { TRPCClientError } from "@trpc/client";
+import type { TRPC_ERROR_CODE_KEY } from "@trpc/server/rpc";
 
-const schema = z
-	.object({
-		title: z.string().nonempty(),
-		description: z.string().optional(),
-		language: z.string().nonempty(),
-	})
-	.refine((data) => check(data.language), {
-		path: ["language"],
-	});
+const schema = z.object({
+	title: z.string().nonempty(),
+	description: z.string().optional(),
+	language: z.string().nonempty(),
+});
 type Inputs = z.infer<typeof schema>;
 
 export function SeoForm({ serverData }: { serverData: Inputs }) {
@@ -57,15 +54,22 @@ export function SeoForm({ serverData }: { serverData: Inputs }) {
 			});
 		} catch (error) {
 			if (error instanceof Error) {
-				toast({
-					title: "Error",
-					description: (
-						<TypographyCode className="bg-[hsl(0_100%_75%)] dark:bg-[hsl(0_73%_75%)]">
-							{error.message.trim()}
-						</TypographyCode>
-					),
-					variant: "destructive",
-				});
+				if (
+					error instanceof TRPCClientError &&
+					error.data?.code === ("BAD_REQUEST" satisfies TRPC_ERROR_CODE_KEY)
+				) {
+					form.setError("language", {});
+				} else {
+					toast({
+						title: "Error",
+						description: (
+							<TypographyCode className="bg-[hsl(0_100%_75%)] dark:bg-[hsl(0_73%_75%)]">
+								{error.message.trim()}
+							</TypographyCode>
+						),
+						variant: "destructive",
+					});
+				}
 			}
 		}
 	};
