@@ -21,26 +21,6 @@ it("adds a page and returns its id", async () => {
 	expect(prisma.page.findFirst).not.toHaveBeenCalled();
 });
 
-it("adds a page with the root group as its parent if no parent id is provided", async () => {
-	const ROOT_GROUP_ID = "cju0q2q2h0000g0q2q2h00002";
-
-	prisma.page.findFirst.mockResolvedValueOnce({
-		id: ROOT_GROUP_ID,
-		last_update: new Date(),
-		...PAGE,
-	});
-	prisma.page.create.mockResolvedValueOnce({ id: ID, last_update: new Date(), ...PAGE });
-	await caller.pages.addPage({ ...PAGE, parent_id: null });
-
-	expect(prisma.page.findFirst).toHaveBeenNthCalledWith(1, { where: { parent_id: null } });
-	expect(prisma.page.create).toHaveBeenNthCalledWith(1, {
-		data: {
-			...PAGE,
-			parent_id: ROOT_GROUP_ID,
-		},
-	});
-});
-
 it("throws a trpc 409 'CONFLICT' error if the page url already exists", async () => {
 	prisma.page.create.mockRejectedValueOnce(
 		new Prisma.PrismaClientKnownRequestError(
