@@ -73,6 +73,7 @@ export function SetupForm() {
 				</Button>
 			}
 			formData={form}
+			data-testid="setup-form"
 		>
 			<FormField
 				control={form.control}

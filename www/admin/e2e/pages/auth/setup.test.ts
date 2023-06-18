@@ -97,7 +97,7 @@ test.describe("sign up step", () => {
 		await page.locator("button[type='submit']").click();
 
 		await page.waitForSelector("text='Set up website'");
-		await expect(page.locator("h1").first()).toHaveText("Set up website");
+		await expect(page.getByTestId("setup-form")).toBeInViewport();
 		expect(page.url()).toMatch(/\/admin\/setup/);
 	});
 });
