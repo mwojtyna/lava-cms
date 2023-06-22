@@ -31,16 +31,17 @@
       "fontSize": 36,
       "fontFamily": 1,
       "text": "Internet",
-      "baseline": 32,
       "textAlign": "left",
       "verticalAlign": "top",
       "containerId": null,
-      "originalText": "Internet"
+      "originalText": "Internet",
+      "lineHeight": 1.2777777777777777,
+      "baseline": 32
     },
     {
       "type": "text",
-      "version": 1096,
-      "versionNonce": 269929706,
+      "version": 1116,
+      "versionNonce": 102430708,
       "isDeleted": false,
       "id": "qpfTg_geqDOBJOQopts2F",
       "fillStyle": "hachure",
@@ -53,23 +54,24 @@
       "y": 339.7511840528233,
       "strokeColor": "#000000",
       "backgroundColor": "transparent",
-      "width": 107,
+      "width": 107.0198974609375,
       "height": 100,
       "seed": 1102777832,
       "groupIds": [],
       "roundness": null,
       "boundElements": [],
-      "updated": 1672940853317,
+      "updated": 1683833159274,
       "link": null,
       "locked": false,
       "fontSize": 20,
       "fontFamily": 1,
-      "text": "- Next.js\n- Mantine\n- Tailwind\n- Heroicons",
-      "baseline": 93,
+      "text": "- Next.js\n- shadcn-ui\n- Tailwind\n- Heroicons",
       "textAlign": "left",
       "verticalAlign": "top",
       "containerId": null,
-      "originalText": "- Next.js\n- Mantine\n- Tailwind\n- Heroicons"
+      "originalText": "- Next.js\n- shadcn-ui\n- Tailwind\n- Heroicons",
+      "lineHeight": 1.25,
+      "baseline": 93
     },
     {
       "type": "text",
@@ -99,11 +101,12 @@
       "fontSize": 28,
       "fontFamily": 1,
       "text": "Admin panel",
-      "baseline": 25,
       "textAlign": "left",
       "verticalAlign": "top",
       "containerId": null,
-      "originalText": "Admin panel"
+      "originalText": "Admin panel",
+      "lineHeight": 1.2857142857142858,
+      "baseline": 25
     },
     {
       "type": "text",
@@ -133,11 +136,12 @@
       "fontSize": 28,
       "fontFamily": 1,
       "text": "PostgreSQL",
-      "baseline": 25,
       "textAlign": "left",
       "verticalAlign": "top",
       "containerId": null,
-      "originalText": "PostgreSQL"
+      "originalText": "PostgreSQL",
+      "lineHeight": 1.2857142857142858,
+      "baseline": 25
     },
     {
       "type": "rectangle",
@@ -247,11 +251,12 @@
       "fontSize": 28,
       "fontFamily": 1,
       "text": "Web page",
-      "baseline": 25,
       "textAlign": "left",
       "verticalAlign": "top",
       "containerId": null,
-      "originalText": "Web page"
+      "originalText": "Web page",
+      "lineHeight": 1.2857142857142858,
+      "baseline": 25
     },
     {
       "type": "text",
@@ -281,11 +286,12 @@
       "fontSize": 20,
       "fontFamily": 1,
       "text": "- Astro\n- Tailwind",
-      "baseline": 43,
       "textAlign": "left",
       "verticalAlign": "top",
       "containerId": null,
-      "originalText": "- Astro\n- Tailwind"
+      "originalText": "- Astro\n- Tailwind",
+      "lineHeight": 1.25,
+      "baseline": 43
     },
     {
       "type": "rectangle",
@@ -350,11 +356,12 @@
       "fontSize": 28,
       "fontFamily": 1,
       "text": "Api",
-      "baseline": 25,
       "textAlign": "center",
       "verticalAlign": "top",
       "containerId": null,
-      "originalText": "Api"
+      "originalText": "Api",
+      "lineHeight": 1.2857142857142858,
+      "baseline": 25
     },
     {
       "type": "text",
@@ -384,11 +391,12 @@
       "fontSize": 16,
       "fontFamily": 1,
       "text": "localhost:3001/admin",
-      "baseline": 14,
       "textAlign": "left",
       "verticalAlign": "top",
       "containerId": null,
-      "originalText": "localhost:3001/admin"
+      "originalText": "localhost:3001/admin",
+      "lineHeight": 1.25,
+      "baseline": 14
     },
     {
       "type": "text",
@@ -418,11 +426,12 @@
       "fontSize": 16,
       "fontFamily": 1,
       "text": "localhost:3000/",
-      "baseline": 14,
       "textAlign": "left",
       "verticalAlign": "top",
       "containerId": null,
-      "originalText": "localhost:3000/"
+      "originalText": "localhost:3000/",
+      "lineHeight": 1.25,
+      "baseline": 14
     },
     {
       "type": "rectangle",
@@ -549,11 +558,12 @@
       "fontSize": 28,
       "fontFamily": 1,
       "text": "Nginx reverse proxy",
-      "baseline": 25,
       "textAlign": "left",
       "verticalAlign": "top",
       "containerId": null,
-      "originalText": "Nginx reverse proxy"
+      "originalText": "Nginx reverse proxy",
+      "lineHeight": 1.2857142857142858,
+      "baseline": 25
     },
     {
       "type": "arrow",
@@ -702,11 +712,12 @@
       "fontSize": 28,
       "fontFamily": 1,
       "text": "Turborepo",
-      "baseline": 25,
       "textAlign": "left",
       "verticalAlign": "top",
       "containerId": null,
-      "originalText": "Turborepo"
+      "originalText": "Turborepo",
+      "lineHeight": 1.2857142857142858,
+      "baseline": 25
     },
     {
       "type": "rectangle",
@@ -767,11 +778,12 @@
       "fontSize": 28,
       "fontFamily": 1,
       "text": "Docker compose",
-      "baseline": 25,
       "textAlign": "left",
       "verticalAlign": "top",
       "containerId": null,
-      "originalText": "Docker compose"
+      "originalText": "Docker compose",
+      "lineHeight": 1.2857142857142858,
+      "baseline": 25
     },
     {
       "type": "text",
@@ -801,11 +813,12 @@
       "fontSize": 28,
       "fontFamily": 1,
       "text": "pgAdmin",
-      "baseline": 25,
       "textAlign": "left",
       "verticalAlign": "top",
       "containerId": null,
-      "originalText": "pgAdmin"
+      "originalText": "pgAdmin",
+      "lineHeight": 1.2857142857142858,
+      "baseline": 25
     },
     {
       "type": "rectangle",
@@ -917,11 +930,12 @@
       "fontSize": 16,
       "fontFamily": 1,
       "text": "localhost:8080",
-      "baseline": 14,
       "textAlign": "left",
       "verticalAlign": "top",
       "containerId": null,
-      "originalText": "localhost:8080"
+      "originalText": "localhost:8080",
+      "lineHeight": 1.25,
+      "baseline": 14
     },
     {
       "type": "rectangle",
@@ -979,11 +993,12 @@
       "fontSize": 20,
       "fontFamily": 1,
       "text": "docker container",
-      "baseline": 18,
       "textAlign": "left",
       "verticalAlign": "top",
       "containerId": null,
-      "originalText": "docker container"
+      "originalText": "docker container",
+      "lineHeight": 1.25,
+      "baseline": 18
     },
     {
       "type": "rectangle",
@@ -1041,11 +1056,12 @@
       "fontSize": 20,
       "fontFamily": 1,
       "text": "general grouping",
-      "baseline": 18,
       "textAlign": "left",
       "verticalAlign": "top",
       "containerId": null,
-      "originalText": "general grouping"
+      "originalText": "general grouping",
+      "lineHeight": 1.25,
+      "baseline": 18
     },
     {
       "type": "rectangle",
@@ -1110,11 +1126,12 @@
       "fontSize": 20,
       "fontFamily": 1,
       "text": "tRPC",
-      "baseline": 18,
       "textAlign": "left",
       "verticalAlign": "top",
       "containerId": null,
-      "originalText": "tRPC"
+      "originalText": "tRPC",
+      "lineHeight": 1.25,
+      "baseline": 18
     },
     {
       "type": "rectangle",
@@ -1191,11 +1208,12 @@
       "fontSize": 20,
       "fontFamily": 1,
       "text": "Prisma",
-      "baseline": 18,
       "textAlign": "left",
       "verticalAlign": "top",
       "containerId": null,
-      "originalText": "Prisma"
+      "originalText": "Prisma",
+      "lineHeight": 1.25,
+      "baseline": 18
     },
     {
       "type": "rectangle",
@@ -1515,11 +1533,12 @@
       "fontSize": 16,
       "fontFamily": 1,
       "text": "localhost:4000/",
-      "baseline": 14,
       "textAlign": "center",
       "verticalAlign": "top",
       "containerId": null,
-      "originalText": "localhost:4000/"
+      "originalText": "localhost:4000/",
+      "lineHeight": 1.25,
+      "baseline": 14
     },
     {
       "type": "text",
@@ -1549,11 +1568,12 @@
       "fontSize": 20,
       "fontFamily": 1,
       "text": "- Express server",
-      "baseline": 18,
       "textAlign": "left",
       "verticalAlign": "top",
       "containerId": null,
-      "originalText": "- Express server"
+      "originalText": "- Express server",
+      "lineHeight": 1.25,
+      "baseline": 18
     },
     {
       "type": "text",
@@ -1583,11 +1603,12 @@
       "fontSize": 16,
       "fontFamily": 1,
       "text": "localhost:80/pgadmin",
-      "baseline": 14,
       "textAlign": "left",
       "verticalAlign": "top",
       "containerId": null,
-      "originalText": "localhost:80/pgadmin"
+      "originalText": "localhost:80/pgadmin",
+      "lineHeight": 1.25,
+      "baseline": 14
     },
     {
       "type": "line",
@@ -1744,11 +1765,12 @@
       "fontSize": 20,
       "fontFamily": 1,
       "text": "/ - frontend\n/admin - CMS admin\n/pgadmin - postgres admin",
-      "baseline": 68,
       "textAlign": "left",
       "verticalAlign": "top",
       "containerId": null,
-      "originalText": "/ - frontend\n/admin - CMS admin\n/pgadmin - postgres admin"
+      "originalText": "/ - frontend\n/admin - CMS admin\n/pgadmin - postgres admin",
+      "lineHeight": 1.25,
+      "baseline": 68
     },
     {
       "type": "arrow",
@@ -1771,7 +1793,7 @@
       "seed": 28935018,
       "groupIds": [],
       "roundness": null,
-      "boundElements": null,
+      "boundElements": [],
       "updated": 1672940853318,
       "link": null,
       "locked": false,
@@ -1820,7 +1842,7 @@
       "seed": 1098170294,
       "groupIds": [],
       "roundness": null,
-      "boundElements": null,
+      "boundElements": [],
       "updated": 1672940889541,
       "link": null,
       "locked": false,
@@ -1869,7 +1891,7 @@
       "seed": 1927052470,
       "groupIds": [],
       "roundness": null,
-      "boundElements": null,
+      "boundElements": [],
       "updated": 1672940912529,
       "link": null,
       "locked": false,

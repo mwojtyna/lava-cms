@@ -8,7 +8,9 @@ import { z } from "zod";
 export const serverSchema = z.object({
 	NODE_ENV: z.enum(["development", "production"]).optional(),
 	NEXTAUTH_SECRET:
-		process.env.NODE_ENV === "production" ? z.string().min(1) : z.string().min(1).optional(),
+		process.env.NODE_ENV === "production"
+			? z.string().nonempty()
+			: z.string().nonempty().optional(),
 	NEXTAUTH_URL: z.preprocess(
 		// This makes Vercel deployments not fail if you don't set NEXTAUTH_URL
 		// Since NextAuth.js automatically uses the VERCEL_URL if present.

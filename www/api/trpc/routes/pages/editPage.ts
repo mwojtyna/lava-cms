@@ -1,9 +1,9 @@
 import { z } from "zod";
-import { Prisma } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
 import { prisma } from "@api/prisma/client";
 import { publicProcedure } from "@api/trpc";
-import { url as urlRegex } from "@api/trpc/regex";
+import { urlRegex } from "@api/trpc/regex";
+import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 
 export const editPage = publicProcedure
 	.input(
@@ -29,21 +29,16 @@ export const editPage = publicProcedure
 					data: {
 						name: input.newName,
 						url: input.newUrl,
+						last_update: new Date(),
 					},
 				}),
-				prisma.$executeRaw`UPDATE frontend.page SET "url" = REPLACE("url", ${page.url} || '/', ${input.newUrl} || '/') WHERE "url" LIKE ${page.url} || '/%';`,
+				prisma.$executeRaw`UPDATE frontend.page SET "url" = REPLACE("url", ${page.url} || '/', ${input.newUrl} || '/'), "last_update" = Now() WHERE "url" LIKE ${page.url} || '/%';`,
 			]);
 		} catch (error) {
-			if (error instanceof Prisma.PrismaClientKnownRequestError) {
+			if (error instanceof PrismaClientKnownRequestError) {
 				if (error.code === "P2002") {
-					throw new TRPCError({
-						code: "CONFLICT",
-					});
+					throw new TRPCError({ code: "CONFLICT" });
 				}
-			}
-
-			throw new TRPCError({
-				code: "INTERNAL_SERVER_ERROR",
-			});
+			} else throw new TRPCError({ code: "INTERNAL_SERVER_ERROR" });
 		}
 	});

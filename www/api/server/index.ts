@@ -22,7 +22,9 @@ export async function init(mockHandlers?: MockHandler[]) {
 	app.use(
 		cors({
 			origin(requestOrigin, callback) {
-				if (!requestOrigin) return callback(null, true);
+				if (!requestOrigin) {
+					return callback(null, true);
+				}
 
 				if (whiteList.includes(requestOrigin)) {
 					callback(null, true);
@@ -42,7 +44,12 @@ export async function init(mockHandlers?: MockHandler[]) {
 
 	app.get("/trpcadmin", (_, res) => {
 		if (env.NODE_ENV === "development") {
-			res.send(renderTrpcPanel(appRouter, { url: "http://localhost:4000/trpc" }));
+			res.send(
+				renderTrpcPanel(appRouter, {
+					url: "http://localhost:4000/trpc",
+					transformer: "superjson",
+				})
+			);
 		}
 	});
 

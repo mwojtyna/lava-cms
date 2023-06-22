@@ -1,9 +1,10 @@
 import { env as envClient } from "@admin/src/env/client.mjs";
 import { createTRPCProxyClient, httpBatchLink, httpLink } from "@trpc/client";
 import type { AppRouter } from "api/trpc/routes/_app";
+import SuperJSON from "superjson";
 
 function getUrl() {
-	return typeof window === "undefined" ? "http://localhost:4000/trpc" : "/admin/api/trpc";
+	return typeof window === "undefined" ? "http://localhost:4000/trpc" : "/admin/trpc";
 }
 
 export const trpc = createTRPCProxyClient<AppRouter>({
@@ -17,4 +18,5 @@ export const trpc = createTRPCProxyClient<AppRouter>({
 					url: getUrl(),
 			  }),
 	],
+	transformer: SuperJSON,
 });

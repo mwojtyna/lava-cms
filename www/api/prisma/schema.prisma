@@ -1,6 +1,6 @@
 generator client {
     provider        = "prisma-client-js"
-    previewFeatures = ["multiSchema"]
+    previewFeatures = ["multiSchema", "jsonProtocol"]
 }
 
 datasource db {
@@ -33,13 +33,14 @@ model Config {
 }
 
 model Page {
-    id        String  @id @default(cuid())
-    name      String
-    url       String  @unique
-    parent    Page?   @relation("Tree", fields: [parent_id], references: [id], onDelete: Cascade)
-    parent_id String?
-    child     Page[]  @relation("Tree")
-    order     Int
+    id          String   @id @default(cuid())
+    name        String
+    url         String   @unique
+    parent      Page?    @relation("Tree", fields: [parent_id], references: [id], onDelete: Cascade)
+    parent_id   String?
+    children    Page[]   @relation("Tree")
+    is_group    Boolean  @default(false)
+    last_update DateTime @default(now())
 
     @@map("page")
     @@schema("frontend")

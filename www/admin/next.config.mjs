@@ -10,13 +10,9 @@ const config = {
 	basePath: "/admin",
 	reactStrictMode: true,
 	swcMinify: true,
-	experimental: {
-		appDir: true,
-		typedRoutes: true,
-	},
 	// Fix for `import type` not working
 	transpilePackages: ["api"],
-	compress: false,
+	compress: true,
 
 	redirects: async () => {
 		return [
@@ -30,7 +26,7 @@ const config = {
 	rewrites: async () => {
 		return [
 			{
-				source: "/api/trpc/:path*",
+				source: "/trpc/:path*",
 				destination: "http://localhost:4000/trpc/:path*",
 			},
 		];

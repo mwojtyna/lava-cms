@@ -9,7 +9,6 @@ const PAGE: Page = {
 	id: "0",
 	name: "Test",
 	url: "/test",
-	order: 0,
 	parent_id: null,
 };
 

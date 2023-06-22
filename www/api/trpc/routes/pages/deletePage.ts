@@ -6,27 +6,14 @@ export const deletePage = publicProcedure
 	.input(
 		z.object({
 			id: z.string().cuid(),
-			parent_id: z.string().cuid(),
-			order: z.number().int(),
 		})
 	)
 	.mutation(async ({ input }) => {
-		prisma.$transaction([
-			prisma.page.delete({
-				where: { id: input.id },
-			}),
-			prisma.page.updateMany({
-				where: {
-					parent_id: input.parent_id,
-					order: {
-						gt: input.order,
-					},
-				},
-				data: {
-					order: {
-						decrement: 1,
-					},
-				},
-			}),
-		]);
+		// This deletes the page and also all of its children
+		// thanks to the `Cascade` setting in the Prisma schema
+		await prisma.page.delete({
+			where: {
+				id: input.id,
+			},
+		});
 	});

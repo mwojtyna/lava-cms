@@ -6,24 +6,23 @@ import { caller } from "@api/trpc/routes/_app";
 
 vi.mock("@api/prisma/client");
 
-const PAGE: Omit<Prisma.PageCreateInput, "id"> = {
+const PAGE: Parameters<typeof caller.pages.addPage>[0] = {
 	name: "Page",
 	url: "/page",
-	order: 0,
+	parent_id: "cju0q2q2h0000g0q2q2h00001",
+	is_group: false,
 };
+const ID = "cju0q2q2h0000g0q2q2h00000";
 
-it("adds a page", async () => {
-	await caller.pages.addPage(PAGE);
+it("adds a page and returns its id", async () => {
+	prisma.page.create.mockResolvedValueOnce({ id: ID, last_update: new Date(), ...PAGE });
+	await expect(caller.pages.addPage(PAGE)).resolves.toBe(ID);
 
-	const call = prisma.page.create.mock.calls[0];
-	expect(call).toBeDefined();
-
-	expect(prisma.page.create).toHaveBeenCalledOnce();
-	expect(call![0].data).toMatchObject(PAGE);
+	expect(prisma.page.findFirst).not.toHaveBeenCalled();
 });
 
 it("throws a trpc 409 'CONFLICT' error if the page url already exists", async () => {
-	prisma.page.create.mockRejectedValue(
+	prisma.page.create.mockRejectedValueOnce(
 		new Prisma.PrismaClientKnownRequestError(
 			"Unique constraint failed on the fields: (`url`)",
 			{
@@ -42,7 +41,7 @@ it("throws a trpc 409 'CONFLICT' error if the page url already exists", async ()
 });
 
 it("throws a trpc 500 'INTERNAL_SERVER_ERROR' error if any other error occurs", async () => {
-	prisma.page.create.mockRejectedValue(new Error("Unknown error"));
+	prisma.page.create.mockRejectedValueOnce(new Error("Unknown error"));
 
 	await expect(caller.pages.addPage(PAGE)).rejects.toThrowError(
 		"INTERNAL_SERVER_ERROR" satisfies TRPC_ERROR_CODE_KEY

@@ -3,6 +3,7 @@ import { test } from "@admin/e2e/fixtures";
 import { init } from "api/server";
 import { start, stop } from "@admin/e2e/mocks/trpc";
 import { userMock } from "@admin/e2e/mocks/data";
+import { getColorScheme } from "@admin/e2e/utils";
 
 const MENU_ID = "user-menu";
 const MENU_DROPDOWN_ID = "user-menu-dropdown";
@@ -14,59 +15,62 @@ test.afterAll(async () => {
 	await stop();
 });
 
+// Check only dropdown because of different icons depending on theme
 test("light theme visual comparison", async ({ authedPage: page }) => {
 	await page.emulateMedia({ colorScheme: "light" });
-	await page.goto("/admin");
-	const userMenu = page.getByTestId(MENU_ID);
+	await page.goto("/admin/dashboard");
 
-	await expect(userMenu).toContainText(userMock.name);
-	await expect(userMenu).toContainText(userMock.last_name);
-	await expect(userMenu).toContainText(userMock.email);
-	await expect(userMenu).toContainText(userMock.name.charAt(0) + userMock.last_name.charAt(0));
+	const userMenu = page.getByTestId(MENU_ID).locator("visible=true");
+	await userMenu.click();
 
-	expect(await userMenu.screenshot()).toMatchSnapshot();
+	expect(await page.getByTestId(MENU_DROPDOWN_ID).screenshot()).toMatchSnapshot();
 });
 test("dark theme visual comparison", async ({ authedPage: page }) => {
 	await page.emulateMedia({ colorScheme: "dark" });
-	await page.goto("/admin");
-	const userMenu = page.getByTestId(MENU_ID);
+	await page.goto("/admin/dashboard");
 
-	await expect(userMenu).toContainText(userMock.name);
-	await expect(userMenu).toContainText(userMock.last_name);
+	const userMenu = page.getByTestId(MENU_ID).locator("visible=true");
+	await userMenu.click();
+
+	expect(await page.getByTestId(MENU_DROPDOWN_ID).screenshot()).toMatchSnapshot();
+});
+
+test("displays current user details", async ({ authedPage: page }) => {
+	await page.goto("/admin/dashboard");
+	const userMenu = page.getByTestId(MENU_ID).locator("visible=true");
+
+	await expect(userMenu).toContainText(
+		`${userMock.name.charAt(0)}${userMock.last_name.charAt(0)}`
+	);
+	await expect(userMenu).toContainText(`${userMock.name} ${userMock.last_name}`);
 	await expect(userMenu).toContainText(userMock.email);
-	await expect(userMenu).toContainText(userMock.name.charAt(0) + userMock.last_name.charAt(0));
-
-	expect(await userMenu.screenshot()).toMatchSnapshot();
 });
 
-test("light theme visual comparison dropdown", async ({ authedPage: page }) => {
-	await page.emulateMedia({ colorScheme: "light" });
-	await page.goto("/admin");
+test("changes color theme when button pressed", async ({ authedPage: page }) => {
+	await page.goto("/admin/dashboard");
 
-	const userMenu = page.getByTestId(MENU_ID);
+	const userMenu = page.getByTestId(MENU_ID).locator("visible=true");
+	const userMenuDropdown = page.getByTestId(MENU_DROPDOWN_ID);
+
 	await userMenu.click();
-	const dropdown = page.getByTestId(MENU_DROPDOWN_ID);
+	await userMenuDropdown.locator("> [role='menuitem']").first().click();
 
-	expect(await dropdown.screenshot()).toMatchSnapshot();
-});
-test("dark theme visual comparison dropdown", async ({ authedPage: page }) => {
-	await page.emulateMedia({ colorScheme: "dark" });
-	await page.goto("/admin");
+	await expect(userMenuDropdown).toBeHidden();
+	expect(await getColorScheme(page)).toBe("dark");
 
-	const userMenu = page.getByTestId(MENU_ID);
 	await userMenu.click();
-	const dropdown = page.getByTestId(MENU_DROPDOWN_ID);
+	await userMenuDropdown.locator("> [role='menuitem']").first().click();
 
-	expect(await dropdown.screenshot()).toMatchSnapshot();
+	await expect(userMenuDropdown).toBeHidden();
+	expect(await getColorScheme(page)).toBe("light");
 });
 
 test("signs out when button pressed", async ({ authedPage: page }) => {
-	await page.goto("/admin");
+	await page.goto("/admin/dashboard");
 
-	const userMenu = page.getByTestId(MENU_ID);
-	await userMenu.click();
-	const dropdown = page.getByTestId(MENU_DROPDOWN_ID);
+	await page.getByTestId(MENU_ID).locator("visible=true").click();
+	await page.getByTestId(MENU_DROPDOWN_ID).locator("> [role='menuitem']").last().click();
 
-	await dropdown.getByText("Sign out").click();
-	await expect(page).toHaveURL("/admin/auth/signin");
+	await expect(page).toHaveURL("/admin/signin");
+	await expect(page.getByTestId("sign-in")).toBeVisible();
 });

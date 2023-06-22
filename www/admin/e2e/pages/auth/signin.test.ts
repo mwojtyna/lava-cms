@@ -32,23 +32,23 @@ test.afterEach(async () => {
 
 test("light theme visual comparison", async ({ page }) => {
 	await page.emulateMedia({ colorScheme: "light" });
-	await page.goto("/admin/auth/signin", { waitUntil: "networkidle" });
+	await page.goto("/admin/signin", { waitUntil: "networkidle" });
 	await expect(page).toHaveScreenshot();
 });
 test("dark theme visual comparison", async ({ page }) => {
 	await page.emulateMedia({ colorScheme: "dark" });
-	await page.goto("/admin/auth/signin", { waitUntil: "networkidle" });
+	await page.goto("/admin/signin", { waitUntil: "networkidle" });
 	await expect(page).toHaveScreenshot();
 });
 
 test("shows 'field required' errors", async ({ page }) => {
-	await page.goto("/admin/auth/signin");
+	await page.goto("/admin/signin");
 	await page.click("button[type=submit]");
 	await expect(page).toHaveScreenshot();
 });
 
 test("shows error when invalid credentials", async ({ page }) => {
-	await page.goto("/admin/auth/signin");
+	await page.goto("/admin/signin");
 	const emailInput = page.locator("input[type='email']");
 	const passwordInput = page.locator("input[type='password']");
 	const submitButton = page.locator("button[type='submit']");
@@ -57,21 +57,21 @@ test("shows error when invalid credentials", async ({ page }) => {
 	await emailInput.type("wrong@email.com");
 	await passwordInput.type(userPasswordDecrypted);
 	await submitButton.click();
-	await expect(page.locator("text=The credentials are invalid.")).toBeInViewport();
+	await expect(page.locator("text=Your credentials are invalid.")).toBeInViewport();
 	await clearInputs();
 
 	// Wrong password
 	await emailInput.type(userMock.email);
 	await passwordInput.type("wrongpassword");
 	await submitButton.click();
-	await expect(page.locator("text=The credentials are invalid.")).toBeInViewport();
+	await expect(page.locator("text=Your credentials are invalid.")).toBeInViewport();
 	await clearInputs();
 
 	// Both wrong
 	await emailInput.type("wrong@email.com");
 	await passwordInput.type("wrongpassword");
 	await submitButton.click();
-	await expect(page.locator("text=The credentials are invalid.")).toBeInViewport();
+	await expect(page.locator("text=Your credentials are invalid.")).toBeInViewport();
 
 	await expect(page).toHaveScreenshot();
 
@@ -82,7 +82,7 @@ test("shows error when invalid credentials", async ({ page }) => {
 });
 
 test("shows error when server error", async ({ page }) => {
-	await page.goto("/admin/auth/signin");
+	await page.goto("/admin/signin");
 	await page.locator("input[type='email']").type(userMock.email);
 	await page.locator("input[type='password']").type(userPasswordDecrypted);
 	await page.route("**/api/auth/callback/**", (route) =>
@@ -95,12 +95,14 @@ test("shows error when server error", async ({ page }) => {
 	);
 	await page.locator("button[type='submit']").click();
 
-	await expect(page.getByRole("alert")).toContainText("Something went wrong. Try again later.");
+	await expect(page.getByRole("alert").first()).toContainText(
+		"Something went wrong. Try again later."
+	);
 	await expect(page).toHaveScreenshot();
 });
 
 test("shows error when email invalid", async ({ page }) => {
-	await page.goto("/admin/auth/signin");
+	await page.goto("/admin/signin");
 	await page.click("button[type=submit]");
 	await page.locator("input[type='email']").type("invalid@domain");
 
@@ -108,10 +110,11 @@ test("shows error when email invalid", async ({ page }) => {
 });
 
 test("signs in when credentials are valid", async ({ page }) => {
-	await page.goto("/admin/auth/signin");
+	await page.goto("/admin/signin", { waitUntil: "networkidle" });
 	await page.locator("input[type='email']").type(userMock.email);
 	await page.locator("input[type='password']").type(userPasswordDecrypted);
 	await page.locator("button[type='submit']").click();
+
 	await page.waitForURL(/\/admin\/dashboard/);
 
 	expect(page.url()).toMatch(/\/admin\/dashboard/);

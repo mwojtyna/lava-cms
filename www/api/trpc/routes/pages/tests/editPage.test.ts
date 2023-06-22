@@ -11,19 +11,22 @@ const NEW_NAME = "New Name";
 const NEW_SLUG = "new-name";
 
 it("updates the page's url and its children's urls", async () => {
-	prisma.page.findFirst.mockResolvedValue({
+	prisma.page.findFirst.mockResolvedValueOnce({
 		id: ID,
 		name: "Old Name",
 		url: "/old-name",
-		order: 0,
 		parent_id: null,
+		is_group: false,
+		last_update: new Date(),
 	});
 
-	await caller.pages.editPage({
-		id: ID,
-		newName: NEW_NAME,
-		newUrl: "/" + NEW_SLUG,
-	});
+	expect(
+		await caller.pages.editPage({
+			id: ID,
+			newName: NEW_NAME,
+			newUrl: "/" + NEW_SLUG,
+		})
+	).toBeUndefined();
 
 	const updatePageCall = prisma.page.update.mock.calls[0];
 	expect(updatePageCall).toBeDefined();
@@ -34,6 +37,7 @@ it("updates the page's url and its children's urls", async () => {
 		data: {
 			name: NEW_NAME,
 			url: "/" + NEW_SLUG,
+			last_update: expect.any(Date),
 		},
 	});
 
@@ -43,7 +47,7 @@ it("updates the page's url and its children's urls", async () => {
 });
 
 it("throws a trpc 404 'NOT_FOUND' error if the page doesn't exist", async () => {
-	prisma.page.findFirst.mockResolvedValue(null);
+	prisma.page.findFirst.mockResolvedValueOnce(null);
 
 	await expect(
 		caller.pages.editPage({
@@ -55,12 +59,13 @@ it("throws a trpc 404 'NOT_FOUND' error if the page doesn't exist", async () => 
 });
 
 it("throws a trpc 409 'CONFLICT' error if the new url is already taken", async () => {
-	prisma.page.findFirst.mockResolvedValue({
+	prisma.page.findFirst.mockResolvedValueOnce({
 		id: ID,
 		name: NEW_NAME,
 		url: "/" + NEW_SLUG,
-		order: 0,
 		parent_id: null,
+		is_group: false,
+		last_update: new Date(),
 	});
 
 	prisma.$transaction.mockRejectedValue(
@@ -86,15 +91,16 @@ it("throws a trpc 409 'CONFLICT' error if the new url is already taken", async (
 });
 
 it("throws a trpc 500 'INTERNAL_SERVER_ERROR' error if the database throws an unknown error", async () => {
-	prisma.page.findFirst.mockResolvedValue({
+	prisma.page.findFirst.mockResolvedValueOnce({
 		id: ID,
 		name: NEW_NAME,
 		url: "/" + NEW_SLUG,
-		order: 0,
 		parent_id: null,
+		is_group: false,
+		last_update: new Date(),
 	});
 
-	prisma.$transaction.mockRejectedValue(new Error("Unknown error"));
+	prisma.$transaction.mockRejectedValueOnce(new Error("Unknown error"));
 
 	await expect(
 		caller.pages.editPage({

@@ -1,20 +1,24 @@
 import { router } from "@api/trpc";
 import { addPage } from "./addPage";
 import { getPage } from "./getPage";
-import { getPages } from "./getPages";
 import { editPage } from "./editPage";
 import { deletePage } from "./deletePage";
 import { movePage } from "./movePage";
-import { reorderPage } from "./reorderPage";
+import { getGroupContents } from "./getGroupContents";
+import { getGroup } from "./getGroup";
+import { getAllGroups } from "./getAllGroups";
+import { checkConflict } from "./checkConflict";
 
 export const pagesRouter = router({
 	addPage,
-	getPage,
-	getPages,
-	editPage,
+	checkConflict,
 	deletePage,
+	getPage,
+	editPage,
+	getAllGroups,
+	getGroup,
+	getGroupContents,
 	movePage,
-	reorderPage,
 });
 
 export type PagesRouter = typeof pagesRouter;

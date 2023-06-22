@@ -1,40 +1,35 @@
 import { z } from "zod";
-import { Prisma } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
 import { prisma } from "@api/prisma/client";
 import { publicProcedure } from "@api/trpc";
-import { url } from "@api/trpc/regex";
+import { urlRegex } from "@api/trpc/regex";
+import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 
 export const addPage = publicProcedure
 	.input(
 		z.object({
 			name: z.string(),
-			url: z.string().regex(url),
-			parent_id: z.string().cuid().optional(),
-			order: z.number().int(),
+			url: z.string().regex(urlRegex),
+			parent_id: z.string().cuid().nullable(),
+			is_group: z.boolean(),
 		})
 	)
-	.mutation(async ({ input }) => {
+	.mutation(async ({ input }): Promise<string | undefined> => {
 		try {
-			await prisma.page.create({
+			const page = await prisma.page.create({
 				data: {
 					name: input.name,
 					url: input.url,
-					parent_id: input.parent_id ?? null,
-					order: input.order,
+					parent_id: input.parent_id,
+					is_group: input.is_group,
 				},
 			});
+			return page.id;
 		} catch (error) {
-			if (error instanceof Prisma.PrismaClientKnownRequestError) {
+			if (error instanceof PrismaClientKnownRequestError) {
 				if (error.code === "P2002") {
-					throw new TRPCError({
-						code: "CONFLICT",
-					});
+					throw new TRPCError({ code: "CONFLICT" });
 				}
-			}
-
-			throw new TRPCError({
-				code: "INTERNAL_SERVER_ERROR",
-			});
+			} else throw new TRPCError({ code: "INTERNAL_SERVER_ERROR" });
 		}
 	});

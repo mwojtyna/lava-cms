@@ -4,8 +4,7 @@ import { trpc } from "@admin/src/utils/trpc";
 
 export const authOptions: NextAuthOptions = {
 	pages: {
-		signIn: "/admin/auth/signin",
-		signOut: "/admin/auth/signout",
+		signIn: "/admin/signin",
 	},
 	session: {
 		strategy: "jwt",
