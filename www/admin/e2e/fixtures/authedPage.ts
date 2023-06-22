@@ -77,6 +77,7 @@ export const authedPage = async (
 	if (await prisma.config.findFirst()) {
 		await prisma.config.deleteMany();
 	}
+	await prisma.page.deleteMany();
 };
 
 async function saveSignedInState(browser: Browser) {
