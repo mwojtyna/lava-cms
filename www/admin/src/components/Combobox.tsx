@@ -17,12 +17,14 @@ import {
 } from "@admin/src/components/ui/client";
 
 type ComboboxData = { value: string; label: React.ReactNode; filterValue: string }[];
-interface ComboboxProps extends React.ComponentPropsWithoutRef<typeof Button> {
+interface ComboboxProps extends Omit<React.ComponentPropsWithoutRef<typeof Button>, "onChange"> {
 	data: ComboboxData;
 	contentProps?: React.ComponentPropsWithoutRef<typeof PopoverContent>;
 	notFoundContent?: React.ReactNode;
 	value: string;
-	onChange: (...event: unknown[]) => void;
+	// Can't figure out how to type this
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	onChange: (value: any) => void;
 }
 const Combobox = React.forwardRef<React.ComponentRef<typeof Button>, ComboboxProps>(
 	(

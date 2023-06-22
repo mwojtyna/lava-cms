@@ -1,8 +1,6 @@
 import type { BrowserContextOptions, Page, Browser } from "@playwright/test";
 import fs from "node:fs";
 import { prisma } from "api/prisma/client";
-import { init } from "api/server";
-import { server, start, stop } from "@admin/e2e/mocks/trpc";
 import { userMock, userPasswordDecrypted, websiteSettingsMock } from "@admin/e2e/mocks/data";
 
 export const STORAGE_STATE_PATH = "./e2e/storageState.json";
@@ -28,6 +26,8 @@ export const authedPage = async (
 			},
 		});
 	}
+
+	await prisma.page.deleteMany();
 	await prisma.page.create({
 		data: {
 			name: "Root",
@@ -81,14 +81,6 @@ export const authedPage = async (
 };
 
 async function saveSignedInState(browser: Browser) {
-	let wasAlreadyStarted = false;
-
-	if (!server) {
-		await start(await init());
-	} else {
-		wasAlreadyStarted = true;
-	}
-
 	const page = await browser.newPage();
 
 	await page.goto("/admin/signin", { waitUntil: "networkidle" });
@@ -112,8 +104,4 @@ async function saveSignedInState(browser: Browser) {
 
 	await page.context().storageState({ path: STORAGE_STATE_PATH });
 	await page.close();
-
-	if (!wasAlreadyStarted) {
-		await stop();
-	}
 }

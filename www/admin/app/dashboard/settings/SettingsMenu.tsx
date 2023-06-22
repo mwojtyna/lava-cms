@@ -11,7 +11,7 @@ export function SettingsMenu() {
 	const lastSegment = segments[segments.length - 1];
 
 	return (
-		<div className="flex w-fit gap-2 overflow-x-auto overflow-y-hidden md:flex-col">
+		<div className="flex w-fit gap-2 overflow-x-auto overflow-y-hidden lg:flex-col">
 			{routes.map((route, i) => (
 				<Link
 					key={i}
@@ -24,7 +24,7 @@ export function SettingsMenu() {
 							(lastSegment === route.slug ||
 								(lastSegment === "settings" && route.slug === "")) &&
 								"bg-accent",
-							"w-full justify-start"
+							"w-full justify-start whitespace-nowrap"
 						)}
 						variant={"ghost"}
 						icon={route.icon}

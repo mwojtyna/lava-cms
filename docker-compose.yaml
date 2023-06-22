@@ -8,7 +8,7 @@ services:
 
   postgres:
     container_name: postgres
-    image: postgres:15.1
+    image: postgres:15.3-alpine
     env_file:
       - .env
     volumes:
@@ -19,7 +19,7 @@ services:
 
   pgadmin:
     container_name: pgadmin
-    image: dpage/pgadmin4:6.18
+    image: dpage/pgadmin4:7.3
     env_file:
       - .env
     volumes:
@@ -30,7 +30,7 @@ services:
 
   nginx:
     container_name: nginx
-    image: nginx:1.23.3-alpine-slim
+    image: nginx:1.25.1-alpine-slim
     ports:
       - "8080:80"
     volumes:

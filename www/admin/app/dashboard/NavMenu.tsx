@@ -47,7 +47,6 @@ async function Menu({ className }: { className?: string }) {
 					))}
 				</div>
 
-				{/* @ts-expect-error Async Server Component */}
 				<UserMenu />
 			</div>
 		</nav>
@@ -80,8 +79,7 @@ function MenuMobile({ className }: { className?: string }) {
 				))}
 			</div>
 
-			{/* @ts-expect-error Async Server Component */}
-			<UserMenu small={true} />
+			<UserMenu small />
 		</nav>
 	);
 }
@@ -89,7 +87,6 @@ function MenuMobile({ className }: { className?: string }) {
 export function NavMenu() {
 	return (
 		<NavMenuWrapper>
-			{/* @ts-expect-error Async Server Component */}
 			<Menu className="hidden h-screen md:flex" />
 			<MenuMobile className="md:hidden" />
 
@@ -100,7 +97,6 @@ export function NavMenu() {
 				breakpoint="md:hidden"
 				returnFocus={false}
 			>
-				{/* @ts-expect-error Async Server Component */}
 				<Menu className="h-full" />
 			</SheetContent>
 		</NavMenuWrapper>

@@ -1,19 +1,25 @@
 import { expect } from "@playwright/test";
-import { start, stop, trpcMsw } from "@admin/e2e/mocks/trpc";
-import { init } from "api/server";
 import { test } from "./fixtures";
+import { prisma } from "@admin/../api/prisma/client";
+import { userMock, websiteSettingsMock } from "./mocks/data";
 
-test.afterEach(async () => {
-	await stop();
-});
+async function createUser() {
+	await prisma.user.create({
+		data: {
+			...userMock,
+		},
+	});
+}
+async function createConfig() {
+	await prisma.config.create({
+		data: {
+			...websiteSettingsMock,
+		},
+	});
+}
 
 test("redirects to sign up page when no user is signed up", async ({ page }) => {
-	const app = await init([
-		trpcMsw.auth.setupRequired.query((_, res, ctx) => {
-			return res(ctx.data({ reason: "no-user" }));
-		}),
-	]);
-	await start(app);
+	await createConfig();
 
 	await page.goto("/admin");
 	expect(page.url()).toMatch(/\/setup$/);
@@ -21,12 +27,8 @@ test("redirects to sign up page when no user is signed up", async ({ page }) => 
 });
 
 test("redirects to sign in page when user is not signed in", async ({ page }) => {
-	const app = await init([
-		trpcMsw.auth.setupRequired.query((_, res, ctx) => {
-			return res(ctx.data({ reason: null }));
-		}),
-	]);
-	await start(app);
+	await createUser();
+	await createConfig();
 
 	await page.goto("/admin");
 	expect(page.url()).toMatch(/\/signin$/);
@@ -34,26 +36,14 @@ test("redirects to sign in page when user is not signed in", async ({ page }) =>
 });
 
 test("redirects to dashboard when user is signed in", async ({ authedPage }) => {
-	const app = await init([
-		trpcMsw.auth.setupRequired.query((_, res, ctx) => {
-			return res(ctx.data({ reason: null }));
-		}),
-	]);
-	await start(app);
-
 	await authedPage.goto("/admin");
-
 	expect(authedPage.url()).toMatch(/\/admin\/dashboard$/);
 	await expect(authedPage.locator("#content").first()).toBeInViewport();
 });
 
 test("returns 401 when trying to access /trpc when not signed in", async ({ page }) => {
-	const app = await init([
-		trpcMsw.auth.setupRequired.query((_, res, ctx) => {
-			return res(ctx.data({ reason: null }));
-		}),
-	]);
-	await start(app);
+	await createUser();
+	await createConfig();
 
 	const res = await page.goto("/admin/trpc");
 	expect(page.url()).toMatch(/\/admin\/trpc$/);
@@ -61,13 +51,6 @@ test("returns 401 when trying to access /trpc when not signed in", async ({ page
 });
 
 test("returns json when trying to access /trpc when signed in", async ({ authedPage }) => {
-	const app = await init([
-		trpcMsw.auth.setupRequired.query((_, res, ctx) => {
-			return res(ctx.data({ reason: null }));
-		}),
-	]);
-	await start(app);
-
 	const res = await authedPage.goto("/admin/trpc/random.endpoint");
 	expect(authedPage.url()).toMatch(/\/admin\/trpc/);
 	expect(await res?.headerValue("content-type")).toMatch(/application\/json/);
@@ -75,13 +58,6 @@ test("returns json when trying to access /trpc when signed in", async ({ authedP
 });
 
 test("returns json when trying to access /trpc when no user signed up", async ({ authedPage }) => {
-	const app = await init([
-		trpcMsw.auth.setupRequired.query((_, res, ctx) => {
-			return res(ctx.data({ reason: "no-user" }));
-		}),
-	]);
-	await start(app);
-
 	const res = await authedPage.goto("/admin/trpc/random.endpoint");
 	expect(authedPage.url()).toMatch(/\/admin\/trpc/);
 	expect(await res?.headerValue("content-type")).toMatch(/application\/json/);

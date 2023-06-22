@@ -10,6 +10,10 @@
 		"verbatimModuleSyntax": true,
 		"importsNotUsedAsValues": "remove"
 	},
-	"extends": "@tsconfig/node18-strictest-esm/tsconfig.json",
+	"extends": [
+		"@tsconfig/node18/tsconfig.json",
+		"@tsconfig/strictest/tsconfig.json",
+		"@tsconfig/esm/tsconfig.json"
+	],
 	"exclude": ["coverage/**/*"]
 }

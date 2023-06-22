@@ -331,7 +331,7 @@ export function BulkMoveDialog(props: BulkEditDialogProps) {
 				form.setError("newParentId", {
 					message: (
 						<>
-							The following pages already exist in the destination group:
+							The following items already exist in the destination group:
 							<TypographyList items={urls!} />
 						</>
 					) as unknown as string,
@@ -504,8 +504,8 @@ export function EditDetailsDialog(props: EditDialogProps) {
 					type: "manual",
 					message: (
 						<>
-							A page with path <strong className="whitespace-nowrap">{newUrl}</strong>{" "}
-							already exists.
+							An item with path{" "}
+							<strong className="whitespace-nowrap">{newUrl}</strong> already exists.
 						</>
 					) as unknown as string,
 				});
@@ -586,7 +586,7 @@ export function AddDialog(props: AddDialogProps) {
 					type: "manual",
 					message: (
 						<>
-							A {props.isGroup ? "group" : "page"} with path <strong>{url}</strong>{" "}
+							An item with path <strong className="whitespace-nowrap">{url}</strong>{" "}
 							already exists.
 						</>
 					) as unknown as string,
@@ -682,7 +682,7 @@ export function DuplicateDialog(props: EditDialogProps) {
 					type: "manual",
 					message: (
 						<>
-							A page with path <strong className="whitespace-nowrap">{url}</strong>{" "}
+							An item with path <strong className="whitespace-nowrap">{url}</strong>{" "}
 							already exists.
 						</>
 					) as unknown as string,

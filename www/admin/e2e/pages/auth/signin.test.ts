@@ -1,6 +1,4 @@
 import { expect, test } from "@playwright/test";
-import { start, stop } from "@admin/e2e/mocks/trpc";
-import { init } from "api/server";
 import { prisma } from "api/prisma/client";
 import { userMock, userPasswordDecrypted } from "@admin/e2e/mocks/data";
 
@@ -21,13 +19,6 @@ test.beforeAll(async () => {
 test.afterAll(async () => {
 	await prisma.user.deleteMany();
 	await prisma.config.deleteMany();
-});
-
-test.beforeEach(async () => {
-	await start(await init());
-});
-test.afterEach(async () => {
-	await stop();
 });
 
 test("light theme visual comparison", async ({ page }) => {

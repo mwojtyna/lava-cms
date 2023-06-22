@@ -14,7 +14,7 @@ import { LogoutItem, ThemeSwitchItem } from "./UserMenuItems";
 import { authOptions } from "@admin/src/pages/api/auth/[...nextauth]";
 import { cn } from "@admin/src/utils/styling";
 
-export async function UserMenu({ small }: { small: boolean }) {
+export async function UserMenu({ small }: { small?: boolean }) {
 	const { user } = await trpc.auth.getUser.query({
 		// set to "empty" when null, because otherwise an ambiguous error is thrown
 		id: (await getServerSession(authOptions))?.user?.id ?? "empty",

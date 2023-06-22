@@ -12,7 +12,7 @@ RUN npm install -g pnpm
 ENV CI=true
 
 # Install node
-ENV NODE_VERSION=18.16.0
+ENV NODE_VERSION=18.16.1
 ENV NVM_DIR=/home/pwuser/.nvm
 RUN mkdir -p ${NVM_DIR}
 

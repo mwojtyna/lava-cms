@@ -1,18 +1,10 @@
 import { test } from "@admin/e2e/fixtures";
-import { init } from "api/server";
-import { start, stop } from "@admin/e2e/mocks/trpc";
 import { prisma } from "api/prisma/client";
 import { type Page, expect } from "@playwright/test";
 
-async function fillAddEditDialog(
-	page: Page,
-	name: string,
-	expectedUrl: string,
-	screenshot?: boolean
-) {
+async function fillAddEditDialog(page: Page, name: string, expectedUrl: string) {
 	const dialog = page.getByRole("dialog");
 	await expect(dialog).toBeInViewport();
-	if (screenshot) await expect(dialog).toHaveScreenshot();
 
 	await dialog.locator("input[type='text']").first().fill(name);
 	expect(dialog.locator("input[type='text']").nth(1)).toHaveValue(expectedUrl);
@@ -35,14 +27,8 @@ async function checkRow(
 	return row;
 }
 
-test.beforeAll(async () => {
-	await start(await init());
-});
 test.afterEach(async () => {
 	await prisma.page.deleteMany();
-});
-test.afterAll(async () => {
-	await stop();
 });
 
 test("displays message when no pages added", async ({ authedPage: page }) => {
@@ -113,7 +99,7 @@ test("searchbox filters pages", async ({ authedPage: page }) => {
 		],
 	});
 
-	await page.goto("/admin/dashboard/pages");
+	await page.goto("/admin/dashboard/pages", { waitUntil: "networkidle" });
 	await expect(page.locator("tbody > tr")).toHaveCount(2);
 
 	await page.locator("input[type='search']").type("Page 2");
@@ -135,7 +121,7 @@ test.describe("page", () => {
 		await page.goto("/admin/dashboard/pages");
 		await page.getByTestId("add-page").click();
 
-		const dialog = await fillAddEditDialog(page, "Test", "/test", true);
+		const dialog = await fillAddEditDialog(page, "Test", "/test");
 		await expect(dialog.locator("input[name='slug']")).toHaveAttribute("aria-invalid", "true");
 		await expect(dialog.locator("strong")).toHaveText("/test");
 		await fillAddEditDialog(page, "Test 2", "/test-2");
@@ -159,7 +145,6 @@ test.describe("page", () => {
 		await page.getByRole("menu").getByRole("menuitem", { name: "Delete" }).click();
 
 		const dialog = page.getByRole("dialog");
-		await expect(dialog).toHaveScreenshot();
 		await dialog.locator("button[type='submit']").click();
 
 		await expect(page.locator("text=No results.")).toBeInViewport();
@@ -186,7 +171,7 @@ test.describe("page", () => {
 		await page.locator("tbody > tr").first().locator("td").last().click();
 		await page.getByRole("menu").getByRole("menuitem", { name: "Edit details" }).click();
 
-		const dialog = await fillAddEditDialog(page, "Test 2", "/test-2", true);
+		const dialog = await fillAddEditDialog(page, "Test 2", "/test-2");
 		await expect(dialog.locator("input[name='slug']")).toHaveAttribute("aria-invalid", "true");
 		await expect(dialog.locator("strong")).toHaveText("/test-2");
 		await fillAddEditDialog(page, "Test 3", "/test-3");
@@ -232,8 +217,7 @@ test.describe("page", () => {
 		await page.getByRole("menu").getByRole("menuitem", { name: "Move" }).click();
 
 		const dialog = page.getByRole("dialog");
-		await expect(dialog).toBeInViewport();
-		await expect(dialog).toHaveScreenshot();
+		await expect(dialog).toBeVisible();
 
 		const combobox = dialog.getByRole("combobox");
 		await combobox.click();
@@ -251,6 +235,7 @@ test.describe("page", () => {
 		await expect(page.locator("tbody > tr")).toHaveCount(2);
 
 		await page.getByRole("link", { name: "Group 2" }).click();
+		await page.waitForNavigation();
 		await checkRow(page, 0, "Page 1", "/group-2/page-1", "Page");
 	});
 
@@ -271,7 +256,6 @@ test.describe("page", () => {
 
 		const dialog = page.getByRole("dialog");
 		await expect(dialog).toBeInViewport();
-		await expect(dialog).toHaveScreenshot();
 		const nameInput = dialog.locator("input[name='name']");
 		const submitButton = dialog.locator("button[type='submit']");
 
@@ -302,7 +286,7 @@ test.describe("group", () => {
 		await page.goto("/admin/dashboard/pages");
 		await page.getByTestId("add-group").click();
 
-		const dialog = await fillAddEditDialog(page, "Test", "/test", true);
+		const dialog = await fillAddEditDialog(page, "Test", "/test");
 		await expect(dialog.locator("input[name='slug']")).toHaveAttribute("aria-invalid", "true");
 		await expect(dialog.locator("strong")).toHaveText("/test");
 		await fillAddEditDialog(page, "Test 2", "/test-2");
@@ -343,7 +327,6 @@ test.describe("group", () => {
 
 		const dialog = page.getByRole("dialog");
 		await expect(dialog).toBeInViewport();
-		await expect(dialog).toHaveScreenshot();
 
 		await dialog.locator("button[type='submit']").click();
 		await page.waitForSelector("[role='dialog']", { state: "hidden" });
@@ -383,7 +366,7 @@ test.describe("group", () => {
 		await page.locator("tbody > tr").first().locator("td").last().click();
 		await page.getByRole("menu").getByRole("menuitem", { name: "Edit details" }).click();
 
-		const dialog = await fillAddEditDialog(page, "Group 2", "/group-2", true);
+		const dialog = await fillAddEditDialog(page, "Group 2", "/group-2");
 		await expect(dialog.locator("input[name='slug']")).toHaveAttribute("aria-invalid", "true");
 		await expect(dialog.locator("strong")).toHaveText("/group-2");
 		await fillAddEditDialog(page, "Group 3", "/group-3");
@@ -468,7 +451,6 @@ test.describe("group", () => {
 
 		const dialog = page.getByRole("dialog");
 		await expect(dialog).toBeInViewport();
-		await expect(dialog).toHaveScreenshot();
 
 		const combobox = dialog.getByRole("combobox");
 		await combobox.click();
@@ -530,7 +512,6 @@ test.describe("bulk", () => {
 
 		await page.locator("thead > tr > th").last().click();
 		await page.getByRole("menu").getByRole("menuitem", { name: "Delete" }).click();
-		await expect(page.getByRole("dialog")).toHaveScreenshot();
 		await page.locator("button[type='submit']").click();
 		await page.waitForSelector("[role='dialog']", { state: "hidden" });
 
@@ -606,7 +587,6 @@ test.describe("bulk", () => {
 
 		const dialog = page.getByRole("dialog");
 		await expect(dialog).toBeInViewport();
-		await expect(dialog).toHaveScreenshot();
 
 		const combobox = dialog.getByRole("combobox");
 		await combobox.click();

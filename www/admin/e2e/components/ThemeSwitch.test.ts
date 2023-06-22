@@ -1,6 +1,4 @@
 import { test, expect, type BrowserContext } from "@playwright/test";
-import { init } from "api/server";
-import { start, stop } from "../mocks/trpc";
 import { type ColorTheme, colorThemeSchema } from "@admin/src/data/stores/dashboard";
 import type { CookieName } from "@admin/src/utils/cookies";
 import { getColorScheme } from "../utils";
@@ -20,13 +18,6 @@ const getCookie = (context: BrowserContext): Promise<ColorTheme | undefined> =>
 						)?.value
 					)
 		);
-
-test.beforeAll(async () => {
-	await start(await init());
-});
-test.afterAll(async () => {
-	await stop();
-});
 
 test("light theme visual comparison", async ({ page }) => {
 	await page.goto("/admin/setup");

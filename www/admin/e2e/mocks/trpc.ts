@@ -1,16 +1,6 @@
-import { createTRPCMsw } from "msw-trpc";
-import type { AppRouter } from "api/trpc/routes/_app";
-import { createHttpTerminator, type HttpTerminator } from "http-terminator";
 import { type App, PORT } from "api/server";
-import SuperJSON from "superjson";
 
-export const trpcMsw = createTRPCMsw<AppRouter>({
-	transformer: {
-		input: SuperJSON,
-		output: SuperJSON,
-	},
-});
-export let server: HttpTerminator | null = null;
+let server: ReturnType<App["listen"]> | null = null;
 
 export async function start(app: App) {
 	if (server) {
@@ -18,18 +8,23 @@ export async function start(app: App) {
 	}
 
 	return new Promise<void>((resolve) => {
-		server = createHttpTerminator({
-			server: app.listen(PORT, () => {
-				console.log(`Mocking on port ${PORT}...`);
-				resolve();
-			}),
+		server = app.listen(PORT, () => {
+			console.log(`Listening on port ${PORT}...`);
+			resolve();
 		});
 	});
 }
+
 export async function stop() {
 	if (server) {
-		await server.terminate();
-		server = null;
-		console.log("Mocking stopped");
+		await new Promise<void>((resolve) => {
+			server!.close(() => {
+				resolve();
+				server = null;
+				console.log("Server stopped");
+			});
+		});
+	} else {
+		throw new Error("Server not started!");
 	}
 }

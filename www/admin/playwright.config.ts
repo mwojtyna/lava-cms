@@ -21,7 +21,7 @@ const config: PlaywrightTestConfig = {
 		 * Maximum time expect() should wait for the condition to be met.
 		 * For example in `await expect(locator).toHaveText();`
 		 */
-		timeout: 5000,
+		timeout: 1000,
 		toHaveScreenshot: {
 			maxDiffPixelRatio: 0.01,
 		},
@@ -43,6 +43,8 @@ const config: PlaywrightTestConfig = {
 		baseURL: "http://localhost:3001",
 		trace: "retain-on-failure",
 	},
+	globalSetup: "./e2e/globalSetup.ts",
+	globalTeardown: "./e2e/globalTeardown.ts",
 
 	/* Configure projects for major browsers */
 	projects: [

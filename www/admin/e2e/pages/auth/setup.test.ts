@@ -1,6 +1,4 @@
 import { expect } from "@playwright/test";
-import { start, stop } from "@admin/e2e/mocks/trpc";
-import { init } from "api/server";
 import { prisma } from "api/prisma/client";
 import { test } from "@admin/e2e/fixtures";
 import { userMock } from "@admin/e2e/mocks/data";
@@ -11,11 +9,7 @@ const EMAIL = "johndoe@domain.com";
 const PASSWORD = "Zaq1@wsx";
 
 test.describe("sign up step", () => {
-	test.beforeAll(async () => {
-		await start(await init());
-	});
 	test.afterAll(async () => {
-		await stop();
 		await prisma.user.deleteMany();
 	});
 
@@ -109,13 +103,11 @@ test.describe("setup website step", () => {
 				...userMock,
 			},
 		});
-		await start(await init());
 	});
 	test.afterEach(async () => {
 		await prisma.page.deleteMany();
 	});
 	test.afterAll(async () => {
-		await stop();
 		await prisma.user.deleteMany();
 		await prisma.config.deleteMany();
 		await prisma.page.deleteMany();

@@ -40,7 +40,6 @@
 		],
 		"prettier.requireConfig": true,
 		"testing.automaticallyOpenPeekView": "never",
-		"sarif-viewer.connectToGithubCodeScanning": "on",
 		"workbench.editor.labelFormat": "medium"
 	}
 }

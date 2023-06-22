@@ -13,7 +13,6 @@ export const routes: SettingsRoute[] = [
 		label: "SEO",
 		slug: "",
 		icon: <MagnifyingGlassIcon className="w-4" />,
-		// @ts-expect-error Async Server Component
 		content: <Settings />,
 	},
 	{

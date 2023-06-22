@@ -1,19 +1,10 @@
 import { expect } from "@playwright/test";
 import { test } from "@admin/e2e/fixtures";
-import { init } from "api/server";
-import { start, stop } from "@admin/e2e/mocks/trpc";
 import { userMock } from "@admin/e2e/mocks/data";
 import { getColorScheme } from "@admin/e2e/utils";
 
 const MENU_ID = "user-menu";
 const MENU_DROPDOWN_ID = "user-menu-dropdown";
-
-test.beforeAll(async () => {
-	await start(await init());
-});
-test.afterAll(async () => {
-	await stop();
-});
 
 // Check only dropdown because of different icons depending on theme
 test("light theme visual comparison", async ({ authedPage: page }) => {

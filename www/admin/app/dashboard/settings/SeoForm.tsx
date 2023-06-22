@@ -15,6 +15,7 @@ import {
 	Input,
 	Textarea,
 	FormDescription,
+	Separator,
 } from "@admin/src/components/ui/client";
 import {
 	Card,
@@ -75,11 +76,15 @@ export function SeoForm({ serverData }: { serverData: Inputs }) {
 	};
 
 	return (
-		<Card className="max-w-md flex-grow" data-testid="seo-form">
+		<Card className="flex max-w-4xl flex-grow flex-col gap-6 md:p-5" data-testid="seo-form">
 			<CardHeader>
-				<CardTitle>SEO</CardTitle>
-				<CardDescription>Search Engine Optimization</CardDescription>
+				<CardTitle>Search Engine Optimization</CardTitle>
+				<CardDescription>
+					Optimize website visibility and rankings with SEO settings.
+				</CardDescription>
+				<Separator className="mt-2" />
 			</CardHeader>
+
 			<CardContent>
 				<FormProvider {...form}>
 					<form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-6">
@@ -87,7 +92,7 @@ export function SeoForm({ serverData }: { serverData: Inputs }) {
 							control={form.control}
 							name="title"
 							render={({ field }) => (
-								<FormItem>
+								<FormItem className="grid grid-cols-2">
 									<FormLabel withAsterisk>Title</FormLabel>
 									<FormControl>
 										<Input
@@ -104,8 +109,14 @@ export function SeoForm({ serverData }: { serverData: Inputs }) {
 							control={form.control}
 							name="description"
 							render={({ field }) => (
-								<FormItem>
-									<FormLabel>Description</FormLabel>
+								<FormItem className="grid grid-cols-2">
+									<div className="space-y-1">
+										<FormLabel>Description</FormLabel>
+										<FormDescription>
+											Used for social media previews
+										</FormDescription>
+									</div>
+
 									<FormControl>
 										<Textarea
 											placeholder="This website is very awesome and fun!"
@@ -114,9 +125,6 @@ export function SeoForm({ serverData }: { serverData: Inputs }) {
 											{...field}
 										/>
 									</FormControl>
-									<FormDescription>
-										Used for social media previews
-									</FormDescription>
 								</FormItem>
 							)}
 						/>
@@ -125,15 +133,19 @@ export function SeoForm({ serverData }: { serverData: Inputs }) {
 							control={form.control}
 							name="language"
 							render={({ field }) => (
-								<FormItem>
-									<FormLabel withAsterisk>Language</FormLabel>
+								<FormItem className="grid grid-cols-2">
+									<div className="space-y-1">
+										<FormLabel withAsterisk>Language</FormLabel>
+										<FormDescription>
+											Used in the <TypographyCode>lang</TypographyCode>{" "}
+											attribute of the{" "}
+											<TypographyCode>&lt;html&gt;</TypographyCode> tag
+										</FormDescription>
+									</div>
+
 									<FormControl>
 										<Input placeholder="en-US" aria-required {...field} />
 									</FormControl>
-									<FormDescription>
-										Used in the <TypographyCode>lang</TypographyCode> attribute
-										of the <TypographyCode>&lt;html&gt;</TypographyCode> tag
-									</FormDescription>
 								</FormItem>
 							)}
 						/>

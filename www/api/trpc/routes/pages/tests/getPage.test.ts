@@ -10,6 +10,8 @@ const PAGE: Page = {
 	name: "Test",
 	url: "/test",
 	parent_id: null,
+	is_group: false,
+	last_update: new Date(),
 };
 
 it("should return a page", async () => {
