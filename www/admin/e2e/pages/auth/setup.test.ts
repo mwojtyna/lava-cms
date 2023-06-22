@@ -111,6 +111,9 @@ test.describe("setup website step", () => {
 		});
 		await start(await init());
 	});
+	test.afterEach(async () => {
+		await prisma.page.deleteMany();
+	});
 	test.afterAll(async () => {
 		await stop();
 		await prisma.user.deleteMany();
@@ -147,10 +150,11 @@ test.describe("setup website step", () => {
 	});
 
 	test("go to dashboard when info is valid", async ({ authedPage }) => {
-		// authedPage fixture automatically creates a config
+		// authedPage fixture automatically creates a config and a Root page
 		// we don't want that for this test because if it exists
 		// then it will redirect to /dashboard
 		await prisma.config.deleteMany();
+		await prisma.page.deleteMany();
 
 		await authedPage.goto("/admin/setup", { waitUntil: "networkidle" });
 		await authedPage.locator("input[type='text']").first().type("My website");

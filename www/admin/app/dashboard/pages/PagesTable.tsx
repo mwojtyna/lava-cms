@@ -131,9 +131,10 @@ export function PagesTable(props: PagesTableProps) {
 
 	return (
 		<>
-			<div className="flex flex-col gap-4">
+			<div className="flex flex-col gap-4" data-testid="pages-table">
 				<div className="flex justify-between gap-2">
 					<Input
+						type="search"
 						className="mr-auto max-w-xs"
 						value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
 						onChange={(e) => table.getColumn("name")?.setFilterValue(e.target.value)}
@@ -144,6 +145,7 @@ export function PagesTable(props: PagesTableProps) {
 						<Button
 							onClick={() => setOpenAddPage(true)}
 							icon={<DocumentPlusIcon className="w-5" />}
+							data-testid="add-page"
 						>
 							Page
 						</Button>
@@ -151,6 +153,7 @@ export function PagesTable(props: PagesTableProps) {
 							onClick={() => setOpenAddGroup(true)}
 							variant={"secondary"}
 							icon={<FolderPlusIcon className="w-5" />}
+							data-testid="add-group"
 						>
 							Group
 						</Button>
@@ -184,6 +187,7 @@ export function PagesTable(props: PagesTableProps) {
 						]}
 						currentStep={data.breadcrumbs.length}
 						separator={<ChevronRightIcon className="w-4" />}
+						data-testid="breadcrumbs"
 					/>
 				)}
 
@@ -191,7 +195,10 @@ export function PagesTable(props: PagesTableProps) {
 					<Table>
 						<TableHeader>
 							{table.getHeaderGroups().map((headerGroup) => (
-								<TableRow key={headerGroup.id} className="hover:bg-inherit">
+								<TableRow
+									key={headerGroup.id}
+									className="whitespace-nowrap hover:bg-inherit"
+								>
 									{headerGroup.headers.map((header) => (
 										<TableHead
 											key={header.id}

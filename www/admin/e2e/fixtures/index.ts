@@ -6,5 +6,5 @@ export interface Fixtures {
 }
 
 export const test = base.extend<Fixtures>({
-	authedPage: authedPage,
+	authedPage,
 });

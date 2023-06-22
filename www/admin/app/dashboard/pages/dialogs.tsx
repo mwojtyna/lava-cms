@@ -247,7 +247,7 @@ export function MoveDialog(props: EditDialogProps) {
 				form.setError("newParentId", {
 					message: (
 						<>
-							A page with path{" "}
+							An item with path{" "}
 							<strong className="whitespace-nowrap">{newPath}</strong> already exists!
 							Either change the slug or move it somewhere else.
 						</>
@@ -269,7 +269,7 @@ export function MoveDialog(props: EditDialogProps) {
 		<Dialog open={props.open} onOpenChange={props.setOpen}>
 			<DialogContent className="!max-w-sm">
 				<DialogHeader>
-					<DialogTitle>Move page</DialogTitle>
+					<DialogTitle>Move {props.page.is_group ? "group" : "page"}</DialogTitle>
 				</DialogHeader>
 
 				<FormProvider {...form}>

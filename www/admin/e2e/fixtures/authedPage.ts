@@ -28,6 +28,14 @@ export const authedPage = async (
 			},
 		});
 	}
+	await prisma.page.create({
+		data: {
+			name: "Root",
+			url: "",
+			is_group: true,
+			parent_id: null,
+		},
+	});
 
 	if (!fs.existsSync(STORAGE_STATE_PATH)) {
 		await saveSignedInState(browser);
