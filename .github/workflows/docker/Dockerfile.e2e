@@ -29,7 +29,7 @@ RUN npm install -g pnpm
 RUN pnpm install --frozen-lockfile
 RUN scripts/deno_install.sh
 
-RUN cd api && pnpm prisma generate
+RUN cd admin && pnpm prisma generate
 RUN pnpm build
 
 CMD [ "tail", "-F", "/dev/null" ]

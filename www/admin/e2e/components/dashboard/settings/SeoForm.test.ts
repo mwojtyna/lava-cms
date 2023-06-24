@@ -32,7 +32,7 @@ test("website config updates", async ({ authedPage: page }) => {
 	await element.locator("input[type='text']").last().fill("pl");
 	await element.locator("button[type='submit']").click();
 
-	await page.waitForResponse((res) => res.url().includes("/trpc/config"));
+	await page.waitForResponse((res) => res.url().includes("/api/trpc/config"));
 
 	const config = await trpc.config.getConfig.query();
 	expect(config.title).toBe("My new website");
@@ -45,7 +45,7 @@ test("website config updates", async ({ authedPage: page }) => {
 test("notification shows error when error occurs", async ({ authedPage: page }) => {
 	await page.goto("/admin/dashboard/settings");
 
-	await page.route("**/trpc/config**", (route) => route.fulfill({ status: 500 }));
+	await page.route("**/api/trpc/config**", (route) => route.fulfill({ status: 500 }));
 	const element = page.getByTestId(TEST_ID);
 	await element.locator("input[type='text']").first().fill("My new website");
 	await element.locator("textarea").fill("My new website description");

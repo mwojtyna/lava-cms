@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import Link from "next/link";
-import type { Page } from "api/prisma/types";
+import type { Page } from "@admin/prisma/types";
 import {
 	DocumentIcon,
 	FolderIcon,

@@ -14,8 +14,8 @@ export default withAuth(
 
 		// Protect the api when not signed in
 		// Account for when the user is setting up the CMS for the first time
-		if (url.pathname.startsWith("/trpc")) {
-			if (!request.nextauth.token && !reason) {
+		if (url.pathname.startsWith("/api/trpc")) {
+			if (headers.get("x-trpc-origin") !== "server" && !request.nextauth.token && !reason) {
 				return new NextResponse("Unauthorized", { status: 401 });
 			} else {
 				return NextResponse.next({
@@ -67,5 +67,5 @@ export default withAuth(
 );
 
 export const config = {
-	matcher: ["/((?!api|_next/static|_next/image|favicon.ico).*)"],
+	matcher: ["/((?!api(?!/trpc)|_next/static|_next/image|favicon.ico).*)"],
 };

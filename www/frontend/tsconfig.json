@@ -2,8 +2,7 @@
 	"compilerOptions": {
 		"baseUrl": ".",
 		"paths": {
-			"@frontend/*": ["./*"],
-			"@api/*": ["../api/*"]
+			"@frontend/*": ["./*"]
 		},
 		"importsNotUsedAsValues": "error",
 		"noEmit": true

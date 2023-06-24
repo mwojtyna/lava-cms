@@ -7,7 +7,6 @@ import dotenv from "dotenv";
  * https://github.com/motdotla/dotenv
  */
 dotenv.config({ path: ".env.test" });
-dotenv.config({ path: "../api/.env.test" });
 
 /**
  * See https://playwright.dev/docs/test-configuration.
@@ -43,8 +42,6 @@ const config: PlaywrightTestConfig = {
 		baseURL: "http://localhost:3001",
 		trace: "retain-on-failure",
 	},
-	globalSetup: "./e2e/globalSetup.ts",
-	globalTeardown: "./e2e/globalTeardown.ts",
 
 	/* Configure projects for major browsers */
 	projects: [

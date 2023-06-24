@@ -6,7 +6,7 @@ services:
     build: ./www
     volumes:
       - /artifacts/playwright-report/:/app/admin/playwright-report/
-      - /artifacts/api-report/:/app/api/html/
+      - /artifacts/api-report/:/app/admin/html/
     restart: always
 
   postgres:

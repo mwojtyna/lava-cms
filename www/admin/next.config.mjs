@@ -11,25 +11,14 @@ const config = {
 	reactStrictMode: true,
 	swcMinify: true,
 	// Fix for `import type` not working
-	transpilePackages: ["api"],
 	compress: true,
 
-	redirects: async () => {
-		return [
-			{
-				source: "/",
-				destination: "/dashboard",
-				permanent: true,
-			},
-		];
-	},
-	rewrites: async () => {
-		return [
-			{
-				source: "/trpc/:path*",
-				destination: "http://localhost:4000/trpc/:path*",
-			},
-		];
-	},
+	redirects: async () => [
+		{
+			source: "/",
+			destination: "/dashboard",
+			permanent: true,
+		},
+	],
 };
 export default config;

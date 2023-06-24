@@ -1,5 +1,5 @@
 import { expect, test } from "@playwright/test";
-import { prisma } from "api/prisma/client";
+import { prisma } from "@admin/prisma/client";
 import { userMock, userPasswordDecrypted } from "@admin/e2e/mocks/data";
 
 test.beforeAll(async () => {

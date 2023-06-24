@@ -12,7 +12,7 @@ RUN npm install -g pnpm
 COPY ./ /app
 RUN pnpm install --frozen-lockfile
 RUN scripts/deno_install.sh
-RUN cd api && pnpm prisma generate
+RUN cd admin && pnpm prisma generate
 RUN pnpm build
 
 FROM node:18.16.1-slim as runner
@@ -30,6 +30,6 @@ COPY --from=builder /app/frontend/dist /app/frontend/dist
 COPY --from=builder /app/frontend/bin/deno /app/frontend/bin/deno
 
 RUN pnpm install --frozen-lockfile --prod
-RUN cd api && pnpx prisma generate
+RUN cd admin && pnpx prisma generate
 
 CMD [ "pnpm", "start" ]

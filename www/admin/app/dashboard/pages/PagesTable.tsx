@@ -24,7 +24,7 @@ import {
 	TableRow,
 } from "@admin/src/components/ui/server";
 import { ChevronRightIcon } from "@heroicons/react/20/solid";
-import type { Page } from "api/prisma/types";
+import type { Page } from "@admin/prisma/types";
 import { cn } from "@admin/src/utils/styling";
 import { ActionIcon, Button, Input } from "@admin/src/components/ui/client";
 import {

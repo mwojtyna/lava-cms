@@ -1,6 +1,6 @@
 import type { BrowserContextOptions, Page, Browser } from "@playwright/test";
 import fs from "node:fs";
-import { prisma } from "api/prisma/client";
+import { prisma } from "@admin/prisma/client";
 import { userMock, userPasswordDecrypted, websiteSettingsMock } from "@admin/e2e/mocks/data";
 
 export const STORAGE_STATE_PATH = "./e2e/storageState.json";

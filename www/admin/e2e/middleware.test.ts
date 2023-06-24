@@ -1,6 +1,6 @@
 import { expect } from "@playwright/test";
 import { test } from "./fixtures";
-import { prisma } from "@admin/../api/prisma/client";
+import { prisma } from "@admin/prisma/client";
 import { userMock, websiteSettingsMock } from "./mocks/data";
 
 async function createUser() {
@@ -45,21 +45,21 @@ test("returns 401 when trying to access /trpc when not signed in", async ({ page
 	await createUser();
 	await createConfig();
 
-	const res = await page.goto("/admin/trpc");
-	expect(page.url()).toMatch(/\/admin\/trpc$/);
+	const res = await page.goto("/admin/api/trpc");
+	expect(page.url()).toMatch(/\/admin\/api\/trpc$/);
 	expect(res?.status()).toBe(401);
 });
 
 test("returns json when trying to access /trpc when signed in", async ({ authedPage }) => {
-	const res = await authedPage.goto("/admin/trpc/random.endpoint");
-	expect(authedPage.url()).toMatch(/\/admin\/trpc/);
+	const res = await authedPage.goto("/admin/api/trpc/random.endpoint");
+	expect(authedPage.url()).toMatch(/\/admin\/api\/trpc/);
 	expect(await res?.headerValue("content-type")).toMatch(/application\/json/);
 	expect(await res?.json()).toBeDefined();
 });
 
 test("returns json when trying to access /trpc when no user signed up", async ({ authedPage }) => {
-	const res = await authedPage.goto("/admin/trpc/random.endpoint");
-	expect(authedPage.url()).toMatch(/\/admin\/trpc/);
+	const res = await authedPage.goto("/admin/api/trpc/random.endpoint");
+	expect(authedPage.url()).toMatch(/\/admin\/api\/trpc/);
 	expect(await res?.headerValue("content-type")).toMatch(/application\/json/);
 	expect(await res?.json()).toBeDefined();
 });

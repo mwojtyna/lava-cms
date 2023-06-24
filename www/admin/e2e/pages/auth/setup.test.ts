@@ -1,5 +1,5 @@
 import { expect } from "@playwright/test";
-import { prisma } from "api/prisma/client";
+import { prisma } from "@admin/prisma/client";
 import { test } from "@admin/e2e/fixtures";
 import { userMock } from "@admin/e2e/mocks/data";
 

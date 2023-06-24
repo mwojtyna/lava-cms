@@ -1,4 +1,4 @@
-import type { User, Config } from "api/prisma/types";
+import type { User, Config } from "@admin/prisma/types";
 
 export const userMock: User = {
 	id: "clfykj2350000nzjhb7hrvan4",

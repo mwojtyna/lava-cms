@@ -10,7 +10,7 @@ import {
 } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import type { Page } from "api/prisma/types";
+import type { Page } from "@admin/prisma/types";
 import {
 	Button,
 	Dialog,
