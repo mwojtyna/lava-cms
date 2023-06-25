@@ -1,9 +1,9 @@
 import { expect, it, vi } from "vitest";
-import { prisma } from "@admin/src/prisma/__mocks__/client";
+import { prisma } from "@admin/prisma/__mocks__/client";
 import { caller } from "@admin/src/trpc/routes/_app";
-import type { Page } from "@admin/src/prisma/types";
+import type { Page } from "@admin/prisma/types";
 
-vi.mock("@admin/src/prisma/client");
+vi.mock("@admin/prisma/client");
 
 const PAGE: Page = {
 	id: "0",
@@ -14,9 +14,23 @@ const PAGE: Page = {
 	last_update: new Date(),
 };
 
-it("should return a page", async () => {
-	prisma.page.findUnique.mockResolvedValueOnce(PAGE);
+it("should return a page if first pass returns it", async () => {
+	prisma.page.findFirst.mockResolvedValueOnce(PAGE);
 
 	const page = await caller.pages.getPage({ url: PAGE.url });
 	expect(page).toEqual(PAGE);
+});
+
+it("should return a page if second pass returns it", async () => {
+	prisma.page.findFirst.mockResolvedValueOnce(null).mockResolvedValueOnce(PAGE);
+
+	const page = await caller.pages.getPage({ url: PAGE.url + "/" });
+	expect(page).toEqual(PAGE);
+});
+
+it("should return null if no page is found", async () => {
+	prisma.page.findFirst.mockResolvedValueOnce(null).mockResolvedValueOnce(null);
+
+	const page = await caller.pages.getPage({ url: PAGE.url });
+	expect(page).toEqual(null);
 });

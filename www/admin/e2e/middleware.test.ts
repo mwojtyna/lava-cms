@@ -18,6 +18,12 @@ async function createConfig() {
 	});
 }
 
+test.afterEach(async () => {
+	await prisma.user.deleteMany();
+	await prisma.config.deleteMany();
+	await prisma.page.deleteMany();
+});
+
 test("redirects to sign up page when no user is signed up", async ({ page }) => {
 	await createConfig();
 
