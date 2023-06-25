@@ -1,27 +1,18 @@
 // @ts-check
-/**
- * This file is included in `/next.config.mjs` which ensures the app isn't built with invalid env vars.
- * It has to be a `.mjs`-file to be imported there.
- */
-import { serverSchema } from "./schema.mjs";
-import { env as clientEnv, formatErrors } from "./client.mjs";
+import { createEnv } from "@t3-oss/env-nextjs";
+import { z } from "zod";
 
-const _serverEnv = serverSchema.safeParse(process.env);
-
-if (!_serverEnv.success) {
-	console.error(
-		"❌ Invalid environment variables:\n",
-		...formatErrors(_serverEnv.error.format())
-	);
-	throw new Error("Invalid environment variables");
-}
-
-for (let key of Object.keys(_serverEnv.data)) {
-	if (key.startsWith("NEXT_PUBLIC_")) {
-		console.warn("❌ You are exposing a server-side env-variable:", key);
-
-		throw new Error("You are exposing a server-side env-variable");
-	}
-}
-
-export const env = { ..._serverEnv.data, ...clientEnv };
+export const env = createEnv({
+	server: {
+		NODE_ENV: z.enum(["development", "production", "test"]),
+		NEXTAUTH_SECRET: z.string().nonempty(),
+		NEXTAUTH_URL: z.preprocess(
+			// This makes Vercel deployments not fail if you don't set NEXTAUTH_URL
+			// Since NextAuth.js automatically uses the VERCEL_URL if present.
+			(str) => process.env.VERCEL_URL ?? str,
+			// VERCEL_URL doesn't include `https` so it cant be validated as a URL
+			process.env.VERCEL ? z.string() : z.string().url()
+		),
+	},
+	experimental__runtimeEnv: process.env,
+});

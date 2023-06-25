@@ -1,6 +1,7 @@
 import { createTRPCProxyClient, httpBatchLink } from "@trpc/client";
 import type { AppRouter } from "@admin/src/trpc/routes/_app";
 import SuperJSON from "superjson";
+import { env } from "@admin/src/env/server.mjs";
 
 export const trpc = createTRPCProxyClient<AppRouter>({
 	links: [
@@ -9,7 +10,7 @@ export const trpc = createTRPCProxyClient<AppRouter>({
 			headers: () => {
 				if (typeof window === "undefined") {
 					return {
-						"x-ssr-token": process.env.NEXTAUTH_SECRET,
+						"x-ssr-token": env.NEXTAUTH_SECRET,
 					};
 				} else {
 					return {};
