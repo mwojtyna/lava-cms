@@ -91,11 +91,10 @@ export function NavMenu() {
 			<MenuMobile className="md:hidden" />
 
 			<SheetContent
-				position={"left"}
-				size={"content"}
-				className="w-full p-0 sm:w-96 md:hidden"
-				breakpoint="md:hidden"
+				side={"left"}
+				className="w-full p-0 sm:w-96"
 				returnFocus={false}
+				breakpoint="md:hidden"
 			>
 				<Menu className="h-full" />
 			</SheetContent>
