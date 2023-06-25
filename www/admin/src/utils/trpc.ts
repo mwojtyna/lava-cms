@@ -6,8 +6,14 @@ export const trpc = createTRPCProxyClient<AppRouter>({
 	links: [
 		httpBatchLink({
 			url: "http://localhost:3001/admin/api/trpc",
-			headers: {
-				"x-trpc-origin": "server",
+			headers: () => {
+				if (typeof window === "undefined") {
+					return {
+						"x-ssr-token": process.env.NEXTAUTH_SECRET,
+					};
+				} else {
+					return {};
+				}
 			},
 		}),
 	],

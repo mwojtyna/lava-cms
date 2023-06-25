@@ -6,9 +6,6 @@ export const trpc = createTRPCProxyClient<AppRouter>({
 	links: [
 		httpBatchLink({
 			url: "http://localhost:3001/admin/api/trpc",
-			headers: {
-				"x-trpc-origin": "server",
-			},
 		}),
 	],
 	transformer: SuperJSON,
