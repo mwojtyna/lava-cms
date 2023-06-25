@@ -11,7 +11,7 @@ import { TypographyMuted } from "@admin/src/components/ui/server";
 import { trpc } from "@admin/src/utils/trpc";
 import { getServerSession } from "next-auth";
 import { LogoutItem, ThemeSwitchItem } from "./UserMenuItems";
-import { authOptions } from "@admin/src/pages/api/auth/[...nextauth]";
+import { authOptions } from "@admin/app/api/auth/[...nextauth]/route";
 import { cn } from "@admin/src/utils/styling";
 
 export async function UserMenu({ small }: { small?: boolean }) {

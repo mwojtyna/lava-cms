@@ -41,7 +41,8 @@ export function SignInForm() {
 			...data,
 		});
 
-		if (res?.ok) {
+		// For some reason, res.ok is still true even if there is an error
+		if (!res?.error) {
 			router.push("/dashboard");
 		} else if (res?.error === "CredentialsSignin") {
 			// "CredentialsSignin" is the error message when the user inputs wrong credentials

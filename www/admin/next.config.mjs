@@ -10,8 +10,6 @@ const config = {
 	basePath: "/admin",
 	reactStrictMode: true,
 	swcMinify: true,
-	// Fix for `import type` not working
-	compress: true,
 
 	redirects: async () => [
 		{
