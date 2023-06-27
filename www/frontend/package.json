@@ -1,7 +1,6 @@
 {
 	"name": "frontend",
-	"version": "0.1.0",
-	"private": true,
+	"version": "0.0.1",
 	"type": "module",
 	"scripts": {
 		"start": "bin/deno run --allow-net --allow-read --allow-env ./dist/server/entry.mjs",

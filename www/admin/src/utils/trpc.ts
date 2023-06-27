@@ -1,13 +1,14 @@
 import { cookies } from "next/headers";
 import { createTRPCProxyClient, httpBatchLink } from "@trpc/client";
-import type { AppRouter } from "@admin/src/trpc/routes/_app";
 import SuperJSON from "superjson";
+import type { AppRouter } from "@admin/src/trpc/routes/_app";
+import { url } from "./server";
 import "server-only";
 
 export const trpc = createTRPCProxyClient<AppRouter>({
 	links: [
 		httpBatchLink({
-			url: "http://localhost:3001/admin/api/trpc",
+			url: `${url()}/admin/api/trpc`,
 			fetch: (url, options) =>
 				fetch(url, {
 					...options,

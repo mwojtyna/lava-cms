@@ -23,7 +23,7 @@ const logoFont = Poppins({
 });
 
 async function Menu({ className }: { className?: string }) {
-	const version = (await import("@admin/../package.json")).version;
+	const version = (await import("@admin/package.json")).version;
 
 	return (
 		<nav

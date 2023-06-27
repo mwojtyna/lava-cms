@@ -7,8 +7,7 @@ import SuperJSON from "superjson";
 import { trpcReact } from "@admin/src/utils/trpcReact";
 import { env } from "@admin/src/env/client.mjs";
 
-export function TrpcProvider(props: { children: React.ReactNode }) {
-	const [queryClient] = useState(new QueryClient());
+export function TrpcProvider({ children }: { children: React.ReactNode }) {
 	const [trpcClient] = useState(
 		trpcReact.createClient({
 			links: [
@@ -23,10 +22,11 @@ export function TrpcProvider(props: { children: React.ReactNode }) {
 			transformer: SuperJSON,
 		})
 	);
+	const [queryClient] = useState(new QueryClient());
 
 	return (
 		<trpcReact.Provider client={trpcClient} queryClient={queryClient}>
-			<QueryClientProvider client={queryClient}>{props.children}</QueryClientProvider>
+			<QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
 		</trpcReact.Provider>
 	);
 }

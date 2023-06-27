@@ -1,7 +1,6 @@
 {
-	"name": "admin",
+	"name": "lava-cms",
 	"version": "0.1.0",
-	"private": true,
 	"type": "module",
 	"scripts": {
 		"start": "next start -p 3001",

@@ -7,7 +7,7 @@ export const GET = async () => {
 	if (await getCurrentUser()) {
 		return new Response(
 			renderTrpcPanel(appRouter, {
-				url: "http://localhost:3001/admin/api/trpc",
+				url: "/admin/api/trpc",
 				transformer: "superjson",
 			}),
 			{
