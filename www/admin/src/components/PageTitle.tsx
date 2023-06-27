@@ -2,11 +2,11 @@
 
 import { usePathname } from "@admin/src/hooks";
 import { TypographyH1, TypographyMuted } from "./ui/server";
-import { getRoute } from "@admin/src/data/routes/navMenu";
+import type { NavMenuRoute } from "@admin/src/data/routes/navMenu";
+import { getRoute } from "@admin/src/data/routes/common";
 
-export function PageTitle() {
-	const pathname = usePathname();
-	const route = getRoute(pathname)!;
+export function PageTitle({ routes }: { routes: NavMenuRoute[] }) {
+	const route = getRoute(usePathname(), routes)!;
 
 	return (
 		<header className="flex flex-col gap-1">

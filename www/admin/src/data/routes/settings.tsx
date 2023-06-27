@@ -1,23 +1,22 @@
 import Settings from "@admin/app/dashboard/settings/page";
 import { MagnifyingGlassIcon } from "@heroicons/react/20/solid";
+import type { Route } from "./common";
+import "server-only";
 
-interface SettingsRoute {
-	label: string;
-	slug: string;
-	icon?: React.ReactNode;
-	content: (() => Promise<React.ReactNode>) | React.ReactNode | Promise<React.ReactNode>;
+export interface SettingsRoute extends Route {
+	content: React.ReactNode;
 }
 
-export const routes: SettingsRoute[] = [
+export const settingsRoutes: SettingsRoute[] = [
 	{
 		label: "SEO",
-		slug: "",
+		path: "",
 		icon: <MagnifyingGlassIcon className="w-4" />,
 		content: <Settings />,
 	},
 	{
 		label: "Other",
-		slug: "other",
+		path: "other",
 		content: <div>other</div>,
 	},
 ];

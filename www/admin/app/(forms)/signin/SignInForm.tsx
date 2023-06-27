@@ -6,7 +6,6 @@ import {
 	ExclamationCircleIcon,
 	ArrowRightOnRectangleIcon,
 } from "@heroicons/react/24/outline";
-import { signIn } from "next-auth/react";
 import { type SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
@@ -22,6 +21,9 @@ import {
 	FormError,
 } from "@admin/src/components/ui/client";
 import { SinglePageForm } from "../SinglePageForm";
+import { trpcReact } from "@admin/src/utils/trpcReact";
+import { TRPCClientError } from "@trpc/client";
+import type { TRPC_ERROR_CODE_KEY } from "@trpc/server/rpc";
 
 const schema = z.object({
 	email: z.string().nonempty(" ").email("The e-mail you provided is invalid."),
@@ -30,29 +32,29 @@ const schema = z.object({
 type Inputs = z.infer<typeof schema>;
 
 export function SignInForm() {
+	const mutation = trpcReact.auth.signIn.useMutation();
 	const router = useRouter();
 
 	const form = useForm<Inputs>({
 		resolver: zodResolver(schema),
 	});
 	const onSubmit: SubmitHandler<Inputs> = async (data) => {
-		const res = await signIn("credentials", {
-			redirect: false,
-			...data,
-		});
-
-		// For some reason, res.ok is still true even if there is an error
-		if (!res?.error) {
-			router.push("/dashboard");
-		} else if (res?.error === "CredentialsSignin") {
-			// "CredentialsSignin" is the error message when the user inputs wrong credentials
-			form.setError("root", {
-				message: "Your credentials are invalid.",
-			});
-		} else {
-			form.setError("root", {
-				message: "Something went wrong. Try again later.",
-			});
+		try {
+			await mutation.mutateAsync(data);
+			router.replace("/dashboard");
+		} catch (error) {
+			if (
+				error instanceof TRPCClientError &&
+				error.data?.code === ("UNAUTHORIZED" satisfies TRPC_ERROR_CODE_KEY)
+			) {
+				form.setError("root", {
+					message: "Your credentials are invalid.",
+				});
+			} else {
+				form.setError("root", {
+					message: "Something went wrong. Try again later.",
+				});
+			}
 		}
 	};
 

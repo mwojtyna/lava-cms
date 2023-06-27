@@ -1,7 +1,14 @@
 import type { BrowserContextOptions, Page, Browser } from "@playwright/test";
 import fs from "node:fs";
 import { prisma } from "@admin/prisma/client";
-import { userMock, userPasswordDecrypted, websiteSettingsMock } from "@admin/e2e/mocks/data";
+import {
+	createMockUser,
+	deleteMockUser,
+	userMock,
+	userPasswordDecrypted,
+	websiteSettingsMock,
+} from "@admin/e2e/mocks/data";
+import { SESSION_COOKIE_NAME } from "lucia-auth";
 
 export const STORAGE_STATE_PATH = "./e2e/storageState.json";
 
@@ -10,14 +17,8 @@ export const authedPage = async (
 	use: (r: Page) => Promise<void>
 ) => {
 	// We have to check if the user exists because a test might create one
-	const existingUser = await prisma.user.findFirst();
-	const { id } =
-		existingUser ??
-		(await prisma.user.create({
-			data: {
-				...userMock,
-			},
-		}));
+	const existingUser = await prisma.authUser.findFirst();
+	if (!existingUser) await createMockUser();
 
 	if (!(await prisma.config.findFirst())) {
 		await prisma.config.create({
@@ -53,6 +54,15 @@ export const authedPage = async (
 			(cookie) => cookie.expires !== -1 && cookie.expires * 1000 < Date.now()
 		);
 
+		await prisma.authSession.create({
+			data: {
+				id: cookies.find((cookie) => cookie.name === SESSION_COOKIE_NAME)!.value,
+				user_id: userMock.id,
+				active_expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7).getTime(),
+				idle_expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7).getTime(),
+			},
+		});
+
 		if (expiredCookies.length > 0) {
 			await saveSignedInState(browser);
 			console.log("Cookies expired; saved signed in state.");
@@ -69,11 +79,7 @@ export const authedPage = async (
 	// Run test
 	await use(authedPage);
 
-	// We have to check if a user exists because a test
-	// might delete an already created user
-	if (await prisma.user.findFirst()) {
-		await prisma.user.delete({ where: { id: id } });
-	}
+	await deleteMockUser();
 	if (await prisma.config.findFirst()) {
 		await prisma.config.deleteMany();
 	}
@@ -91,7 +97,7 @@ async function saveSignedInState(browser: Browser) {
 	await page.waitForURL(/\/admin\/dashboard/);
 
 	const cookies = await page.context().cookies();
-	const whitelist = ["next-auth.csrf-token", "next-auth.callback-url", "next-auth.session-token"];
+	const whitelist = [SESSION_COOKIE_NAME];
 
 	const cookiesToDelete = cookies
 		.filter((cookie) => !whitelist.includes(cookie.name))

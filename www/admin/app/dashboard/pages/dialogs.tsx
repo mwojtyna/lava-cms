@@ -43,7 +43,6 @@ import { TypographyList, TypographyMuted } from "@admin/src/components/ui/server
 import slugify from "slugify";
 import { TRPCClientError } from "@trpc/client";
 import { usePagePreferences } from "@admin/src/hooks";
-import { trpc } from "@admin/src/utils/trpc";
 
 interface AddDialogProps {
 	group: Page;
@@ -209,9 +208,7 @@ function NewParentSelect<T extends MoveDialogInputs>({
 }
 
 export function MoveDialog(props: EditDialogProps) {
-	const allGroups = trpcReact.pages.getAllGroups.useQuery(undefined, {
-		refetchOnWindowFocus: false,
-	}).data;
+	const allGroups = trpcReact.pages.getAllGroups.useQuery().data;
 	const groups = React.useMemo(
 		() =>
 			allGroups
@@ -293,9 +290,7 @@ export function MoveDialog(props: EditDialogProps) {
 	);
 }
 export function BulkMoveDialog(props: BulkEditDialogProps) {
-	const allGroups = trpcReact.pages.getAllGroups.useQuery(undefined, {
-		refetchOnWindowFocus: false,
-	}).data;
+	const allGroups = trpcReact.pages.getAllGroups.useQuery().data;
 	const groups = React.useMemo(
 		() =>
 			allGroups
@@ -314,25 +309,29 @@ export function BulkMoveDialog(props: BulkEditDialogProps) {
 		[allGroups, props.pages]
 	);
 
-	const mutation = trpcReact.pages.movePage.useMutation();
-	const [isConflictChecking, setIsConflictChecking] = React.useState(false);
-
 	const form = useForm<MoveDialogInputs>();
+
+	const mutation = trpcReact.pages.movePage.useMutation();
+	const conflictQuery = trpcReact.pages.checkConflict.useQuery(
+		{
+			newParentId: form.watch("newParentId"),
+			originalUrls: props.pages.map((page) => page.url),
+		},
+		{
+			enabled: false,
+		}
+	);
+
 	const onSubmit: SubmitHandler<MoveDialogInputs> = async (data) => {
 		try {
-			setIsConflictChecking(true);
-			const { conflict, urls } = await trpc.pages.checkConflict.query({
-				newParentId: data.newParentId,
-				originalUrls: props.pages.map((page) => page.url),
-			});
-			setIsConflictChecking(false);
+			const { data: query } = await conflictQuery.refetch();
 
-			if (conflict) {
+			if (query?.conflict) {
 				form.setError("newParentId", {
 					message: (
 						<>
 							The following items already exist in the destination group:
-							<TypographyList items={urls!} />
+							<TypographyList items={query.urls!} />
 						</>
 					) as unknown as string,
 				});
@@ -374,7 +373,7 @@ export function BulkMoveDialog(props: BulkEditDialogProps) {
 							<Button
 								type="submit"
 								disabled={!form.watch("newParentId")}
-								loading={mutation.isLoading || isConflictChecking}
+								loading={mutation.isLoading}
 								icon={<FolderArrowDownIcon className="w-5" />}
 							>
 								Move

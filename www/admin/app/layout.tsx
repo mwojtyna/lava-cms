@@ -4,9 +4,8 @@ import { cookies, headers } from "next/headers";
 import { TrpcProvider } from "@admin/src/components/providers";
 import { Body } from "@admin/src/components";
 import { ZustandProvider } from "@admin/src/components/providers";
-import { colorThemeSchema } from "@admin/src/data/stores/dashboard";
 import { Toaster, TooltipProvider } from "@admin/src/components/ui/client";
-import type { CookieName } from "@admin/src/utils/cookies";
+import { colorThemeSchema, type CookieName } from "@admin/src/utils/cookies";
 import "@admin/src/styles/globals.css";
 
 export const metadata: Metadata = {

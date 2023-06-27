@@ -1,5 +1,5 @@
 import { test, expect, type BrowserContext } from "@playwright/test";
-import { type ColorTheme, colorThemeSchema } from "@admin/src/data/stores/dashboard";
+import { type ColorTheme, colorThemeSchema } from "@admin/src/utils/cookies";
 import type { CookieName } from "@admin/src/utils/cookies";
 import { getColorScheme } from "../utils";
 

@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import { setCookie } from "cookies-next";
-import { z } from "zod";
-import type { CookieName } from "@admin/src/utils/cookies";
+import type { ColorTheme, CookieName } from "@admin/src/utils/cookies";
+import "client-only";
 
 interface MenuState {
 	isOpen: boolean;
@@ -11,9 +11,6 @@ export const useMenuStore = create<MenuState>((set) => ({
 	isOpen: false,
 	set: (value) => set(() => ({ isOpen: value })),
 }));
-
-export const colorThemeSchema = z.enum(["dark", "light"]);
-export type ColorTheme = z.infer<typeof colorThemeSchema>;
 
 interface ColorThemeState {
 	colorTheme?: ColorTheme;

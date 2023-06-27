@@ -1,7 +1,7 @@
 import { expect } from "@playwright/test";
 import { prisma } from "@admin/prisma/client";
 import { test } from "@admin/e2e/fixtures";
-import { userMock } from "@admin/e2e/mocks/data";
+import { createMockUser, deleteMockUser } from "@admin/e2e/mocks/data";
 
 const NAME = "John";
 const LAST_NAME = "Doe";
@@ -10,7 +10,7 @@ const PASSWORD = "Zaq1@wsx";
 
 test.describe("sign up step", () => {
 	test.afterAll(async () => {
-		await prisma.user.deleteMany();
+		await deleteMockUser();
 	});
 
 	test("light theme visual comparison", async ({ page }) => {
@@ -98,17 +98,13 @@ test.describe("sign up step", () => {
 
 test.describe("setup website step", () => {
 	test.beforeAll(async () => {
-		await prisma.user.create({
-			data: {
-				...userMock,
-			},
-		});
+		await createMockUser();
 	});
 	test.afterEach(async () => {
 		await prisma.page.deleteMany();
 	});
 	test.afterAll(async () => {
-		await prisma.user.deleteMany();
+		await deleteMockUser();
 		await prisma.config.deleteMany();
 		await prisma.page.deleteMany();
 	});
@@ -148,7 +144,7 @@ test.describe("setup website step", () => {
 		await prisma.config.deleteMany();
 		await prisma.page.deleteMany();
 
-		await authedPage.goto("/admin/setup", { waitUntil: "networkidle" });
+		await authedPage.goto("/admin/setup");
 		await authedPage.locator("input[type='text']").first().type("My website");
 		await authedPage.locator("input[type='text']").nth(1).type("en");
 		await authedPage.locator("button[type='submit']").click();

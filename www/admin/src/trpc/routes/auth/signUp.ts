@@ -1,7 +1,6 @@
 import { publicProcedure } from "@admin/src/trpc";
 import { z } from "zod";
-import bcrypt from "bcrypt";
-import { prisma } from "@admin/prisma/client";
+import { auth } from "@admin/src/auth";
 
 export const signUp = publicProcedure
 	.input(
@@ -12,15 +11,19 @@ export const signUp = publicProcedure
 			password: z.string().min(8).regex(/[a-z]/).regex(/[A-Z]/).regex(/[0-9]/),
 		})
 	)
-	.mutation(async ({ input }) => {
-		const hashed = await bcrypt.hash(input.password, 10);
-
-		await prisma.user.create({
-			data: {
+	.mutation(async ({ input, ctx }) => {
+		const user = await auth.createUser({
+			primaryKey: {
+				providerId: "email",
+				providerUserId: input.email,
+				password: input.password,
+			},
+			attributes: {
+				email: input.email,
 				name: input.name,
 				last_name: input.lastName,
-				email: input.email,
-				password: hashed,
-			},
+			} satisfies Lucia.UserAttributes,
 		});
+		const session = await auth.createSession(user.id);
+		ctx.authReq.setSession(session);
 	});

@@ -1,13 +1,11 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { signIn } from "next-auth/react";
 import { EnvelopeIcon, LockClosedIcon, UserIcon } from "@heroicons/react/24/outline";
 import { ArrowRightIcon } from "@heroicons/react/20/solid";
 import { type SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { trpc } from "@admin/src/utils/trpc";
 import {
 	Button,
 	FormControl,
@@ -18,6 +16,7 @@ import {
 	Input,
 } from "@admin/src/components/ui/client";
 import { SinglePageForm } from "../SinglePageForm";
+import { trpcReact } from "@admin/src/utils/trpcReact";
 
 const inputSchema = z
 	.object({
@@ -50,16 +49,18 @@ type Inputs = z.infer<typeof inputSchema>;
 export function SignUpForm() {
 	const router = useRouter();
 
+	const signUpMutation = trpcReact.auth.signUp.useMutation();
+	const signInMutation = trpcReact.auth.signIn.useMutation();
+
 	const form = useForm<Inputs>({ mode: "onSubmit", resolver: zodResolver(inputSchema) });
 	const onSubmit: SubmitHandler<Inputs> = async (data) => {
-		await trpc.auth.signUp.mutate({
+		await signUpMutation.mutateAsync({
 			name: data.name,
 			lastName: data.lastName,
 			email: data.email,
 			password: data.password,
 		});
-		await signIn("credentials", {
-			redirect: false,
+		await signInMutation.mutateAsync({
 			email: data.email,
 			password: data.password,
 		});

@@ -10,14 +10,40 @@ datasource db {
 }
 
 // Admin schema
-model User {
-    id        String @id @default(cuid())
-    name      String
-    last_name String
-    email     String @unique
-    password  String
+model AuthUser {
+    id           String        @id @unique
+    auth_session AuthSession[]
+    auth_key     AuthKey[]
+    name         String
+    last_name    String
+    email        String        @unique
 
     @@map("user")
+    @@schema("admin")
+}
+
+model AuthSession {
+    id             String   @id @unique
+    user_id        String
+    active_expires BigInt
+    idle_expires   BigInt
+    auth_user      AuthUser @relation(references: [id], fields: [user_id], onDelete: Cascade)
+
+    @@index([user_id])
+    @@map("session")
+    @@schema("admin")
+}
+
+model AuthKey {
+    id              String   @id @unique
+    hashed_password String?
+    user_id         String
+    primary_key     Boolean
+    expires         BigInt?
+    auth_user       AuthUser @relation(references: [id], fields: [user_id], onDelete: Cascade)
+
+    @@index([user_id])
+    @@map("key")
     @@schema("admin")
 }
 

@@ -4,12 +4,18 @@ import * as React from "react";
 import Link from "next/link";
 import { Button, Tooltip, TooltipContent, TooltipTrigger } from "@admin/src/components/ui/client";
 import { cn } from "@admin/src/utils/styling";
-import { type NavMenuRoute, getRoute } from "@admin/src/data/routes/navMenu";
+import type { NavMenuRoute } from "@admin/src/data/routes/navMenu";
 import { usePathname } from "@admin/src/hooks";
 import { useMenuStore } from "@admin/src/data/stores/dashboard";
+import { getRoute } from "@admin/src/data/routes/common";
 
-export function NavMenuItem({ route, small }: { route: NavMenuRoute; small?: boolean }) {
-	const matchedRoute = getRoute(usePathname());
+interface Props {
+	routes: NavMenuRoute[];
+	route: NavMenuRoute;
+	small?: boolean;
+}
+export function NavMenuItem({ routes, route, small }: Props) {
+	const matchedRoute = getRoute(usePathname(), routes);
 	const menu = useMenuStore();
 
 	return (

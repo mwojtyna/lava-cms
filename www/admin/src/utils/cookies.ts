@@ -2,13 +2,15 @@ import { z } from "zod";
 import { getCookie } from "cookies-next";
 
 export type CookieName = "color-theme" | "pages-table";
-
 export function getParsedCookie<T>(name: CookieName, fallback: T) {
 	const cookie = getCookie(name)?.toString();
 	if (!cookie) return fallback;
 
 	return JSON.parse(cookie) as T;
 }
+
+export const colorThemeSchema = z.enum(["dark", "light"]);
+export type ColorTheme = z.infer<typeof colorThemeSchema>;
 
 export const tableCookieSchema = z.object({
 	id: z.string(),

@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
 import { ArrowRightIcon } from "@heroicons/react/20/solid";
-import { trpc } from "@admin/src/utils/trpc";
 import { Stepper } from "@admin/src/components/ui/server";
 import { SignUpForm } from "./SignUpForm";
 import { SetupForm } from "./SetupForm";
+import { trpc } from "@admin/src/utils/trpc";
+import { redirect } from "next/navigation";
 
 export const metadata: Metadata = {
 	title: "Lava CMS - Setup",
@@ -20,6 +21,9 @@ const reasonFormMap: Record<
 
 export default async function SetupLayout() {
 	const { reason } = await trpc.auth.setupRequired.query();
+	if (!reason) {
+		redirect("/admin/signin");
+	}
 
 	return (
 		<div>

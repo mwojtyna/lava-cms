@@ -5,7 +5,8 @@ import { type SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { ArrowRightIcon } from "@heroicons/react/20/solid";
-import { trpc } from "@admin/src/utils/trpc";
+import { TRPCClientError } from "@trpc/client";
+import type { TRPC_ERROR_CODE_KEY } from "@trpc/server/rpc";
 import { InfoTooltip } from "@admin/src/components";
 import {
 	Button,
@@ -18,8 +19,7 @@ import {
 } from "@admin/src/components/ui/client";
 import { TypographyCode } from "@admin/src/components/ui/server";
 import { SinglePageForm } from "../SinglePageForm";
-import { TRPCClientError } from "@trpc/client";
-import type { TRPC_ERROR_CODE_KEY } from "@trpc/server/rpc";
+import { trpcReact } from "@admin/src/utils/trpcReact";
 
 const schema = z.object({
 	title: z.string().nonempty(),
@@ -32,10 +32,13 @@ type Inputs = z.infer<typeof schema>;
 export function SetupForm() {
 	const router = useRouter();
 
+	const setConfigMutation = trpcReact.config.setConfig.useMutation();
+	const addPageMutation = trpcReact.pages.addPage.useMutation();
+
 	const form = useForm<Inputs>({ resolver: zodResolver(schema) });
 	const onSubmit: SubmitHandler<Inputs> = async (data) => {
 		try {
-			await trpc.config.setConfig.mutate({
+			await setConfigMutation.mutateAsync({
 				...data,
 				description: data.description ?? "",
 			});
@@ -47,9 +50,14 @@ export function SetupForm() {
 				form.setError("language", {});
 			}
 		}
-		await trpc.pages.addPage.mutate({ name: "Root", url: "", is_group: true, parent_id: null });
+		await addPageMutation.mutateAsync({
+			name: "Root",
+			url: "",
+			is_group: true,
+			parent_id: null,
+		});
 
-		router.push("/dashboard");
+		router.replace("/dashboard");
 	};
 
 	return (

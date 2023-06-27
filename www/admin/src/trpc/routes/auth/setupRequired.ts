@@ -3,7 +3,7 @@ import { prisma } from "@admin/prisma/client";
 
 export const setupRequired = publicProcedure.query(
 	async (): Promise<{ reason: "no-user" | "no-config" | null }> => {
-		const user = await prisma.user.findFirst();
+		const user = await prisma.authUser.findFirst();
 		const config = await prisma.config.findFirst();
 
 		if (!user) {

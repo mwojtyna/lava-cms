@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef } from "react";
-import type { ColorTheme } from "@admin/src/data/stores/dashboard";
+import type { ColorTheme } from "@admin/src/utils/cookies";
 import { useColorThemeStore } from "@admin/src/data/stores/dashboard";
 
 interface Props {

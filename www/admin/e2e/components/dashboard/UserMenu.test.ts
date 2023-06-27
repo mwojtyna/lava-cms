@@ -60,7 +60,7 @@ test("signs out when button pressed", async ({ authedPage: page }) => {
 	await page.goto("/admin/dashboard");
 
 	await page.getByTestId(MENU_ID).locator("visible=true").click();
-	await page.getByTestId(MENU_DROPDOWN_ID).locator("> [role='menuitem']").last().click();
+	await page.getByTestId(MENU_DROPDOWN_ID).locator("[role='menuitem']").last().click();
 
 	await expect(page).toHaveURL("/admin/signin");
 	await expect(page.getByTestId("sign-in")).toBeVisible();
