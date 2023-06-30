@@ -14,8 +14,3 @@ const handler = async (req: Request) => {
 	return res;
 };
 export { handler as GET, handler as POST };
-
-export const OPTIONS = () =>
-	new Response(null, {
-		status: 204,
-	});

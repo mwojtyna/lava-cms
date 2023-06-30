@@ -5,8 +5,7 @@ import type { ColorTheme } from "@admin/src/utils/cookies";
 import { useColorThemeStore } from "@admin/src/data/stores/dashboard";
 
 interface Props {
-	url: string;
-	colorTheme?: ColorTheme;
+	colorTheme: ColorTheme | undefined;
 	children: React.ReactNode;
 }
 export function ZustandProvider(props: Props) {

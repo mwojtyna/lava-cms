@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Inter, Poppins } from "next/font/google";
-import { cookies, headers } from "next/headers";
+import { cookies } from "next/headers";
 import { TrpcProvider } from "@admin/src/components/providers";
 import { Body } from "@admin/src/components";
 import { ZustandProvider } from "@admin/src/components/providers";
@@ -32,11 +32,9 @@ export default async function RootLayout({ children }: { children: React.ReactNo
 		.optional()
 		.parseAsync(cookies().get("color-theme" satisfies CookieName)?.value);
 
-	const url = headers().get("x-url")!.split("/admin")[1]!.split("?")[0]!;
-
 	return (
 		<html lang="en-US">
-			<ZustandProvider colorTheme={colorTheme} url={url}>
+			<ZustandProvider colorTheme={colorTheme}>
 				<Body fonts={[regularFont, headerFont]}>
 					<TooltipProvider delayDuration={400}>
 						<TrpcProvider>{children}</TrpcProvider>
