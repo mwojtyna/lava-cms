@@ -2,7 +2,7 @@ import { z } from "zod";
 import { TRPCError } from "@trpc/server";
 import { prisma } from "@admin/prisma/client";
 import { publicProcedure } from "@admin/src/trpc";
-import { caller } from "../_app";
+import { privateCaller } from "../_private";
 
 export const movePage = publicProcedure
 	.input(
@@ -25,7 +25,7 @@ export const movePage = publicProcedure
 			throw new TRPCError({ code: "NOT_FOUND" });
 		}
 
-		await caller.pages.editPage({
+		await privateCaller.pages.editPage({
 			id: input.id,
 			newName: page.name,
 			newUrl: parentGroup.url + "/" + page.url.split("/").pop(),

@@ -3,7 +3,7 @@ import { authRouter } from "./auth/_auth";
 import { configRouter } from "./config/_config";
 import { pagesRouter } from "./pages/_pages";
 
-export const appRouter = router({
+export const privateRouter = router({
 	auth: authRouter,
 	config: configRouter,
 	pages: pagesRouter,
@@ -11,6 +11,6 @@ export const appRouter = router({
 
 // @ts-expect-error lucia-auth context requires Request API, which is not available when using caller.
 // Don't use caller to run auth related queries.
-export const caller = appRouter.createCaller({});
+export const privateCaller = privateRouter.createCaller({});
 
-export type AppRouter = typeof appRouter;
+export type PrivateRouter = typeof privateRouter;

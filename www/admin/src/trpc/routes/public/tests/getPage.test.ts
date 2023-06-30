@@ -1,6 +1,6 @@
 import { expect, it, vi } from "vitest";
 import { prisma } from "@admin/prisma/__mocks__/client";
-import { caller } from "@admin/src/trpc/routes/_app";
+import { publicCaller } from "@admin/src/trpc/routes/public/_public";
 import type { Page } from "@admin/prisma/types";
 
 vi.mock("@admin/prisma/client");
@@ -17,20 +17,20 @@ const PAGE: Page = {
 it("should return a page if first pass returns it", async () => {
 	prisma.page.findFirst.mockResolvedValueOnce(PAGE);
 
-	const page = await caller.pages.getPage({ url: PAGE.url });
+	const page = await publicCaller.getPage({ url: PAGE.url });
 	expect(page).toEqual(PAGE);
 });
 
 it("should return a page if second pass returns it", async () => {
 	prisma.page.findFirst.mockResolvedValueOnce(null).mockResolvedValueOnce(PAGE);
 
-	const page = await caller.pages.getPage({ url: PAGE.url + "/" });
+	const page = await publicCaller.getPage({ url: PAGE.url + "/" });
 	expect(page).toEqual(PAGE);
 });
 
 it("should return null if no page is found", async () => {
 	prisma.page.findFirst.mockResolvedValueOnce(null).mockResolvedValueOnce(null);
 
-	const page = await caller.pages.getPage({ url: PAGE.url });
+	const page = await publicCaller.getPage({ url: PAGE.url });
 	expect(page).toEqual(null);
 });

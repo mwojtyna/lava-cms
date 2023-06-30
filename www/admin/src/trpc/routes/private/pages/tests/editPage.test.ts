@@ -1,7 +1,7 @@
 import { expect, it, vi } from "vitest";
 import { Prisma } from "@prisma/client";
 import { prisma } from "@admin/prisma/__mocks__/client";
-import { caller } from "@admin/src/trpc/routes/_app";
+import { privateCaller } from "@admin/src/trpc/routes/private/_private";
 import type { TRPC_ERROR_CODE_KEY } from "@trpc/server/rpc";
 
 vi.mock("@admin/prisma/client");
@@ -21,7 +21,7 @@ it("updates the page's url and its children's urls", async () => {
 	});
 
 	expect(
-		await caller.pages.editPage({
+		await privateCaller.pages.editPage({
 			id: ID,
 			newName: NEW_NAME,
 			newUrl: "/" + NEW_SLUG,
@@ -50,7 +50,7 @@ it("throws a trpc 404 'NOT_FOUND' error if the page doesn't exist", async () => 
 	prisma.page.findFirst.mockResolvedValueOnce(null);
 
 	await expect(
-		caller.pages.editPage({
+		privateCaller.pages.editPage({
 			id: ID,
 			newName: NEW_NAME,
 			newUrl: "/" + NEW_SLUG,
@@ -82,7 +82,7 @@ it("throws a trpc 409 'CONFLICT' error if the new url is already taken", async (
 	);
 
 	await expect(
-		caller.pages.editPage({
+		privateCaller.pages.editPage({
 			id: ID,
 			newName: NEW_NAME,
 			newUrl: "/" + NEW_SLUG,
@@ -103,7 +103,7 @@ it("throws a trpc 500 'INTERNAL_SERVER_ERROR' error if the database throws an un
 	prisma.$transaction.mockRejectedValueOnce(new Error("Unknown error"));
 
 	await expect(
-		caller.pages.editPage({
+		privateCaller.pages.editPage({
 			id: ID,
 			newName: NEW_NAME,
 			newUrl: "/" + NEW_SLUG,

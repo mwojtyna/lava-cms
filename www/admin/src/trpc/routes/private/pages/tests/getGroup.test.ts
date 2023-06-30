@@ -1,6 +1,6 @@
 import { prisma } from "@admin/prisma/__mocks__/client";
 import { expect, it, vi } from "vitest";
-import { caller } from "../../_app";
+import { privateCaller } from "../../_private";
 
 vi.mock("@admin/prisma/client");
 
@@ -15,7 +15,7 @@ const GROUP = {
 
 it("returns root group if input isn't provided", async () => {
 	prisma.page.findFirst.mockResolvedValueOnce(GROUP);
-	await expect(caller.pages.getGroup()).resolves.toMatchObject(GROUP);
+	await expect(privateCaller.pages.getGroup()).resolves.toMatchObject(GROUP);
 
 	expect(prisma.page.findFirst).toHaveBeenNthCalledWith(1, {
 		where: { parent_id: null },
@@ -24,7 +24,7 @@ it("returns root group if input isn't provided", async () => {
 
 it("returns group with provided it if input is provided", async () => {
 	prisma.page.findFirst.mockResolvedValueOnce(GROUP);
-	await expect(caller.pages.getGroup({ id: GROUP.id })).resolves.toMatchObject(GROUP);
+	await expect(privateCaller.pages.getGroup({ id: GROUP.id })).resolves.toMatchObject(GROUP);
 
 	expect(prisma.page.findFirst).toHaveBeenNthCalledWith(1, {
 		where: { id: GROUP.id, is_group: true },

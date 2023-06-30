@@ -1,6 +1,6 @@
 import { prisma } from "@admin/prisma/__mocks__/client";
 import { expect, it, vi } from "vitest";
-import { caller } from "../../_app";
+import { privateCaller } from "../../_private";
 
 vi.mock("@admin/prisma/client");
 
@@ -25,7 +25,7 @@ const GROUPS = [
 
 it("returns all groups", async () => {
 	prisma.page.findMany.mockResolvedValueOnce(GROUPS);
-	await expect(caller.pages.getAllGroups()).resolves.toMatchObject(GROUPS);
+	await expect(privateCaller.pages.getAllGroups()).resolves.toMatchObject(GROUPS);
 
 	expect(prisma.page.findMany).toHaveBeenNthCalledWith(1, {
 		where: { is_group: true },

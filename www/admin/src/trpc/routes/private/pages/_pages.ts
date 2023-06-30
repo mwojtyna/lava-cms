@@ -1,6 +1,5 @@
 import { router } from "@admin/src/trpc";
 import { addPage } from "./addPage";
-import { getPage } from "./getPage";
 import { editPage } from "./editPage";
 import { deletePage } from "./deletePage";
 import { movePage } from "./movePage";
@@ -13,7 +12,6 @@ export const pagesRouter = router({
 	addPage,
 	checkConflict,
 	deletePage,
-	getPage,
 	editPage,
 	getAllGroups,
 	getGroup,

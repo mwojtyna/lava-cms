@@ -15,7 +15,7 @@ export function TrpcProvider({ children }: { children: React.ReactNode }) {
 					enabled: () => !!env.NEXT_PUBLIC_DEV,
 				}),
 				httpBatchLink({
-					url: "/admin/api/trpc",
+					url: "/admin/api/private",
 					fetch: (url, options) => fetch(url, { ...options, credentials: "include" }),
 				}),
 			],

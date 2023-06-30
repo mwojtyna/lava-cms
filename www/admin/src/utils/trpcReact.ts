@@ -1,8 +1,8 @@
 import { createTRPCReact } from "@trpc/react-query";
-import type { AppRouter } from "@admin/src/trpc/routes/_app";
+import type { PrivateRouter } from "@admin/src/trpc/routes/private/_private";
 import "client-only";
 
-export const trpcReact = createTRPCReact<AppRouter>({
+export const trpcReact = createTRPCReact<PrivateRouter>({
 	unstable_overrides: {
 		useMutation: {
 			onSuccess: async (opts) => {

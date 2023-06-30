@@ -1,6 +1,6 @@
 import { expect, it, vi } from "vitest";
 import { prisma } from "@admin/prisma/__mocks__/client";
-import { caller } from "@admin/src/trpc/routes/_app";
+import { privateCaller } from "@admin/src/trpc/routes/private/_private";
 
 vi.mock("@admin/prisma/client");
 
@@ -16,7 +16,7 @@ it("gets the config without id", async () => {
 		language: LANGUAGE,
 	});
 
-	const config = await caller.config.getConfig();
+	const config = await privateCaller.config.getConfig();
 
 	expect(config).toMatchObject({
 		title: TITLE,

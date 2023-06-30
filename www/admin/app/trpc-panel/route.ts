@@ -1,13 +1,13 @@
 import { redirect } from "next/navigation";
 import { getCurrentUser } from "@admin/src/auth";
-import { appRouter } from "@admin/src/trpc/routes/_app";
+import { privateRouter } from "@admin/src/trpc/routes/private/_private";
 import { renderTrpcPanel } from "trpc-panel";
 
 export const GET = async () => {
 	if (await getCurrentUser()) {
 		return new Response(
-			renderTrpcPanel(appRouter, {
-				url: "/admin/api/trpc",
+			renderTrpcPanel(privateRouter, {
+				url: "/admin/api/private",
 				transformer: "superjson",
 			}),
 			{
