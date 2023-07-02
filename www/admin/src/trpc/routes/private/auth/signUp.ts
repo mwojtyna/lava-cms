@@ -1,5 +1,6 @@
-import { privateProcedure } from "@admin/src/trpc";
 import { z } from "zod";
+import { createId } from "@paralleldrive/cuid2";
+import { privateProcedure } from "@admin/src/trpc";
 import { auth } from "@admin/src/auth";
 
 export const signUp = privateProcedure
@@ -13,7 +14,8 @@ export const signUp = privateProcedure
 	)
 	.mutation(async ({ input, ctx }) => {
 		const user = await auth.createUser({
-			primaryKey: {
+			userId: createId(),
+			key: {
 				providerId: "email",
 				providerUserId: input.email,
 				password: input.password,
@@ -22,8 +24,11 @@ export const signUp = privateProcedure
 				email: input.email,
 				name: input.name,
 				last_name: input.lastName,
-			} satisfies Lucia.UserAttributes,
+			},
 		});
-		const session = await auth.createSession(user.id);
-		ctx.authReq.setSession(session);
+		const session = await auth.createSession({
+			userId: user.userId,
+			attributes: {},
+		});
+		ctx.setSession(session);
 	});

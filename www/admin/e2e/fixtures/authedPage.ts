@@ -8,7 +8,7 @@ import {
 	userPasswordDecrypted,
 	websiteSettingsMock,
 } from "@admin/e2e/mocks/data";
-import { SESSION_COOKIE_NAME } from "lucia-auth";
+import { DEFAULT_SESSION_COOKIE_NAME } from "lucia";
 
 export const STORAGE_STATE_PATH = "./e2e/storageState.json";
 
@@ -17,7 +17,7 @@ export const authedPage = async (
 	use: (r: Page) => Promise<void>
 ) => {
 	// We have to check if the user exists because a test might create one
-	const existingUser = await prisma.authUser.findFirst();
+	const existingUser = await prisma.user.findFirst();
 	if (!existingUser) await createMockUser();
 
 	if (!(await prisma.config.findFirst())) {
@@ -54,9 +54,9 @@ export const authedPage = async (
 			(cookie) => cookie.expires !== -1 && cookie.expires * 1000 < Date.now()
 		);
 
-		await prisma.authSession.create({
+		await prisma.session.create({
 			data: {
-				id: cookies.find((cookie) => cookie.name === SESSION_COOKIE_NAME)!.value,
+				id: cookies.find((cookie) => cookie.name === DEFAULT_SESSION_COOKIE_NAME)!.value,
 				user_id: userMock.id,
 				active_expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7).getTime(),
 				idle_expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7).getTime(),
@@ -97,7 +97,7 @@ async function saveSignedInState(browser: Browser) {
 	await page.waitForURL(/\/admin\/dashboard/);
 
 	const cookies = await page.context().cookies();
-	const whitelist = [SESSION_COOKIE_NAME];
+	const whitelist = [DEFAULT_SESSION_COOKIE_NAME];
 
 	const cookiesToDelete = cookies
 		.filter((cookie) => !whitelist.includes(cookie.name))

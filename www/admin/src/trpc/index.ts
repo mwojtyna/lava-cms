@@ -10,8 +10,14 @@ export const router = t.router;
 
 export const privateAuth = t.middleware(async (opts) => {
 	const authReq = auth.handleRequest({
+		request: null,
 		cookies,
 	});
+	const session = await authReq.validate();
+	const context = {
+		setSession: authReq.setSession,
+		session,
+	};
 
 	if (
 		opts.path === "auth.signIn" ||
@@ -19,23 +25,16 @@ export const privateAuth = t.middleware(async (opts) => {
 		(await prisma.config.count()) === 0
 	) {
 		return opts.next({
-			ctx: {
-				authReq,
-			},
+			ctx: context,
 		});
 	}
 
-	const { user, session } = await authReq.validateUser();
-	if (!user) {
+	if (!session) {
 		throw new TRPCError({ code: "UNAUTHORIZED" });
 	}
 
 	return opts.next({
-		ctx: {
-			authReq,
-			user,
-			session,
-		},
+		ctx: context,
 	});
 });
 

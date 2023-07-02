@@ -10,10 +10,11 @@ export const metadata: Metadata = {
 
 export default async function SignIn() {
 	const { reason } = await caller.auth.setupRequired();
+
 	if (reason) {
 		redirect("/admin/setup");
 	}
-	if ((await getCurrentUser()) !== null) {
+	if (await getCurrentUser()) {
 		redirect("/admin/dashboard");
 	}
 

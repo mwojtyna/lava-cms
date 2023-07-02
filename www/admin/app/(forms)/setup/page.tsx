@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import type { inferAsyncReturnType } from "@trpc/server";
 import { ArrowRightIcon } from "@heroicons/react/20/solid";
 import { Stepper } from "@admin/src/components/ui/server";
 import { SignUpForm } from "./SignUpForm";
@@ -12,7 +13,7 @@ export const metadata: Metadata = {
 export const dynamic = "force-dynamic";
 
 const reasonFormMap: Record<
-	NonNullable<Awaited<ReturnType<typeof caller.auth.setupRequired>>["reason"]>,
+	NonNullable<inferAsyncReturnType<typeof caller.auth.setupRequired>["reason"]>,
 	React.ReactNode
 > = {
 	"no-user": <SignUpForm />,

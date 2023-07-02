@@ -4,7 +4,7 @@
 declare namespace Lucia {
 	type Auth = import("@admin/src/auth").Auth;
 
-	type UserAttributes = {
+	type DatabaseUserAttributes = {
 		name: string;
 		last_name: string;
 		email: string;

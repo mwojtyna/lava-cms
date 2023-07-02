@@ -17,17 +17,14 @@ export const websiteSettingsMock: Omit<Config, "id"> = {
 
 export async function createMockUser() {
 	await prisma.$transaction([
-		prisma.authUser.create({
-			data: {
-				...userMock,
-			},
+		prisma.user.create({
+			data: userMock,
 		}),
-		prisma.authKey.create({
+		prisma.key.create({
 			data: {
 				id: `email:${userMock.email}`,
 				hashed_password: "$2b$10$ZVGT1G/c.WqZHa9UpSBTEeDRuL6sd/.k.RgPGE0YaZuPDdaV3Oe1G",
 				user_id: userMock.id,
-				primary_key: true,
 			},
 		}),
 	]);
@@ -36,8 +33,8 @@ export async function createMockUser() {
 }
 export async function deleteMockUser() {
 	await prisma.$transaction([
-		prisma.authUser.deleteMany(),
-		prisma.authSession.deleteMany(),
-		prisma.authKey.deleteMany(),
+		prisma.user.deleteMany(),
+		prisma.session.deleteMany(),
+		prisma.key.deleteMany(),
 	]);
 }

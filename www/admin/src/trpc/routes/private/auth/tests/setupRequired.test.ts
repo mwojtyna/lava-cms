@@ -13,14 +13,14 @@ const mockUser = {
 vi.mock("@admin/prisma/client");
 
 it("returns true and correct reason if no users exist", async () => {
-	prisma.authUser.findFirst.mockResolvedValue(null);
+	prisma.user.findFirst.mockResolvedValue(null);
 	prisma.config.findFirst.mockResolvedValue(null);
 
 	const { reason } = await caller.auth.setupRequired();
 	expect(reason).toBe("no-user");
 });
 it("returns true and correct reason if config is not applied", async () => {
-	prisma.authUser.findFirst.mockResolvedValue(mockUser);
+	prisma.user.findFirst.mockResolvedValue(mockUser);
 	prisma.config.findFirst.mockResolvedValue(null);
 
 	const { reason } = await caller.auth.setupRequired();
@@ -28,7 +28,7 @@ it("returns true and correct reason if config is not applied", async () => {
 });
 
 it("returns false and no reason if users and config exist", async () => {
-	prisma.authUser.findFirst.mockResolvedValue(mockUser);
+	prisma.user.findFirst.mockResolvedValue(mockUser);
 	prisma.config.findFirst.mockResolvedValue({
 		id: "123456789abcdef",
 		title: "My Blog",

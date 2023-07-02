@@ -13,8 +13,9 @@ export const signIn = privateProcedure
 	.mutation(async ({ input, ctx }) => {
 		try {
 			const key = await auth.useKey("email", input.email, input.password);
-			const session = await auth.createSession(key.userId);
-			ctx.authReq.setSession(session);
+			const session = await auth.createSession({ userId: key.userId, attributes: {} });
+			ctx.setSession(session);
+			await auth.deleteDeadUserSessions(key.userId);
 		} catch (error) {
 			throw new TRPCError({ code: "UNAUTHORIZED" });
 		}
