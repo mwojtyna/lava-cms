@@ -39,7 +39,12 @@ import { AddDialog } from "./dialogs";
 import { DataTablePagination } from "@admin/src/components";
 import { useSearchParams } from "@admin/src/hooks/useSearchParams";
 import type { SearchParams } from "./page";
-import { type CookieName, type TableCookie, getParsedCookie } from "@admin/src/utils/cookies";
+import {
+	type CookieName,
+	type TableCookie,
+	getParsedCookie,
+	permanentCookieOptions,
+} from "@admin/src/utils/cookies";
 
 interface PagesTableProps {
 	columns: ColumnDef<Page>[];
@@ -90,10 +95,7 @@ export function PagesTable(props: PagesTableProps) {
 		setCookie(
 			"pages-table" satisfies CookieName,
 			JSON.stringify({ ...sorting[0], pageSize: pagination.pageSize } as TableCookie),
-			{
-				maxAge: new Date(2100, 12).getTime(),
-				sameSite: "lax",
-			}
+			permanentCookieOptions
 		);
 	}, [pagination, sorting]);
 
@@ -109,10 +111,7 @@ export function PagesTable(props: PagesTableProps) {
 				"pages-table" satisfies CookieName,
 				// @ts-expect-error `value` type is weird
 				JSON.stringify({ ...value()[0], pageSize: pagination.pageSize } as TableCookie),
-				{
-					maxAge: new Date(2100, 12).getTime(),
-					sameSite: "lax",
-				}
+				permanentCookieOptions
 			);
 		},
 		getSortedRowModel: getSortedRowModel(),

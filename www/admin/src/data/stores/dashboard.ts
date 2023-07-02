@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import { setCookie } from "cookies-next";
-import type { ColorTheme, CookieName } from "@admin/src/utils/cookies";
+import { permanentCookieOptions, type ColorTheme, type CookieName } from "@admin/src/utils/cookies";
 import "client-only";
 
 interface MenuState {
@@ -20,9 +20,6 @@ export const useColorThemeStore = create<ColorThemeState>((set) => ({
 	colorTheme: undefined,
 	set: (theme) => {
 		set({ colorTheme: theme });
-		setCookie("color-theme" satisfies CookieName, theme, {
-			expires: new Date(2999, 12),
-			sameSite: "lax",
-		});
+		setCookie("color-theme" satisfies CookieName, theme, permanentCookieOptions);
 	},
 }));
