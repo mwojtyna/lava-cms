@@ -4,7 +4,11 @@ import SuperJSON from "superjson";
 import { auth } from "@admin/src/auth";
 import { prisma } from "@admin/prisma/client";
 
-const t = initTRPC.create({ transformer: SuperJSON });
+interface Meta {
+	noAuth: boolean;
+}
+
+const t = initTRPC.meta<Meta>().create({ transformer: SuperJSON });
 
 export const router = t.router;
 
@@ -19,11 +23,7 @@ export const privateAuth = t.middleware(async (opts) => {
 		session,
 	};
 
-	if (
-		opts.path === "auth.signIn" ||
-		opts.path === "auth.setupRequired" ||
-		(await prisma.config.count()) === 0
-	) {
+	if (opts.meta?.noAuth || (await prisma.config.count()) === 0) {
 		return opts.next({
 			ctx: context,
 		});

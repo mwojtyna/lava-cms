@@ -4,6 +4,7 @@ import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
 export const signIn = privateProcedure
+	.meta({ noAuth: true })
 	.input(
 		z.object({
 			email: z.string().email(),
