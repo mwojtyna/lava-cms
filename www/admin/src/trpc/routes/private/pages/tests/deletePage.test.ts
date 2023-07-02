@@ -1,6 +1,6 @@
 import { expect, it, vi } from "vitest";
 import { prisma } from "@admin/prisma/__mocks__/client";
-import { privateCaller } from "@admin/src/trpc/routes/private/_private";
+import { caller } from "@admin/src/trpc/routes/private/_private";
 
 vi.mock("@admin/prisma/client");
 
@@ -8,7 +8,7 @@ const ID = "clgaxfcla0017qnotc4a9aemf";
 
 it("deletes a page", async () => {
 	await expect(
-		privateCaller.pages.deletePage({
+		caller.pages.deletePage({
 			id: ID,
 		})
 	).resolves.toBeUndefined();

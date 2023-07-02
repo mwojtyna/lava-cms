@@ -1,6 +1,6 @@
 import { expect, it, vi } from "vitest";
 import { prisma } from "@admin/prisma/__mocks__/client";
-import { privateCaller } from "@admin/src/trpc/routes/private/_private";
+import { caller } from "@admin/src/trpc/routes/private/_private";
 
 vi.mock("@admin/prisma/client");
 
@@ -11,7 +11,7 @@ const LANGUAGE = "en";
 it("creates a config row if it doesn't exist", async () => {
 	prisma.config.findFirst.mockResolvedValue(null);
 
-	await privateCaller.config.setConfig({
+	await caller.config.setConfig({
 		title: TITLE,
 		description: DESCRIPTION,
 		language: LANGUAGE,
@@ -36,7 +36,7 @@ it("updates a config row if it exists", async () => {
 		language: LANGUAGE,
 	});
 
-	await privateCaller.config.setConfig({
+	await caller.config.setConfig({
 		title: TITLE,
 		description: DESCRIPTION,
 		language: LANGUAGE,

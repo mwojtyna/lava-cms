@@ -1,7 +1,7 @@
 import { prisma } from "@admin/prisma/__mocks__/client";
 import type { Page } from "@admin/prisma/types";
 import { expect, it, vi } from "vitest";
-import { privateCaller } from "@admin/src/trpc/routes/private/_private";
+import { caller } from "@admin/src/trpc/routes/private/_private";
 import type { TRPC_ERROR_CODE_KEY } from "@trpc/server/rpc";
 
 vi.mock("@admin/prisma/client");
@@ -28,10 +28,10 @@ it("returns root group contents if input isn't provided", async () => {
 	];
 	prisma.page.findMany.mockResolvedValueOnce(ROOT_GROUP_CONTENTS);
 
-	await expect(privateCaller.pages.getGroupContents()).resolves.toMatchObject({
+	await expect(caller.pages.getGroupContents()).resolves.toMatchObject({
 		breadcrumbs: [],
 		pages: ROOT_GROUP_CONTENTS,
-	} satisfies Awaited<ReturnType<typeof privateCaller.pages.getGroupContents>>);
+	} satisfies Awaited<ReturnType<typeof caller.pages.getGroupContents>>);
 	expect(prisma.page.findFirst).toHaveBeenNthCalledWith(1, { where: { parent_id: null } });
 });
 
@@ -86,10 +86,10 @@ it("returns group contents if input is provided", async () => {
 		.mockResolvedValueOnce(PARENT_GROUP_2)
 		.mockResolvedValueOnce(PARENT_GROUP_1);
 
-	await expect(privateCaller.pages.getGroupContents({ id: "group-id" })).resolves.toMatchObject({
+	await expect(caller.pages.getGroupContents({ id: "group-id" })).resolves.toMatchObject({
 		breadcrumbs: [PARENT_GROUP_1, PARENT_GROUP_2, GROUP],
 		pages: GROUP_CONTENTS,
-	} satisfies Awaited<ReturnType<typeof privateCaller.pages.getGroupContents>>);
+	} satisfies Awaited<ReturnType<typeof caller.pages.getGroupContents>>);
 
 	expect(prisma.page.findFirst).toHaveBeenNthCalledWith(1, {
 		where: { id: "group-id", is_group: true },
@@ -106,7 +106,7 @@ it("returns group contents if input is provided", async () => {
 it("throws a trpc 404 'NOT_FOUND' error if group doesn't exist", async () => {
 	prisma.page.findFirst.mockResolvedValueOnce(null);
 
-	await expect(privateCaller.pages.getGroupContents({ id: "group-id" })).rejects.toThrowError(
+	await expect(caller.pages.getGroupContents({ id: "group-id" })).rejects.toThrowError(
 		"NOT_FOUND" satisfies TRPC_ERROR_CODE_KEY
 	);
 });

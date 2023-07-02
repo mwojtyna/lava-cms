@@ -1,11 +1,11 @@
 import { z } from "zod";
 import { TRPCError } from "@trpc/server";
 import { prisma } from "@admin/prisma/client";
-import { publicProcedure } from "@admin/src/trpc";
+import { privateProcedure } from "@admin/src/trpc";
 import { urlRegex } from "@admin/src/trpc/regex";
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 
-export const addPage = publicProcedure
+export const addPage = privateProcedure
 	.input(
 		z.object({
 			name: z.string(),

@@ -1,8 +1,8 @@
-import { publicProcedure } from "@admin/src/trpc";
+import { privateProcedure } from "@admin/src/trpc";
 import { z } from "zod";
 import { auth } from "@admin/src/auth";
 
-export const signUp = publicProcedure
+export const signUp = privateProcedure
 	.input(
 		z.object({
 			name: z.string(),

@@ -1,9 +1,9 @@
 import { auth } from "@admin/src/auth";
-import { publicProcedure } from "@admin/src/trpc";
+import { privateProcedure } from "@admin/src/trpc";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
-export const signIn = publicProcedure
+export const signIn = privateProcedure
 	.input(
 		z.object({
 			email: z.string().email(),

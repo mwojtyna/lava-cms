@@ -1,10 +1,10 @@
-import { publicProcedure } from "@admin/src/trpc";
+import { privateProcedure } from "@admin/src/trpc";
 import { z } from "zod";
 import { prisma } from "@admin/prisma/client";
 import tags from "language-tags";
 import { TRPCError } from "@trpc/server";
 
-export const setConfig = publicProcedure
+export const setConfig = privateProcedure
 	.input(
 		z.object({
 			title: z.string(),

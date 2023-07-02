@@ -9,8 +9,6 @@ export const privateRouter = router({
 	pages: pagesRouter,
 });
 
-// @ts-expect-error lucia-auth context requires Request API, which is not available when using caller.
-// Don't use caller to run auth related queries.
-export const privateCaller = privateRouter.createCaller({});
+export const caller = privateRouter.createCaller({});
 
 export type PrivateRouter = typeof privateRouter;

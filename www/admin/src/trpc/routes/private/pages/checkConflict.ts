@@ -1,9 +1,9 @@
 import { z } from "zod";
 import { prisma } from "@admin/prisma/client";
-import { publicProcedure } from "@admin/src/trpc";
+import { privateProcedure } from "@admin/src/trpc";
 import { urlRegex } from "@admin/src/trpc/regex";
 
-export const checkConflict = publicProcedure
+export const checkConflict = privateProcedure
 	.input(
 		z.object({
 			newParentId: z.string().cuid(),

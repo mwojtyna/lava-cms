@@ -1,8 +1,8 @@
 import { z } from "zod";
 import { prisma } from "@admin/prisma/client";
-import { publicProcedure } from "@admin/src/trpc";
+import { privateProcedure } from "@admin/src/trpc";
 
-export const deletePage = publicProcedure
+export const deletePage = privateProcedure
 	.input(
 		z.object({
 			id: z.string().cuid(),

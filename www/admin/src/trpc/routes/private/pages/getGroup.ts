@@ -1,9 +1,9 @@
 import { prisma } from "@admin/prisma/client";
 import type { Page } from "@admin/prisma/types";
-import { publicProcedure } from "@admin/src/trpc";
+import { privateProcedure } from "@admin/src/trpc";
 import { z } from "zod";
 
-export const getGroup = publicProcedure
+export const getGroup = privateProcedure
 	.input(z.object({ id: z.string() }).nullish())
 	.query(async ({ input }): Promise<Page | null> => {
 		// Get root group if no input is provided

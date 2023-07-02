@@ -1,10 +1,10 @@
 import { prisma } from "@admin/prisma/client";
 import type { Page } from "@admin/prisma/types";
-import { publicProcedure } from "@admin/src/trpc";
+import { privateProcedure } from "@admin/src/trpc";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
-export const getGroupContents = publicProcedure
+export const getGroupContents = privateProcedure
 	.input(z.object({ id: z.string() }).nullish())
 	.query(async ({ input }): Promise<{ breadcrumbs: Page[]; pages: Page[] }> => {
 		// Return root group contents if no input is provided

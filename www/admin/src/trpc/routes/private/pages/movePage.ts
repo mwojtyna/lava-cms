@@ -1,10 +1,10 @@
 import { z } from "zod";
 import { TRPCError } from "@trpc/server";
 import { prisma } from "@admin/prisma/client";
-import { publicProcedure } from "@admin/src/trpc";
-import { privateCaller } from "../_private";
+import { privateProcedure } from "@admin/src/trpc";
+import { caller } from "../_private";
 
-export const movePage = publicProcedure
+export const movePage = privateProcedure
 	.input(
 		z.object({
 			id: z.string().cuid(),
@@ -25,7 +25,7 @@ export const movePage = publicProcedure
 			throw new TRPCError({ code: "NOT_FOUND" });
 		}
 
-		await privateCaller.pages.editPage({
+		await caller.pages.editPage({
 			id: input.id,
 			newName: page.name,
 			newUrl: parentGroup.url + "/" + page.url.split("/").pop(),

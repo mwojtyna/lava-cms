@@ -1,7 +1,7 @@
-import { publicProcedure } from "@admin/src/trpc";
+import { privateProcedure } from "@admin/src/trpc";
 import { prisma } from "@admin/prisma/client";
 
-export const setupRequired = publicProcedure.query(
+export const setupRequired = privateProcedure.query(
 	async (): Promise<{ reason: "no-user" | "no-config" | null }> => {
 		const user = await prisma.authUser.findFirst();
 		const config = await prisma.config.findFirst();

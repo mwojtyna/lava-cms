@@ -1,7 +1,7 @@
 import { prisma } from "@admin/prisma/__mocks__/client";
 import type { Page } from "@admin/prisma/types";
 import { expect, it, vi } from "vitest";
-import { privateCaller } from "../../_private";
+import { caller } from "../../_private";
 
 vi.mock("@admin/prisma/client");
 
@@ -25,38 +25,38 @@ it("returns urls if they conflict", async () => {
 		.mockResolvedValueOnce(getPage(urls[1]!))
 		.mockResolvedValueOnce(getPage(urls[2]!));
 	await expect(
-		privateCaller.pages.checkConflict({
+		caller.pages.checkConflict({
 			newParentId: "cju0q2q2h0000g0q2q2h00000",
 			originalUrls: urls,
 		})
 	).resolves.toEqual({
 		conflict: true,
 		urls,
-	} satisfies Awaited<ReturnType<typeof privateCaller.pages.checkConflict>>);
+	} satisfies Awaited<ReturnType<typeof caller.pages.checkConflict>>);
 
 	prisma.page.findFirst
 		.mockResolvedValueOnce(getPage(urls[0]!))
 		.mockResolvedValueOnce(getPage(urls[1]!));
 	await expect(
-		privateCaller.pages.checkConflict({
+		caller.pages.checkConflict({
 			newParentId: "cju0q2q2h0000g0q2q2h00000",
 			originalUrls: urls,
 		})
 	).resolves.toEqual({
 		conflict: true,
 		urls: urls.slice(0, 2),
-	} satisfies Awaited<ReturnType<typeof privateCaller.pages.checkConflict>>);
+	} satisfies Awaited<ReturnType<typeof caller.pages.checkConflict>>);
 });
 
 it("returns false if there are no conflicts", async () => {
 	prisma.page.findFirst.mockResolvedValueOnce(null);
 
 	await expect(
-		privateCaller.pages.checkConflict({
+		caller.pages.checkConflict({
 			newParentId: "cju0q2q2h0000g0q2q2h00000",
 			originalUrls: ["/page"],
 		})
 	).resolves.toEqual({
 		conflict: false,
-	} satisfies Awaited<ReturnType<typeof privateCaller.pages.checkConflict>>);
+	} satisfies Awaited<ReturnType<typeof caller.pages.checkConflict>>);
 });
