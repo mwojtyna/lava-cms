@@ -11,6 +11,13 @@ const mockUser = {
 };
 
 vi.mock("@admin/prisma/client");
+// For some reason this has to be here otherwise it doesn't mock
+// even though we are mocking prisma
+vi.mock("next/headers", () => ({
+	cookies: vi.fn(() => ({
+		get: vi.fn(),
+	})),
+}));
 
 it("returns true and correct reason if no users exist", async () => {
 	prisma.user.findFirst.mockResolvedValue(null);
