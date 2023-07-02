@@ -31,24 +31,20 @@ import type { TRPC_ERROR_CODE_KEY } from "@trpc/server/rpc";
 
 const schema = z.object({
 	title: z.string().nonempty(),
-	description: z.string().optional(),
+	description: z.string(),
 	language: z.string().nonempty(),
 });
 type Inputs = z.infer<typeof schema>;
 
 export function SeoForm({ serverData }: { serverData: Inputs }) {
-	const data = trpc.config.getConfig.useQuery().data ?? serverData;
+	const data = trpc.config.getConfig.useQuery(undefined, { initialData: serverData }).data;
 	const mutation = trpc.config.setConfig.useMutation();
 	const { toast } = useToast();
 
 	const form = useForm<Inputs>({ resolver: zodResolver(schema), defaultValues: data });
 	const onSubmit: SubmitHandler<Inputs> = async (data) => {
 		try {
-			await mutation.mutateAsync({
-				title: data.title,
-				description: data.description ?? "",
-				language: data.language,
-			});
+			await mutation.mutateAsync(data);
 			toast({
 				title: "Success",
 				description: "Website settings saved.",

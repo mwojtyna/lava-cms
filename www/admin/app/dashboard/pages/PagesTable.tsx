@@ -50,10 +50,10 @@ interface PagesTableProps {
 }
 
 export function PagesTable(props: PagesTableProps) {
-	const clientData = trpc.pages.getGroupContents.useQuery(
-		props.data.breadcrumbs.length > 0 ? { id: props.group.id } : null
+	const data = trpc.pages.getGroupContents.useQuery(
+		props.data.breadcrumbs.length > 0 ? { id: props.group.id } : null,
+		{ initialData: props.data }
 	).data;
-	const data: typeof props.data = clientData ?? props.data;
 	const cookie = React.useMemo(
 		() =>
 			getParsedCookie<TableCookie>(
@@ -107,7 +107,7 @@ export function PagesTable(props: PagesTableProps) {
 			setSorting(value);
 			setCookie(
 				"pages-table" satisfies CookieName,
-				// @ts-expect-error `value` type is broken
+				// @ts-expect-error `value` type is weird
 				JSON.stringify({ ...value()[0], pageSize: pagination.pageSize } as TableCookie),
 				{
 					maxAge: new Date(2100, 12).getTime(),

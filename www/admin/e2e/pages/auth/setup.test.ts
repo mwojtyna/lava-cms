@@ -1,12 +1,13 @@
 import { expect } from "@playwright/test";
 import { prisma } from "@admin/prisma/client";
 import { test } from "@admin/e2e/fixtures";
-import { createMockUser, deleteMockUser } from "@admin/e2e/mocks/data";
-
-const NAME = "John";
-const LAST_NAME = "Doe";
-const EMAIL = "johndoe@domain.com";
-const PASSWORD = "Zaq1@wsx";
+import {
+	createMockUser,
+	deleteMockUser,
+	userMock,
+	userPasswordDecrypted,
+	websiteSettingsMock,
+} from "@admin/e2e/mocks/data";
 
 test.describe("sign up step", () => {
 	test.afterAll(async () => {
@@ -83,11 +84,11 @@ test.describe("sign up step", () => {
 	test("goes to the next step when info is valid", async ({ page }) => {
 		await page.goto("/admin/setup");
 
-		await page.locator("input[type='email']").type(EMAIL);
-		await page.locator("input[type='text']").first().type(NAME);
-		await page.locator("input[type='text']").nth(1).type(LAST_NAME);
-		await page.locator("input[type='password']").first().type(PASSWORD);
-		await page.locator("input[type='password']").nth(1).type(PASSWORD);
+		await page.locator("input[type='email']").type(userMock.email);
+		await page.locator("input[type='text']").first().type(userMock.name);
+		await page.locator("input[type='text']").nth(1).type(userMock.last_name);
+		await page.locator("input[type='password']").first().type(userPasswordDecrypted);
+		await page.locator("input[type='password']").nth(1).type(userPasswordDecrypted);
 		await page.locator("button[type='submit']").click();
 
 		await page.waitForSelector("text='Set up website'");
@@ -128,7 +129,7 @@ test.describe("setup website step", () => {
 
 	test("shows error when language code invalid", async ({ page }) => {
 		await page.goto("/admin/setup");
-		await page.locator("input[type='text']").first().type("My website");
+		await page.locator("input[type='text']").first().type(websiteSettingsMock.title);
 
 		const languageInput = page.locator("input[type='text']").nth(1);
 		await languageInput.type("invalid");
@@ -145,12 +146,17 @@ test.describe("setup website step", () => {
 		await prisma.page.deleteMany();
 
 		await authedPage.goto("/admin/setup");
-		await authedPage.locator("input[type='text']").first().type("My website");
-		await authedPage.locator("input[type='text']").nth(1).type("en");
+		await authedPage.locator("input[type='text']").first().type(websiteSettingsMock.title);
+		await authedPage.locator("input[type='text']").nth(1).type(websiteSettingsMock.language);
 		await authedPage.locator("button[type='submit']").click();
 		await authedPage.waitForURL(/dashboard/);
 
 		expect(authedPage.url()).toMatch(/dashboard/);
 		await expect(authedPage.locator("#content").first()).toBeInViewport();
+		await expect(prisma.config.findFirstOrThrow()).resolves.toMatchObject({
+			title: websiteSettingsMock.title,
+			description: "",
+			language: websiteSettingsMock.language,
+		} satisfies typeof websiteSettingsMock);
 	});
 });

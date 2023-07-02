@@ -23,7 +23,7 @@ import { trpc } from "@admin/src/utils/trpc";
 
 const schema = z.object({
 	title: z.string().nonempty(),
-	description: z.string().optional(),
+	description: z.string(),
 	language: z.string().nonempty(),
 });
 
@@ -38,10 +38,7 @@ export function SetupForm() {
 	const form = useForm<Inputs>({ resolver: zodResolver(schema) });
 	const onSubmit: SubmitHandler<Inputs> = async (data) => {
 		try {
-			await setConfigMutation.mutateAsync({
-				...data,
-				description: data.description ?? "",
-			});
+			await setConfigMutation.mutateAsync(data);
 		} catch (error) {
 			if (
 				error instanceof TRPCClientError &&
