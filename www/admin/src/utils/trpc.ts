@@ -1,25 +1,14 @@
-import { cookies } from "next/headers";
-import { createTRPCProxyClient, httpBatchLink, loggerLink } from "@trpc/client";
-import SuperJSON from "superjson";
+import { createTRPCReact } from "@trpc/react-query";
 import type { PrivateRouter } from "@admin/src/trpc/routes/private/_private";
-import { url } from "./server";
-import "server-only";
+import "client-only";
 
-export const trpc = createTRPCProxyClient<PrivateRouter>({
-	links: [
-		loggerLink(),
-		httpBatchLink({
-			url: `${url()}/admin/api/private`,
-			fetch: (url, options) =>
-				fetch(url, {
-					...options,
-					headers: {
-						...options?.headers,
-						Cookie: cookies().toString(),
-					},
-					credentials: "include",
-				}),
-		}),
-	],
-	transformer: SuperJSON,
+export const trpc = createTRPCReact<PrivateRouter>({
+	overrides: {
+		useMutation: {
+			onSuccess: async (opts) => {
+				await opts.originalFn();
+				await opts.queryClient.invalidateQueries();
+			},
+		},
+	},
 });

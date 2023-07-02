@@ -3,7 +3,7 @@
 import { ArrowLeftOnRectangleIcon, MoonIcon, SunIcon } from "@heroicons/react/24/outline";
 import { DropdownMenuItem } from "@admin/src/components/ui/client";
 import { useColorThemeStore } from "@admin/src/data/stores/dashboard";
-import { trpcReact } from "@admin/src/utils/trpcReact";
+import { trpc } from "@admin/src/utils/trpc";
 import { useRouter } from "next/navigation";
 import { Loader } from "@admin/src/components/ui/server";
 
@@ -25,7 +25,7 @@ export const ThemeSwitchItem = () => {
 };
 
 export const LogoutItem = () => {
-	const mutation = trpcReact.auth.signOut.useMutation();
+	const mutation = trpc.auth.signOut.useMutation();
 	const router = useRouter();
 
 	return (

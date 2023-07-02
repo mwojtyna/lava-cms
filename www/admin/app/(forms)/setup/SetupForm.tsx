@@ -19,7 +19,7 @@ import {
 } from "@admin/src/components/ui/client";
 import { TypographyCode } from "@admin/src/components/ui/server";
 import { SinglePageForm } from "../SinglePageForm";
-import { trpcReact } from "@admin/src/utils/trpcReact";
+import { trpc } from "@admin/src/utils/trpc";
 
 const schema = z.object({
 	title: z.string().nonempty(),
@@ -32,8 +32,8 @@ type Inputs = z.infer<typeof schema>;
 export function SetupForm() {
 	const router = useRouter();
 
-	const setConfigMutation = trpcReact.config.setConfig.useMutation();
-	const addPageMutation = trpcReact.pages.addPage.useMutation();
+	const setConfigMutation = trpc.config.setConfig.useMutation();
+	const addPageMutation = trpc.pages.addPage.useMutation();
 
 	const form = useForm<Inputs>({ resolver: zodResolver(schema) });
 	const onSubmit: SubmitHandler<Inputs> = async (data) => {

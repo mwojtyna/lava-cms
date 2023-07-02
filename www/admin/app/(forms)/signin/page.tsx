@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { SignInForm } from "./SignInForm";
 import { redirect } from "next/navigation";
-import { trpc } from "@admin/src/utils/trpc";
+import { caller } from "@admin/src/trpc/routes/private/_private";
 import { getCurrentUser } from "@admin/src/auth";
 
 export const metadata: Metadata = {
@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 };
 
 export default async function SignIn() {
-	const { reason } = await trpc.auth.setupRequired.query();
+	const { reason } = await caller.auth.setupRequired();
 	if (reason) {
 		redirect("/admin/setup");
 	}

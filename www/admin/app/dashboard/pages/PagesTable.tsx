@@ -34,7 +34,7 @@ import {
 	MagnifyingGlassIcon,
 } from "@heroicons/react/24/outline";
 import Link from "next/link";
-import { trpcReact } from "@admin/src/utils/trpcReact";
+import { trpc } from "@admin/src/utils/trpc";
 import { AddDialog } from "./dialogs";
 import { DataTablePagination } from "@admin/src/components";
 import { useSearchParams } from "@admin/src/hooks/useSearchParams";
@@ -50,7 +50,7 @@ interface PagesTableProps {
 }
 
 export function PagesTable(props: PagesTableProps) {
-	const clientData = trpcReact.pages.getGroupContents.useQuery(
+	const clientData = trpc.pages.getGroupContents.useQuery(
 		props.data.breadcrumbs.length > 0 ? { id: props.group.id } : null
 	).data;
 	const data: typeof props.data = clientData ?? props.data;

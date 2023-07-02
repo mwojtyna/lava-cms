@@ -3,7 +3,7 @@ import { ArrowRightIcon } from "@heroicons/react/20/solid";
 import { Stepper } from "@admin/src/components/ui/server";
 import { SignUpForm } from "./SignUpForm";
 import { SetupForm } from "./SetupForm";
-import { trpc } from "@admin/src/utils/trpc";
+import { caller } from "@admin/src/trpc/routes/private/_private";
 import { redirect } from "next/navigation";
 
 export const metadata: Metadata = {
@@ -12,7 +12,7 @@ export const metadata: Metadata = {
 export const dynamic = "force-dynamic";
 
 const reasonFormMap: Record<
-	NonNullable<Awaited<ReturnType<typeof trpc.auth.setupRequired.query>>["reason"]>,
+	NonNullable<Awaited<ReturnType<typeof caller.auth.setupRequired>>["reason"]>,
 	React.ReactNode
 > = {
 	"no-user": <SignUpForm />,
@@ -20,7 +20,7 @@ const reasonFormMap: Record<
 };
 
 export default async function SetupLayout() {
-	const { reason } = await trpc.auth.setupRequired.query();
+	const { reason } = await caller.auth.setupRequired();
 	if (!reason) {
 		redirect("/admin/signin");
 	}

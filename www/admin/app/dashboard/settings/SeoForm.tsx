@@ -3,7 +3,7 @@
 import * as React from "react";
 import { z } from "zod";
 import { type SubmitHandler, useForm } from "react-hook-form";
-import { trpcReact } from "@admin/src/utils/trpcReact";
+import { trpc } from "@admin/src/utils/trpc";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
 	Button,
@@ -37,8 +37,8 @@ const schema = z.object({
 type Inputs = z.infer<typeof schema>;
 
 export function SeoForm({ serverData }: { serverData: Inputs }) {
-	const data = trpcReact.config.getConfig.useQuery().data ?? serverData;
-	const mutation = trpcReact.config.setConfig.useMutation();
+	const data = trpc.config.getConfig.useQuery().data ?? serverData;
+	const mutation = trpc.config.setConfig.useMutation();
 	const { toast } = useToast();
 
 	const form = useForm<Inputs>({ resolver: zodResolver(schema), defaultValues: data });

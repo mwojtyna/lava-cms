@@ -16,7 +16,7 @@ import {
 	Input,
 } from "@admin/src/components/ui/client";
 import { SinglePageForm } from "../SinglePageForm";
-import { trpcReact } from "@admin/src/utils/trpcReact";
+import { trpc } from "@admin/src/utils/trpc";
 
 const inputSchema = z
 	.object({
@@ -49,8 +49,8 @@ type Inputs = z.infer<typeof inputSchema>;
 export function SignUpForm() {
 	const router = useRouter();
 
-	const signUpMutation = trpcReact.auth.signUp.useMutation();
-	const signInMutation = trpcReact.auth.signIn.useMutation();
+	const signUpMutation = trpc.auth.signUp.useMutation();
+	const signInMutation = trpc.auth.signIn.useMutation();
 
 	const form = useForm<Inputs>({ mode: "onSubmit", resolver: zodResolver(inputSchema) });
 	const onSubmit: SubmitHandler<Inputs> = async (data) => {

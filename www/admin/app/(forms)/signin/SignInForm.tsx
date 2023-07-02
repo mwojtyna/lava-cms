@@ -21,7 +21,7 @@ import {
 	FormError,
 } from "@admin/src/components/ui/client";
 import { SinglePageForm } from "../SinglePageForm";
-import { trpcReact } from "@admin/src/utils/trpcReact";
+import { trpc } from "@admin/src/utils/trpc";
 import { TRPCClientError } from "@trpc/client";
 import type { TRPC_ERROR_CODE_KEY } from "@trpc/server/rpc";
 
@@ -32,7 +32,7 @@ const schema = z.object({
 type Inputs = z.infer<typeof schema>;
 
 export function SignInForm() {
-	const mutation = trpcReact.auth.signIn.useMutation();
+	const mutation = trpc.auth.signIn.useMutation();
 	const router = useRouter();
 
 	const form = useForm<Inputs>({

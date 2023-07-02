@@ -27,7 +27,7 @@ import {
 	FormLabel,
 	Input,
 } from "@admin/src/components/ui/client";
-import { trpcReact } from "@admin/src/utils/trpcReact";
+import { trpc } from "@admin/src/utils/trpc";
 import {
 	DocumentDuplicateIcon,
 	DocumentPlusIcon,
@@ -63,7 +63,7 @@ interface BulkEditDialogProps {
 }
 
 export function DeleteDialog(props: EditDialogProps) {
-	const mutation = trpcReact.pages.deletePage.useMutation();
+	const mutation = trpc.pages.deletePage.useMutation();
 	const [preferences, setPreferences] = usePagePreferences(props.page.id);
 
 	async function handleSubmit() {
@@ -105,7 +105,7 @@ export function DeleteDialog(props: EditDialogProps) {
 	);
 }
 export function BulkDeleteDialog(props: BulkEditDialogProps) {
-	const mutation = trpcReact.pages.deletePage.useMutation();
+	const mutation = trpc.pages.deletePage.useMutation();
 	// const [preferences, setPreferences] = usePagePreferences(props.pages[0].id);
 
 	async function handleSubmit() {
@@ -208,7 +208,7 @@ function NewParentSelect<T extends MoveDialogInputs>({
 }
 
 export function MoveDialog(props: EditDialogProps) {
-	const allGroups = trpcReact.pages.getAllGroups.useQuery().data;
+	const allGroups = trpc.pages.getAllGroups.useQuery().data;
 	const groups = React.useMemo(
 		() =>
 			allGroups
@@ -222,7 +222,7 @@ export function MoveDialog(props: EditDialogProps) {
 				.sort((a, b) => a.url.localeCompare(b.url)),
 		[allGroups, props.page]
 	);
-	const mutation = trpcReact.pages.movePage.useMutation();
+	const mutation = trpc.pages.movePage.useMutation();
 
 	const form = useForm<MoveDialogInputs>();
 	const onSubmit: SubmitHandler<MoveDialogInputs> = async (data) => {
@@ -290,7 +290,7 @@ export function MoveDialog(props: EditDialogProps) {
 	);
 }
 export function BulkMoveDialog(props: BulkEditDialogProps) {
-	const allGroups = trpcReact.pages.getAllGroups.useQuery().data;
+	const allGroups = trpc.pages.getAllGroups.useQuery().data;
 	const groups = React.useMemo(
 		() =>
 			allGroups
@@ -311,8 +311,8 @@ export function BulkMoveDialog(props: BulkEditDialogProps) {
 
 	const form = useForm<MoveDialogInputs>();
 
-	const mutation = trpcReact.pages.movePage.useMutation();
-	const conflictQuery = trpcReact.pages.checkConflict.useQuery(
+	const mutation = trpc.pages.movePage.useMutation();
+	const conflictQuery = trpc.pages.checkConflict.useQuery(
 		{
 			newParentId: form.watch("newParentId"),
 			originalUrls: props.pages.map((page) => page.url),
@@ -476,7 +476,7 @@ function NameSlugInput<T extends EditDialogInputs>({
 }
 
 export function EditDetailsDialog(props: EditDialogProps) {
-	const mutation = trpcReact.pages.editPage.useMutation();
+	const mutation = trpc.pages.editPage.useMutation();
 	const [preferences, setPreferences] = usePagePreferences(props.page.id);
 
 	const form = useForm<EditDialogInputs>({
@@ -554,7 +554,7 @@ export function EditDetailsDialog(props: EditDialogProps) {
 }
 
 export function AddDialog(props: AddDialogProps) {
-	const mutation = trpcReact.pages.addPage.useMutation();
+	const mutation = trpc.pages.addPage.useMutation();
 	const [preferences, setPreferences] = usePagePreferences(props.group.id);
 	const [slugLocked, setSlugLocked] = React.useState(false);
 
@@ -641,7 +641,7 @@ const duplicateDialogSchema = editDialogSchema.extend({
 type DuplicateDialogInputs = z.infer<typeof duplicateDialogSchema>;
 
 export function DuplicateDialog(props: EditDialogProps) {
-	const groups = trpcReact.pages.getAllGroups.useQuery(undefined, {
+	const groups = trpc.pages.getAllGroups.useQuery(undefined, {
 		refetchOnWindowFocus: false,
 	}).data;
 	const sortedGroups = React.useMemo(
@@ -649,7 +649,7 @@ export function DuplicateDialog(props: EditDialogProps) {
 		[groups]
 	);
 
-	const mutation = trpcReact.pages.addPage.useMutation();
+	const mutation = trpc.pages.addPage.useMutation();
 	const [preferences, setPreferences] = usePagePreferences(props.page.id);
 	const [slugLocked, setSlugLocked] = React.useState(false);
 
