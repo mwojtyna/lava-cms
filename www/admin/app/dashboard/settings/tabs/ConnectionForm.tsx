@@ -2,16 +2,11 @@
 
 import * as React from "react";
 import {
-	ActionIcon,
-	FormControl,
+	Button,
 	FormDescription,
 	FormItem,
 	FormLabel,
-	Input,
 	Separator,
-	Tooltip,
-	TooltipContent,
-	TooltipTrigger,
 } from "@admin/src/components/ui/client";
 import {
 	Card,
@@ -19,67 +14,59 @@ import {
 	CardDescription,
 	CardHeader,
 	CardTitle,
+	Loader,
+	TypographyCode,
 } from "@admin/src/components/ui/server";
 import { trpc } from "@admin/src/utils/trpc";
-import { ArrowPathIcon, CheckIcon, ClipboardIcon } from "@heroicons/react/24/outline";
 import { FormProvider, useForm } from "react-hook-form";
-import { cn } from "@admin/src/utils/styling";
+import { useToast } from "@admin/src/hooks";
 
-const TokenInput = ({ token }: { token: string }) => {
-	const [copied, setCopied] = React.useState(false);
-	const [spin, setSpin] = React.useState(false);
-	const timeoutRef = React.useRef<NodeJS.Timer>();
+const GenerateToken = () => {
 	const mutation = trpc.auth.generateToken.useMutation();
+	const { toast } = useToast();
+
+	const regenerateToken = async () => {
+		try {
+			const { token } = await mutation.mutateAsync();
+			await navigator.clipboard.writeText(token);
+
+			toast({
+				title: "Success",
+				description: (
+					<>
+						Token generated and stored in the clipboard.
+						<br />
+						The previous token is now invalid.
+					</>
+				),
+			});
+		} catch (error) {
+			if (error instanceof Error) {
+				toast({
+					title: "Error",
+					description: (
+						<TypographyCode className="bg-[hsl(0_100%_75%)] dark:bg-[hsl(0_73%_75%)]">
+							{error.message.trim()}
+						</TypographyCode>
+					),
+					variant: "destructive",
+				});
+			}
+		}
+	};
 
 	return (
-		<div className="flex items-center gap-2">
-			<Input className="font-mono" type="password" value={token} readOnly />
-			<span className="flex">
-				<Tooltip>
-					<TooltipTrigger asChild>
-						<ActionIcon
-							onClick={async () => {
-								await navigator.clipboard.writeText(token);
-								setCopied(true);
-							}}
-						>
-							{copied ? (
-								<CheckIcon className="w-5 text-green-600" />
-							) : (
-								<ClipboardIcon className="w-5" />
-							)}
-						</ActionIcon>
-					</TooltipTrigger>
-					<TooltipContent>Copy to clipboard</TooltipContent>
-				</Tooltip>
-
-				<Tooltip>
-					<TooltipTrigger asChild>
-						<ActionIcon
-							onClick={() => {
-								clearTimeout(timeoutRef.current);
-								setCopied(false);
-								setSpin(true);
-								timeoutRef.current = setTimeout(() => setSpin(false), 500);
-								mutation.mutate();
-							}}
-						>
-							<ArrowPathIcon className={cn("w-5", spin && "animate-spin")} />
-						</ActionIcon>
-					</TooltipTrigger>
-					<TooltipContent>Regenerate token</TooltipContent>
-				</Tooltip>
-			</span>
-		</div>
+		<Button
+			className="ml-auto w-fit whitespace-nowrap"
+			variant={"secondary"}
+			onClick={regenerateToken}
+		>
+			{mutation.isLoading && <Loader />}Generate and copy token
+		</Button>
 	);
 };
 
-export function ConnectionForm(props: { token: string | undefined }) {
-	const token =
-		trpc.auth.getToken.useQuery(undefined, {
-			initialData: props.token,
-			refetchOnWindowFocus: false,
-		}).data ?? "";
+export function ConnectionForm() {
 	const form = useForm();
 
 	return (
@@ -93,17 +80,15 @@ export function ConnectionForm(props: { token: string | undefined }) {
 			<CardContent>
 				<FormProvider {...form}>
 					<form className="flex flex-col gap-6">
-						<FormItem className="grid grid-cols-[40%_auto]">
+						<FormItem className="flex-row items-center">
 							<div className="space-y-1">
-								<FormLabel>Token</FormLabel>
+								<FormLabel>API Token</FormLabel>
 								<FormDescription>
 									Paste this token into your environment variables
 								</FormDescription>
 							</div>
 
-							<FormControl>
-								<TokenInput token={token} />
-							</FormControl>
+							<GenerateToken />
 						</FormItem>
 
 						{/* <Button type="submit" className="ml-auto" loading={mutation.isLoading}>
