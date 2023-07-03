@@ -37,7 +37,10 @@ const schema = z.object({
 type Inputs = z.infer<typeof schema>;
 
 export function SeoForm({ serverData }: { serverData: Inputs }) {
-	const data = trpc.config.getConfig.useQuery(undefined, { initialData: serverData }).data;
+	const data = trpc.config.getConfig.useQuery(undefined, {
+		initialData: serverData,
+		refetchOnWindowFocus: false,
+	}).data;
 	const mutation = trpc.config.setConfig.useMutation();
 	const { toast } = useToast();
 

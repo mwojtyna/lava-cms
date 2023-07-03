@@ -1,5 +1,7 @@
-import ConnectionForm from "./ConnectionForm";
+import { caller } from "@admin/src/trpc/routes/private/_private";
+import { ConnectionForm } from "./ConnectionForm";
 
 export async function ConnectionTab() {
-	return <ConnectionForm />;
+	const token = await caller.auth.getToken();
+	return <ConnectionForm token={token} />;
 }
