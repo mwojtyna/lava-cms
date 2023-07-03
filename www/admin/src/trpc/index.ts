@@ -18,14 +18,14 @@ export const privateAuth = t.middleware(async (opts) => {
 		cookies,
 	});
 	const session = await authReq.validate();
-	const context = {
+	const ctx = {
 		setSession: authReq.setSession,
 		session,
 	};
 
 	if (opts.meta?.noAuth || (await prisma.config.count()) === 0) {
 		return opts.next({
-			ctx: context,
+			ctx,
 		});
 	}
 
@@ -34,7 +34,7 @@ export const privateAuth = t.middleware(async (opts) => {
 	}
 
 	return opts.next({
-		ctx: context,
+		ctx,
 	});
 });
 
