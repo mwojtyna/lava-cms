@@ -69,3 +69,11 @@ model Page {
     @@map("page")
     @@schema("frontend")
 }
+
+model Token {
+    id    String @id @default(cuid())
+    token String
+
+    @@map("token")
+    @@schema("frontend")
+}
