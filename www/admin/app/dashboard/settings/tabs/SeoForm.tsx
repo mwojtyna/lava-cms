@@ -42,7 +42,7 @@ export function SeoForm({ serverData }: { serverData: Inputs }) {
 		refetchOnWindowFocus: false,
 	}).data;
 	const mutation = trpc.config.setConfig.useMutation();
-	const { toast } = useToast();
+	const { toast, toastError } = useToast();
 
 	const form = useForm<Inputs>({ resolver: zodResolver(schema), defaultValues: data });
 	const onSubmit: SubmitHandler<Inputs> = async (data) => {
@@ -50,7 +50,7 @@ export function SeoForm({ serverData }: { serverData: Inputs }) {
 			await mutation.mutateAsync(data);
 			toast({
 				title: "Success",
-				description: "Website settings saved.",
+				description: "SEO settings saved.",
 			});
 		} catch (error) {
 			if (error instanceof Error) {
@@ -60,14 +60,9 @@ export function SeoForm({ serverData }: { serverData: Inputs }) {
 				) {
 					form.setError("language", {});
 				} else {
-					toast({
+					toastError({
 						title: "Error",
-						description: (
-							<TypographyCode className="bg-[hsl(0_100%_75%)] dark:bg-[hsl(0_73%_75%)]">
-								{error.message.trim()}
-							</TypographyCode>
-						),
-						variant: "destructive",
+						description: error.message.trim(),
 					});
 				}
 			}

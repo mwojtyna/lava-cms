@@ -1,6 +1,7 @@
 // Inspired by react-hot-toast library
 import * as React from "react";
 import type { ToastActionElement, ToastProps } from "@admin/src/components/ui/client";
+import { TypographyCode } from "../components/ui/server";
 
 const TOAST_LIMIT = 1;
 const TOAST_REMOVE_DELAY = 5000;
@@ -164,6 +165,17 @@ function toast({ ...props }: Toast) {
 		update,
 	};
 }
+function toastError({ ...props }: Omit<Toast, "variant">) {
+	return toast({
+		...props,
+		description: (
+			<TypographyCode className="bg-[hsl(0_100%_75%)] dark:bg-[hsl(0_73%_75%)]">
+				{props.description}
+			</TypographyCode>
+		),
+		variant: "destructive",
+	});
+}
 
 function useToast() {
 	const [state, setState] = React.useState<State>(memoryState);
@@ -181,6 +193,7 @@ function useToast() {
 	return {
 		...state,
 		toast,
+		toastError,
 		dismiss: (toastId?: string) => dispatch({ type: "DISMISS_TOAST", toastId }),
 	};
 }

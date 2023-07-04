@@ -3,7 +3,6 @@
 import * as React from "react";
 import {
 	ActionIcon,
-	FormControl,
 	FormDescription,
 	FormItem,
 	FormLabel,
@@ -19,17 +18,17 @@ import {
 	CardDescription,
 	CardHeader,
 	CardTitle,
+	Loader,
 } from "@admin/src/components/ui/server";
 import { trpc } from "@admin/src/utils/trpc";
 import { ArrowPathIcon, CheckIcon, ClipboardIcon } from "@heroicons/react/24/outline";
 import { FormProvider, useForm } from "react-hook-form";
-import { cn } from "@admin/src/utils/styling";
+import { useToast } from "@admin/src/hooks";
 
 const TokenInput = ({ token }: { token: string }) => {
 	const [copied, setCopied] = React.useState(false);
-	const [spin, setSpin] = React.useState(false);
-	const timeoutRef = React.useRef<NodeJS.Timer>();
 	const mutation = trpc.auth.generateToken.useMutation();
+	const { toast, toastError } = useToast();
 
 	return (
 		<div className="flex items-center gap-2">
@@ -56,15 +55,26 @@ const TokenInput = ({ token }: { token: string }) => {
 				<Tooltip>
 					<TooltipTrigger asChild>
 						<ActionIcon
-							onClick={() => {
-								clearTimeout(timeoutRef.current);
+							onClick={async () => {
 								setCopied(false);
-								setSpin(true);
-								timeoutRef.current = setTimeout(() => setSpin(false), 500);
-								mutation.mutate();
+								try {
+									await mutation.mutateAsync();
+									toast({
+										title: "Success",
+										description:
+											"Token regenerated, previous token is now invalid.",
+									});
+								} catch (error) {
+									if (error instanceof Error) {
+										toastError({
+											title: "Error",
+											description: error.message.trim(),
+										});
+									}
+								}
 							}}
 						>
-							<ArrowPathIcon className={cn("w-5", spin && "animate-spin")} />
+							{mutation.isLoading ? <Loader /> : <ArrowPathIcon className="w-5" />}
 						</ActionIcon>
 					</TooltipTrigger>
 					<TooltipContent>Regenerate token</TooltipContent>
@@ -97,13 +107,11 @@ export function ConnectionForm(props: { token: string | undefined }) {
 							<div className="space-y-1">
 								<FormLabel>Token</FormLabel>
 								<FormDescription>
-									Paste this token into your environment variables
+									Paste this token into your website&apos;s CMS API configuration
 								</FormDescription>
 							</div>
 
-							<FormControl>
-								<TokenInput token={token} />
-							</FormControl>
+							<TokenInput token={token} />
 						</FormItem>
 
 						{/* <Button type="submit" className="ml-auto" loading={mutation.isLoading}>
