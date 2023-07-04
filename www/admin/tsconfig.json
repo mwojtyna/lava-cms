@@ -15,8 +15,7 @@
 		"jsx": "preserve",
 		"incremental": true,
 		"noUncheckedIndexedAccess": true,
-		"ignoreDeprecations": "5.0",
-		"importsNotUsedAsValues": "error",
+		"verbatimModuleSyntax": true,
 		"plugins": [
 			{
 				"name": "next"

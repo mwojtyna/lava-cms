@@ -1,0 +1,6 @@
+{
+	"name": "eslint-config-package",
+	"private": true,
+	"type": "commonjs",
+	"main": "index.cjs"
+}

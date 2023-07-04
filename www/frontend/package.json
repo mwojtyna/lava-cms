@@ -2,6 +2,7 @@
 	"name": "frontend",
 	"version": "0.0.1",
 	"type": "module",
+	"private": true,
 	"scripts": {
 		"start": "bin/deno run --allow-net --allow-read --allow-env ./dist/server/entry.mjs",
 		"dev": "astro dev --port 3000",
@@ -12,6 +13,10 @@
 	},
 	"dependencies": {
 		"@astrojs/deno": "^4.2.0",
+		"@lavacms/astro": "workspace:*",
 		"astro": "^2.7.0"
+	},
+	"devDependencies": {
+		"eslint-plugin-astro": "^0.27.2"
 	}
 }

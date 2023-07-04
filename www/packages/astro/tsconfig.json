@@ -1,0 +1,4 @@
+{
+	"exclude": ["dist"],
+	"extends": ["astro/tsconfigs/strictest"]
+}

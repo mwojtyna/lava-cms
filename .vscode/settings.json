@@ -6,6 +6,7 @@
 		"cmdk",
 		"Combobox",
 		"formkit",
+		"lavacms",
 		"mswjs",
 		"nextauth",
 		"paralleldrive",
@@ -25,5 +26,6 @@
 	"prettier.requireConfig": true,
 	"testing.automaticallyOpenPeekView": "never",
 	"workbench.editor.labelFormat": "medium",
-	"typescript.tsdk": "node_modules/typescript/lib"
+	"typescript.tsdk": "node_modules/typescript/lib",
+	"eslint.validate": ["javascript", "javascriptreact", "astro", "typescript", "typescriptreact"]
 }

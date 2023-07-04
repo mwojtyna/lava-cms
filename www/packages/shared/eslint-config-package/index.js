@@ -1,17 +1,13 @@
 /** @type {import("eslint").Linter.Config} */
 module.exports = {
 	extends: [
-		"next/core-web-vitals",
+		"eslint:recommended",
 		"plugin:@typescript-eslint/recommended",
 		"plugin:@typescript-eslint/recommended-requiring-type-checking",
 	],
 	plugins: ["@typescript-eslint"],
 	parser: "@typescript-eslint/parser",
-	parserOptions: {
-		project: true,
-		tsconfigRootDir: __dirname,
-	},
-	ignorePatterns: [".eslintrc.cjs"],
+	ignorePatterns: ["dist", ".eslintrc.cjs"],
 	rules: {
 		"@typescript-eslint/no-non-null-assertion": "off",
 		"@typescript-eslint/consistent-type-imports": "warn",

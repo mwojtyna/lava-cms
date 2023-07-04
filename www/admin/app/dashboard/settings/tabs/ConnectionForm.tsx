@@ -107,7 +107,7 @@ export function ConnectionForm(props: { token: string | undefined }) {
 							<div className="space-y-1">
 								<FormLabel>Token</FormLabel>
 								<FormDescription>
-									Paste this token into your website&apos;s CMS API configuration
+									Paste into your website&apos;s CMS API configuration
 								</FormDescription>
 							</div>
 

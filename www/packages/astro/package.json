@@ -1,0 +1,34 @@
+{
+	"name": "@lavacms/astro",
+	"version": "0.0.1",
+	"type": "module",
+	"description": "Astro adapter for Lava CMS API",
+	"main": "dist/index.js",
+	"types": "dist/index.d.ts",
+	"files": [
+		"dist"
+	],
+	"license": "MIT",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/matijas-05/lava-cms.git",
+		"directory": "www/packages/astro"
+	},
+	"keywords": [
+		"astro",
+		"lava",
+		"cms"
+	],
+	"scripts": {
+		"prepublishOnly": "pnpm run lint && pnpm run build",
+		"build": "tsup index.ts --format esm --dts --minify",
+		"lint": "tsc && eslint ."
+	},
+	"devDependencies": {
+		"astro": "^2.7.0",
+		"eslint-config-package": "workspace:*"
+	},
+	"peerDependencies": {
+		"astro": ">=2"
+	}
+}
