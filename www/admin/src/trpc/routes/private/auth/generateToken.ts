@@ -1,11 +1,9 @@
 import { generateRandomString } from "lucia/utils";
-import bcrypt from "bcrypt";
 import { privateProcedure } from "@admin/src/trpc";
 import { prisma } from "@admin/prisma/client";
 
-export const generateToken = privateProcedure.mutation(async (): Promise<{ token: string }> => {
+export const generateToken = privateProcedure.mutation(async () => {
 	const token = generateRandomString(32);
-	const hashed = await bcrypt.hash(token, 10);
 	const storedToken = await prisma.token.findFirst();
 
 	await prisma.token.upsert({
@@ -13,12 +11,10 @@ export const generateToken = privateProcedure.mutation(async (): Promise<{ token
 			id: storedToken?.id ?? "",
 		},
 		create: {
-			token: hashed,
+			token,
 		},
 		update: {
-			token: hashed,
+			token,
 		},
 	});
-
-	return { token };
 });

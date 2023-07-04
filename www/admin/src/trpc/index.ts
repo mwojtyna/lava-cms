@@ -1,7 +1,6 @@
 import { cookies, headers } from "next/headers";
 import { TRPCError, initTRPC } from "@trpc/server";
 import SuperJSON from "superjson";
-import bcrypt from "bcrypt";
 import { auth } from "@admin/src/auth";
 import { prisma } from "@admin/prisma/client";
 
@@ -40,8 +39,11 @@ export const privateAuth = t.middleware(async (opts) => {
 });
 export const publicAuth = t.middleware(async (opts) => {
 	const token = auth.readBearerToken(headers().get("Authorization"));
+	if (!token) {
+		throw new TRPCError({ code: "UNAUTHORIZED" });
+	}
 
-	if (!token || !(await bcrypt.compare(token, (await prisma.token.findFirst())?.token ?? ""))) {
+	if (token !== (await prisma.token.findFirst())?.token) {
 		throw new TRPCError({ code: "UNAUTHORIZED" });
 	}
 

@@ -50,7 +50,7 @@ export function SeoForm({ serverData }: { serverData: Inputs }) {
 			await mutation.mutateAsync(data);
 			toast({
 				title: "Success",
-				description: "SEO settings saved.",
+				description: "Website settings saved.",
 			});
 		} catch (error) {
 			if (error instanceof Error) {
