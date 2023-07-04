@@ -2,6 +2,7 @@
 node_modules/
 .turbo/
 dist/
+bin/
 
 # logs
 npm-debug.log*
@@ -12,3 +13,5 @@ pnpm-debug.log*
 # environment variables
 .env
 .env.production
+
+.DS_Store

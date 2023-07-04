@@ -21,7 +21,6 @@ const config = {
 			transform: "@tabler/icons-react/dist/esm/icons/{{member}}",
 		},
 	},
-
 	redirects: async () => [
 		{
 			source: "/",

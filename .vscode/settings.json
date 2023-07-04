@@ -1,0 +1,29 @@
+{
+	"cSpell.words": [
+		"astrojs",
+		"Authed",
+		"clsx",
+		"cmdk",
+		"Combobox",
+		"formkit",
+		"mswjs",
+		"nextauth",
+		"paralleldrive",
+		"pgadmin",
+		"pnpm",
+		"shadcn",
+		"signin",
+		"signout",
+		"signup",
+		"superjson",
+		"tabler",
+		"tanstack",
+		"trpc",
+		"trpcadmin",
+		"unstub"
+	],
+	"prettier.requireConfig": true,
+	"testing.automaticallyOpenPeekView": "never",
+	"workbench.editor.labelFormat": "medium",
+	"typescript.tsdk": "node_modules/typescript/lib"
+}

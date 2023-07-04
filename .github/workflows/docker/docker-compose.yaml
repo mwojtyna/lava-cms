@@ -11,7 +11,7 @@ services:
 
   postgres:
     container_name: postgres
-    image: postgres:15.3 # 15.3-alpine doesn't work in Github Actions
+    image: postgres:15.3 # 15.3-alpine is very flaky in Github Actions
     environment:
       - POSTGRES_USER=admin
       - POSTGRES_PASSWORD=admin
