@@ -2,7 +2,8 @@
 	"compilerOptions": {
 		"paths": {
 			"@frontend/*": ["./*"]
-		}
+		},
+		"exactOptionalPropertyTypes": false
 	},
 	"extends": "astro/tsconfigs/strictest"
 }

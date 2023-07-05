@@ -1,5 +1,5 @@
 import { createTRPCProxyClient, httpBatchLink } from "@trpc/client";
-import type { PublicRouter } from "./types";
+import type { PublicRouter } from "@lavacms/types";
 import SuperJSON from "superjson";
 
 interface InitApiConfig {
@@ -16,6 +16,5 @@ export const initApi = (config: InitApiConfig) =>
 				},
 			}),
 		],
-		// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
 		transformer: SuperJSON,
 	});

@@ -1,9 +1,10 @@
 ---
 // import { trpc } from "@frontend/src/utils/trpc";
-import Layout from "@frontend/src/layouts/Layout.astro";
+import Layout from "../layouts/Layout.astro";
+import { cms } from "../utils/cms";
 
-// const slug = Astro.params.slug;
-const page = { name: "Index" };
+const slug = Astro.params.slug;
+const page = await cms.getPage.query({ url: slug ? "/" + slug : "/" });
 ---
 
 <Layout name={page?.name}>{page ? page.name : "404"}</Layout>
