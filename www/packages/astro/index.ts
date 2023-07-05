@@ -1,1 +1,1 @@
-export { hello } from "./src/hello";
+export { initApi } from "./src/init";

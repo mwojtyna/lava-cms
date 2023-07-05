@@ -1,10 +1,9 @@
 ---
 // import { trpc } from "@frontend/src/utils/trpc";
 import Layout from "@frontend/src/layouts/Layout.astro";
-import { hello } from "@lavacms/astro";
 
-const slug = Astro.params.slug;
+// const slug = Astro.params.slug;
 const page = { name: "Index" };
 ---
 
-<Layout name={page?.name}>{page ? page.name : "404"}&nbsp;{hello()}</Layout>
+<Layout name={page?.name}>{page ? page.name : "404"}</Layout>

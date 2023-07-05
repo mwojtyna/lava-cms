@@ -1,11 +1,13 @@
 ---
 // import { trpc } from "@frontend/src/utils/trpc";
 
+import { cms } from "../utils/cms";
+
 interface Props {
 	name?: string;
 }
 
-const config = { language: "pl", description: "test", title: "test" };
+const config = await cms.getConfig.query();
 const { name } = Astro.props;
 ---
 

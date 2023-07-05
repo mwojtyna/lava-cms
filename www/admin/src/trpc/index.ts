@@ -4,7 +4,7 @@ import SuperJSON from "superjson";
 import { auth } from "@admin/src/auth";
 import { prisma } from "@admin/prisma/client";
 
-interface Meta {
+export interface Meta {
 	noAuth: boolean;
 }
 
