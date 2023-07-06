@@ -1,8 +1,8 @@
 {
-	"name": "@lavacms/astro",
-	"version": "0.0.1",
+	"name": "@lavacms/client",
+	"version": "0.1.0",
 	"type": "module",
-	"description": "Astro adapter for Lava CMS API",
+	"description": "Collection of different library clients for Lava CMS API",
 	"main": "dist/index.js",
 	"types": "dist/index.d.ts",
 	"files": [
@@ -12,12 +12,13 @@
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/matijas-05/lava-cms.git",
-		"directory": "www/packages/astro"
+		"directory": "www/packages/client"
 	},
 	"keywords": [
-		"astro",
 		"lava",
-		"cms"
+		"cms",
+		"client",
+		"api"
 	],
 	"scripts": {
 		"dev": "pnpm run build --watch",

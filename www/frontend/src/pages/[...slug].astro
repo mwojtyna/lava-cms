@@ -1,10 +1,13 @@
 ---
-// import { trpc } from "@frontend/src/utils/trpc";
+import Card from "../components/Card.astro";
 import Layout from "../layouts/Layout.astro";
 import { cms } from "../utils/cms";
 
 const slug = Astro.params.slug;
-const page = await cms.getPage.query({ url: slug ? "/" + slug : "/" });
+const page = await cms.getPage(slug ? "/" + slug : "/");
 ---
 
-<Layout name={page?.name}>{page ? page.name : "404"}</Layout>
+<Layout name={page?.name}>
+	{page ? page.name : "404"}
+	<Card title="title" body="body" href="href" />
+</Layout>

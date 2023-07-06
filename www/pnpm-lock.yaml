@@ -247,9 +247,9 @@ importers:
       '@astrojs/deno':
         specifier: ^4.2.0
         version: 4.2.0(astro@2.7.0)
-      '@lavacms/astro':
+      '@lavacms/client':
         specifier: workspace:*
-        version: link:../packages/astro
+        version: link:../packages/client
       astro:
         specifier: ^2.7.0
         version: 2.7.0
@@ -258,7 +258,7 @@ importers:
         specifier: ^0.27.2
         version: 0.27.2(eslint@8.44.0)
 
-  packages/astro:
+  packages/client:
     dependencies:
       '@trpc/client':
         specifier: ^10.33.1

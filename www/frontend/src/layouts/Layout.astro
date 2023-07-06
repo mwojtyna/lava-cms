@@ -5,7 +5,7 @@ interface Props {
 	name?: string;
 }
 
-const config = await cms.getConfig.query();
+const config = await cms.getHead();
 const { name } = Astro.props;
 ---
 
