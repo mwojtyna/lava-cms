@@ -11,12 +11,9 @@ export function TrpcProvider({ children }: { children: React.ReactNode }) {
 	const [trpcClient] = useState(
 		trpc.createClient({
 			links: [
-				loggerLink({
-					enabled: () => !!env.NEXT_PUBLIC_DEV,
-				}),
+				loggerLink({ enabled: () => !!env.NEXT_PUBLIC_DEV }),
 				httpBatchLink({
 					url: "/admin/api/private",
-					fetch: (url, options) => fetch(url, { ...options, credentials: "include" }),
 				}),
 			],
 			transformer: SuperJSON,
