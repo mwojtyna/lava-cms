@@ -22,18 +22,19 @@
 	],
 	"scripts": {
 		"dev": "pnpm run build --watch",
-		"build": "tsup index.ts --format esm --dts",
+		"build": "tsup index.ts --format esm --dts --external virtual:lavacms-init",
 		"lint": "tsc && eslint .",
-		"prepublishOnly": "pnpm run lint && pnpm run build"
+		"prepublishOnly": "pnpm run lint && pnpm run build --minify"
 	},
 	"dependencies": {
 		"@trpc/client": "^10.33.1",
 		"superjson": "^1.12.4"
 	},
 	"devDependencies": {
+		"@lavacms/types": "workspace:*",
 		"astro": "^2.7.0",
 		"eslint-config-package": "workspace:*",
-		"@lavacms/types": "workspace:*"
+		"vite": "4.2.2"
 	},
 	"peerDependencies": {
 		"astro": ">=2"

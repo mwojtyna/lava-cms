@@ -14,7 +14,8 @@
 	"dependencies": {
 		"@astrojs/deno": "^4.2.0",
 		"@lavacms/client": "workspace:*",
-		"astro": "^2.7.0"
+		"astro": "^2.7.0",
+		"vite": "^4.4.2"
 	},
 	"devDependencies": {
 		"eslint-plugin-astro": "^0.27.2"

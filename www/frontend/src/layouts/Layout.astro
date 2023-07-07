@@ -1,12 +1,13 @@
 ---
-import { cms } from "../utils/cms";
+import { useLavaCms } from "@lavacms/client";
 
 interface Props {
 	name?: string;
 }
-
-const config = await cms.getHead();
 const { name } = Astro.props;
+
+const cms = useLavaCms();
+const config = await cms.getHead();
 ---
 
 <!DOCTYPE html>

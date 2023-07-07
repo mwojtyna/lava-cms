@@ -1,10 +1,12 @@
+/// Shared code between the adapters
+
 import { createTRPCProxyClient, httpBatchLink, loggerLink } from "@trpc/client";
 import SuperJSON from "superjson";
 import type { PublicRouter } from "@lavacms/types";
 
 export interface ClientConfigBase {
 	/**
-	 * Base URL of your self-hosted CMS
+	 * URL of your self-hosted CMS
 	 * @example "https://lavacms.com/admin"
 	 */
 	url: string;
@@ -14,7 +16,7 @@ export interface ClientConfigBase {
 	log?: boolean;
 }
 
-export class LavaApiClientBase {
+export class LavaCmsApiClient {
 	protected readonly connection;
 
 	constructor(config: ClientConfigBase) {
@@ -38,5 +40,17 @@ export class LavaApiClientBase {
 	 */
 	public async getHead() {
 		return await this.connection.getConfig.query();
+	}
+}
+
+declare global {
+	// eslint-disable-next-line no-var
+	var client: LavaCmsApiClient | undefined;
+}
+export function useLavaCms(): LavaCmsApiClient {
+	if (!globalThis.client) {
+		throw new Error("Lava CMS client not initialized! Are you using the correct adapter?");
+	} else {
+		return globalThis.client;
 	}
 }

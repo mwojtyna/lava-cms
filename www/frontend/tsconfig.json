@@ -3,7 +3,8 @@
 		"paths": {
 			"@frontend/*": ["./*"]
 		},
-		"exactOptionalPropertyTypes": false
+		"exactOptionalPropertyTypes": false,
+		"jsx": "preserve"
 	},
 	"extends": "astro/tsconfigs/strictest"
 }
