@@ -1,5 +1,4 @@
 import { defineConfig } from "astro/config";
-import deno from "@astrojs/deno";
 import { URL } from "node:url";
 import { loadEnv } from "vite";
 import { lavaCmsAstro } from "@lavacms/client";
@@ -11,10 +10,6 @@ export default defineConfig({
 	server: {
 		host: true,
 	},
-	output: "server",
-	adapter: deno({
-		port: 3000,
-	}),
 	integrations: [
 		lavaCmsAstro({
 			url: "http://localhost:3001/admin",
