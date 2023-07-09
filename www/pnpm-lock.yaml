@@ -247,9 +247,9 @@ importers:
       '@astrojs/deno':
         specifier: ^4.2.0
         version: 4.2.0(astro@2.7.0)
-      '@lavacms/client':
+      '@lavacms/astro':
         specifier: workspace:*
-        version: link:../packages/client
+        version: link:../packages/astro
       astro:
         specifier: ^2.7.0
         version: 2.7.0
@@ -261,7 +261,26 @@ importers:
         specifier: ^0.27.2
         version: 0.27.2(eslint@8.44.0)
 
-  packages/client:
+  packages/astro:
+    dependencies:
+      '@lavacms/core':
+        specifier: workspace:*
+        version: link:../core
+      camelcase:
+        specifier: ^7.0.1
+        version: 7.0.1
+    devDependencies:
+      astro:
+        specifier: ^2.7.0
+        version: 2.7.0
+      eslint-config-package:
+        specifier: workspace:*
+        version: link:../eslint-config-package
+      vite:
+        specifier: 4.2.2
+        version: 4.2.2(@types/node@18.16.18)
+
+  packages/core:
     dependencies:
       '@trpc/client':
         specifier: ^10.33.1
@@ -273,15 +292,12 @@ importers:
       '@lavacms/types':
         specifier: workspace:*
         version: link:../types
-      astro:
-        specifier: ^2.7.0
-        version: 2.7.0
+      '@tsconfig/strictest':
+        specifier: ^2.0.1
+        version: 2.0.1
       eslint-config-package:
         specifier: workspace:*
         version: link:../eslint-config-package
-      vite:
-        specifier: 4.2.2
-        version: 4.2.2(@types/node@18.16.18)
 
   packages/eslint-config-package: {}
 
@@ -2501,6 +2517,10 @@ packages:
       path-browserify: 1.0.1
     dev: true
 
+  /@tsconfig/strictest@2.0.1:
+    resolution: {integrity: sha512-7JHHCbyCsGUxLd0pDbp24yz3zjxw2t673W5oAP6HCEdr/UUhaRhYd3SSnUsGCk+VnPVJVA4mXROzbhI+nyIk+w==}
+    dev: true
+
   /@types/babel__core@7.20.1:
     resolution: {integrity: sha512-aACu/U/omhdk15O4Nfb+fHgH/z3QsfQzpnvRZhYhThms83ZnAOZz7zZAWO7mn2yyNQaA4xTO8GLK3uqFU4bYYw==}
     dependencies:
@@ -3397,6 +3417,11 @@ packages:
   /camelcase@6.3.0:
     resolution: {integrity: sha512-Gmy6FhYlCY7uOElZUSbxo2UCDH8owEk996gkbrpsgGtrJLM3J7jGxl9Ic7Qwwj4ivOE5AWZWRMecDdF7hqGjFA==}
     engines: {node: '>=10'}
+
+  /camelcase@7.0.1:
+    resolution: {integrity: sha512-xlx1yCK2Oc1APsPXDL2LdlNP6+uu8OCDdhOBSVT279M/S+y75O30C2VuD8T2ogdePBBl7PfPF4504tnLgX3zfw==}
+    engines: {node: '>=14.16'}
+    dev: false
 
   /caniuse-lite@1.0.30001507:
     resolution: {integrity: sha512-SFpUDoSLCaE5XYL2jfqe9ova/pbQHEmbheDf5r4diNwbAgR3qxM9NQtfsiSscjqoya5K7kFcHPUQ+VsUkIJR4A==}
@@ -8290,7 +8315,7 @@ packages:
       esbuild: 0.17.19
       postcss: 8.4.24
       resolve: 1.22.2
-      rollup: 3.25.1
+      rollup: 3.26.2
     optionalDependencies:
       fsevents: 2.3.2
     dev: true

@@ -1,0 +1,35 @@
+---
+// @ts-expect-error
+import astroComponents from "virtual:lavacms-components";
+import type { LavaCmsComponentList, LavaCmsComponent } from "@lavacms/core";
+import type { AstroComponentFactory } from "astro/dist/runtime/server";
+import camelcase from "camelcase";
+
+interface Props {
+	components: LavaCmsComponentList;
+}
+
+const { components: cmsComponents } = Astro.props;
+if (!cmsComponents) {
+	throw new Error("No page data provided to `LavaCmsPage`");
+}
+
+const components: Array<{ astroComponent: AstroComponentFactory; cmsData: LavaCmsComponent }> = [];
+for (const cmsComponent of cmsComponents) {
+	const name = camelcase(cmsComponent.name);
+
+	if (Object.keys(astroComponents).includes(name)) {
+		const astroComponent: AstroComponentFactory = astroComponents[name];
+		const cmsData = cmsComponent.component;
+		components.push({ astroComponent, cmsData });
+	} else {
+		console.warn(`Component ${name} not found`);
+	}
+}
+---
+
+{
+	components.map(({ astroComponent: Comp, cmsData: data }) => {
+		return <Comp cms={data} />;
+	})
+}

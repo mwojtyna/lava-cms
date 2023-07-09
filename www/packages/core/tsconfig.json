@@ -1,0 +1,9 @@
+{
+	"compilerOptions": {
+		"target": "ESNext",
+		"module": "ESNext",
+		"moduleResolution": "Bundler"
+	},
+	"exclude": ["dist"],
+	"extends": "@tsconfig/strictest/tsconfig.json"
+}

@@ -6,17 +6,17 @@ import type { Page } from "@admin/prisma/types";
 export const getPage = publicProcedure
 	.input(
 		z.object({
-			url: z.string(),
+			path: z.string(),
 		})
 	)
 	.query(async ({ input }): Promise<Page | null> => {
 		let page = await prisma.page.findFirst({
-			where: { url: input.url, is_group: false },
+			where: { url: input.path, is_group: false },
 		});
 
 		if (!page) {
 			page = await prisma.page.findFirst({
-				where: { url: input.url + "/", is_group: false },
+				where: { url: input.path + "/", is_group: false },
 			});
 		}
 

@@ -1,7 +1,7 @@
 import { defineConfig } from "astro/config";
 import { URL } from "node:url";
 import { loadEnv } from "vite";
-import { lavaCmsAstro } from "@lavacms/client";
+import { lavaCmsAstro } from "@lavacms/astro";
 
 const { CMS_TOKEN } = loadEnv(import.meta.env.MODE, process.cwd(), "") as ImportMetaEnv;
 
@@ -15,7 +15,9 @@ export default defineConfig({
 			url: "http://localhost:3001/admin",
 			token: CMS_TOKEN,
 			log: import.meta.env.DEV,
-			components: {},
+			components: {
+				Card: "/src/components/Card.astro",
+			},
 		}),
 	],
 	vite: {

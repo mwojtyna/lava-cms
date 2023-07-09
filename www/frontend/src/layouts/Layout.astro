@@ -1,24 +1,20 @@
 ---
-import { useLavaCms } from "@lavacms/client";
-
-interface Props {
-	name?: string;
-}
-const { name } = Astro.props;
+import { useLavaCms } from "@lavacms/astro";
 
 const cms = useLavaCms();
-const config = await cms.getHead();
+const head = await cms.getHead();
+const page = await cms.getPage(Astro.url.pathname);
 ---
 
 <!DOCTYPE html>
-<html lang={config.language}>
+<html lang={head.language}>
 	<head>
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width" />
 		<meta name="generator" content={Astro.generator} />
-		{config.description !== "" && <meta name="description" content={config.description} />}
+		{head.description !== "" && <meta name="description" content={head.description} />}
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<title>{name ?? "404"} - {config.title}</title>
+		<title>{page.name ?? "404"} - {head.title}</title>
 	</head>
 	<body>
 		<slot />

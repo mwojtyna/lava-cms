@@ -1,8 +1,8 @@
 {
-	"name": "@lavacms/client",
+	"name": "@lavacms/core",
 	"version": "0.1.0",
 	"type": "module",
-	"description": "Collection of different library clients for Lava CMS API",
+	"description": "Core methods for Lava CMS API clients",
 	"main": "dist/index.js",
 	"types": "dist/index.d.ts",
 	"files": [
@@ -17,12 +17,12 @@
 	"keywords": [
 		"lava",
 		"cms",
-		"client",
+		"core",
 		"api"
 	],
 	"scripts": {
 		"dev": "pnpm run build --watch",
-		"build": "tsup index.ts --format esm --dts --external virtual:lavacms-init",
+		"build": "tsup index.ts --format esm --dts",
 		"lint": "tsc && eslint .",
 		"prepublishOnly": "pnpm run lint && pnpm run build --minify"
 	},
@@ -32,11 +32,7 @@
 	},
 	"devDependencies": {
 		"@lavacms/types": "workspace:*",
-		"astro": "^2.7.0",
-		"eslint-config-package": "workspace:*",
-		"vite": "4.2.2"
-	},
-	"peerDependencies": {
-		"astro": ">=2"
+		"@tsconfig/strictest": "^2.0.1",
+		"eslint-config-package": "workspace:*"
 	}
 }

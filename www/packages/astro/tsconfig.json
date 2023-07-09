@@ -1,4 +1,7 @@
 {
+	"compilerOptions": {
+		"jsx": "preserve"
+	},
 	"exclude": ["dist"],
 	"extends": "astro/tsconfigs/strictest"
 }
