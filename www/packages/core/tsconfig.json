@@ -2,7 +2,8 @@
 	"compilerOptions": {
 		"target": "ESNext",
 		"module": "ESNext",
-		"moduleResolution": "Bundler"
+		"moduleResolution": "Bundler",
+		"noEmit": true
 	},
 	"exclude": ["dist"],
 	"extends": "@tsconfig/strictest/tsconfig.json"

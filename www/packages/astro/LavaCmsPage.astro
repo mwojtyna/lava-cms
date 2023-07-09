@@ -1,7 +1,12 @@
 ---
-// @ts-expect-error
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-return */
+
+// @ts-expect-error - virtual modules don't have types
 import astroComponents from "virtual:lavacms-components";
-import type { LavaCmsComponentList, LavaCmsComponent } from "@lavacms/core";
+import type { LavaCmsComponentList, LavaCmsComponentData } from "@lavacms/core";
 import type { AstroComponentFactory } from "astro/dist/runtime/server";
 import camelcase from "camelcase";
 
@@ -11,10 +16,11 @@ interface Props {
 
 const { components: cmsComponents } = Astro.props;
 if (!cmsComponents) {
-	throw new Error("No page data provided to `LavaCmsPage`");
+	throw new Error("No page data provided to `LavaCmsPage` Astro component");
 }
 
-const components: Array<{ astroComponent: AstroComponentFactory; cmsData: LavaCmsComponent }> = [];
+const components: Array<{ astroComponent: AstroComponentFactory; cmsData: LavaCmsComponentData }> =
+	[];
 for (const cmsComponent of cmsComponents) {
 	const name = camelcase(cmsComponent.name);
 

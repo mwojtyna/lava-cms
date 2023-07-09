@@ -19,7 +19,7 @@ export interface ClientConfigBase {
 
 export type ContentType = string | number | boolean | object;
 
-export interface LavaCmsComponent {
-	[name: string]: ContentType;
+export interface LavaCmsComponentData {
+	[fieldName: string]: ContentType;
 }
-export type LavaCmsComponentList = Array<{ name: string; component: LavaCmsComponent }>;
+export type LavaCmsComponentList = Array<{ name: string; component: LavaCmsComponentData }>;
