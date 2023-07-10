@@ -60,11 +60,11 @@ export class LavaCmsApiClient {
 					},
 				},
 				{
-					name: "Card Nested",
+					name: "Parent Card",
 					data: {
-						title: "Nested",
-						body: "Nested component",
-						href: "/nested",
+						title: "Card with children",
+						body: "Card with the ability to have other components inside",
+						href: "/card-with-children",
 						nested: [
 							{
 								name: "Card",
@@ -75,7 +75,7 @@ export class LavaCmsApiClient {
 								},
 							},
 							{
-								name: "Card Nested",
+								name: "Parent Card",
 								data: {
 									title: "Nested card 2",
 									body: "Nested card body 2",

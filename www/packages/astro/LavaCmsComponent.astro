@@ -1,21 +1,16 @@
 ---
-/* eslint-disable @typescript-eslint/no-unsafe-argument */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-return */
-/* eslint-disable @typescript-eslint/restrict-template-expressions */
-
-// @ts-expect-error - virtual modules don't have types
 import astroComponents from "virtual:lavacms-components";
+import config from "virtual:lavacms-config";
 import camelcase from "camelcase";
-import type { AstroComponentFactory } from "astro/dist/runtime/server";
 import type { LavaCmsComponent } from "@lavacms/core";
+import FallbackComponent from "./FallbackComponent.astro";
 
 interface Props {
 	component: LavaCmsComponent;
 }
 
 const { component: cmsComponent } = Astro.props;
+
 if (!cmsComponent) {
 	throw new Error("No component data provided to `LavaCmsComponent` Astro component");
 }
@@ -30,14 +25,11 @@ if (typeof cmsComponent.name !== "string") {
 }
 
 const name = camelcase(cmsComponent.name);
-let Comp: AstroComponentFactory;
-
-if (name in astroComponents) {
-	Comp = astroComponents[name];
-} else {
-	console.warn(`Component '${cmsComponent.name}' not defined in adapter config`);
-	return;
+// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+const Comp = astroComponents[name];
+if (!(name in astroComponents) && !config.enableFallbackComponent) {
+	throw new Error(`No Astro component found for CMS component \`${cmsComponent.name}\``);
 }
 ---
 
-<Comp cms={cmsComponent.data} />
+{!Comp ? <FallbackComponent name={cmsComponent.name} /> : <Comp cms={cmsComponent.data} />}

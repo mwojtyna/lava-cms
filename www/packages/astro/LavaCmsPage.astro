@@ -1,15 +1,8 @@
 ---
-/* eslint-disable @typescript-eslint/no-unsafe-argument */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-return */
-/* eslint-disable @typescript-eslint/restrict-template-expressions */
 
-// @ts-expect-error - virtual modules don't have types
-import astroComponents from "virtual:lavacms-components";
-import camelcase from "camelcase";
-import type { AstroComponentFactory } from "astro/dist/runtime/server";
-import type { LavaCmsComponent, LavaCmsComponentData } from "@lavacms/core";
+import type { LavaCmsComponent } from "@lavacms/core";
+import { default as LavaCmsAstroComponent } from "./LavaCmsComponent.astro";
 
 interface Props {
 	components: LavaCmsComponent[];
@@ -19,20 +12,6 @@ const { components: cmsComponents } = Astro.props;
 if (!cmsComponents) {
 	throw new Error("No page data provided to `LavaCmsPage` Astro component");
 }
-
-const components: Array<{ astroComponent: AstroComponentFactory; cmsData: LavaCmsComponentData }> =
-	[];
-for (const cmsComponent of cmsComponents) {
-	const name = camelcase(cmsComponent.name);
-
-	if (name in astroComponents) {
-		const astroComponent: AstroComponentFactory = astroComponents[name];
-		const cmsData = cmsComponent.data;
-		components.push({ astroComponent, cmsData });
-	} else {
-		console.warn(`Component '${cmsComponent.name}' not defined in adapter config`);
-	}
-}
 ---
 
-{components.map(({ astroComponent: Comp, cmsData: data }) => <Comp cms={data} />)}
+{cmsComponents.map((comp) => <LavaCmsAstroComponent component={comp} />)}

@@ -1,6 +1,7 @@
 import type { AstroIntegration } from "astro";
 import type { ClientConfigBase } from "@lavacms/core";
 import { vitePluginLavaCmsComponents } from "./vite-plugin-lavacms-components";
+import { vitePluginLavaCmsConfig } from "./vite-plugin-lavacms-config";
 
 export interface ClientConfigAstro extends ClientConfigBase {
 	/**
@@ -16,6 +17,12 @@ export interface ClientConfigAstro extends ClientConfigBase {
 	 * ```
 	 */
 	components: Record<string, string>;
+
+	/**
+	 * Will display a fallback component when an Astro component
+	 * isn't assigned to a CMS component instead of throwing an error
+	 */
+	enableFallbackComponent?: boolean;
 }
 
 export function lavaCmsAstro(config: ClientConfigAstro): AstroIntegration {
@@ -46,7 +53,10 @@ export function lavaCmsAstro(config: ClientConfigAstro): AstroIntegration {
 
 				updateConfig({
 					vite: {
-						plugins: [vitePluginLavaCmsComponents(config.components)],
+						plugins: [
+							vitePluginLavaCmsConfig(config),
+							vitePluginLavaCmsComponents(config.components),
+						],
 					},
 				});
 			},
