@@ -1,21 +1,23 @@
 ---
-import type { LavaCms } from "@lavacms/astro";
-
 interface Props {
-	cms: LavaCms.ComponentData;
+	cms: {
+		href: string;
+		title: string;
+		body: string;
+	};
 }
 
 const { cms } = Astro.props;
 ---
 
 <li class="link-card">
-	<a href={cms.href as string}>
+	<a href={cms.href}>
 		<h2>
-			{cms.title as string}
+			{cms.title}
 			<span>&rarr;</span>
 		</h2>
 		<p>
-			{cms.body as string}
+			{cms.body}
 		</p>
 	</a>
 </li>

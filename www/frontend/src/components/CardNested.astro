@@ -3,23 +3,28 @@ import type { LavaCms } from "@lavacms/astro";
 import LavaCmsComponents from "@lavacms/astro/LavaCmsComponents.astro";
 
 interface Props {
-	cms: LavaCms.ComponentData;
+	cms: {
+		href: string;
+		title: string;
+		body: string;
+		children: LavaCms.Component[];
+	};
 }
 
 const { cms } = Astro.props;
 ---
 
 <div class="link-card">
-	<a href={cms.href as string}>
+	<a href={cms.href}>
 		<h2>
-			{cms.title as string}
+			{cms.title}
 			<span>&rarr;</span>
 		</h2>
 		<p>
-			{cms.body as string}
+			{cms.body}
 		</p>
 		<div class="nested">
-			<LavaCmsComponents components={cms.children as LavaCms.Component[]} />
+			<LavaCmsComponents components={cms.children} />
 		</div>
 	</a>
 </div>
