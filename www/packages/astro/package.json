@@ -5,7 +5,8 @@
 	"description": "Astro adapter for Lava CMS API",
 	"exports": {
 		".": "./dist/index.js",
-		"./LavaCmsPage.astro": "./LavaCmsPage.astro"
+		"./LavaCmsPage.astro": "./LavaCmsPage.astro",
+		"./LavaCmsComponent.astro": "./LavaCmsComponent.astro"
 	},
 	"files": [
 		"dist",

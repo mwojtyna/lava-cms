@@ -1,7 +1,7 @@
 import { createTRPCProxyClient, httpBatchLink, loggerLink } from "@trpc/client";
 import SuperJSON from "superjson";
 import type { PublicRouter } from "@lavacms/types";
-import type { ClientConfigBase, LavaCmsComponentList } from "./types";
+import type { ClientConfigBase, LavaCmsComponent } from "./types";
 
 export class LavaCmsApiClient {
 	private readonly connection;
@@ -33,9 +33,7 @@ export class LavaCmsApiClient {
 	 * @param path Path of the page to get. Recommended to use the [URL API](https://developer.mozilla.org/en-US/docs/Web/API/URL) `pathname` property
 	 * @returns Page name and its components
 	 */
-	public async getPage(
-		path: string
-	): Promise<{ name: string; components: LavaCmsComponentList }> {
+	public async getPage(path: string): Promise<{ name: string; components: LavaCmsComponent[] }> {
 		const page = await this.connection.getPage.query({ path });
 
 		if (!page) {
@@ -44,10 +42,10 @@ export class LavaCmsApiClient {
 			const { name } = page;
 
 			// TODO: Get from CMS
-			const components: LavaCmsComponentList = [
+			const components: LavaCmsComponent[] = [
 				{
 					name: "Card",
-					component: {
+					data: {
 						title: "Products",
 						body: "Browse our products",
 						href: "/products",
@@ -55,10 +53,46 @@ export class LavaCmsApiClient {
 				},
 				{
 					name: "Card",
-					component: {
+					data: {
 						title: "About",
 						body: "Learn about our company",
 						href: "/about",
+					},
+				},
+				{
+					name: "Card Nested",
+					data: {
+						title: "Nested",
+						body: "Nested component",
+						href: "/nested",
+						nested: [
+							{
+								name: "Card",
+								data: {
+									title: "Nested card 1",
+									body: "Nested card body 1",
+									href: "/nested-card-1",
+								},
+							},
+							{
+								name: "Card Nested",
+								data: {
+									title: "Nested card 2",
+									body: "Nested card body 2",
+									href: "/nested-card-2",
+									nested: [
+										{
+											name: "Card",
+											data: {
+												title: "Nested card 2.1",
+												body: "Nested card body 2.1",
+												href: "/nested-card-2-1",
+											},
+										},
+									] satisfies LavaCmsComponent[],
+								},
+							},
+						] satisfies LavaCmsComponent[],
 					},
 				},
 			];
