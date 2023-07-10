@@ -3,6 +3,8 @@
 	"version": "0.1.0",
 	"type": "module",
 	"description": "Astro adapter for Lava CMS API",
+	"main": "./dist/index.js",
+	"types": "./dist/index.d.ts",
 	"exports": {
 		".": "./dist/index.js",
 		"./LavaCmsComponent.astro": "./LavaCmsComponent.astro",
@@ -10,7 +12,7 @@
 	},
 	"files": [
 		"dist",
-		"LavaCmsComponent.astro"
+		"*.astro"
 	],
 	"license": "MIT",
 	"repository": {
