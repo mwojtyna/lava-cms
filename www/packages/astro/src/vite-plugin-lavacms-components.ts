@@ -32,7 +32,7 @@ export function vitePluginLavaCmsComponents(components: ClientConfigAstro["compo
 				}
 
 				if (!Object.values(components).length) {
-					throw new Error(`No CMS components are registered in astro.config.mjs.`);
+					throw new Error(`No CMS components are registered in Astro config`);
 				} else {
 					return `${imports.join(";")}; export default {${Object.keys(components)
 						.map((name) => camelcase(name))

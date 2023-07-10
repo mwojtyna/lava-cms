@@ -65,7 +65,7 @@ export class ApiClient {
 						title: "Card with children",
 						body: "Card with the ability to have other components inside",
 						href: "/card-with-children",
-						nested: [
+						children: [
 							{
 								name: "Card",
 								data: {
@@ -80,7 +80,7 @@ export class ApiClient {
 									title: "Nested card 2",
 									body: "Nested card body 2",
 									href: "/nested-card-2",
-									nested: [
+									children: [
 										{
 											name: "Card",
 											data: {
