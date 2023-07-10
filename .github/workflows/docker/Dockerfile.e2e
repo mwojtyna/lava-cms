@@ -27,7 +27,6 @@ ENV PATH ${NVM_DIR}/versions/node/v$NODE_VERSION/bin:$PATH
 COPY ./ /app
 RUN npm install -g pnpm
 RUN pnpm install --frozen-lockfile
-RUN scripts/deno_install.sh
 
 RUN cd admin && pnpm prisma generate
 RUN pnpm build
