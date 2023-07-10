@@ -1,9 +1,9 @@
 ---
-import type { LavaCmsComponent, LavaCmsComponentData } from "@lavacms/astro";
-import { default as LavaCmsComponentAstro } from "@lavacms/astro/LavaCmsComponent.astro";
+import type { LavaCms } from "@lavacms/astro";
+import LavaCmsComponent from "@lavacms/astro/LavaCmsComponent.astro";
 
 interface Props {
-	cms: LavaCmsComponentData;
+	cms: LavaCms.ComponentData;
 }
 
 const { cms } = Astro.props;
@@ -20,9 +20,9 @@ const { cms } = Astro.props;
 		</p>
 		<div class="nested">
 			{
-				(cms.nested as LavaCmsComponent[]).map((comp) => {
-					// eslint-disable-next-line
-					return <LavaCmsComponentAstro component={comp} />;
+				(cms.nested as LavaCms.Component[]).map((comp) => {
+					// eslint-disable-next-line @typescript-eslint/no-unsafe-return
+					return <LavaCmsComponent component={comp} />;
 				})
 			}
 		</div>

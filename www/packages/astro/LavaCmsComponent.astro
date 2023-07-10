@@ -2,11 +2,11 @@
 import astroComponents from "virtual:lavacms-components";
 import config from "virtual:lavacms-config";
 import camelcase from "camelcase";
-import type { LavaCmsComponent } from "@lavacms/core";
+import type { LavaCms } from "@lavacms/core";
 import FallbackComponent from "./FallbackComponent.astro";
 
 interface Props {
-	component: LavaCmsComponent;
+	component: LavaCms.Component;
 }
 
 const { component: cmsComponent } = Astro.props;

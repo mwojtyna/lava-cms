@@ -1,8 +1,8 @@
-import type { LavaCmsApiClient } from "./client";
+import type { ApiClient } from "./client";
 
 declare global {
 	// eslint-disable-next-line no-var
-	var client: LavaCmsApiClient | undefined;
+	var client: ApiClient | undefined;
 }
 
 export interface ClientConfigBase {
@@ -19,10 +19,10 @@ export interface ClientConfigBase {
 
 export type ContentType = string | number | boolean | object;
 
-export interface LavaCmsComponent {
+export interface Component {
 	name: string;
-	data: LavaCmsComponentData;
+	data: ComponentData;
 }
-export interface LavaCmsComponentData {
+export interface ComponentData {
 	[fieldName: string]: ContentType;
 }

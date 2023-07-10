@@ -1,11 +1,11 @@
 ---
 /* eslint-disable @typescript-eslint/no-unsafe-return */
 
-import type { LavaCmsComponent } from "@lavacms/core";
-import { default as LavaCmsAstroComponent } from "./LavaCmsComponent.astro";
+import type { LavaCms } from "@lavacms/core";
+import LavaCmsComponent from "./LavaCmsComponent.astro";
 
 interface Props {
-	components: LavaCmsComponent[];
+	components: LavaCms.Component[];
 }
 
 const { components: cmsComponents } = Astro.props;
@@ -14,4 +14,4 @@ if (!cmsComponents) {
 }
 ---
 
-{cmsComponents.map((comp) => <LavaCmsAstroComponent component={comp} />)}
+{cmsComponents.map((comp) => <LavaCmsComponent component={comp} />)}

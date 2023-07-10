@@ -1,9 +1,9 @@
 import type { AstroIntegration } from "astro";
-import type { ClientConfigBase } from "@lavacms/core";
+import type { LavaCms } from "@lavacms/core";
 import { vitePluginLavaCmsComponents } from "./vite-plugin-lavacms-components";
 import { vitePluginLavaCmsConfig } from "./vite-plugin-lavacms-config";
 
-export interface ClientConfigAstro extends ClientConfigBase {
+export interface ClientConfigAstro extends LavaCms.ClientConfigBase {
 	/**
 	 * Assign CMS component name to an Astro component path
 	 * @example
@@ -41,8 +41,8 @@ export function lavaCmsAstro(config: ClientConfigAstro): AstroIntegration {
 				injectScript(
 					"page-ssr",
 					`
-					import { LavaCmsApiClient } from "@lavacms/astro";
-					const client = new LavaCmsApiClient({
+					import { ApiClient } from "@lavacms/astro";
+					const client = new ApiClient({
 						url: "${config.url}",
 						token: "${config.token}",
 						log: ${config.log ? "true" : "false"},

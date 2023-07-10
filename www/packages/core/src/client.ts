@@ -1,9 +1,9 @@
 import { createTRPCProxyClient, httpBatchLink, loggerLink } from "@trpc/client";
 import SuperJSON from "superjson";
 import type { PublicRouter } from "@lavacms/types";
-import type { ClientConfigBase, LavaCmsComponent } from "./types";
+import type { ClientConfigBase, Component } from "./types";
 
-export class LavaCmsApiClient {
+export class ApiClient {
 	private readonly connection;
 
 	constructor(config: ClientConfigBase) {
@@ -33,7 +33,7 @@ export class LavaCmsApiClient {
 	 * @param path Path of the page to get. Recommended to use the [URL API](https://developer.mozilla.org/en-US/docs/Web/API/URL) `pathname` property
 	 * @returns Page name and its components
 	 */
-	public async getPage(path: string): Promise<{ name: string; components: LavaCmsComponent[] }> {
+	public async getPage(path: string): Promise<{ name: string; components: Component[] }> {
 		const page = await this.connection.getPage.query({ path });
 
 		if (!page) {
@@ -42,7 +42,7 @@ export class LavaCmsApiClient {
 			const { name } = page;
 
 			// TODO: Get from CMS
-			const components: LavaCmsComponent[] = [
+			const components: Component[] = [
 				{
 					name: "Card",
 					data: {
@@ -89,10 +89,10 @@ export class LavaCmsApiClient {
 												href: "/nested-card-2-1",
 											},
 										},
-									] satisfies LavaCmsComponent[],
+									] satisfies Component[],
 								},
 							},
-						] satisfies LavaCmsComponent[],
+						] satisfies Component[],
 					},
 				},
 			];
@@ -102,7 +102,7 @@ export class LavaCmsApiClient {
 	}
 }
 
-export function useLavaCms(): LavaCmsApiClient {
+export function useLavaCms(): ApiClient {
 	if (!globalThis.client) {
 		throw new Error(
 			"Lava CMS client not initialized! Are you using the correct adapter for your framework?"
