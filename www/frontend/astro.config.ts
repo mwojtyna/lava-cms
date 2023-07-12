@@ -16,7 +16,7 @@ export default defineConfig({
 			log: import.meta.env.DEV,
 			components: {
 				Card: "/src/components/Card.astro",
-				"Parent Card": "/src/components/CardNested.astro",
+				"Parent Card": "/src/components/ParentCard.astro",
 			},
 			enableFallbackComponent: true,
 		}),
