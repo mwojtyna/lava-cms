@@ -8,13 +8,11 @@ export function vitePluginLavaCmsComponents(components: ClientConfigAstro["compo
 
 	return {
 		name: "lavacms-components",
-		// @ts-expect-error - not all code paths return a value
 		resolveId: (id) => {
 			if (id === virtualModuleId) {
 				return resolvedVirtualModuleId;
 			}
 		},
-		// @ts-expect-error - not all code paths return a value
 		async load(id) {
 			if (id === resolvedVirtualModuleId) {
 				const imports: string[] = [];

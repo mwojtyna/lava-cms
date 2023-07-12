@@ -1,4 +1,4 @@
-import { createTRPCProxyClient, httpBatchLink, loggerLink } from "@trpc/client";
+import { TRPCClientError, createTRPCProxyClient, httpBatchLink, loggerLink } from "@trpc/client";
 import SuperJSON from "superjson";
 import type { PublicRouter } from "@lavacms/types";
 import type { ClientConfigBase, Component } from "./types";
@@ -37,7 +37,7 @@ export class ApiClient {
 		const page = await this.connection.getPage.query({ path });
 
 		if (!page) {
-			throw new Error(`Page with path '${path}' not added in CMS!`);
+			throw new Error(`Page with path '${path}' not added in CMS`);
 		} else {
 			const { name } = page;
 
@@ -98,6 +98,23 @@ export class ApiClient {
 			];
 
 			return { name, components };
+		}
+	}
+
+	/**
+	 * Returns slugs of specified group's pages. Useful for statically generating dynamic routes
+	 * @param groupUrl URL of the CMS page group
+	 * @returns Slugs of the pages in the group
+	 * @example getPaths("/products") -> ["product-1", "product-2", "product-3"]
+	 */
+	public async getPaths(groupUrl: string): Promise<string[] | undefined> {
+		try {
+			const slugs = await this.connection.getPaths.query({ groupUrl });
+			return slugs;
+		} catch (error) {
+			if (error instanceof TRPCClientError) {
+				throw new Error(`Group with URL \`${groupUrl}\` not found`);
+			}
 		}
 	}
 }

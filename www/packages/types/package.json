@@ -14,6 +14,7 @@
 		"directory": "www/packages/server"
 	},
 	"scripts": {
+		"dev": "pnpm run build --watch",
 		"build": "tsup index.ts --format esm --dts-only",
 		"lint": "tsc",
 		"prepublishOnly": "npm run lint && npm run build"

@@ -1,0 +1,12 @@
+---
+import { useLavaCms } from "@lavacms/astro";
+import Layout from "../../layouts/Layout.astro";
+
+export async function getStaticPaths(): Promise<Array<{ params: { product: string } }>> {
+	const cms = useLavaCms();
+	const paths = await cms.getPaths("/products");
+	return paths.map((path) => ({ params: { product: path } }));
+}
+---
+
+<Layout>{Astro.params.product}</Layout>

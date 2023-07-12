@@ -7,13 +7,11 @@ export function vitePluginLavaCmsConfig(config: ClientConfigAstro): Plugin {
 
 	return {
 		name: "lavacms-config",
-		// @ts-expect-error - not all code paths return a value
 		resolveId: (id) => {
 			if (id === virtualModuleId) {
 				return resolvedVirtualModuleId;
 			}
 		},
-		// @ts-expect-error - not all code paths return a value
 		load: (id) => {
 			if (id === resolvedVirtualModuleId) {
 				return `export default ${JSON.stringify(config)}`;

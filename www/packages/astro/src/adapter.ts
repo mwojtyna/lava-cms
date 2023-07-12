@@ -33,7 +33,7 @@ export function lavaCmsAstro(config: ClientConfigAstro): AstroIntegration {
 				if (astroConfig.output !== "static") {
 					injectScript(
 						"page-ssr",
-						`throw new Error("Lava CMS Astro adapter doesn't support SSR!");`
+						`throw new Error("Lava CMS Astro adapter doesn't support SSR");`
 					);
 					return;
 				}
