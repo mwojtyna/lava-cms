@@ -7,9 +7,16 @@ export const prisma = mockDeep<PrismaClient>();
 beforeEach(() => {
 	// Bypass the privateAuth middleware
 	prisma.config.count.mockResolvedValue(0);
+
+	// Bypass the publicAuth middleware
+	prisma.token.findFirst.mockResolvedValue({ id: "1", token: "token" });
+
 	vi.mock("next/headers", () => ({
 		cookies: vi.fn(() => ({
 			get: vi.fn(),
+		})),
+		headers: vi.fn(() => ({
+			get: vi.fn().mockReturnValue("Bearer token"),
 		})),
 	}));
 	vi.mock("@admin/src/utils/server", () => ({
