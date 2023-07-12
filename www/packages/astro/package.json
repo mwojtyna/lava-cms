@@ -29,7 +29,7 @@
 	],
 	"scripts": {
 		"dev": "pnpm run build --watch",
-		"build": "tsup index.ts --format esm --dts --external virtual:lavacms-init",
+		"build": "tsup index.ts --format esm --dts",
 		"lint": "tsc && eslint .",
 		"prepublishOnly": "pnpm run lint && pnpm run build --minify"
 	},

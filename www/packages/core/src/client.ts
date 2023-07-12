@@ -1,4 +1,4 @@
-import { TRPCClientError, createTRPCProxyClient, httpBatchLink, loggerLink } from "@trpc/client";
+import { createTRPCProxyClient, httpBatchLink, loggerLink } from "@trpc/client";
 import SuperJSON from "superjson";
 import type { PublicRouter } from "@lavacms/types";
 import type { ClientConfigBase, Component } from "./types";
@@ -107,14 +107,11 @@ export class ApiClient {
 	 * @returns Slugs of the pages in the group
 	 * @example getPaths("/products") -> ["product-1", "product-2", "product-3"]
 	 */
-	public async getPaths(groupUrl: string): Promise<string[] | undefined> {
+	public async getPaths(groupUrl: string): Promise<string[]> {
 		try {
-			const slugs = await this.connection.getPaths.query({ groupUrl });
-			return slugs;
+			return await this.connection.getPaths.query({ groupUrl });
 		} catch (error) {
-			if (error instanceof TRPCClientError) {
-				throw new Error(`Group with URL \`${groupUrl}\` not found`);
-			}
+			throw new Error(`Group with URL \`${groupUrl}\` not found`);
 		}
 	}
 }
