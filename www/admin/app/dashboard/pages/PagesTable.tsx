@@ -110,6 +110,7 @@ export function PagesTable(props: PagesTableProps) {
 			setCookie(
 				"pages-table" satisfies CookieName,
 				// @ts-expect-error `value` type is weird
+				// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
 				JSON.stringify({ ...value()[0], pageSize: pagination.pageSize } as TableCookie),
 				permanentCookieOptions
 			);
@@ -201,7 +202,7 @@ export function PagesTable(props: PagesTableProps) {
 									{headerGroup.headers.map((header) => (
 										<TableHead
 											key={header.id}
-											style={{ width: header.getSize() + "px" }}
+											style={{ width: header.getSize().toString() + "px" }}
 										>
 											{header.isPlaceholder
 												? null

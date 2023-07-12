@@ -14,7 +14,7 @@ export const addPage = privateProcedure
 			is_group: z.boolean(),
 		})
 	)
-	.mutation(async ({ input }): Promise<string | undefined> => {
+	.mutation(async ({ input }): Promise<string> => {
 		try {
 			const page = await prisma.page.create({
 				data: {
@@ -29,7 +29,7 @@ export const addPage = privateProcedure
 			if (error instanceof PrismaClientKnownRequestError) {
 				if (error.code === "P2002") {
 					throw new TRPCError({ code: "CONFLICT" });
-				}
+				} else throw new TRPCError({ code: "INTERNAL_SERVER_ERROR" });
 			} else throw new TRPCError({ code: "INTERNAL_SERVER_ERROR" });
 		}
 	});

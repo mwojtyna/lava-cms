@@ -41,7 +41,6 @@ import {
 import { Combobox } from "@admin/src/components";
 import { TypographyList, TypographyMuted } from "@admin/src/components/ui/server";
 import slugify from "slugify";
-import { TRPCClientError } from "@trpc/client";
 import { usePagePreferences } from "@admin/src/hooks";
 
 interface AddDialogProps {
@@ -225,37 +224,42 @@ export function MoveDialog(props: EditDialogProps) {
 	const mutation = trpc.pages.movePage.useMutation();
 
 	const form = useForm<MoveDialogInputs>();
-	const onSubmit: SubmitHandler<MoveDialogInputs> = async (data) => {
-		try {
-			await mutation.mutateAsync({
+	const onSubmit: SubmitHandler<MoveDialogInputs> = (data) => {
+		mutation.mutate(
+			{
 				id: props.page.id,
 				newParentId: data.newParentId,
-			});
-			props.setOpen(false);
-		} catch (error) {
-			if (error instanceof TRPCClientError && error.data.code === "CONFLICT") {
-				const destinationUrl = groups!.find((group) => group.id === data.newParentId)!.url;
+			},
+			{
+				onSuccess: () => props.setOpen(false),
+				onError: (err) => {
+					if (err.data?.code === "CONFLICT") {
+						const destinationUrl = groups!.find(
+							(group) => group.id === data.newParentId
+						)!.url;
 
-				const newPath =
-					destinationUrl +
-					(destinationUrl === "/" ? "" : "/") +
-					props.page.url.split("/").pop()!;
+						const newPath =
+							destinationUrl +
+							(destinationUrl === "/" ? "" : "/") +
+							props.page.url.split("/").pop()!;
 
-				form.setError("newParentId", {
-					message: (
-						<>
-							An item with path{" "}
-							<strong className="whitespace-nowrap">{newPath}</strong> already exists!
-							Either change the slug or move it somewhere else.
-						</>
-					) as unknown as string,
-				});
-			} else {
-				form.setError("newParentId", {
-					message: "An unexpected error occurred.",
-				});
+						form.setError("newParentId", {
+							message: (
+								<>
+									An item with path{" "}
+									<strong className="whitespace-nowrap">{newPath}</strong> already
+									exists! Either change the slug or move it somewhere else.
+								</>
+							) as unknown as string,
+						});
+					} else {
+						form.setError("newParentId", {
+							message: "An unexpected error occurred.",
+						});
+					}
+				},
 			}
-		}
+		);
 	};
 
 	React.useEffect(() => {
@@ -428,7 +432,7 @@ function NameSlugInput<T extends EditDialogInputs>({
 				control={form.control}
 				name={"name" as Path<T>}
 				rules={{
-					onChange: (e) => {
+					onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
 						if (!slugLocked)
 							form.setValue(
 								"slug" as Path<T>,
@@ -482,34 +486,36 @@ export function EditDetailsDialog(props: EditDialogProps) {
 	const form = useForm<EditDialogInputs>({
 		resolver: zodResolver(editDialogSchema),
 	});
-	const onSubmit: SubmitHandler<EditDialogInputs> = async (data) => {
+	const onSubmit: SubmitHandler<EditDialogInputs> = (data) => {
 		if (data.slug === "/" && props.page.is_group) {
 			form.setError("slug", { message: "Groups cannot have slugs containing only '/'." });
 			return;
 		}
-
 		const newUrl = editUrl(props.page.url, data.slug);
 
-		try {
-			await mutation.mutateAsync({
+		mutation.mutate(
+			{
 				id: props.page.id,
 				newName: data.name,
 				newUrl,
-			});
-			props.setOpen(false);
-		} catch (error) {
-			if (error instanceof TRPCClientError && error.data.code === "CONFLICT") {
-				form.setError("slug", {
-					type: "manual",
-					message: (
-						<>
-							An item with path{" "}
-							<strong className="whitespace-nowrap">{newUrl}</strong> already exists.
-						</>
-					) as unknown as string,
-				});
+			},
+			{
+				onSuccess: () => props.setOpen(false),
+				onError: (err) => {
+					if (err.data?.code === "CONFLICT") {
+						form.setError("slug", {
+							message: (
+								<>
+									An item with path{" "}
+									<strong className="whitespace-nowrap">{newUrl}</strong> already
+									exists.
+								</>
+							) as unknown as string,
+						});
+					}
+				},
 			}
-		}
+		);
 	};
 
 	React.useEffect(() => {
@@ -561,37 +567,41 @@ export function AddDialog(props: AddDialogProps) {
 	const form = useForm<EditDialogInputs>({
 		resolver: zodResolver(editDialogSchema),
 	});
-	const onSubmit: SubmitHandler<EditDialogInputs> = async (data) => {
+	const onSubmit: SubmitHandler<EditDialogInputs> = (data) => {
 		const url = props.group.url + (props.group.url !== "/" ? "/" : "") + data.slug.slice(1);
-
-		try {
-			const id = await mutation.mutateAsync({
+		mutation.mutate(
+			{
 				name: data.name,
 				url,
 				parent_id: props.group.id,
 				is_group: props.isGroup,
-			});
-
-			if (slugLocked) {
-				setPreferences({
-					...preferences,
-					[id!]: slugLocked,
-				});
+			},
+			{
+				onSuccess: (id) => {
+					if (slugLocked) {
+						setPreferences({
+							...preferences,
+							[id]: slugLocked,
+						});
+					}
+					props.setOpen(false);
+				},
+				onError: (err) => {
+					if (err.data?.code === "CONFLICT") {
+						form.setError("slug", {
+							type: "manual",
+							message: (
+								<>
+									An item with path{" "}
+									<strong className="whitespace-nowrap">{url}</strong> already
+									exists.
+								</>
+							) as unknown as string,
+						});
+					}
+				},
 			}
-			props.setOpen(false);
-		} catch (error) {
-			if (error instanceof TRPCClientError && error.data.code === "CONFLICT") {
-				form.setError("slug", {
-					type: "manual",
-					message: (
-						<>
-							An item with path <strong className="whitespace-nowrap">{url}</strong>{" "}
-							already exists.
-						</>
-					) as unknown as string,
-				});
-			}
-		}
+		);
 	};
 
 	React.useEffect(() => {
@@ -656,38 +666,43 @@ export function DuplicateDialog(props: EditDialogProps) {
 	const form = useForm<DuplicateDialogInputs>({
 		resolver: zodResolver(duplicateDialogSchema),
 	});
-	const onSubmit: SubmitHandler<DuplicateDialogInputs> = async (data) => {
-		const newParent = groups?.find((group) => group.id === data.newParentId);
-		const url = newParent?.url + data.slug;
+	const onSubmit: SubmitHandler<DuplicateDialogInputs> = (data) => {
+		const newParent = groups!.find((group) => group.id === data.newParentId)!;
+		const url = newParent.url + data.slug;
 
-		try {
-			const id = await mutation.mutateAsync({
+		mutation.mutate(
+			{
 				name: data.name,
-				url: url,
+				url,
 				parent_id: data.newParentId,
 				is_group: false,
-			});
-
-			if (slugLocked) {
-				setPreferences({
-					...preferences,
-					[id!]: slugLocked,
-				});
+			},
+			{
+				onSuccess: (id) => {
+					if (slugLocked) {
+						setPreferences({
+							...preferences,
+							[id]: slugLocked,
+						});
+					}
+					props.setOpen(false);
+				},
+				onError: (err) => {
+					if (err.data?.code === "CONFLICT") {
+						form.setError("slug", {
+							type: "manual",
+							message: (
+								<>
+									An item with path{" "}
+									<strong className="whitespace-nowrap">{url}</strong> already
+									exists.
+								</>
+							) as unknown as string,
+						});
+					}
+				},
 			}
-			props.setOpen(false);
-		} catch (error) {
-			if (error instanceof TRPCClientError && error.data.code === "CONFLICT") {
-				form.setError("slug", {
-					type: "manual",
-					message: (
-						<>
-							An item with path <strong className="whitespace-nowrap">{url}</strong>{" "}
-							already exists.
-						</>
-					) as unknown as string,
-				});
-			}
-		}
+		);
 	};
 
 	React.useEffect(() => {

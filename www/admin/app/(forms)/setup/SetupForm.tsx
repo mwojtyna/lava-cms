@@ -5,8 +5,6 @@ import { type SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { ArrowRightIcon } from "@heroicons/react/20/solid";
-import { TRPCClientError } from "@trpc/client";
-import type { TRPC_ERROR_CODE_KEY } from "@trpc/server/rpc";
 import { InfoTooltip } from "@admin/src/components";
 import {
 	Button,
@@ -36,25 +34,23 @@ export function SetupForm() {
 	const addPageMutation = trpc.pages.addPage.useMutation();
 
 	const form = useForm<Inputs>({ resolver: zodResolver(schema) });
-	const onSubmit: SubmitHandler<Inputs> = async (data) => {
-		try {
-			await setConfigMutation.mutateAsync(data);
-		} catch (error) {
-			if (
-				error instanceof TRPCClientError &&
-				error.data?.code === ("BAD_REQUEST" satisfies TRPC_ERROR_CODE_KEY)
-			) {
-				form.setError("language", {});
-			}
-		}
-		await addPageMutation.mutateAsync({
-			name: "Root",
-			url: "",
-			is_group: true,
-			parent_id: null,
+	const onSubmit: SubmitHandler<Inputs> = (data) => {
+		setConfigMutation.mutate(data, {
+			onSuccess: async () => {
+				await addPageMutation.mutateAsync({
+					name: "Root",
+					url: "",
+					is_group: true,
+					parent_id: null,
+				});
+				router.replace("/dashboard");
+			},
+			onError: (err) => {
+				if (err.data?.code === "BAD_REQUEST") {
+					form.setError("language", {});
+				}
+			},
 		});
-
-		router.replace("/dashboard");
 	};
 
 	return (
@@ -72,7 +68,11 @@ export function SetupForm() {
 					size="lg"
 					icon={<ArrowRightIcon className="w-5" />}
 					className="ml-auto shadow-lg shadow-primary/25"
-					loading={form.formState.isSubmitting || form.formState.isSubmitSuccessful}
+					loading={
+						setConfigMutation.isLoading ||
+						addPageMutation.isLoading ||
+						addPageMutation.isSuccess
+					}
 				>
 					Finish
 				</Button>

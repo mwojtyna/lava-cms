@@ -17,5 +17,14 @@ module.exports = {
 		"@typescript-eslint/consistent-type-imports": "warn",
 		"@typescript-eslint/no-unused-vars": ["warn", { ignoreRestSiblings: true }],
 		"@typescript-eslint/consistent-type-imports": ["warn", { disallowTypeAnnotations: false }],
+		"@typescript-eslint/no-misused-promises": ["error", { checksVoidReturn: false }],
 	},
+	overrides: [
+		{
+			files: ["*.test.ts"],
+			rules: {
+				"@typescript-eslint/unbound-method": "off",
+			},
+		},
+	],
 };

@@ -37,6 +37,7 @@ it("updates the page's url and its children's urls", async () => {
 		data: {
 			name: NEW_NAME,
 			url: "/" + NEW_SLUG,
+			// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
 			last_update: expect.any(Date),
 		},
 	});

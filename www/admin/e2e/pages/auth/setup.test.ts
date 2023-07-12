@@ -45,27 +45,27 @@ test.describe("sign up step", () => {
 		await page.locator("button[type='submit']").click();
 		const passwordField = page.locator("input[type='password']").first();
 
-		passwordField.first().fill("pass");
+		await passwordField.first().fill("pass");
 		await expect(
 			page.locator("text=The password must be at least 8 characters long.")
 		).toBeInViewport();
 
-		passwordField.first().fill("12345678");
+		await passwordField.first().fill("12345678");
 		await expect(
 			page.locator("text=The password must contain at least one lowercase letter.")
 		).toBeInViewport();
 
-		passwordField.first().fill("password");
+		await passwordField.first().fill("password");
 		await expect(
 			page.locator("text=The password must contain at least one uppercase letter.")
 		).toBeInViewport();
 
-		passwordField.first().fill("Password");
+		await passwordField.first().fill("Password");
 		await expect(
 			page.locator("text=The password must contain at least one digit.")
 		).toBeInViewport();
 
-		passwordField.first().fill("Password1");
+		await passwordField.first().fill("Password1");
 		await expect(page.locator("input[type='password']").first()).toHaveAttribute(
 			"aria-invalid",
 			"false"

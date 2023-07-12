@@ -31,10 +31,10 @@ export default async function SetupLayout() {
 			<Stepper
 				className="mb-2 ml-1"
 				steps={["Admin account", "Configuration"]}
-				currentStep={Object.keys(reasonFormMap).indexOf(reason!)}
+				currentStep={Object.keys(reasonFormMap).indexOf(reason)}
 				separator={<ArrowRightIcon className="w-4" />}
 			/>
-			{reasonFormMap[reason!]}
+			{reasonFormMap[reason]}
 		</div>
 	);
 }

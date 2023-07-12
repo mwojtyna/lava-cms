@@ -26,8 +26,6 @@ import {
 	TypographyCode,
 } from "@admin/src/components/ui/server";
 import { useToast } from "@admin/src/hooks";
-import { TRPCClientError } from "@trpc/client";
-import type { TRPC_ERROR_CODE_KEY } from "@trpc/server/rpc";
 
 const schema = z.object({
 	title: z.string().nonempty(),
@@ -45,28 +43,20 @@ export function SeoForm({ serverData }: { serverData: Inputs }) {
 	const { toast, toastError } = useToast();
 
 	const form = useForm<Inputs>({ resolver: zodResolver(schema), defaultValues: data });
-	const onSubmit: SubmitHandler<Inputs> = async (data) => {
-		try {
-			await mutation.mutateAsync(data);
-			toast({
-				title: "Success",
-				description: "SEO settings saved.",
-			});
-		} catch (error) {
-			if (error instanceof Error) {
-				if (
-					error instanceof TRPCClientError &&
-					error.data?.code === ("BAD_REQUEST" satisfies TRPC_ERROR_CODE_KEY)
-				) {
+	const onSubmit: SubmitHandler<Inputs> = (data) => {
+		mutation.mutate(data, {
+			onSuccess: () => toast({ title: "Success", description: "SEO settings saved." }),
+			onError: (err) => {
+				if (err.data?.code === "BAD_REQUEST") {
 					form.setError("language", {});
 				} else {
 					toastError({
 						title: "Error",
-						description: error.message.trim(),
+						description: err.message.trim(),
 					});
 				}
-			}
-		}
+			},
+		});
 	};
 
 	return (

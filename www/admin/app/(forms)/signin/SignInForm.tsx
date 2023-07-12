@@ -22,8 +22,6 @@ import {
 } from "@admin/src/components/ui/client";
 import { SinglePageForm } from "../SinglePageForm";
 import { trpc } from "@admin/src/utils/trpc";
-import { TRPCClientError } from "@trpc/client";
-import type { TRPC_ERROR_CODE_KEY } from "@trpc/server/rpc";
 
 const schema = z.object({
 	email: z.string().nonempty(" ").email("The e-mail you provided is invalid."),
@@ -38,24 +36,21 @@ export function SignInForm() {
 	const form = useForm<Inputs>({
 		resolver: zodResolver(schema),
 	});
-	const onSubmit: SubmitHandler<Inputs> = async (data) => {
-		try {
-			await mutation.mutateAsync(data);
-			router.replace("/dashboard");
-		} catch (error) {
-			if (
-				error instanceof TRPCClientError &&
-				error.data?.code === ("UNAUTHORIZED" satisfies TRPC_ERROR_CODE_KEY)
-			) {
-				form.setError("root", {
-					message: "Your credentials are invalid.",
-				});
-			} else {
-				form.setError("root", {
-					message: "Something went wrong. Try again later.",
-				});
-			}
-		}
+	const onSubmit: SubmitHandler<Inputs> = (data) => {
+		mutation.mutate(data, {
+			onSuccess: () => router.replace("/dashboard"),
+			onError: (err) => {
+				if (err.data?.code === "UNAUTHORIZED") {
+					form.setError("root", {
+						message: "Your credentials are invalid.",
+					});
+				} else {
+					form.setError("root", {
+						message: "Something went wrong. Try again later.",
+					});
+				}
+			},
+		});
 	};
 
 	return (
@@ -78,7 +73,7 @@ export function SignInForm() {
 					size="lg"
 					icon={<ArrowRightOnRectangleIcon className="w-5" />}
 					className="ml-auto shadow-lg shadow-primary/25"
-					loading={form.formState.isSubmitting || form.formState.isSubmitSuccessful}
+					loading={mutation.isLoading || mutation.isSuccess}
 				>
 					Sign in
 				</Button>
