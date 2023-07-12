@@ -1,5 +1,4 @@
 import { defineConfig } from "astro/config";
-import { URL } from "node:url";
 import { loadEnv } from "vite";
 import { lavaCmsAstro } from "@lavacms/astro";
 
@@ -22,11 +21,4 @@ export default defineConfig({
 			enableFallbackComponent: true,
 		}),
 	],
-	vite: {
-		resolve: {
-			alias: {
-				"@frontend": new URL(".", import.meta.url).pathname,
-			},
-		},
-	},
 });
