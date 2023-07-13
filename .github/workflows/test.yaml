@@ -125,7 +125,7 @@ jobs:
 
   api:
     runs-on: ubuntu-22.04
-    name: Test api
+    name: Unit test API endpoints
 
     steps:
       - name: Checkout
