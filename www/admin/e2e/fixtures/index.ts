@@ -1,5 +1,4 @@
-import type { Page } from "playwright";
-import { test as base } from "@playwright/test";
+import { test as base, type Page } from "@playwright/test";
 import { authedPage } from "./authedPage";
 
 export interface Fixtures {
@@ -7,5 +6,5 @@ export interface Fixtures {
 }
 
 export const test = base.extend<Fixtures>({
-	authedPage: authedPage,
+	authedPage,
 });

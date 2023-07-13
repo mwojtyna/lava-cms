@@ -1,39 +1,32 @@
 // @ts-check
-/**
- * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation.
- * This is especially useful for Docker builds.
- */
-!process.env.SKIP_ENV_VALIDATION && (await import("./src/env/server.mjs"));
+import "./src/env/client.mjs";
+import "./src/env/server.mjs";
 
 /** @type {import("next").NextConfig} */
 const config = {
 	basePath: "/admin",
 	reactStrictMode: true,
 	swcMinify: true,
-	experimental: {
-		appDir: true,
-		typedRoutes: true,
+	modularizeImports: {
+		"@heroicons/react/24/outline": {
+			transform: "@heroicons/react/24/outline/{{member}}",
+		},
+		"@heroicons/react/24/solid": {
+			transform: "@heroicons/react/24/solid/{{member}}",
+		},
+		"@heroicons/react/20/solid": {
+			transform: "@heroicons/react/20/solid/{{member}}",
+		},
+		"@tabler/icons-react": {
+			transform: "@tabler/icons-react/dist/esm/icons/{{member}}",
+		},
 	},
-	// Fix for `import type` not working
-	transpilePackages: ["api"],
-	compress: false,
-
-	redirects: async () => {
-		return [
-			{
-				source: "/",
-				destination: "/dashboard",
-				permanent: true,
-			},
-		];
-	},
-	rewrites: async () => {
-		return [
-			{
-				source: "/api/trpc/:path*",
-				destination: "http://localhost:4000/trpc/:path*",
-			},
-		];
-	},
+	redirects: async () => [
+		{
+			source: "/",
+			destination: "/dashboard",
+			permanent: true,
+		},
+	],
 };
 export default config;

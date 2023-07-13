@@ -1,23 +1,25 @@
 import { create } from "zustand";
+import { setCookie } from "cookies-next";
+import { permanentCookieOptions, type ColorTheme, type CookieName } from "@admin/src/utils/cookies";
+import "client-only";
 
 interface MenuState {
 	isOpen: boolean;
-	toggle: () => void;
+	set: (value: boolean) => void;
 }
 export const useMenuStore = create<MenuState>((set) => ({
 	isOpen: false,
-	toggle: () => set((state) => ({ isOpen: !state.isOpen })),
+	set: (value) => set(() => ({ isOpen: value })),
 }));
 
-interface UrlState {
-	url: string;
-	set: (url: string) => void;
+interface ColorThemeState {
+	colorTheme?: ColorTheme;
+	set: (theme: ColorTheme) => void;
 }
-/**
- * This is for internal use only.
- * Use the useUrl hook instead.
- */
-export const useServerUrlStore = create<UrlState>((set) => ({
-	url: "",
-	set: (url) => set({ url }),
+export const useColorThemeStore = create<ColorThemeState>((set) => ({
+	colorTheme: undefined,
+	set: (theme) => {
+		set({ colorTheme: theme });
+		setCookie("color-theme" satisfies CookieName, theme, permanentCookieOptions);
+	},
 }));

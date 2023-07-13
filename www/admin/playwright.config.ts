@@ -7,7 +7,6 @@ import dotenv from "dotenv";
  * https://github.com/motdotla/dotenv
  */
 dotenv.config({ path: ".env.test" });
-dotenv.config({ path: "../api/.env.test" });
 
 /**
  * See https://playwright.dev/docs/test-configuration.
@@ -50,6 +49,9 @@ const config: PlaywrightTestConfig = {
 			name: "chromium",
 			use: {
 				...devices["Desktop Chrome"],
+				contextOptions: {
+					permissions: ["clipboard-read", "clipboard-write"],
+				},
 			},
 		},
 

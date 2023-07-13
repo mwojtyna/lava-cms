@@ -1,0 +1,33 @@
+---
+interface Props {
+	name: string;
+}
+
+const { name } = Astro.props;
+---
+
+<div>
+	<p>
+		No Astro component found for CMS component
+		<span>{name}</span>
+	</p>
+	<p>Make sure you have configured the Astro adapter properly</p>
+</div>
+
+<style scoped>
+	div {
+		background-color: beige;
+		padding: 15px 30px;
+		border-radius: 5px;
+		text-align: center;
+		width: fit-content;
+		margin: 0 auto;
+	}
+	span {
+		color: orange;
+		font-weight: bold;
+	}
+	p {
+		margin: 0.5rem auto;
+	}
+</style>

@@ -15,8 +15,8 @@ services:
     volumes:
       # Update this to wherever you want VS Code to mount the folder of your project
       - ./:/workspaces/lava-cms:cached
-      - ~/.ssh:/home/pwuser/.ssh
-      - ~/.gitconfig:/home/pwuser/.gitconfig
+      - ~/.ssh:/home/pwuser/.ssh:cached
+      - ~/.gitconfig:/home/pwuser/.gitconfig:cached
       - vscode:/home/pwuser/.vscode-server
       - pnpm-store:/home/pwuser/.pnpm-store
 

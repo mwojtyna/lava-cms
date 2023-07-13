@@ -1,10 +1,15 @@
-import type { Browser } from "playwright";
-import type { BrowserContextOptions, Page } from "@playwright/test";
+import type { BrowserContextOptions, Page, Browser } from "@playwright/test";
 import fs from "node:fs";
-import { prisma } from "api/prisma/client";
-import { init } from "api/server";
-import { server, start, stop } from "@admin/e2e/mocks/trpc";
-import { userMock, userPasswordDecrypted, websiteSettingsMock } from "@admin/e2e/mocks/data";
+import { prisma } from "@admin/prisma/client";
+import {
+	createMockUser,
+	deleteMockUser,
+	tokenMock,
+	userMock,
+	userPasswordDecrypted,
+	websiteSettingsMock,
+} from "@admin/e2e/mocks/data";
+import { DEFAULT_SESSION_COOKIE_NAME } from "lucia";
 
 export const STORAGE_STATE_PATH = "./e2e/storageState.json";
 
@@ -14,13 +19,7 @@ export const authedPage = async (
 ) => {
 	// We have to check if the user exists because a test might create one
 	const existingUser = await prisma.user.findFirst();
-	const { id } =
-		existingUser ??
-		(await prisma.user.create({
-			data: {
-				...userMock,
-			},
-		}));
+	if (!existingUser) await createMockUser();
 
 	if (!(await prisma.config.findFirst())) {
 		await prisma.config.create({
@@ -30,25 +29,51 @@ export const authedPage = async (
 		});
 	}
 
+	await prisma.page.deleteMany();
+	await prisma.page.create({
+		data: {
+			name: "Root",
+			url: "",
+			is_group: true,
+			parent_id: null,
+		},
+	});
+
+	await prisma.token.create({
+		data: {
+			token: tokenMock,
+		},
+	});
+
 	if (!fs.existsSync(STORAGE_STATE_PATH)) {
 		await saveSignedInState(browser);
 		console.log("Saved signed in state");
 	}
 
 	// Check if cookies are not expired
+	// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
 	const storageState: BrowserContextOptions["storageState"] = JSON.parse(
 		fs.readFileSync(STORAGE_STATE_PATH, "utf-8")
 	);
 
 	if (typeof storageState !== "string" && typeof storageState !== "undefined") {
 		const cookies = storageState.cookies;
-		const expiredCookies = cookies.filter((cookie) => {
-			return cookie.expires !== -1 && cookie.expires * 1000 < Date.now();
+		const expiredCookies = cookies.filter(
+			(cookie) => cookie.expires !== -1 && cookie.expires * 1000 < Date.now()
+		);
+
+		await prisma.session.create({
+			data: {
+				id: cookies.find((cookie) => cookie.name === DEFAULT_SESSION_COOKIE_NAME)!.value,
+				user_id: userMock.id,
+				active_expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7).getTime(),
+				idle_expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7).getTime(),
+			},
 		});
 
 		if (expiredCookies.length > 0) {
 			await saveSignedInState(browser);
-			console.log("Cookies expired; saved signed in state ");
+			console.log("Cookies expired; saved signed in state.");
 		}
 	} else {
 		throw new Error("Could not parse storage state");
@@ -62,36 +87,29 @@ export const authedPage = async (
 	// Run test
 	await use(authedPage);
 
-	// We have to check if a user exists because a test
-	// might delete an already created user
-	if (await prisma.user.findFirst()) {
-		await prisma.user.delete({ where: { id: id } });
-	}
+	await deleteMockUser();
 	if (await prisma.config.findFirst()) {
 		await prisma.config.deleteMany();
 	}
+	await prisma.page.deleteMany();
+	await prisma.token.deleteMany();
 };
 
 async function saveSignedInState(browser: Browser) {
-	let wasAlreadyStarted = false;
-
-	if (!server) {
-		await start(await init());
-	} else wasAlreadyStarted = true;
-
 	const page = await browser.newPage();
 
-	await page.goto("/admin");
+	await page.goto("/admin/signin", { waitUntil: "networkidle" });
 	await page.locator("input[name='email']").type(userMock.email);
 	await page.locator("input[name='password']").type(userPasswordDecrypted);
 	await page.locator("button[type='submit']").click();
+
 	await page.waitForURL(/\/admin\/dashboard/);
 
 	const cookies = await page.context().cookies();
-	const names = ["next-auth.csrf-token", "next-auth.callback-url", "next-auth.session-token"];
+	const whitelist = [DEFAULT_SESSION_COOKIE_NAME];
 
 	const cookiesToDelete = cookies
-		.filter((cookie) => !names.includes(cookie.name))
+		.filter((cookie) => !whitelist.includes(cookie.name))
 		.map((cookie) => cookies.indexOf(cookie));
 
 	cookiesToDelete.forEach((index) => cookies.splice(index, 1));
@@ -101,8 +119,4 @@ async function saveSignedInState(browser: Browser) {
 
 	await page.context().storageState({ path: STORAGE_STATE_PATH });
 	await page.close();
-
-	if (!wasAlreadyStarted) {
-		await stop();
-	}
 }

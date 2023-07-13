@@ -6,12 +6,12 @@ services:
     build: ./www
     volumes:
       - /artifacts/playwright-report/:/app/admin/playwright-report/
-      - /artifacts/api-report/:/app/api/html/
+      - /artifacts/api-report/:/app/admin/html/
     restart: always
 
   postgres:
     container_name: postgres
-    image: postgres:15.1
+    image: postgres:15.3 # 15.3-alpine is very flaky in Github Actions
     environment:
       - POSTGRES_USER=admin
       - POSTGRES_PASSWORD=admin

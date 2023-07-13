@@ -1,4 +1,4 @@
-FROM node:18.16.0-slim
+FROM node:18.16.1-slim
 WORKDIR /app
 
 # Setup system
@@ -10,6 +10,6 @@ ENV CI=true
 # Install dependencies
 COPY ./ /app
 RUN pnpm install --frozen-lockfile
-RUN cd api && pnpm prisma generate
+RUN cd admin && pnpm prisma generate
 
 CMD [ "tail", "-F", "/dev/null" ]

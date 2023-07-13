@@ -1,31 +1,12 @@
 import { useLocalStorage } from "@mantine/hooks";
 
-interface PagePreference {
-	expanded: boolean;
-	slugLocked: boolean;
-}
-const defaultValue: PagePreference = {
-	expanded: true,
-	slugLocked: false,
-};
-
-export function usePagePreferences(id: string) {
-	const [pagePreferences, setPagePreferences] = useLocalStorage({
-		key: "page-tree",
+export const usePagePreferences = (pageId: string) => {
+	const [slugLocked, setSlugLocked] = useLocalStorage<Record<string, boolean | undefined>>({
+		key: "slug-locked",
 		defaultValue: {
-			[id]: defaultValue,
+			[pageId]: false,
 		},
 	});
 
-	return {
-		pagePreferences: pagePreferences[id] ?? defaultValue,
-		setPagePreferences: (value: PagePreference) => {
-			setPagePreferences({
-				...pagePreferences,
-				[id]: {
-					...value,
-				} satisfies PagePreference,
-			});
-		},
-	};
-}
+	return [slugLocked, setSlugLocked] as const;
+};

@@ -1,14 +1,31 @@
-import type { Metadata } from "next";
-import PageTree from "./_components/PageTree";
-import { trpc } from "@admin/src/utils/trpc";
+import { cookies } from "next/headers";
+import { caller } from "@admin/src/trpc/routes/private/_private";
+import { PagesTable } from "./PagesTable";
+import { columns } from "./PagesTableColumns";
+import { type CookieName, tableCookieSchema } from "@admin/src/utils/cookies";
 
-export const metadata: Metadata = {
-	title: "Lava CMS - Website pages",
-};
-export const revalidate = 0;
+export const dynamic = "force-dynamic";
 
-export default async function Pages() {
-	const pages = await trpc.pages.getPages.query();
+export type SearchParams =
+	| {
+			pageIndex?: number;
+	  }
+	| undefined;
 
-	return <PageTree initialData={pages} />;
+export default async function Pages({ searchParams }: { searchParams: SearchParams }) {
+	const rootGroup = await caller.pages.getGroup();
+	const data = await caller.pages.getGroupContents();
+
+	const rawCookie = cookies().get("pages-table" satisfies CookieName)?.value;
+	const cookie = rawCookie ? await tableCookieSchema.parseAsync(JSON.parse(rawCookie)) : null;
+
+	return (
+		<PagesTable
+			columns={columns}
+			data={{ pages: data.pages, breadcrumbs: [] }}
+			group={rootGroup!}
+			pagination={searchParams}
+			cookie={cookie}
+		/>
+	);
 }
