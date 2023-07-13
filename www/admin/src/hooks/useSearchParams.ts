@@ -33,7 +33,7 @@ export const useSearchParams = (callbacks?: Callbacks) => {
 
 			// Get a new searchParams string by merging the current
 			// searchParams with a provided key/value pair
-			function createQueryString(values: Record<string, unknown | undefined>) {
+			function createQueryString(values: Record<string, unknown>) {
 				const params = new URLSearchParams(searchParams.toString());
 
 				for (const [key, value] of Object.entries(values)) {

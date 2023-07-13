@@ -23,6 +23,4 @@ export interface Component {
 	name: string;
 	data: ComponentData;
 }
-export interface ComponentData {
-	[fieldName: string]: ContentType;
-}
+export type ComponentData = Record<string, ContentType>;

@@ -63,6 +63,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
 				className={cn(buttonVariants({ variant, size, className }))}
 				ref={ref}
 				type={type}
+				// eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
 				disabled={loading || disabled}
 				{...props}
 			>

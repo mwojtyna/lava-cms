@@ -4,7 +4,7 @@ module.exports = {
 		project: true,
 		tsconfigRootDir: __dirname,
 	},
-	extends: ["package", "eslint:recommended", "plugin:astro/recommended"],
+	extends: ["package",  "plugin:astro/recommended"],
 	ignorePatterns: [".eslintrc*"],
 	overrides: [
 		{
