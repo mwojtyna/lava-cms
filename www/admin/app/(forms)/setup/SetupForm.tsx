@@ -32,6 +32,7 @@ export function SetupForm() {
 
 	const setConfigMutation = trpc.config.setConfig.useMutation();
 	const addPageMutation = trpc.pages.addPage.useMutation();
+	const generateTokenMutation = trpc.auth.generateToken.useMutation();
 
 	const form = useForm<Inputs>({ resolver: zodResolver(schema) });
 	const onSubmit: SubmitHandler<Inputs> = (data) => {
@@ -43,6 +44,7 @@ export function SetupForm() {
 					is_group: true,
 					parent_id: null,
 				});
+				await generateTokenMutation.mutateAsync();
 				router.replace("/dashboard");
 			},
 			onError: (err) => {
@@ -71,7 +73,8 @@ export function SetupForm() {
 					loading={
 						setConfigMutation.isLoading ||
 						addPageMutation.isLoading ||
-						addPageMutation.isSuccess
+						generateTokenMutation.isLoading ||
+						generateTokenMutation.isSuccess
 					}
 				>
 					Finish

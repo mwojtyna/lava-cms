@@ -4,6 +4,7 @@ import { prisma } from "@admin/prisma/client";
 import {
 	createMockUser,
 	deleteMockUser,
+	tokenMock,
 	userMock,
 	userPasswordDecrypted,
 	websiteSettingsMock,
@@ -38,12 +39,19 @@ export const authedPage = async (
 		},
 	});
 
+	await prisma.token.create({
+		data: {
+			token: tokenMock,
+		},
+	});
+
 	if (!fs.existsSync(STORAGE_STATE_PATH)) {
 		await saveSignedInState(browser);
 		console.log("Saved signed in state");
 	}
 
 	// Check if cookies are not expired
+	// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
 	const storageState: BrowserContextOptions["storageState"] = JSON.parse(
 		fs.readFileSync(STORAGE_STATE_PATH, "utf-8")
 	);
@@ -84,6 +92,7 @@ export const authedPage = async (
 		await prisma.config.deleteMany();
 	}
 	await prisma.page.deleteMany();
+	await prisma.token.deleteMany();
 };
 
 async function saveSignedInState(browser: Browser) {

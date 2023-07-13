@@ -15,6 +15,8 @@ export const websiteSettingsMock: Omit<Config, "id"> = {
 	language: "en",
 };
 
+export const tokenMock = "Rdt9DZz45guRCk6d9S8dASl9pSIXeqyh";
+
 export async function createMockUser() {
 	await prisma.$transaction([
 		prisma.user.create({
