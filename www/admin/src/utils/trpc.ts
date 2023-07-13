@@ -1,15 +1,14 @@
-import { createTRPCProxyClient, httpBatchLink } from "@trpc/client";
-import type { AppRouter } from "@admin/src/trpc/routes/_app";
-import SuperJSON from "superjson";
+import { createTRPCReact } from "@trpc/react-query";
+import type { PrivateRouter } from "@admin/src/trpc/routes/private/_private";
+import "client-only";
 
-export const trpc = createTRPCProxyClient<AppRouter>({
-	links: [
-		httpBatchLink({
-			url: "http://localhost:3001/admin/api/trpc",
-			headers: {
-				"x-trpc-origin": "server",
+export const trpc = createTRPCReact<PrivateRouter>({
+	overrides: {
+		useMutation: {
+			onSuccess: async (opts) => {
+				await opts.originalFn();
+				await opts.queryClient.invalidateQueries();
 			},
-		}),
-	],
-	transformer: SuperJSON,
+		},
+	},
 });

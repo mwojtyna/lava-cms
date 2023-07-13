@@ -1,23 +1,18 @@
 import { test, expect, type BrowserContext } from "@playwright/test";
-import { type ColorTheme, colorThemeSchema } from "@admin/src/data/stores/dashboard";
+import { type ColorTheme, colorThemeSchema } from "@admin/src/utils/cookies";
 import type { CookieName } from "@admin/src/utils/cookies";
 import { getColorScheme } from "../utils";
 
 const TEST_ID = "theme-switch";
 
-const getCookie = (context: BrowserContext): Promise<ColorTheme | undefined> =>
-	context
-		.cookies()
-		.then(
-			async (cookies) =>
-				await colorThemeSchema
-					.optional()
-					.parseAsync(
-						cookies.find(
-							(cookie) => cookie.name === ("color-theme" satisfies CookieName)
-						)?.value
-					)
+async function getCookie(context: BrowserContext): Promise<ColorTheme | undefined> {
+	const cookies = await context.cookies();
+	return await colorThemeSchema
+		.optional()
+		.parseAsync(
+			cookies.find((cookie) => cookie.name === ("color-theme" satisfies CookieName))?.value
 		);
+}
 
 test("light theme visual comparison", async ({ page }) => {
 	await page.goto("/admin/setup");
@@ -33,6 +28,7 @@ test("dark theme visual comparison", async ({ page }) => {
 	expect(await element.screenshot()).toMatchSnapshot();
 });
 
+// If this fails, it's likely because the cookie is set improperly. Check its attributes
 test("when pressing the switch, cookie and theme are updated", async ({ page, context }) => {
 	expect(await getCookie(context)).toBeUndefined();
 

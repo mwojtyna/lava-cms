@@ -2,11 +2,11 @@
 
 import Link from "next/link";
 import { Button } from "@admin/src/components/ui/client";
-import { routes } from "@admin/src/data/routes/settings";
+import type { SettingsRoute } from "@admin/src/data/routes/settings";
 import { cn } from "@admin/src/utils/styling";
 import { usePathname } from "@admin/src/hooks";
 
-export function SettingsMenu() {
+export function SettingsMenu({ routes }: { routes: SettingsRoute[] }) {
 	const segments = usePathname().split("/");
 	const lastSegment = segments[segments.length - 1];
 
@@ -15,14 +15,14 @@ export function SettingsMenu() {
 			{routes.map((route, i) => (
 				<Link
 					key={i}
-					href={"/dashboard/settings/" + route.slug}
+					href={"/dashboard/settings/" + route.path}
 					className="w-full"
 					tabIndex={-1}
 				>
 					<Button
 						className={cn(
-							(lastSegment === route.slug ||
-								(lastSegment === "settings" && route.slug === "")) &&
+							(lastSegment === route.path ||
+								(lastSegment === "settings" && route.path === "")) &&
 								"bg-accent",
 							"w-full justify-start whitespace-nowrap"
 						)}

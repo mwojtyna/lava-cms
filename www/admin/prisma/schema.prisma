@@ -11,13 +11,37 @@ datasource db {
 
 // Admin schema
 model User {
-    id        String @id @default(cuid())
-    name      String
-    last_name String
-    email     String @unique
-    password  String
+    id           String    @id @unique
+    auth_session Session[]
+    auth_key     Key[]
+    name         String
+    last_name    String
+    email        String    @unique
 
     @@map("user")
+    @@schema("admin")
+}
+
+model Session {
+    id             String @id @unique
+    user_id        String
+    active_expires BigInt
+    idle_expires   BigInt
+    user           User   @relation(references: [id], fields: [user_id], onDelete: Cascade)
+
+    @@index([user_id])
+    @@map("session")
+    @@schema("admin")
+}
+
+model Key {
+    id              String  @id @unique
+    hashed_password String?
+    user_id         String
+    user            User    @relation(references: [id], fields: [user_id], onDelete: Cascade)
+
+    @@index([user_id])
+    @@map("key")
     @@schema("admin")
 }
 
@@ -43,5 +67,13 @@ model Page {
     last_update DateTime @default(now())
 
     @@map("page")
+    @@schema("frontend")
+}
+
+model Token {
+    id    String @id @default(cuid())
+    token String
+
+    @@map("token")
     @@schema("frontend")
 }

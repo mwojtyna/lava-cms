@@ -34,12 +34,17 @@ import {
 	MagnifyingGlassIcon,
 } from "@heroicons/react/24/outline";
 import Link from "next/link";
-import { trpcReact } from "@admin/src/utils/trpcReact";
+import { trpc } from "@admin/src/utils/trpc";
 import { AddDialog } from "./dialogs";
 import { DataTablePagination } from "@admin/src/components";
 import { useSearchParams } from "@admin/src/hooks/useSearchParams";
 import type { SearchParams } from "./page";
-import { type CookieName, type TableCookie, getParsedCookie } from "@admin/src/utils/cookies";
+import {
+	type CookieName,
+	type TableCookie,
+	getParsedCookie,
+	permanentCookieOptions,
+} from "@admin/src/utils/cookies";
 
 interface PagesTableProps {
 	columns: ColumnDef<Page>[];
@@ -50,10 +55,10 @@ interface PagesTableProps {
 }
 
 export function PagesTable(props: PagesTableProps) {
-	const clientData = trpcReact.pages.getGroupContents.useQuery(
-		props.data.breadcrumbs.length > 0 ? { id: props.group.id } : null
+	const data = trpc.pages.getGroupContents.useQuery(
+		props.data.breadcrumbs.length > 0 ? { id: props.group.id } : null,
+		{ initialData: props.data }
 	).data;
-	const data: typeof props.data = clientData ?? props.data;
 	const cookie = React.useMemo(
 		() =>
 			getParsedCookie<TableCookie>(
@@ -90,10 +95,7 @@ export function PagesTable(props: PagesTableProps) {
 		setCookie(
 			"pages-table" satisfies CookieName,
 			JSON.stringify({ ...sorting[0], pageSize: pagination.pageSize } as TableCookie),
-			{
-				maxAge: new Date(2100, 12).getTime(),
-				sameSite: "lax",
-			}
+			permanentCookieOptions
 		);
 	}, [pagination, sorting]);
 
@@ -107,12 +109,10 @@ export function PagesTable(props: PagesTableProps) {
 			setSorting(value);
 			setCookie(
 				"pages-table" satisfies CookieName,
-				// @ts-expect-error `value` type is broken
+				// @ts-expect-error `value` type is weird
+				// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
 				JSON.stringify({ ...value()[0], pageSize: pagination.pageSize } as TableCookie),
-				{
-					maxAge: new Date(2100, 12).getTime(),
-					sameSite: "lax",
-				}
+				permanentCookieOptions
 			);
 		},
 		getSortedRowModel: getSortedRowModel(),
@@ -202,7 +202,7 @@ export function PagesTable(props: PagesTableProps) {
 									{headerGroup.headers.map((header) => (
 										<TableHead
 											key={header.id}
-											style={{ width: header.getSize() + "px" }}
+											style={{ width: header.getSize().toString() + "px" }}
 										>
 											{header.isPlaceholder
 												? null

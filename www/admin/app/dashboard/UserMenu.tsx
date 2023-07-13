@@ -8,17 +8,12 @@ import {
 	DropdownMenuTrigger,
 } from "@admin/src/components/ui/client";
 import { TypographyMuted } from "@admin/src/components/ui/server";
-import { trpc } from "@admin/src/utils/trpc";
-import { getServerSession } from "next-auth";
 import { LogoutItem, ThemeSwitchItem } from "./UserMenuItems";
-import { authOptions } from "@admin/app/api/auth/[...nextauth]/route";
 import { cn } from "@admin/src/utils/styling";
+import { getCurrentUser } from "@admin/src/auth";
 
 export async function UserMenu({ small }: { small?: boolean }) {
-	const { user } = await trpc.auth.getUser.query({
-		// set to "empty" when null, because otherwise an ambiguous error is thrown
-		id: (await getServerSession(authOptions))?.user?.id ?? "empty",
-	});
+	const user = await getCurrentUser();
 
 	return (
 		<DropdownMenu>
@@ -29,13 +24,13 @@ export async function UserMenu({ small }: { small?: boolean }) {
 				<Avatar>
 					<AvatarFallback>
 						{user?.name.charAt(0).toUpperCase()}
-						{user?.last_name.charAt(0).toUpperCase()}
+						{user?.lastName.charAt(0).toUpperCase()}
 					</AvatarFallback>
 				</Avatar>
 
 				<div className={cn("text-left", small && "hidden")}>
 					<p>
-						{user?.name} {user?.last_name}
+						{user?.name} {user?.lastName}
 					</p>
 					<TypographyMuted>{user?.email}</TypographyMuted>
 				</div>

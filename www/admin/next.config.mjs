@@ -1,16 +1,26 @@
 // @ts-check
-/**
- * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation.
- * This is especially useful for Docker builds.
- */
-!process.env.SKIP_ENV_VALIDATION && (await import("./src/env/server.mjs"));
+import "./src/env/client.mjs";
+import "./src/env/server.mjs";
 
 /** @type {import("next").NextConfig} */
 const config = {
 	basePath: "/admin",
 	reactStrictMode: true,
 	swcMinify: true,
-
+	modularizeImports: {
+		"@heroicons/react/24/outline": {
+			transform: "@heroicons/react/24/outline/{{member}}",
+		},
+		"@heroicons/react/24/solid": {
+			transform: "@heroicons/react/24/solid/{{member}}",
+		},
+		"@heroicons/react/20/solid": {
+			transform: "@heroicons/react/20/solid/{{member}}",
+		},
+		"@tabler/icons-react": {
+			transform: "@tabler/icons-react/dist/esm/icons/{{member}}",
+		},
+	},
 	redirects: async () => [
 		{
 			source: "/",

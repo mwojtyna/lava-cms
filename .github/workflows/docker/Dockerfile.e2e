@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/playwright:v1.35.1
+FROM mcr.microsoft.com/playwright:v1.36.0
 
 WORKDIR /app
 SHELL ["/bin/bash", "-c"]
@@ -27,9 +27,7 @@ ENV PATH ${NVM_DIR}/versions/node/v$NODE_VERSION/bin:$PATH
 COPY ./ /app
 RUN npm install -g pnpm
 RUN pnpm install --frozen-lockfile
-RUN scripts/deno_install.sh
 
-RUN cd admin && pnpm prisma generate
-RUN pnpm build
+RUN cd admin && pnpm prisma generate && pnpm build
 
 CMD [ "tail", "-F", "/dev/null" ]

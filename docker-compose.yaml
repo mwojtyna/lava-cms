@@ -9,8 +9,9 @@ services:
   postgres:
     container_name: postgres
     image: postgres:15.3-alpine
-    env_file:
-      - .env
+    environment:
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=admin
     volumes:
       - pgdata:/var/lib/postgresql/data
     depends_on:
@@ -20,8 +21,9 @@ services:
   pgadmin:
     container_name: pgadmin
     image: dpage/pgadmin4:7.3
-    env_file:
-      - .env
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=admin@admin.com
+      - PGADMIN_DEFAULT_PASSWORD=admin
     volumes:
       - pgadmin:/var/lib/pgadmin
     depends_on:
@@ -34,7 +36,7 @@ services:
     ports:
       - "8080:80"
     volumes:
-      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./nginx.conf:/etc/nginx/nginx.conf
     depends_on:
       - web
       - postgres

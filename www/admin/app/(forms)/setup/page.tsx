@@ -1,9 +1,11 @@
 import type { Metadata } from "next";
+import type { inferAsyncReturnType } from "@trpc/server";
 import { ArrowRightIcon } from "@heroicons/react/20/solid";
-import { trpc } from "@admin/src/utils/trpc";
 import { Stepper } from "@admin/src/components/ui/server";
 import { SignUpForm } from "./SignUpForm";
 import { SetupForm } from "./SetupForm";
+import { caller } from "@admin/src/trpc/routes/private/_private";
+import { redirect } from "next/navigation";
 
 export const metadata: Metadata = {
 	title: "Lava CMS - Setup",
@@ -11,7 +13,7 @@ export const metadata: Metadata = {
 export const dynamic = "force-dynamic";
 
 const reasonFormMap: Record<
-	NonNullable<Awaited<ReturnType<typeof trpc.auth.setupRequired.query>>["reason"]>,
+	NonNullable<inferAsyncReturnType<typeof caller.auth.setupRequired>["reason"]>,
 	React.ReactNode
 > = {
 	"no-user": <SignUpForm />,
@@ -19,17 +21,20 @@ const reasonFormMap: Record<
 };
 
 export default async function SetupLayout() {
-	const { reason } = await trpc.auth.setupRequired.query();
+	const { reason } = await caller.auth.setupRequired();
+	if (!reason) {
+		redirect("/admin/signin");
+	}
 
 	return (
 		<div>
 			<Stepper
 				className="mb-2 ml-1"
 				steps={["Admin account", "Configuration"]}
-				currentStep={Object.keys(reasonFormMap).indexOf(reason!)}
+				currentStep={Object.keys(reasonFormMap).indexOf(reason)}
 				separator={<ArrowRightIcon className="w-4" />}
 			/>
-			{reasonFormMap[reason!]}
+			{reasonFormMap[reason]}
 		</div>
 	);
 }

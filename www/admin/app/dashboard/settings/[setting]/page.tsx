@@ -1,9 +1,9 @@
 import { notFound } from "next/navigation";
-import { routes } from "@admin/src/data/routes/settings";
+import { settingsRoutes } from "@admin/src/data/routes/settings";
 
 export const dynamic = "force-dynamic";
 
 export default function Setting({ params }: { params: { setting: string } }) {
-	const route = routes.find((route) => route.slug === params.setting);
+	const route = settingsRoutes.find((route) => route.path === params.setting);
 	return route?.content ?? notFound();
 }

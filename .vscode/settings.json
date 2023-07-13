@@ -1,0 +1,32 @@
+{
+	"cSpell.words": [
+		"astrojs",
+		"Authed",
+		"camelcase",
+		"clsx",
+		"cmdk",
+		"Combobox",
+		"formkit",
+		"lavacms",
+		"mswjs",
+		"nextauth",
+		"paralleldrive",
+		"pgadmin",
+		"pnpm",
+		"shadcn",
+		"signin",
+		"signout",
+		"signup",
+		"superjson",
+		"tabler",
+		"tanstack",
+		"trpc",
+		"trpcadmin",
+		"unstub"
+	],
+	"prettier.requireConfig": true,
+	"testing.automaticallyOpenPeekView": "never",
+	"workbench.editor.labelFormat": "medium",
+	"typescript.tsdk": "node_modules/typescript/lib",
+	"eslint.validate": ["javascript", "javascriptreact", "astro", "typescript", "typescriptreact"]
+}

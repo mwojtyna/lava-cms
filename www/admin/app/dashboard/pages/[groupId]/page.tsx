@@ -1,4 +1,4 @@
-import { trpc } from "@admin/src/utils/trpc";
+import { caller } from "@admin/src/trpc/routes/private/_private";
 import { cookies } from "next/headers";
 import { PagesTable } from "../PagesTable";
 import { columns } from "../PagesTableColumns";
@@ -15,11 +15,11 @@ export default async function Group({
 	params: { groupId: string };
 	searchParams: SearchParams;
 }) {
-	const group = await trpc.pages.getGroup.query({ id: params.groupId });
+	const group = await caller.pages.getGroup({ id: params.groupId });
 	if (!group) {
 		return notFound();
 	}
-	const { breadcrumbs, pages } = await trpc.pages.getGroupContents.query({ id: params.groupId });
+	const { breadcrumbs, pages } = await caller.pages.getGroupContents({ id: params.groupId });
 
 	const rawCookie = cookies().get("pages-table" satisfies CookieName)?.value;
 	const cookie = rawCookie ? await tableCookieSchema.parseAsync(JSON.parse(rawCookie)) : null;

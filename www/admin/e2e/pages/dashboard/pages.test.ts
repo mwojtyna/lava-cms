@@ -7,7 +7,7 @@ async function fillAddEditDialog(page: Page, name: string, expectedUrl: string) 
 	await expect(dialog).toBeInViewport();
 
 	await dialog.locator("input[type='text']").first().fill(name);
-	expect(dialog.locator("input[type='text']").nth(1)).toHaveValue(expectedUrl);
+	await expect(dialog.locator("input[type='text']").nth(1)).toHaveValue(expectedUrl);
 	await dialog.locator("button[type='submit']").click();
 
 	return dialog;
@@ -50,7 +50,7 @@ test("breadcrumbs", async ({ authedPage: page }) => {
 		data: {
 			name: "Group 2",
 			url: "/group-1/group-2",
-			parent_id: group1!.id,
+			parent_id: group1.id,
 			is_group: true,
 		},
 	});
@@ -58,7 +58,7 @@ test("breadcrumbs", async ({ authedPage: page }) => {
 		data: {
 			name: "Group 3",
 			url: "/group-1/group-2/group-3",
-			parent_id: group2!.id,
+			parent_id: group2.id,
 			is_group: true,
 		},
 	});
@@ -66,15 +66,15 @@ test("breadcrumbs", async ({ authedPage: page }) => {
 	await page.goto("/admin/dashboard/pages");
 	await expect(page.getByTestId("breadcrumbs")).toHaveCount(0);
 	await page.getByRole("link", { name: "Group 1" }).click();
-	await page.waitForURL(`/admin/dashboard/pages/${group1!.id}`);
+	await page.waitForURL(`/admin/dashboard/pages/${group1.id}`);
 	await page.getByRole("link", { name: "Group 2" }).click();
-	await page.waitForURL(`/admin/dashboard/pages/${group2!.id}`);
+	await page.waitForURL(`/admin/dashboard/pages/${group2.id}`);
 
 	const breadcrumbs = page.getByTestId("breadcrumbs");
 	await expect(breadcrumbs).toContainText("Group 1 Group 2");
 
 	await breadcrumbs.getByRole("link", { name: "Group 1" }).click();
-	await expect(page).toHaveURL(`/admin/dashboard/pages/${group1!.id}`);
+	await expect(page).toHaveURL(`/admin/dashboard/pages/${group1.id}`);
 	await expect(breadcrumbs).toContainText("Group 1");
 
 	await breadcrumbs.getByRole("link").first().click();
@@ -99,6 +99,7 @@ test("searchbox filters pages", async ({ authedPage: page }) => {
 		],
 	});
 
+	// waitUntil: "networkidle" is needed because webkit is great as always
 	await page.goto("/admin/dashboard/pages", { waitUntil: "networkidle" });
 	await expect(page.locator("tbody > tr")).toHaveCount(2);
 
@@ -118,7 +119,8 @@ test.describe("page", () => {
 			},
 		});
 
-		await page.goto("/admin/dashboard/pages");
+		// waitUntil: "networkidle" is needed because webkit is great as always
+		await page.goto("/admin/dashboard/pages", { waitUntil: "networkidle" });
 		await page.getByTestId("add-page").click();
 
 		const dialog = await fillAddEditDialog(page, "Test", "/test");
@@ -139,7 +141,7 @@ test.describe("page", () => {
 				parent_id: rootGroup!.id,
 			},
 		});
-		await page.goto("/admin/dashboard/pages");
+		await page.goto("/admin/dashboard/pages", { waitUntil: "networkidle" });
 
 		await page.locator("tbody > tr").first().locator("td").last().click();
 		await page.getByRole("menu").getByRole("menuitem", { name: "Delete" }).click();
@@ -167,7 +169,7 @@ test.describe("page", () => {
 			],
 		});
 
-		await page.goto("/admin/dashboard/pages");
+		await page.goto("/admin/dashboard/pages", { waitUntil: "networkidle" });
 		await page.locator("tbody > tr").first().locator("td").last().click();
 		await page.getByRole("menu").getByRole("menuitem", { name: "Edit details" }).click();
 
@@ -201,7 +203,7 @@ test.describe("page", () => {
 				{
 					name: "Page 1",
 					url: "/group-1/page-1",
-					parent_id: group!.id,
+					parent_id: group.id,
 				},
 				{
 					name: "Group 2",
@@ -212,7 +214,7 @@ test.describe("page", () => {
 			],
 		});
 
-		await page.goto("/admin/dashboard/pages");
+		await page.goto("/admin/dashboard/pages", { waitUntil: "networkidle" });
 		await page.locator("tbody > tr").last().locator("td").last().click();
 		await page.getByRole("menu").getByRole("menuitem", { name: "Move" }).click();
 
@@ -235,7 +237,7 @@ test.describe("page", () => {
 		await expect(page.locator("tbody > tr")).toHaveCount(2);
 
 		await page.getByRole("link", { name: "Group 2" }).click();
-		await page.waitForNavigation();
+		await page.waitForURL("/admin/dashboard/pages/**");
 		await checkRow(page, 0, "Page 1", "/group-2/page-1", "Page");
 	});
 
@@ -249,7 +251,7 @@ test.describe("page", () => {
 			},
 		});
 
-		await page.goto("/admin/dashboard/pages");
+		await page.goto("/admin/dashboard/pages", { waitUntil: "networkidle" });
 		const lastTableRow = page.locator("tbody > tr").last();
 		await lastTableRow.locator("td").last().click();
 		await page.getByRole("menu").getByRole("menuitem", { name: "Duplicate" }).click();
@@ -283,7 +285,7 @@ test.describe("group", () => {
 			},
 		});
 
-		await page.goto("/admin/dashboard/pages");
+		await page.goto("/admin/dashboard/pages", { waitUntil: "networkidle" });
 		await page.getByTestId("add-group").click();
 
 		const dialog = await fillAddEditDialog(page, "Test", "/test");
@@ -309,7 +311,7 @@ test.describe("group", () => {
 			data: {
 				name: "Group 1",
 				url: "/group-1/group-1",
-				parent_id: group!.id,
+				parent_id: group.id,
 				is_group: true,
 			},
 		});
@@ -317,11 +319,11 @@ test.describe("group", () => {
 			data: {
 				name: "Page 1",
 				url: "/group-1/group-1/page-1",
-				parent_id: nestedGroup!.id,
+				parent_id: nestedGroup.id,
 			},
 		});
 
-		await page.goto("/admin/dashboard/pages");
+		await page.goto("/admin/dashboard/pages", { waitUntil: "networkidle" });
 		await page.locator("tbody > tr").first().locator("td").last().click();
 		await page.getByRole("menu").getByRole("menuitem", { name: "Delete" }).click();
 
@@ -357,12 +359,12 @@ test.describe("group", () => {
 				{
 					name: "Page 1",
 					url: "/group-1/page-1",
-					parent_id: group!.id,
+					parent_id: group.id,
 				},
 			],
 		});
 
-		await page.goto("/admin/dashboard/pages");
+		await page.goto("/admin/dashboard/pages", { waitUntil: "networkidle" });
 		await page.locator("tbody > tr").first().locator("td").last().click();
 		await page.getByRole("menu").getByRole("menuitem", { name: "Edit details" }).click();
 
@@ -388,7 +390,7 @@ test.describe("group", () => {
 			},
 		});
 
-		await page.goto("/admin/dashboard/pages");
+		await page.goto("/admin/dashboard/pages", { waitUntil: "networkidle" });
 		await page.locator("tbody > tr").first().locator("td").last().click();
 		await page.getByRole("menu").getByRole("menuitem", { name: "Edit details" }).click();
 
@@ -417,7 +419,7 @@ test.describe("group", () => {
 				{
 					name: "Group 2",
 					url: "/group-1/group-2",
-					parent_id: group1!.id,
+					parent_id: group1.id,
 					is_group: true,
 				},
 				{
@@ -441,11 +443,11 @@ test.describe("group", () => {
 			data: {
 				name: "Page 1",
 				url: "/group-2/page-1",
-				parent_id: group2!.id,
+				parent_id: group2.id,
 			},
 		});
 
-		await page.goto("/admin/dashboard/pages");
+		await page.goto("/admin/dashboard/pages", { waitUntil: "networkidle" });
 		await page.locator("tbody > tr").nth(1).locator("td").last().click();
 		await page.getByRole("menu").getByRole("menuitem", { name: "Move" }).click();
 
@@ -468,11 +470,11 @@ test.describe("group", () => {
 		await expect(page.locator("tbody > tr")).toHaveCount(2);
 
 		await page.getByRole("link", { name: "Group 3" }).click();
-		await page.waitForNavigation(); // Don't care that it's deprecated, I don't want to refactor to get the page's id
+		await page.waitForURL("/admin/dashboard/pages/**");
 		await checkRow(page, 0, "Group 2", "/group-3/group-2", "Group");
 
 		await page.getByRole("link", { name: "Group 2" }).click();
-		await page.waitForNavigation();
+		await page.waitForURL("/admin/dashboard/pages/**");
 		await checkRow(page, 0, "Page 1", "/group-3/group-2/page-1", "Page");
 	});
 });
@@ -499,12 +501,12 @@ test.describe("bulk", () => {
 				{
 					name: "Page 1",
 					url: "/group-1/page-1",
-					parent_id: group!.id,
+					parent_id: group.id,
 				},
 			],
 		});
 
-		await page.goto("/admin/dashboard/pages");
+		await page.goto("/admin/dashboard/pages", { waitUntil: "networkidle" });
 
 		const rows = page.locator("tbody > tr");
 		await rows.first().locator("td").first().click();
@@ -536,7 +538,7 @@ test.describe("bulk", () => {
 				{
 					name: "Group 2",
 					url: "/group-1/group-2",
-					parent_id: group1!.id,
+					parent_id: group1.id,
 					is_group: true,
 				},
 				{
@@ -566,12 +568,12 @@ test.describe("bulk", () => {
 				{
 					name: "Page 1",
 					url: "/group-2/page-1",
-					parent_id: group2!.id,
+					parent_id: group2.id,
 				},
 				{
 					name: "Page 2",
 					url: "/group-2/page-2",
-					parent_id: group2!.id,
+					parent_id: group2.id,
 				},
 			],
 		});
@@ -602,12 +604,12 @@ test.describe("bulk", () => {
 		await page.waitForSelector("[role='dialog']", { state: "hidden" });
 
 		await page.getByRole("link", { name: "Group 3" }).click();
-		await page.waitForNavigation();
+		await page.waitForURL("/admin/dashboard/pages/**");
 		await checkRow(page, 0, "Group 1", "/group-3/group-1", "Group");
 		await checkRow(page, 1, "Page 1", "/group-3/page-1", "Page");
 
 		await page.getByRole("link", { name: "Group 1" }).click();
-		await page.waitForNavigation();
+		await page.waitForURL("/admin/dashboard/pages/**");
 		await checkRow(page, 0, "Group 2", "/group-3/group-1/group-2", "Group");
 	});
 });

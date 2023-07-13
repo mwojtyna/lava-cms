@@ -1,7 +1,7 @@
 import { expect } from "@playwright/test";
 import { test } from "@admin/e2e/fixtures";
-import { websiteSettingsMock } from "@admin/e2e/mocks/data";
-import { trpc } from "@admin/src/utils/trpc";
+import { websiteSettingsMock } from "@admin/e2e/mocks";
+import { prisma } from "@admin/prisma/client";
 
 const TEST_ID = "seo-form";
 
@@ -32,9 +32,9 @@ test("website config updates", async ({ authedPage: page }) => {
 	await element.locator("input[type='text']").last().fill("pl");
 	await element.locator("button[type='submit']").click();
 
-	await page.waitForResponse((res) => res.url().includes("/api/trpc/config"));
+	await page.waitForResponse("**/api/private/config.getConfig**");
 
-	const config = await trpc.config.getConfig.query();
+	const config = await prisma.config.findFirstOrThrow();
 	expect(config.title).toBe("My new website");
 	expect(config.description).toBe("My new website description");
 	expect(config.language).toBe("pl");
@@ -45,7 +45,9 @@ test("website config updates", async ({ authedPage: page }) => {
 test("notification shows error when error occurs", async ({ authedPage: page }) => {
 	await page.goto("/admin/dashboard/settings");
 
-	await page.route("**/api/trpc/config**", (route) => route.fulfill({ status: 500 }));
+	await page.route("**/api/private/config.setConfig**", (route) =>
+		route.fulfill({ status: 500 })
+	);
 	const element = page.getByTestId(TEST_ID);
 	await element.locator("input[type='text']").first().fill("My new website");
 	await element.locator("textarea").fill("My new website description");
@@ -54,14 +56,14 @@ test("notification shows error when error occurs", async ({ authedPage: page }) 
 
 	await expect(page.locator("li[role=alert]")).toContainText("Error");
 });
-test("shows field required errors", async ({ authedPage: page }) => {
+test("shows 'field required' errors", async ({ authedPage: page }) => {
 	await page.goto("/admin/dashboard/settings");
 	const element = page.getByTestId(TEST_ID);
 
-	await element.locator("input[type='text']").first().fill("");
-	await element.locator("textarea").fill("");
-	await element.locator("input[type='text']").last().fill("");
-	await element.locator("button[type='submit']").click();
+	await element.locator("input[type='text']").first().clear();
+	await element.locator("textarea").clear();
+	await element.locator("input[type='text']").last().clear();
+	await element.locator("button[type='submit']").click({ force: true });
 
 	await expect(element.locator("input[type='text']").first()).toHaveAttribute(
 		"aria-invalid",

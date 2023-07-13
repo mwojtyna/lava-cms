@@ -1,16 +1,17 @@
 import { expect } from "@playwright/test";
 import { prisma } from "@admin/prisma/client";
 import { test } from "@admin/e2e/fixtures";
-import { userMock } from "@admin/e2e/mocks/data";
-
-const NAME = "John";
-const LAST_NAME = "Doe";
-const EMAIL = "johndoe@domain.com";
-const PASSWORD = "Zaq1@wsx";
+import {
+	createMockUser,
+	deleteMockUser,
+	userMock,
+	userPasswordDecrypted,
+	websiteSettingsMock,
+} from "@admin/e2e/mocks";
 
 test.describe("sign up step", () => {
 	test.afterAll(async () => {
-		await prisma.user.deleteMany();
+		await deleteMockUser();
 	});
 
 	test("light theme visual comparison", async ({ page }) => {
@@ -44,27 +45,27 @@ test.describe("sign up step", () => {
 		await page.locator("button[type='submit']").click();
 		const passwordField = page.locator("input[type='password']").first();
 
-		passwordField.first().fill("pass");
+		await passwordField.first().fill("pass");
 		await expect(
 			page.locator("text=The password must be at least 8 characters long.")
 		).toBeInViewport();
 
-		passwordField.first().fill("12345678");
+		await passwordField.first().fill("12345678");
 		await expect(
 			page.locator("text=The password must contain at least one lowercase letter.")
 		).toBeInViewport();
 
-		passwordField.first().fill("password");
+		await passwordField.first().fill("password");
 		await expect(
 			page.locator("text=The password must contain at least one uppercase letter.")
 		).toBeInViewport();
 
-		passwordField.first().fill("Password");
+		await passwordField.first().fill("Password");
 		await expect(
 			page.locator("text=The password must contain at least one digit.")
 		).toBeInViewport();
 
-		passwordField.first().fill("Password1");
+		await passwordField.first().fill("Password1");
 		await expect(page.locator("input[type='password']").first()).toHaveAttribute(
 			"aria-invalid",
 			"false"
@@ -83,11 +84,11 @@ test.describe("sign up step", () => {
 	test("goes to the next step when info is valid", async ({ page }) => {
 		await page.goto("/admin/setup");
 
-		await page.locator("input[type='email']").type(EMAIL);
-		await page.locator("input[type='text']").first().type(NAME);
-		await page.locator("input[type='text']").nth(1).type(LAST_NAME);
-		await page.locator("input[type='password']").first().type(PASSWORD);
-		await page.locator("input[type='password']").nth(1).type(PASSWORD);
+		await page.locator("input[type='email']").type(userMock.email);
+		await page.locator("input[type='text']").first().type(userMock.name);
+		await page.locator("input[type='text']").nth(1).type(userMock.last_name);
+		await page.locator("input[type='password']").first().type(userPasswordDecrypted);
+		await page.locator("input[type='password']").nth(1).type(userPasswordDecrypted);
 		await page.locator("button[type='submit']").click();
 
 		await page.waitForSelector("text='Set up website'");
@@ -98,17 +99,13 @@ test.describe("sign up step", () => {
 
 test.describe("setup website step", () => {
 	test.beforeAll(async () => {
-		await prisma.user.create({
-			data: {
-				...userMock,
-			},
-		});
+		await createMockUser();
 	});
 	test.afterEach(async () => {
 		await prisma.page.deleteMany();
 	});
 	test.afterAll(async () => {
-		await prisma.user.deleteMany();
+		await deleteMockUser();
 		await prisma.config.deleteMany();
 		await prisma.page.deleteMany();
 	});
@@ -132,7 +129,7 @@ test.describe("setup website step", () => {
 
 	test("shows error when language code invalid", async ({ page }) => {
 		await page.goto("/admin/setup");
-		await page.locator("input[type='text']").first().type("My website");
+		await page.locator("input[type='text']").first().type(websiteSettingsMock.title);
 
 		const languageInput = page.locator("input[type='text']").nth(1);
 		await languageInput.type("invalid");
@@ -148,13 +145,18 @@ test.describe("setup website step", () => {
 		await prisma.config.deleteMany();
 		await prisma.page.deleteMany();
 
-		await authedPage.goto("/admin/setup", { waitUntil: "networkidle" });
-		await authedPage.locator("input[type='text']").first().type("My website");
-		await authedPage.locator("input[type='text']").nth(1).type("en");
+		await authedPage.goto("/admin/setup");
+		await authedPage.locator("input[type='text']").first().type(websiteSettingsMock.title);
+		await authedPage.locator("input[type='text']").nth(1).type(websiteSettingsMock.language);
 		await authedPage.locator("button[type='submit']").click();
 		await authedPage.waitForURL(/dashboard/);
 
 		expect(authedPage.url()).toMatch(/dashboard/);
 		await expect(authedPage.locator("#content").first()).toBeInViewport();
+		await expect(prisma.config.findFirstOrThrow()).resolves.toMatchObject({
+			title: websiteSettingsMock.title,
+			description: "",
+			language: websiteSettingsMock.language,
+		} satisfies typeof websiteSettingsMock);
 	});
 });

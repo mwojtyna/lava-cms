@@ -1,9 +1,0 @@
----
-import { trpc } from "@frontend/src/utils/trpc";
-import Layout from "@frontend/src/layouts/Layout.astro";
-
-const slug = Astro.params.slug;
-const page = await trpc.pages.getPage.query({ url: slug ? "/" + slug : "/" });
----
-
-<Layout name={page?.name}>{page ? page.name : "404"}</Layout>

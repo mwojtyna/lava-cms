@@ -1,13 +1,9 @@
 import { expect, test } from "@playwright/test";
 import { prisma } from "@admin/prisma/client";
-import { userMock, userPasswordDecrypted } from "@admin/e2e/mocks/data";
+import { createMockUser, deleteMockUser, userMock, userPasswordDecrypted } from "@admin/e2e/mocks";
 
 test.beforeAll(async () => {
-	await prisma.user.create({
-		data: {
-			...userMock,
-		},
-	});
+	await createMockUser();
 	await prisma.config.create({
 		data: {
 			title: "My website",
@@ -17,7 +13,7 @@ test.beforeAll(async () => {
 	});
 });
 test.afterAll(async () => {
-	await prisma.user.deleteMany();
+	await deleteMockUser();
 	await prisma.config.deleteMany();
 });
 
@@ -76,7 +72,7 @@ test("shows error when server error", async ({ page }) => {
 	await page.goto("/admin/signin");
 	await page.locator("input[type='email']").type(userMock.email);
 	await page.locator("input[type='password']").type(userPasswordDecrypted);
-	await page.route("**/api/auth/callback/**", (route) =>
+	await page.route("**/api/private/auth.signIn**", (route) =>
 		route.fulfill({
 			body: JSON.stringify({
 				url: "http://localhost:3001/admin/api/auth/error?error=UnknownError&provider=credentials",
@@ -101,7 +97,7 @@ test("shows error when email invalid", async ({ page }) => {
 });
 
 test("signs in when credentials are valid", async ({ page }) => {
-	await page.goto("/admin/signin", { waitUntil: "networkidle" });
+	await page.goto("/admin/signin");
 	await page.locator("input[type='email']").type(userMock.email);
 	await page.locator("input[type='password']").type(userPasswordDecrypted);
 	await page.locator("button[type='submit']").click();

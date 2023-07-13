@@ -3,7 +3,9 @@
 import { ArrowLeftOnRectangleIcon, MoonIcon, SunIcon } from "@heroicons/react/24/outline";
 import { DropdownMenuItem } from "@admin/src/components/ui/client";
 import { useColorThemeStore } from "@admin/src/data/stores/dashboard";
-import { signOut } from "next-auth/react";
+import { trpc } from "@admin/src/utils/trpc";
+import { useRouter } from "next/navigation";
+import { Loader } from "@admin/src/components/ui/server";
 
 export const ThemeSwitchItem = () => {
 	const store = useColorThemeStore();
@@ -22,9 +24,25 @@ export const ThemeSwitchItem = () => {
 	);
 };
 
-export const LogoutItem = () => (
-	<DropdownMenuItem className="text-destructive" onSelect={() => signOut()}>
-		<ArrowLeftOnRectangleIcon className="w-4" />
-		<span>Log out</span>
-	</DropdownMenuItem>
-);
+export const LogoutItem = () => {
+	const mutation = trpc.auth.signOut.useMutation();
+	const router = useRouter();
+
+	return (
+		<DropdownMenuItem
+			className="text-destructive"
+			onClick={async (e) => {
+				e.preventDefault();
+				await mutation.mutateAsync();
+				router.replace("/signin");
+			}}
+		>
+			{mutation.isLoading || mutation.isSuccess ? (
+				<Loader className="w-4" />
+			) : (
+				<ArrowLeftOnRectangleIcon className="w-4" />
+			)}
+			<span>Sign out</span>
+		</DropdownMenuItem>
+	);
+};

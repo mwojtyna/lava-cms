@@ -28,7 +28,7 @@
 	// "shutdownAction": "none",
 
 	// Uncomment the next line to run commands after the container is created.
-	"postCreateCommand": "pnpm install --frozen-lockfile && scripts/deno_install.sh && cd admin && pnpm db:push",
+	"postCreateCommand": "pnpm install --frozen-lockfile && cd admin && pnpm db:push",
 	"postStartCommand": "git pull && pnpm install",
 
 	// Configure tool-specific properties.

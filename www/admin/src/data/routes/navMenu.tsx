@@ -5,16 +5,14 @@ import {
 	CircleStackIcon,
 	CubeIcon,
 } from "@heroicons/react/24/outline";
+import type { Route } from "./common";
+import "server-only";
 
-export interface NavMenuRoute {
-	label: string;
-	path: string;
+export interface NavMenuRoute extends Route {
 	description: string;
-	icon?: React.ReactNode;
-	hasChildren?: boolean;
 }
 
-export const routes: NavMenuRoute[] = [
+export const navMenuRoutes: NavMenuRoute[] = [
 	{
 		label: "Dashboard",
 		path: "/dashboard",
@@ -48,15 +46,3 @@ export const routes: NavMenuRoute[] = [
 		hasChildren: true,
 	},
 ];
-
-export function getRoute(path: string): NavMenuRoute | undefined {
-	for (const route of routes) {
-		if (route.path === path) {
-			return route;
-		}
-
-		if (route.hasChildren && path.startsWith(route.path)) {
-			return route;
-		}
-	}
-}

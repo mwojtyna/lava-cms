@@ -27,7 +27,7 @@ import {
 	FormLabel,
 	Input,
 } from "@admin/src/components/ui/client";
-import { trpcReact } from "@admin/src/utils/trpcReact";
+import { trpc } from "@admin/src/utils/trpc";
 import {
 	DocumentDuplicateIcon,
 	DocumentPlusIcon,
@@ -41,9 +41,7 @@ import {
 import { Combobox } from "@admin/src/components";
 import { TypographyList, TypographyMuted } from "@admin/src/components/ui/server";
 import slugify from "slugify";
-import { TRPCClientError } from "@trpc/client";
 import { usePagePreferences } from "@admin/src/hooks";
-import { trpc } from "@admin/src/utils/trpc";
 
 interface AddDialogProps {
 	group: Page;
@@ -64,7 +62,7 @@ interface BulkEditDialogProps {
 }
 
 export function DeleteDialog(props: EditDialogProps) {
-	const mutation = trpcReact.pages.deletePage.useMutation();
+	const mutation = trpc.pages.deletePage.useMutation();
 	const [preferences, setPreferences] = usePagePreferences(props.page.id);
 
 	async function handleSubmit() {
@@ -106,7 +104,7 @@ export function DeleteDialog(props: EditDialogProps) {
 	);
 }
 export function BulkDeleteDialog(props: BulkEditDialogProps) {
-	const mutation = trpcReact.pages.deletePage.useMutation();
+	const mutation = trpc.pages.deletePage.useMutation();
 	// const [preferences, setPreferences] = usePagePreferences(props.pages[0].id);
 
 	async function handleSubmit() {
@@ -209,9 +207,7 @@ function NewParentSelect<T extends MoveDialogInputs>({
 }
 
 export function MoveDialog(props: EditDialogProps) {
-	const allGroups = trpcReact.pages.getAllGroups.useQuery(undefined, {
-		refetchOnWindowFocus: false,
-	}).data;
+	const allGroups = trpc.pages.getAllGroups.useQuery().data;
 	const groups = React.useMemo(
 		() =>
 			allGroups
@@ -225,40 +221,45 @@ export function MoveDialog(props: EditDialogProps) {
 				.sort((a, b) => a.url.localeCompare(b.url)),
 		[allGroups, props.page]
 	);
-	const mutation = trpcReact.pages.movePage.useMutation();
+	const mutation = trpc.pages.movePage.useMutation();
 
 	const form = useForm<MoveDialogInputs>();
-	const onSubmit: SubmitHandler<MoveDialogInputs> = async (data) => {
-		try {
-			await mutation.mutateAsync({
+	const onSubmit: SubmitHandler<MoveDialogInputs> = (data) => {
+		mutation.mutate(
+			{
 				id: props.page.id,
 				newParentId: data.newParentId,
-			});
-			props.setOpen(false);
-		} catch (error) {
-			if (error instanceof TRPCClientError && error.data.code === "CONFLICT") {
-				const destinationUrl = groups!.find((group) => group.id === data.newParentId)!.url;
+			},
+			{
+				onSuccess: () => props.setOpen(false),
+				onError: (err) => {
+					if (err.data?.code === "CONFLICT") {
+						const destinationUrl = groups!.find(
+							(group) => group.id === data.newParentId
+						)!.url;
 
-				const newPath =
-					destinationUrl +
-					(destinationUrl === "/" ? "" : "/") +
-					props.page.url.split("/").pop()!;
+						const newPath =
+							destinationUrl +
+							(destinationUrl === "/" ? "" : "/") +
+							props.page.url.split("/").pop()!;
 
-				form.setError("newParentId", {
-					message: (
-						<>
-							An item with path{" "}
-							<strong className="whitespace-nowrap">{newPath}</strong> already exists!
-							Either change the slug or move it somewhere else.
-						</>
-					) as unknown as string,
-				});
-			} else {
-				form.setError("newParentId", {
-					message: "An unexpected error occurred.",
-				});
+						form.setError("newParentId", {
+							message: (
+								<>
+									An item with path{" "}
+									<strong className="whitespace-nowrap">{newPath}</strong> already
+									exists! Either change the slug or move it somewhere else.
+								</>
+							) as unknown as string,
+						});
+					} else {
+						form.setError("newParentId", {
+							message: "An unexpected error occurred.",
+						});
+					}
+				},
 			}
-		}
+		);
 	};
 
 	React.useEffect(() => {
@@ -293,9 +294,7 @@ export function MoveDialog(props: EditDialogProps) {
 	);
 }
 export function BulkMoveDialog(props: BulkEditDialogProps) {
-	const allGroups = trpcReact.pages.getAllGroups.useQuery(undefined, {
-		refetchOnWindowFocus: false,
-	}).data;
+	const allGroups = trpc.pages.getAllGroups.useQuery().data;
 	const groups = React.useMemo(
 		() =>
 			allGroups
@@ -314,25 +313,29 @@ export function BulkMoveDialog(props: BulkEditDialogProps) {
 		[allGroups, props.pages]
 	);
 
-	const mutation = trpcReact.pages.movePage.useMutation();
-	const [isConflictChecking, setIsConflictChecking] = React.useState(false);
-
 	const form = useForm<MoveDialogInputs>();
+
+	const mutation = trpc.pages.movePage.useMutation();
+	const conflictQuery = trpc.pages.checkConflict.useQuery(
+		{
+			newParentId: form.watch("newParentId"),
+			originalUrls: props.pages.map((page) => page.url),
+		},
+		{
+			enabled: false,
+		}
+	);
+
 	const onSubmit: SubmitHandler<MoveDialogInputs> = async (data) => {
 		try {
-			setIsConflictChecking(true);
-			const { conflict, urls } = await trpc.pages.checkConflict.query({
-				newParentId: data.newParentId,
-				originalUrls: props.pages.map((page) => page.url),
-			});
-			setIsConflictChecking(false);
+			const { data: query } = await conflictQuery.refetch();
 
-			if (conflict) {
+			if (query?.conflict) {
 				form.setError("newParentId", {
 					message: (
 						<>
 							The following items already exist in the destination group:
-							<TypographyList items={urls!} />
+							<TypographyList items={query.urls!} />
 						</>
 					) as unknown as string,
 				});
@@ -374,7 +377,7 @@ export function BulkMoveDialog(props: BulkEditDialogProps) {
 							<Button
 								type="submit"
 								disabled={!form.watch("newParentId")}
-								loading={mutation.isLoading || isConflictChecking}
+								loading={mutation.isLoading}
 								icon={<FolderArrowDownIcon className="w-5" />}
 							>
 								Move
@@ -429,7 +432,7 @@ function NameSlugInput<T extends EditDialogInputs>({
 				control={form.control}
 				name={"name" as Path<T>}
 				rules={{
-					onChange: (e) => {
+					onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
 						if (!slugLocked)
 							form.setValue(
 								"slug" as Path<T>,
@@ -477,40 +480,42 @@ function NameSlugInput<T extends EditDialogInputs>({
 }
 
 export function EditDetailsDialog(props: EditDialogProps) {
-	const mutation = trpcReact.pages.editPage.useMutation();
+	const mutation = trpc.pages.editPage.useMutation();
 	const [preferences, setPreferences] = usePagePreferences(props.page.id);
 
 	const form = useForm<EditDialogInputs>({
 		resolver: zodResolver(editDialogSchema),
 	});
-	const onSubmit: SubmitHandler<EditDialogInputs> = async (data) => {
+	const onSubmit: SubmitHandler<EditDialogInputs> = (data) => {
 		if (data.slug === "/" && props.page.is_group) {
 			form.setError("slug", { message: "Groups cannot have slugs containing only '/'." });
 			return;
 		}
-
 		const newUrl = editUrl(props.page.url, data.slug);
 
-		try {
-			await mutation.mutateAsync({
+		mutation.mutate(
+			{
 				id: props.page.id,
 				newName: data.name,
 				newUrl,
-			});
-			props.setOpen(false);
-		} catch (error) {
-			if (error instanceof TRPCClientError && error.data.code === "CONFLICT") {
-				form.setError("slug", {
-					type: "manual",
-					message: (
-						<>
-							An item with path{" "}
-							<strong className="whitespace-nowrap">{newUrl}</strong> already exists.
-						</>
-					) as unknown as string,
-				});
+			},
+			{
+				onSuccess: () => props.setOpen(false),
+				onError: (err) => {
+					if (err.data?.code === "CONFLICT") {
+						form.setError("slug", {
+							message: (
+								<>
+									An item with path{" "}
+									<strong className="whitespace-nowrap">{newUrl}</strong> already
+									exists.
+								</>
+							) as unknown as string,
+						});
+					}
+				},
 			}
-		}
+		);
 	};
 
 	React.useEffect(() => {
@@ -555,44 +560,48 @@ export function EditDetailsDialog(props: EditDialogProps) {
 }
 
 export function AddDialog(props: AddDialogProps) {
-	const mutation = trpcReact.pages.addPage.useMutation();
+	const mutation = trpc.pages.addPage.useMutation();
 	const [preferences, setPreferences] = usePagePreferences(props.group.id);
 	const [slugLocked, setSlugLocked] = React.useState(false);
 
 	const form = useForm<EditDialogInputs>({
 		resolver: zodResolver(editDialogSchema),
 	});
-	const onSubmit: SubmitHandler<EditDialogInputs> = async (data) => {
+	const onSubmit: SubmitHandler<EditDialogInputs> = (data) => {
 		const url = props.group.url + (props.group.url !== "/" ? "/" : "") + data.slug.slice(1);
-
-		try {
-			const id = await mutation.mutateAsync({
+		mutation.mutate(
+			{
 				name: data.name,
 				url,
 				parent_id: props.group.id,
 				is_group: props.isGroup,
-			});
-
-			if (slugLocked) {
-				setPreferences({
-					...preferences,
-					[id!]: slugLocked,
-				});
+			},
+			{
+				onSuccess: (id) => {
+					if (slugLocked) {
+						setPreferences({
+							...preferences,
+							[id]: slugLocked,
+						});
+					}
+					props.setOpen(false);
+				},
+				onError: (err) => {
+					if (err.data?.code === "CONFLICT") {
+						form.setError("slug", {
+							type: "manual",
+							message: (
+								<>
+									An item with path{" "}
+									<strong className="whitespace-nowrap">{url}</strong> already
+									exists.
+								</>
+							) as unknown as string,
+						});
+					}
+				},
 			}
-			props.setOpen(false);
-		} catch (error) {
-			if (error instanceof TRPCClientError && error.data.code === "CONFLICT") {
-				form.setError("slug", {
-					type: "manual",
-					message: (
-						<>
-							An item with path <strong className="whitespace-nowrap">{url}</strong>{" "}
-							already exists.
-						</>
-					) as unknown as string,
-				});
-			}
-		}
+		);
 	};
 
 	React.useEffect(() => {
@@ -642,7 +651,7 @@ const duplicateDialogSchema = editDialogSchema.extend({
 type DuplicateDialogInputs = z.infer<typeof duplicateDialogSchema>;
 
 export function DuplicateDialog(props: EditDialogProps) {
-	const groups = trpcReact.pages.getAllGroups.useQuery(undefined, {
+	const groups = trpc.pages.getAllGroups.useQuery(undefined, {
 		refetchOnWindowFocus: false,
 	}).data;
 	const sortedGroups = React.useMemo(
@@ -650,45 +659,50 @@ export function DuplicateDialog(props: EditDialogProps) {
 		[groups]
 	);
 
-	const mutation = trpcReact.pages.addPage.useMutation();
+	const mutation = trpc.pages.addPage.useMutation();
 	const [preferences, setPreferences] = usePagePreferences(props.page.id);
 	const [slugLocked, setSlugLocked] = React.useState(false);
 
 	const form = useForm<DuplicateDialogInputs>({
 		resolver: zodResolver(duplicateDialogSchema),
 	});
-	const onSubmit: SubmitHandler<DuplicateDialogInputs> = async (data) => {
-		const newParent = groups?.find((group) => group.id === data.newParentId);
-		const url = newParent?.url + data.slug;
+	const onSubmit: SubmitHandler<DuplicateDialogInputs> = (data) => {
+		const newParent = groups!.find((group) => group.id === data.newParentId)!;
+		const url = newParent.url + data.slug;
 
-		try {
-			const id = await mutation.mutateAsync({
+		mutation.mutate(
+			{
 				name: data.name,
-				url: url,
+				url,
 				parent_id: data.newParentId,
 				is_group: false,
-			});
-
-			if (slugLocked) {
-				setPreferences({
-					...preferences,
-					[id!]: slugLocked,
-				});
+			},
+			{
+				onSuccess: (id) => {
+					if (slugLocked) {
+						setPreferences({
+							...preferences,
+							[id]: slugLocked,
+						});
+					}
+					props.setOpen(false);
+				},
+				onError: (err) => {
+					if (err.data?.code === "CONFLICT") {
+						form.setError("slug", {
+							type: "manual",
+							message: (
+								<>
+									An item with path{" "}
+									<strong className="whitespace-nowrap">{url}</strong> already
+									exists.
+								</>
+							) as unknown as string,
+						});
+					}
+				},
 			}
-			props.setOpen(false);
-		} catch (error) {
-			if (error instanceof TRPCClientError && error.data.code === "CONFLICT") {
-				form.setError("slug", {
-					type: "manual",
-					message: (
-						<>
-							An item with path <strong className="whitespace-nowrap">{url}</strong>{" "}
-							already exists.
-						</>
-					) as unknown as string,
-				});
-			}
-		}
+		);
 	};
 
 	React.useEffect(() => {

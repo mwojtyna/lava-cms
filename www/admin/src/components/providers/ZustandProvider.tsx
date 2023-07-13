@@ -1,12 +1,11 @@
 "use client";
 
 import { useRef } from "react";
-import type { ColorTheme } from "@admin/src/data/stores/dashboard";
+import type { ColorTheme } from "@admin/src/utils/cookies";
 import { useColorThemeStore } from "@admin/src/data/stores/dashboard";
 
 interface Props {
-	url: string;
-	colorTheme?: ColorTheme;
+	colorTheme: ColorTheme | undefined;
 	children: React.ReactNode;
 }
 export function ZustandProvider(props: Props) {
@@ -14,7 +13,6 @@ export function ZustandProvider(props: Props) {
 
 	if (!initialized.current) {
 		useColorThemeStore.setState({ colorTheme: props.colorTheme });
-
 		initialized.current = true;
 	}
 

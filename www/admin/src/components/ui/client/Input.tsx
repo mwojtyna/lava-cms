@@ -64,7 +64,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
 
 				{type === "password" ? (
 					<ActionIcon
-						className="absolute right-2"
+						className="absolute right-2 bg-background"
 						onClick={() => setPasswordVisible(!passwordVisible)}
 						size={size}
 						aria-label="Toggle password visibility"
@@ -81,7 +81,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
 						<Tooltip>
 							<TooltipTrigger asChild>
 								<ActionIcon
-									className="absolute right-2"
+									className="absolute right-2 bg-background"
 									onClick={() => {
 										setRightButtonState!(!rightButtonState);
 									}}

@@ -11,7 +11,7 @@ import {
 	TooltipTrigger,
 } from "@admin/src/components/ui/client";
 import { Bars3Icon } from "@heroicons/react/24/outline";
-import { routes } from "@admin/src/data/routes/navMenu";
+import { navMenuRoutes } from "@admin/src/data/routes/navMenu";
 import { cn } from "@admin/src/utils/styling";
 import { UserMenu } from "./UserMenu";
 import { NavMenuItem } from "./NavMenuItem";
@@ -23,7 +23,7 @@ const logoFont = Poppins({
 });
 
 async function Menu({ className }: { className?: string }) {
-	const version = (await import("@admin/../package.json")).version;
+	const version = (await import("@admin/package.json")).version;
 
 	return (
 		<nav
@@ -36,11 +36,11 @@ async function Menu({ className }: { className?: string }) {
 
 			<div className="flex flex-grow flex-col justify-between gap-8">
 				<div className="flex flex-col gap-2">
-					{routes.map((route, i) => (
+					{navMenuRoutes.map((route, i) => (
 						<React.Fragment key={i}>
 							{i === 1 && <Separator />}
 
-							<NavMenuItem route={route} />
+							<NavMenuItem routes={navMenuRoutes} route={route} />
 
 							{i === 3 && <Separator />}
 						</React.Fragment>
@@ -74,8 +74,8 @@ function MenuMobile({ className }: { className?: string }) {
 			</Tooltip>
 
 			<div className="flex gap-0.5">
-				{routes.map((route, i) => (
-					<NavMenuItem key={i} route={route} small={true} />
+				{navMenuRoutes.map((route, i) => (
+					<NavMenuItem key={i} routes={navMenuRoutes} route={route} small={true} />
 				))}
 			</div>
 

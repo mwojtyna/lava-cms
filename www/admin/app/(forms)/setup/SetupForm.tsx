@@ -5,7 +5,6 @@ import { type SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { ArrowRightIcon } from "@heroicons/react/20/solid";
-import { trpc } from "@admin/src/utils/trpc";
 import { InfoTooltip } from "@admin/src/components";
 import {
 	Button,
@@ -18,12 +17,11 @@ import {
 } from "@admin/src/components/ui/client";
 import { TypographyCode } from "@admin/src/components/ui/server";
 import { SinglePageForm } from "../SinglePageForm";
-import { TRPCClientError } from "@trpc/client";
-import type { TRPC_ERROR_CODE_KEY } from "@trpc/server/rpc";
+import { trpc } from "@admin/src/utils/trpc";
 
 const schema = z.object({
 	title: z.string().nonempty(),
-	description: z.string().optional(),
+	description: z.string(),
 	language: z.string().nonempty(),
 });
 
@@ -32,24 +30,29 @@ type Inputs = z.infer<typeof schema>;
 export function SetupForm() {
 	const router = useRouter();
 
-	const form = useForm<Inputs>({ resolver: zodResolver(schema) });
-	const onSubmit: SubmitHandler<Inputs> = async (data) => {
-		try {
-			await trpc.config.setConfig.mutate({
-				...data,
-				description: data.description ?? "",
-			});
-		} catch (error) {
-			if (
-				error instanceof TRPCClientError &&
-				error.data?.code === ("BAD_REQUEST" satisfies TRPC_ERROR_CODE_KEY)
-			) {
-				form.setError("language", {});
-			}
-		}
-		await trpc.pages.addPage.mutate({ name: "Root", url: "", is_group: true, parent_id: null });
+	const setConfigMutation = trpc.config.setConfig.useMutation();
+	const addPageMutation = trpc.pages.addPage.useMutation();
+	const generateTokenMutation = trpc.auth.generateToken.useMutation();
 
-		router.push("/dashboard");
+	const form = useForm<Inputs>({ resolver: zodResolver(schema) });
+	const onSubmit: SubmitHandler<Inputs> = (data) => {
+		setConfigMutation.mutate(data, {
+			onSuccess: async () => {
+				await addPageMutation.mutateAsync({
+					name: "Root",
+					url: "",
+					is_group: true,
+					parent_id: null,
+				});
+				await generateTokenMutation.mutateAsync();
+				router.replace("/dashboard");
+			},
+			onError: (err) => {
+				if (err.data?.code === "BAD_REQUEST") {
+					form.setError("language", {});
+				}
+			},
+		});
 	};
 
 	return (
@@ -67,7 +70,12 @@ export function SetupForm() {
 					size="lg"
 					icon={<ArrowRightIcon className="w-5" />}
 					className="ml-auto shadow-lg shadow-primary/25"
-					loading={form.formState.isSubmitting || form.formState.isSubmitSuccessful}
+					loading={
+						setConfigMutation.isLoading ||
+						addPageMutation.isLoading ||
+						generateTokenMutation.isLoading ||
+						generateTokenMutation.isSuccess
+					}
 				>
 					Finish
 				</Button>
