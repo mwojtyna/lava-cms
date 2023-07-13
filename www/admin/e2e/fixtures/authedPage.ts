@@ -18,8 +18,8 @@ export const authedPage = async (
 	use: (r: Page) => Promise<void>
 ) => {
 	// We have to check if the user exists because a test might create one
-	const existingUser = await prisma.user.findFirst();
-	if (!existingUser) await createMockUser();
+	await deleteMockUser();
+	await createMockUser();
 
 	if (!(await prisma.config.findFirst())) {
 		await prisma.config.create({
@@ -119,4 +119,9 @@ async function saveSignedInState(browser: Browser) {
 
 	await page.context().storageState({ path: STORAGE_STATE_PATH });
 	await page.close();
+
+	// Delete session that was created when signed in
+	// to prevent prisma error when creating session
+	// during fixture execution
+	await prisma.session.deleteMany();
 }

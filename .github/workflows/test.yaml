@@ -34,7 +34,7 @@ jobs:
 
       - name: Test
         run: |
-          docker exec -w /app/admin web pnpm db:push
+          docker exec -w /app/admin web pnpm prisma db push
           docker exec -w /app/admin web pnpm e2e --project=chromium
 
       - name: Upload report

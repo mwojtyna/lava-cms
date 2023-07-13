@@ -28,7 +28,6 @@ COPY ./ /app
 RUN npm install -g pnpm
 RUN pnpm install --frozen-lockfile
 
-RUN cd admin && pnpm prisma generate
-RUN pnpm build
+RUN cd admin && pnpm prisma generate && pnpm build
 
 CMD [ "tail", "-F", "/dev/null" ]

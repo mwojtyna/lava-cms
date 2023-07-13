@@ -56,7 +56,7 @@ test("notification shows error when error occurs", async ({ authedPage: page }) 
 
 	await expect(page.locator("li[role=alert]")).toContainText("Error");
 });
-test("shows field required errors", async ({ authedPage: page }) => {
+test("shows 'field required' errors", async ({ authedPage: page }) => {
 	await page.goto("/admin/dashboard/settings");
 	const element = page.getByTestId(TEST_ID);
 
