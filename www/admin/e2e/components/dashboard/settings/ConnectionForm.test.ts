@@ -1,6 +1,6 @@
 import { expect } from "@playwright/test";
 import { test } from "@admin/e2e/fixtures";
-import { tokenMock } from "@admin/e2e/mocks/data";
+import { tokenMock } from "@admin/e2e/mocks";
 
 const TEST_ID = "connection-form";
 const BUTTONS_TEST_ID = "token-actions";

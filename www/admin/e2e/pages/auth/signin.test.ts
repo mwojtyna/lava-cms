@@ -1,11 +1,6 @@
 import { expect, test } from "@playwright/test";
 import { prisma } from "@admin/prisma/client";
-import {
-	createMockUser,
-	deleteMockUser,
-	userMock,
-	userPasswordDecrypted,
-} from "@admin/e2e/mocks/data";
+import { createMockUser, deleteMockUser, userMock, userPasswordDecrypted } from "@admin/e2e/mocks";
 
 test.beforeAll(async () => {
 	await createMockUser();
@@ -77,7 +72,7 @@ test("shows error when server error", async ({ page }) => {
 	await page.goto("/admin/signin");
 	await page.locator("input[type='email']").type(userMock.email);
 	await page.locator("input[type='password']").type(userPasswordDecrypted);
-	await page.route("**/api/trpc/auth.signIn**", (route) =>
+	await page.route("**/api/private/auth.signIn**", (route) =>
 		route.fulfill({
 			body: JSON.stringify({
 				url: "http://localhost:3001/admin/api/auth/error?error=UnknownError&provider=credentials",

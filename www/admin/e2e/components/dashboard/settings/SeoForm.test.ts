@@ -1,6 +1,6 @@
 import { expect } from "@playwright/test";
 import { test } from "@admin/e2e/fixtures";
-import { websiteSettingsMock } from "@admin/e2e/mocks/data";
+import { websiteSettingsMock } from "@admin/e2e/mocks";
 import { prisma } from "@admin/prisma/client";
 
 const TEST_ID = "seo-form";
@@ -32,7 +32,7 @@ test("website config updates", async ({ authedPage: page }) => {
 	await element.locator("input[type='text']").last().fill("pl");
 	await element.locator("button[type='submit']").click();
 
-	await page.waitForResponse((res) => res.url().includes("/api/trpc/config"));
+	await page.waitForResponse("**/api/private/config.getConfig**");
 
 	const config = await prisma.config.findFirstOrThrow();
 	expect(config.title).toBe("My new website");
@@ -45,7 +45,9 @@ test("website config updates", async ({ authedPage: page }) => {
 test("notification shows error when error occurs", async ({ authedPage: page }) => {
 	await page.goto("/admin/dashboard/settings");
 
-	await page.route("**/api/trpc/config**", (route) => route.fulfill({ status: 500 }));
+	await page.route("**/api/private/config.setConfig**", (route) =>
+		route.fulfill({ status: 500 })
+	);
 	const element = page.getByTestId(TEST_ID);
 	await element.locator("input[type='text']").first().fill("My new website");
 	await element.locator("textarea").fill("My new website description");

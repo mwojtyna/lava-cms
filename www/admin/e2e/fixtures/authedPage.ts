@@ -8,7 +8,7 @@ import {
 	userMock,
 	userPasswordDecrypted,
 	websiteSettingsMock,
-} from "@admin/e2e/mocks/data";
+} from "@admin/e2e/mocks";
 import { DEFAULT_SESSION_COOKIE_NAME } from "lucia";
 
 export const STORAGE_STATE_PATH = "./e2e/storageState.json";

@@ -7,7 +7,7 @@ async function fillAddEditDialog(page: Page, name: string, expectedUrl: string) 
 	await expect(dialog).toBeInViewport();
 
 	await dialog.locator("input[type='text']").first().fill(name);
-	expect(dialog.locator("input[type='text']").nth(1)).toHaveValue(expectedUrl);
+	await expect(dialog.locator("input[type='text']").nth(1)).toHaveValue(expectedUrl);
 	await dialog.locator("button[type='submit']").click();
 
 	return dialog;
@@ -50,7 +50,7 @@ test("breadcrumbs", async ({ authedPage: page }) => {
 		data: {
 			name: "Group 2",
 			url: "/group-1/group-2",
-			parent_id: group1!.id,
+			parent_id: group1.id,
 			is_group: true,
 		},
 	});
@@ -58,7 +58,7 @@ test("breadcrumbs", async ({ authedPage: page }) => {
 		data: {
 			name: "Group 3",
 			url: "/group-1/group-2/group-3",
-			parent_id: group2!.id,
+			parent_id: group2.id,
 			is_group: true,
 		},
 	});
@@ -66,15 +66,15 @@ test("breadcrumbs", async ({ authedPage: page }) => {
 	await page.goto("/admin/dashboard/pages");
 	await expect(page.getByTestId("breadcrumbs")).toHaveCount(0);
 	await page.getByRole("link", { name: "Group 1" }).click();
-	await page.waitForURL(`/admin/dashboard/pages/${group1!.id}`);
+	await page.waitForURL(`/admin/dashboard/pages/${group1.id}`);
 	await page.getByRole("link", { name: "Group 2" }).click();
-	await page.waitForURL(`/admin/dashboard/pages/${group2!.id}`);
+	await page.waitForURL(`/admin/dashboard/pages/${group2.id}`);
 
 	const breadcrumbs = page.getByTestId("breadcrumbs");
 	await expect(breadcrumbs).toContainText("Group 1 Group 2");
 
 	await breadcrumbs.getByRole("link", { name: "Group 1" }).click();
-	await expect(page).toHaveURL(`/admin/dashboard/pages/${group1!.id}`);
+	await expect(page).toHaveURL(`/admin/dashboard/pages/${group1.id}`);
 	await expect(breadcrumbs).toContainText("Group 1");
 
 	await breadcrumbs.getByRole("link").first().click();
@@ -203,7 +203,7 @@ test.describe("page", () => {
 				{
 					name: "Page 1",
 					url: "/group-1/page-1",
-					parent_id: group!.id,
+					parent_id: group.id,
 				},
 				{
 					name: "Group 2",
@@ -311,7 +311,7 @@ test.describe("group", () => {
 			data: {
 				name: "Group 1",
 				url: "/group-1/group-1",
-				parent_id: group!.id,
+				parent_id: group.id,
 				is_group: true,
 			},
 		});
@@ -319,7 +319,7 @@ test.describe("group", () => {
 			data: {
 				name: "Page 1",
 				url: "/group-1/group-1/page-1",
-				parent_id: nestedGroup!.id,
+				parent_id: nestedGroup.id,
 			},
 		});
 
@@ -359,7 +359,7 @@ test.describe("group", () => {
 				{
 					name: "Page 1",
 					url: "/group-1/page-1",
-					parent_id: group!.id,
+					parent_id: group.id,
 				},
 			],
 		});
@@ -419,7 +419,7 @@ test.describe("group", () => {
 				{
 					name: "Group 2",
 					url: "/group-1/group-2",
-					parent_id: group1!.id,
+					parent_id: group1.id,
 					is_group: true,
 				},
 				{
@@ -443,7 +443,7 @@ test.describe("group", () => {
 			data: {
 				name: "Page 1",
 				url: "/group-2/page-1",
-				parent_id: group2!.id,
+				parent_id: group2.id,
 			},
 		});
 
@@ -501,12 +501,12 @@ test.describe("bulk", () => {
 				{
 					name: "Page 1",
 					url: "/group-1/page-1",
-					parent_id: group!.id,
+					parent_id: group.id,
 				},
 			],
 		});
 
-		await page.goto("/admin/dashboard/pages");
+		await page.goto("/admin/dashboard/pages", { waitUntil: "networkidle" });
 
 		const rows = page.locator("tbody > tr");
 		await rows.first().locator("td").first().click();
@@ -538,7 +538,7 @@ test.describe("bulk", () => {
 				{
 					name: "Group 2",
 					url: "/group-1/group-2",
-					parent_id: group1!.id,
+					parent_id: group1.id,
 					is_group: true,
 				},
 				{
@@ -568,12 +568,12 @@ test.describe("bulk", () => {
 				{
 					name: "Page 1",
 					url: "/group-2/page-1",
-					parent_id: group2!.id,
+					parent_id: group2.id,
 				},
 				{
 					name: "Page 2",
 					url: "/group-2/page-2",
-					parent_id: group2!.id,
+					parent_id: group2.id,
 				},
 			],
 		});

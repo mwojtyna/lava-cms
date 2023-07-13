@@ -7,7 +7,7 @@ import {
 	userMock,
 	userPasswordDecrypted,
 	websiteSettingsMock,
-} from "@admin/e2e/mocks/data";
+} from "@admin/e2e/mocks";
 
 test.describe("sign up step", () => {
 	test.afterAll(async () => {

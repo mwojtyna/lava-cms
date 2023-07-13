@@ -13,7 +13,6 @@ export function ZustandProvider(props: Props) {
 
 	if (!initialized.current) {
 		useColorThemeStore.setState({ colorTheme: props.colorTheme });
-
 		initialized.current = true;
 	}
 

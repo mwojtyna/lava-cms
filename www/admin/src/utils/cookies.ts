@@ -10,7 +10,7 @@ export function getParsedCookie<T>(name: CookieName, fallback: T) {
 	return JSON.parse(cookie) as T;
 }
 export const permanentCookieOptions: OptionsType = {
-	maxAge: new Date(2100, 12).getTime(),
+	expires: new Date(2100, 11),
 	sameSite: "lax",
 	path: "/admin",
 };
