@@ -10,7 +10,7 @@ import {
 } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import type { Page } from "@admin/prisma/types";
+import type { Page } from "@prisma/client";
 import {
 	Button,
 	Dialog,
@@ -111,7 +111,7 @@ export function BulkDeleteDialog(props: BulkEditDialogProps) {
 		const promises = props.pages.map((page) =>
 			mutation.mutateAsync({
 				id: page.id,
-			})
+			}),
 		);
 		await Promise.all(promises);
 		// setPreferences({ ...preferences, [props.pages[0].id]: undefined });
@@ -219,7 +219,7 @@ export function MoveDialog(props: EditDialogProps) {
 					);
 				})
 				.sort((a, b) => a.url.localeCompare(b.url)),
-		[allGroups, props.page]
+		[allGroups, props.page],
 	);
 	const mutation = trpc.pages.movePage.useMutation();
 
@@ -235,7 +235,7 @@ export function MoveDialog(props: EditDialogProps) {
 				onError: (err) => {
 					if (err.data?.code === "CONFLICT") {
 						const destinationUrl = groups!.find(
-							(group) => group.id === data.newParentId
+							(group) => group.id === data.newParentId,
 						)!.url;
 
 						const newPath =
@@ -258,7 +258,7 @@ export function MoveDialog(props: EditDialogProps) {
 						});
 					}
 				},
-			}
+			},
 		);
 	};
 
@@ -301,16 +301,16 @@ export function BulkMoveDialog(props: BulkEditDialogProps) {
 				?.filter((group) => {
 					return (
 						props.pages.every(
-							(page) => page.parent_id !== group.id && page.id !== group.id
+							(page) => page.parent_id !== group.id && page.id !== group.id,
 						) &&
 						props.pages.reduce(
 							(acc, curr) => acc && !group.url.startsWith(curr.url + "/"),
-							true
+							true,
 						)
 					);
 				})
 				.sort((a, b) => a.url.localeCompare(b.url)),
-		[allGroups, props.pages]
+		[allGroups, props.pages],
 	);
 
 	const form = useForm<MoveDialogInputs>();
@@ -323,7 +323,7 @@ export function BulkMoveDialog(props: BulkEditDialogProps) {
 		},
 		{
 			enabled: false,
-		}
+		},
 	);
 
 	const onSubmit: SubmitHandler<MoveDialogInputs> = async (data) => {
@@ -343,7 +343,7 @@ export function BulkMoveDialog(props: BulkEditDialogProps) {
 			}
 
 			const promises = props.pages.map((page) =>
-				mutation.mutateAsync({ id: page.id, newParentId: data.newParentId })
+				mutation.mutateAsync({ id: page.id, newParentId: data.newParentId }),
 			);
 			await Promise.all(promises);
 
@@ -439,7 +439,7 @@ function NameSlugInput<T extends EditDialogInputs>({
 								("/" + slugify(e.target.value, slugifyOptions)) as PathValue<
 									T,
 									Path<T>
-								>
+								>,
 							);
 					},
 				}}
@@ -514,7 +514,7 @@ export function EditDetailsDialog(props: EditDialogProps) {
 						});
 					}
 				},
-			}
+			},
 		);
 	};
 
@@ -600,7 +600,7 @@ export function AddDialog(props: AddDialogProps) {
 						});
 					}
 				},
-			}
+			},
 		);
 	};
 
@@ -656,7 +656,7 @@ export function DuplicateDialog(props: EditDialogProps) {
 	}).data;
 	const sortedGroups = React.useMemo(
 		() => groups?.sort((a, b) => a.url.localeCompare(b.url)),
-		[groups]
+		[groups],
 	);
 
 	const mutation = trpc.pages.addPage.useMutation();
@@ -701,7 +701,7 @@ export function DuplicateDialog(props: EditDialogProps) {
 						});
 					}
 				},
-			}
+			},
 		);
 	};
 

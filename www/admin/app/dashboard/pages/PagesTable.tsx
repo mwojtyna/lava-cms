@@ -24,7 +24,7 @@ import {
 	TableRow,
 } from "@admin/src/components/ui/server";
 import { ChevronRightIcon } from "@heroicons/react/20/solid";
-import type { Page } from "@admin/prisma/types";
+import type { Page } from "@prisma/client";
 import { cn } from "@admin/src/utils/styling";
 import { ActionIcon, Button, Input } from "@admin/src/components/ui/client";
 import {
@@ -57,15 +57,15 @@ interface PagesTableProps {
 export function PagesTable(props: PagesTableProps) {
 	const data = trpc.pages.getGroupContents.useQuery(
 		props.data.breadcrumbs.length > 0 ? { id: props.group.id } : null,
-		{ initialData: props.data }
+		{ initialData: props.data },
 	).data;
 	const cookie = React.useMemo(
 		() =>
 			getParsedCookie<TableCookie>(
 				"pages-table",
-				props.cookie ?? { id: "name", desc: false, pageSize: 10 }
+				props.cookie ?? { id: "name", desc: false, pageSize: 10 },
 			),
-		[props.cookie]
+		[props.cookie],
 	);
 
 	const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
@@ -95,7 +95,7 @@ export function PagesTable(props: PagesTableProps) {
 		setCookie(
 			"pages-table" satisfies CookieName,
 			JSON.stringify({ ...sorting[0], pageSize: pagination.pageSize } as TableCookie),
-			permanentCookieOptions
+			permanentCookieOptions,
 		);
 	}, [pagination, sorting]);
 
@@ -112,7 +112,7 @@ export function PagesTable(props: PagesTableProps) {
 				// @ts-expect-error `value` type is weird
 				// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
 				JSON.stringify({ ...value()[0], pageSize: pagination.pageSize } as TableCookie),
-				permanentCookieOptions
+				permanentCookieOptions,
 			);
 		},
 		getSortedRowModel: getSortedRowModel(),
@@ -175,7 +175,7 @@ export function PagesTable(props: PagesTableProps) {
 									variant={"link"}
 									className={cn(
 										"whitespace-nowrap font-normal",
-										i < data.breadcrumbs.length - 1 && "text-muted-foreground"
+										i < data.breadcrumbs.length - 1 && "text-muted-foreground",
 									)}
 									asChild
 								>
@@ -208,7 +208,7 @@ export function PagesTable(props: PagesTableProps) {
 												? null
 												: flexRender(
 														header.column.columnDef.header,
-														header.getContext()
+														header.getContext(),
 												  )}
 										</TableHead>
 									))}
@@ -229,12 +229,12 @@ export function PagesTable(props: PagesTableProps) {
 												className={cn(
 													"whitespace-nowrap",
 													i > 0 && "text-muted-foreground",
-													i === cells.length - 1 && "py-0"
+													i === cells.length - 1 && "py-0",
 												)}
 											>
 												{flexRender(
 													cell.column.columnDef.cell,
-													cell.getContext()
+													cell.getContext(),
 												)}
 											</TableCell>
 										))}

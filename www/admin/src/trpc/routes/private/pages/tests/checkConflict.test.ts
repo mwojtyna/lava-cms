@@ -1,5 +1,5 @@
 import { prisma } from "@admin/prisma/__mocks__/client";
-import type { Page } from "@admin/prisma/types";
+import type { Page } from "@prisma/client";
 import { expect, it, vi } from "vitest";
 import { caller } from "../../_private";
 

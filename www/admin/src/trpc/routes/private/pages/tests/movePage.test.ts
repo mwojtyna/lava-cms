@@ -2,7 +2,7 @@ import { expect, it, vi } from "vitest";
 import { prisma } from "@admin/prisma/__mocks__/client";
 import { caller } from "@admin/src/trpc/routes/private/_private";
 import type { TRPC_ERROR_CODE_KEY } from "@trpc/server/rpc";
-import type { Page } from "@admin/prisma/types";
+import type { Page } from "@prisma/client";
 
 vi.mock("@admin/prisma/client");
 
@@ -31,7 +31,7 @@ it("updates the page's url, parent_id, and its children's urls", async () => {
 		caller.pages.movePage({
 			id: PAGE.id,
 			newParentId: PARENT_GROUP.id,
-		})
+		}),
 	).resolves.toBeUndefined();
 
 	expect(prisma.page.update).toHaveBeenCalledWith({
@@ -48,7 +48,7 @@ it("throws a trpc 404 'NOT_FOUND' error if parent page or page doesn't exist", a
 		caller.pages.movePage({
 			id: PAGE.id,
 			newParentId: PARENT_GROUP.id,
-		})
+		}),
 	).rejects.toThrowError("NOT_FOUND" as TRPC_ERROR_CODE_KEY);
 
 	prisma.$transaction.mockResolvedValueOnce([null, PARENT_GROUP]);
@@ -56,7 +56,7 @@ it("throws a trpc 404 'NOT_FOUND' error if parent page or page doesn't exist", a
 		caller.pages.movePage({
 			id: PAGE.id,
 			newParentId: PARENT_GROUP.id,
-		})
+		}),
 	).rejects.toThrowError("NOT_FOUND" as TRPC_ERROR_CODE_KEY);
 
 	prisma.$transaction.mockResolvedValueOnce([PAGE, null]);
@@ -64,7 +64,7 @@ it("throws a trpc 404 'NOT_FOUND' error if parent page or page doesn't exist", a
 		caller.pages.movePage({
 			id: PAGE.id,
 			newParentId: PARENT_GROUP.id,
-		})
+		}),
 	).rejects.toThrowError("NOT_FOUND" as TRPC_ERROR_CODE_KEY);
 
 	prisma.$transaction.mockResolvedValueOnce([PAGE, PARENT_GROUP]);
@@ -73,6 +73,6 @@ it("throws a trpc 404 'NOT_FOUND' error if parent page or page doesn't exist", a
 		caller.pages.movePage({
 			id: PAGE.id,
 			newParentId: PARENT_GROUP.id,
-		})
+		}),
 	).resolves.toBeUndefined();
 });

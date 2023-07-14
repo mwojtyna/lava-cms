@@ -1,7 +1,7 @@
 import { expect, it, vi } from "vitest";
 import { prisma } from "@admin/prisma/__mocks__/client";
 import { publicCaller } from "@admin/src/trpc/routes/public/_public";
-import type { Page } from "@admin/prisma/types";
+import type { Page } from "@prisma/client";
 
 vi.mock("@admin/prisma/client");
 

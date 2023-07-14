@@ -1,13 +1,13 @@
 import { z } from "zod";
 import { prisma } from "@admin/prisma/client";
 import { publicProcedure } from "@admin/src/trpc";
-import type { Page } from "@admin/prisma/types";
+import type { Page } from "@prisma/client";
 
 export const getPage = publicProcedure
 	.input(
 		z.object({
 			path: z.string(),
-		})
+		}),
 	)
 	.query(async ({ input }): Promise<Page | null> => {
 		let page = await prisma.page.findFirst({

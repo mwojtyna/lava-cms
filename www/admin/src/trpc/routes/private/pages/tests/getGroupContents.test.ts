@@ -1,5 +1,5 @@
 import { prisma } from "@admin/prisma/__mocks__/client";
-import type { Page } from "@admin/prisma/types";
+import type { Page } from "@prisma/client";
 import { expect, it, vi } from "vitest";
 import { caller } from "@admin/src/trpc/routes/private/_private";
 import type { TRPC_ERROR_CODE_KEY } from "@trpc/server/rpc";
@@ -107,6 +107,6 @@ it("throws a trpc 404 'NOT_FOUND' error if group doesn't exist", async () => {
 	prisma.page.findFirst.mockResolvedValueOnce(null);
 
 	await expect(caller.pages.getGroupContents({ id: "group-id" })).rejects.toThrowError(
-		"NOT_FOUND" satisfies TRPC_ERROR_CODE_KEY
+		"NOT_FOUND" satisfies TRPC_ERROR_CODE_KEY,
 	);
 });
