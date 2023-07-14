@@ -1,7 +1,8 @@
 name: Tests
 on:
   pull_request:
-    branches: [main]
+    branches:
+      - "**"
   workflow_dispatch:
 
 jobs:
@@ -11,7 +12,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v3.5.2
+        uses: actions/checkout@v3.5.3
 
       - name: Swap Docker configs
         run: |
@@ -21,7 +22,6 @@ jobs:
       - name: Env files
         run: |
           cp www/admin/.env.test www/admin/.env
-          cp www/api/.env.test www/api/.env
 
       - name: Pull
         run: docker compose pull
@@ -34,8 +34,8 @@ jobs:
 
       - name: Test
         run: |
-          docker exec -w /app/api web pnpm prisma db push
-          docker exec -w /app/admin web pnpm test -- --project=chromium
+          docker exec -w /app/admin web pnpm prisma db push
+          docker exec -w /app/admin web pnpm e2e --project=chromium
 
       - name: Upload report
         uses: actions/upload-artifact@v3.1.2
@@ -51,7 +51,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v3.5.2
+        uses: actions/checkout@v3.5.3
 
       - name: Swap Docker configs
         run: |
@@ -61,7 +61,6 @@ jobs:
       - name: Env files
         run: |
           cp www/admin/.env.test www/admin/.env
-          cp www/api/.env.test www/api/.env
 
       - name: Pull
         run: docker compose pull
@@ -74,8 +73,8 @@ jobs:
 
       - name: Test
         run: |
-          docker exec -w /app/api web pnpm prisma db push
-          docker exec -w /app/admin web pnpm test -- --project=firefox
+          docker exec -w /app/admin web pnpm db:push
+          docker exec -w /app/admin web pnpm e2e --project=firefox
 
       - name: Upload report
         uses: actions/upload-artifact@v3.1.2
@@ -91,7 +90,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v3.5.2
+        uses: actions/checkout@v3.5.3
 
       - name: Swap Docker configs
         run: |
@@ -101,7 +100,6 @@ jobs:
       - name: Env files
         run: |
           cp www/admin/.env.test www/admin/.env
-          cp www/api/.env.test www/api/.env
 
       - name: Pull
         run: docker compose pull
@@ -114,8 +112,8 @@ jobs:
 
       - name: Test
         run: |
-          docker exec -w /app/api web pnpm prisma db push
-          docker exec -w /app/admin web pnpm test -- --project=webkit
+          docker exec -w /app/admin web pnpm db:push
+          docker exec -w /app/admin web pnpm e2e --project=webkit
 
       - name: Upload report
         uses: actions/upload-artifact@v3.1.2
@@ -127,11 +125,11 @@ jobs:
 
   api:
     runs-on: ubuntu-22.04
-    name: Test api
+    name: Unit test API endpoints
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v3.5.2
+        uses: actions/checkout@v3.5.3
 
       - name: Swap Docker configs
         run: |
@@ -141,7 +139,6 @@ jobs:
       - name: Env files
         run: |
           cp www/admin/.env.test www/admin/.env
-          cp www/api/.env.test www/api/.env
 
       - name: Pull
         run: docker compose pull
@@ -153,7 +150,7 @@ jobs:
         run: docker compose up -d
 
       - name: Test
-        run: docker exec -w /app/api web pnpm test
+        run: docker exec -w /app/admin web pnpm unit
 
       - name: Upload report
         uses: actions/upload-artifact@v3.1.2

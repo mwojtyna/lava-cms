@@ -1,10 +1,9 @@
 {
 	"name": "frontend",
-	"version": "0.0.5",
-	"private": true,
+	"version": "0.0.1",
 	"type": "module",
+	"private": true,
 	"scripts": {
-		"start": "bin/deno run --allow-net --allow-read --allow-env ./dist/server/entry.mjs",
 		"dev": "astro dev --port 3000",
 		"build": "astro build",
 		"lint": "tsc && eslint . && astro check",
@@ -12,8 +11,11 @@
 		"astro": "astro"
 	},
 	"dependencies": {
-		"@astrojs/deno": "^4.1.0",
-		"api": "workspace:*",
-		"astro": "^2.3.1"
+		"@lavacms/astro": "workspace:*",
+		"astro": "^2.8.2",
+		"vite": "^4.4.3"
+	},
+	"devDependencies": {
+		"eslint-plugin-astro": "^0.27.2"
 	}
 }

@@ -1,35 +1,21 @@
 version: 2
 updates:
-  # /nginx/Dockerfile
-  - package-ecosystem: docker
-    directory: "/nginx"
-    target-branch: main
-    schedule:
-      interval: daily
-
-  # /www/Dockerfile
-  - package-ecosystem: docker
-    directory: "/www"
-    target-branch: main
-    schedule:
-      interval: daily
-
   # /.github/workflows/docker/*
   - package-ecosystem: docker
     directory: "/.github/workflows/docker"
-    target-branch: main
+    target-branch: 0.1.0
     schedule:
       interval: daily
 
   # /.devcontainer/Dockerfile
   - package-ecosystem: docker
     directory: "/.devcontainer"
-    target-branch: main
+    target-branch: 0.1.0
     schedule:
       interval: daily
 
   - package-ecosystem: "github-actions"
     directory: "/"
-    target-branch: main
+    target-branch: 0.1.0
     schedule:
       interval: daily

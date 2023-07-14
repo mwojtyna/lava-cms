@@ -1,0 +1,8 @@
+{
+	"compilerOptions": {
+		"baseUrl": "../../admin",
+		"incremental": false
+	},
+	"include": ["./index.ts"],
+	"extends": ["../../admin/tsconfig.json"]
+}

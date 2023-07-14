@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/playwright:v1.33.0
+FROM mcr.microsoft.com/playwright:v1.36.0
 
 WORKDIR /
 SHELL ["/bin/bash", "-c"]
@@ -19,7 +19,7 @@ RUN echo "root:root" | chpasswd
 RUN git config --global --add safe.directory /workspaces/lava-cms/
 
 # Install node
-ENV NODE_VERSION=18.16.0
+ENV NODE_VERSION=18.16.1
 ENV NVM_DIR=/home/pwuser/.nvm
 RUN mkdir -p ${NVM_DIR}
 

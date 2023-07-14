@@ -1,0 +1,79 @@
+generator client {
+    provider        = "prisma-client-js"
+    previewFeatures = ["multiSchema"]
+}
+
+datasource db {
+    provider = "postgresql"
+    url      = env("DATABASE_URL")
+    schemas  = ["admin", "frontend"]
+}
+
+// Admin schema
+model User {
+    id           String    @id @unique
+    auth_session Session[]
+    auth_key     Key[]
+    name         String
+    last_name    String
+    email        String    @unique
+
+    @@map("user")
+    @@schema("admin")
+}
+
+model Session {
+    id             String @id @unique
+    user_id        String
+    active_expires BigInt
+    idle_expires   BigInt
+    user           User   @relation(references: [id], fields: [user_id], onDelete: Cascade)
+
+    @@index([user_id])
+    @@map("session")
+    @@schema("admin")
+}
+
+model Key {
+    id              String  @id @unique
+    hashed_password String?
+    user_id         String
+    user            User    @relation(references: [id], fields: [user_id], onDelete: Cascade)
+
+    @@index([user_id])
+    @@map("key")
+    @@schema("admin")
+}
+
+// Frontend schema
+model Config {
+    id          String @id @default(cuid())
+    title       String
+    description String
+    language    String
+
+    @@map("config")
+    @@schema("frontend")
+}
+
+model Page {
+    id          String   @id @default(cuid())
+    name        String
+    url         String   @unique
+    parent      Page?    @relation("Tree", fields: [parent_id], references: [id], onDelete: Cascade)
+    parent_id   String?
+    children    Page[]   @relation("Tree")
+    is_group    Boolean  @default(false)
+    last_update DateTime @default(now())
+
+    @@map("page")
+    @@schema("frontend")
+}
+
+model Token {
+    id    String @id @default(cuid())
+    token String
+
+    @@map("token")
+    @@schema("frontend")
+}
