@@ -21,6 +21,7 @@ const config = {
 			transform: "@tabler/icons-react/dist/esm/icons/{{member}}",
 		},
 	},
+	// eslint-disable-next-line @typescript-eslint/require-await
 	redirects: async () => [
 		{
 			source: "/",

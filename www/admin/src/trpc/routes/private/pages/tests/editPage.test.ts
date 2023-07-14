@@ -25,7 +25,7 @@ it("updates the page's url and its children's urls", async () => {
 			id: ID,
 			newName: NEW_NAME,
 			newUrl: "/" + NEW_SLUG,
-		})
+		}),
 	).toBeUndefined();
 
 	const updatePageCall = prisma.page.update.mock.calls[0];
@@ -55,7 +55,7 @@ it("throws a trpc 404 'NOT_FOUND' error if the page doesn't exist", async () => 
 			id: ID,
 			newName: NEW_NAME,
 			newUrl: "/" + NEW_SLUG,
-		})
+		}),
 	).rejects.toThrowError("NOT_FOUND" as TRPC_ERROR_CODE_KEY);
 });
 
@@ -78,8 +78,8 @@ it("throws a trpc 409 'CONFLICT' error if the new url is already taken", async (
 				meta: {
 					target: ["url"],
 				},
-			}
-		)
+			},
+		),
 	);
 
 	await expect(
@@ -87,7 +87,7 @@ it("throws a trpc 409 'CONFLICT' error if the new url is already taken", async (
 			id: ID,
 			newName: NEW_NAME,
 			newUrl: "/" + NEW_SLUG,
-		})
+		}),
 	).rejects.toThrowError("CONFLICT" as TRPC_ERROR_CODE_KEY);
 });
 
@@ -108,6 +108,6 @@ it("throws a trpc 500 'INTERNAL_SERVER_ERROR' error if the database throws an un
 			id: ID,
 			newName: NEW_NAME,
 			newUrl: "/" + NEW_SLUG,
-		})
+		}),
 	).rejects.toThrowError("INTERNAL_SERVER_ERROR" as TRPC_ERROR_CODE_KEY);
 });
