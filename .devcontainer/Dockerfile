@@ -1,7 +1,7 @@
 FROM mcr.microsoft.com/playwright:v1.36.0
 
 WORKDIR /
-SHELL ["/bin/bash", "-c"]
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
 # Setup system
 RUN apt-get update
@@ -24,6 +24,7 @@ ENV NVM_DIR=/home/pwuser/.nvm
 RUN mkdir -p ${NVM_DIR}
 
 RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.3/install.sh | bash
+# hadolint ignore=SC1091
 RUN source ${NVM_DIR}/nvm.sh \
 	&& nvm install ${NODE_VERSION} \
 	&& nvm alias default ${NODE_VERSION} \
@@ -61,6 +62,6 @@ RUN	chezmoi git switch zsh
 RUN	chezmoi apply
 
 # Install theme and plugins
-RUN git clone --depth=1 https://github.com/romkatv/powerlevel10k.git ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/themes/powerlevel10k
-RUN git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
-RUN git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting
+RUN git clone --depth=1 "https://github.com/romkatv/powerlevel10k.git ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/themes/powerlevel10k"
+RUN git clone "https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions"
+RUN git clone "https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting"
