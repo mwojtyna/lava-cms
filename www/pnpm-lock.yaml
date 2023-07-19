@@ -257,6 +257,9 @@ importers:
       eslint-plugin-astro:
         specifier: ^0.27.2
         version: 0.27.2(eslint@8.44.0)
+      typescript:
+        specifier: ^5.1.6
+        version: 5.1.6
 
   packages/astro:
     dependencies:
@@ -273,6 +276,9 @@ importers:
       eslint-config-package:
         specifier: workspace:*
         version: link:../eslint-config-package
+      typescript:
+        specifier: ^5.1.6
+        version: 5.1.6
       vite:
         specifier: ^4.4.4
         version: 4.4.4(@types/node@18.16.19)
