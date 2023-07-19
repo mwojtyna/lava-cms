@@ -1,37 +1,66 @@
 name: lava-cms
 
 services:
-  # Update this to the name of the service you want to work with in your docker-compose.yml file
   web:
-    # Uncomment if you want to override the service's Dockerfile to one in the .devcontainer
-    # folder. Note that the path of the Dockerfile and context is relative to the *primary*
-    # docker-compose.yml file (the first in the devcontainer.json "dockerComposeFile"
-    # array). The sample below assumes your primary file is in the root of your project.
-    #
+    container_name: web
     build:
       context: .
-      dockerfile: .devcontainer/Dockerfile
-
     volumes:
-      # Update this to wherever you want VS Code to mount the folder of your project
-      - ./:/workspaces/lava-cms:cached
+      - ../:/workspaces/lava-cms:cached
       - ~/.ssh:/home/pwuser/.ssh:cached
       - ~/.gitconfig:/home/pwuser/.gitconfig:cached
-      - vscode:/home/pwuser/.vscode-server
       - pnpm-store:/home/pwuser/.pnpm-store
-
-    # Uncomment the next four lines if you will use a ptrace-based debugger like C++, Go, and Rust.
-    # cap_add:
-    #   - SYS_PTRACE
-    # security_opt:
-    #   - seccomp:unconfined
-
-    # Overrides default command so things don't shut down after the process ends.
+      - ~/.config/nvim:/home/pwuser/.config/nvim
+      - nvim:/home/pwuser/.local/share/nvim
+      - /tmp/.X11-unix:/tmp/.X11-unix
+    ports:
+      - 3000:3000
+      - 3001:3001
+    environment:
+      - DISPLAY=:0
     command: /bin/sh -c "while sleep 1000; do :; done"
-
     restart: unless-stopped
 
+  postgres:
+    container_name: postgres
+    image: postgres:15.3-alpine
+    environment:
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=admin
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    depends_on:
+      - web
+    restart: always
+
+  pgadmin:
+    container_name: pgadmin
+    image: dpage/pgadmin4:7.4
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=admin@admin.com
+      - PGADMIN_DEFAULT_PASSWORD=admin
+    volumes:
+      - pgadmin:/var/lib/pgadmin
+    depends_on:
+      - postgres
+    restart: always
+
+  nginx:
+    container_name: nginx
+    image: nginx:1.25.1-alpine-slim
+    ports:
+      - "8080:80"
+    volumes:
+      - ../nginx.conf:/etc/nginx/nginx.conf
+    depends_on:
+      - web
+      - postgres
+      - pgadmin
+    restart: always
+
 volumes:
-  vscode:
-    external: true
+  pgdata:
+  pgadmin:
   pnpm-store:
+  nvim:
+    external: true

@@ -5,17 +5,18 @@ SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
 # Setup system
 RUN apt-get update
-RUN apt-get install -y neovim
 RUN apt-get install -y less
 RUN apt-get install -y psmisc
 RUN apt-get install -y netcat
 RUN apt-get install -y git
 RUN apt-get install -y openssl
 RUN apt-get install -y sudo
-RUN apt-get install -y unzip
+RUN apt-get install -y unzip tar
+RUN apt-get install -y g++ make
 
 RUN ln -sf /usr/share/zoneinfo/Europe/Warsaw /etc/localtime
 RUN echo "root:root" | chpasswd
+RUN echo "pwuser:pwuser" | chpasswd
 RUN git config --global --add safe.directory /workspaces/lava-cms/
 
 # Install node
@@ -31,10 +32,6 @@ RUN source ${NVM_DIR}/nvm.sh \
 	&& nvm use default
 ENV PATH ${NVM_DIR}/versions/node/v$NODE_VERSION/bin:$PATH
 
-# Setup project
-RUN npm install -g pnpm
-RUN npm install -g git-open
-
 # Install zsh
 RUN apt-get install -y zsh
 RUN usermod --shell /bin/zsh pwuser
@@ -43,25 +40,40 @@ RUN usermod --shell /bin/zsh pwuser
 RUN sh -c "$(curl -fsLS get.chezmoi.io)"
 
 # Setup volume mounts
-RUN mkdir -p /workspaces/lava-cms/
-RUN mkdir /home/pwuser/.vscode-server
+RUN mkdir -p /workspaces/lava-cms
 RUN mkdir /home/pwuser/.pnpm-store
+RUN mkdir -p /home/pwuser/.config
+RUN mkdir -p /home/pwuser/.local/share
+RUN mkdir -p /home/pwuser/.local/state/nvim
 
-RUN chown -R pwuser:pwuser /workspaces/lava-cms/
-RUN chown -R pwuser:pwuser /home/pwuser/.vscode-server
+RUN chown -R pwuser:pwuser /workspaces/lava-cms
 RUN chown -R pwuser:pwuser /home/pwuser/.pnpm-store
+RUN chown -R pwuser:pwuser /home/pwuser/.config
+RUN chown -R pwuser:pwuser /home/pwuser/.local/share
+RUN chown -R pwuser:pwuser /home/pwuser/.local/state
+
+USER pwuser
+RUN npm install -g pnpm
+RUN npm install -g git-open
 
 # Install oh-my-zsh
-USER pwuser
 RUN sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 
 # Apply dotfiles from repo
 RUN chezmoi init https://github.com/matijas-05/dotfiles.git
-RUN	chezmoi apply
-RUN	chezmoi git switch zsh
+RUN rm -rf "$HOME/.config/chezmoi"
 RUN	chezmoi apply
 
 # Install theme and plugins
-RUN git clone --depth=1 "https://github.com/romkatv/powerlevel10k.git ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/themes/powerlevel10k"
-RUN git clone "https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions"
-RUN git clone "https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting"
+RUN git clone --depth=1 "https://github.com/romkatv/powerlevel10k.git" "${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/themes/powerlevel10k"
+RUN git clone "https://github.com/zsh-users/zsh-autosuggestions" "${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/zsh-autosuggestions"
+RUN git clone "https://github.com/zsh-users/zsh-syntax-highlighting.git" "${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting"
+
+# Install neovim
+USER root
+RUN curl -LO https://github.com/neovim/neovim/releases/latest/download/nvim.appimage
+RUN chmod u+x nvim.appimage
+RUN ./nvim.appimage --appimage-extract
+RUN ln -s /squashfs-root/AppRun /usr/bin/nvim
+
+USER pwuser
