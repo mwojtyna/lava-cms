@@ -179,8 +179,8 @@ importers:
         version: 4.3.9(react@18.2.0)
     devDependencies:
       '@playwright/test':
-        specifier: ^1.36.0
-        version: 1.36.0
+        specifier: ^1.36.1
+        version: 1.36.1
       '@types/bcrypt':
         specifier: ^5.0.0
         version: 5.0.0
@@ -257,6 +257,9 @@ importers:
       eslint-plugin-astro:
         specifier: ^0.27.2
         version: 0.27.2(eslint@8.44.0)
+      typescript:
+        specifier: ^5.1.6
+        version: 5.1.6
 
   packages/astro:
     dependencies:
@@ -273,6 +276,9 @@ importers:
       eslint-config-package:
         specifier: workspace:*
         version: link:../eslint-config-package
+      typescript:
+        specifier: ^5.1.6
+        version: 5.1.6
       vite:
         specifier: ^4.4.4
         version: 4.4.4(@types/node@18.16.19)
@@ -1732,14 +1738,14 @@ packages:
       tiny-glob: 0.2.9
       tslib: 2.5.0
 
-  /@playwright/test@1.36.0:
-    resolution: {integrity: sha512-yN+fvMYtiyLFDCQos+lWzoX4XW3DNuaxjBu68G0lkgLgC6BP+m/iTxJQoSicz/x2G5EsrqlZTqTIP9sTgLQerg==}
+  /@playwright/test@1.36.1:
+    resolution: {integrity: sha512-YK7yGWK0N3C2QInPU6iaf/L3N95dlGdbsezLya4n0ZCh3IL7VgPGxC6Gnznh9ApWdOmkJeleT2kMTcWPRZvzqg==}
     engines: {node: '>=16'}
     hasBin: true
     requiresBuild: true
     dependencies:
       '@types/node': 18.16.19
-      playwright-core: 1.36.0
+      playwright-core: 1.36.1
     optionalDependencies:
       fsevents: 2.3.2
     dev: true
@@ -6906,8 +6912,8 @@ packages:
       pathe: 1.1.0
     dev: true
 
-  /playwright-core@1.36.0:
-    resolution: {integrity: sha512-7RTr8P6YJPAqB+8j5ATGHqD6LvLLM39sYVNsslh78g8QeLcBs5750c6+msjrHUwwGt+kEbczBj1XB22WMwn+WA==}
+  /playwright-core@1.36.1:
+    resolution: {integrity: sha512-7+tmPuMcEW4xeCL9cp9KxmYpQYHKkyjwoXRnoeTowaeNat8PoBMk/HwCYhqkH2fRkshfKEOiVus/IhID2Pg8kg==}
     engines: {node: '>=16'}
     hasBin: true
     dev: true

@@ -1,19 +1,5 @@
 version: 2
 updates:
-  # /.github/workflows/docker/*
-  - package-ecosystem: docker
-    directory: "/.github/workflows/docker"
-    target-branch: main
-    schedule:
-      interval: daily
-
-  # /.devcontainer/Dockerfile
-  - package-ecosystem: docker
-    directory: "/.devcontainer"
-    target-branch: main
-    schedule:
-      interval: daily
-
   - package-ecosystem: "github-actions"
     directory: "/"
     target-branch: main

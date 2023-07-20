@@ -67,7 +67,7 @@
 		"zustand": "^4.3.9"
 	},
 	"devDependencies": {
-		"@playwright/test": "^1.36.0",
+		"@playwright/test": "^1.36.1",
 		"@types/bcrypt": "^5.0.0",
 		"@types/language-tags": "^1.0.1",
 		"@types/node": "^18.16.19",

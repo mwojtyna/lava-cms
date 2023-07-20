@@ -1,0 +1,76 @@
+on:
+  workflow_call:
+    inputs:
+      browser:
+        required: true
+        type: string
+
+jobs:
+  admin:
+    name: ${{ inputs.browser }}
+    runs-on: ubuntu-22.04
+    defaults:
+      run:
+        working-directory: ./www/admin
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3.5.3
+
+      - name: Setup Node.js environment
+        uses: actions/setup-node@v3.7.0
+        with:
+          node-version-file: ".nvmrc"
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2.2.4
+        id: pnpm-install
+        with:
+          version: 8
+          run_install: false
+
+      - name: Setup pnpm cache
+        uses: actions/cache@v3.3.1
+        with:
+          path: ${{ github.workspace }}/.pnpm-store/v3
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: ${{ runner.os }}-pnpm-store-
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Setup Playwright
+        run: pnpm playwright install --with-deps
+
+      - name: Setup postgres
+        run: |
+          cp .env.test .env
+          docker run -p 5432:5432 -e POSTGRES_USER=admin -e POSTGRES_PASSWORD=admin -d postgres:15.3-alpine
+          sleep 5s
+          pnpm db:push
+
+      - name: Setup Next.js cache
+        uses: actions/cache@v3.3.1
+        with:
+          # See here for caching with `yarn` https://github.com/actions/cache/blob/main/examples.md#node---yarn or you can leverage caching with actions/setup-node https://github.com/actions/setup-node
+          path: ${{ github.workspace }}/www/admin/.next/cache
+          # Generate a new cache whenever packages or source files change.
+          key: ${{ runner.os }}-nextjs-${{ hashFiles('**/pnpm-lock.yaml') }}-${{ hashFiles('www/admin/*.[jt]s', 'www/admin/*.[jt]sx', '!www/admin/*.test.*', '!www/admin/node_modules/**', '!www/admin/.next/**') }}
+          # If source files changed but packages didn't, rebuild from a prior cache
+          restore-keys: ${{ runner.os }}-nextjs-${{ hashFiles('**/pnpm-lock.yaml') }}-
+
+      - name: Build admin
+        run: |
+          pnpm lint
+          pnpm build
+
+      - name: Run Tests
+        run: pnpm e2e --project ${{ inputs.browser }}
+
+      - name: Upload report
+        uses: actions/upload-artifact@v3.1.2
+        if: always()
+        with:
+          name: playwright-chromium-report
+          path: ${{ github.workspace }}/www/admin/playwright-report/
+          retention-days: 30

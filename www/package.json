@@ -6,6 +6,7 @@
 		"build": "FORCE_COLOR=1 turbo build",
 		"lint": "FORCE_COLOR=1 turbo lint"
 	},
+	"packageManager": "pnpm@8.6.9",
 	"dependencies": {
 		"turbo": "^1.10.7"
 	},

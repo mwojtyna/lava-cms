@@ -1,11 +1,6 @@
 name: lava-cms
 
 services:
-  web:
-    container_name: web
-    build: ./www
-    restart: always
-
   postgres:
     container_name: postgres
     image: postgres:15.3-alpine
@@ -14,8 +9,8 @@ services:
       - POSTGRES_PASSWORD=admin
     volumes:
       - pgdata:/var/lib/postgresql/data
-    depends_on:
-      - web
+    ports:
+      - 5432:5432
     restart: always
 
   pgadmin:
@@ -32,13 +27,12 @@ services:
 
   nginx:
     container_name: nginx
-    image: nginx:1.25.1-alpine-slim
-    ports:
-      - "8080:80"
+    image: nginx:1.25.1-alpine
     volumes:
       - ./nginx.conf:/etc/nginx/nginx.conf
+    ports:
+      - 8080:80
     depends_on:
-      - web
       - postgres
       - pgadmin
     restart: always
