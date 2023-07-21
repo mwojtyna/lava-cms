@@ -3,9 +3,6 @@
 import * as React from "react";
 import {
 	type ColumnDef,
-	type ColumnFiltersState,
-	type SortingState,
-	type PaginationState,
 	getCoreRowModel,
 	useReactTable,
 	getFilteredRowModel,
@@ -13,7 +10,6 @@ import {
 	getPaginationRowModel,
 	flexRender,
 } from "@tanstack/react-table";
-import { setCookie } from "cookies-next";
 import {
 	Stepper,
 	Table,
@@ -37,14 +33,9 @@ import Link from "next/link";
 import { trpc } from "@admin/src/utils/trpc";
 import { AddDialog } from "./dialogs";
 import { DataTablePagination } from "@admin/src/components";
-import { useSearchParams } from "@admin/src/hooks/useSearchParams";
 import type { SearchParams } from "./page";
-import {
-	type CookieName,
-	type TableCookie,
-	getParsedCookie,
-	permanentCookieOptions,
-} from "@admin/src/utils/cookies";
+import { type TableCookie } from "@admin/src/utils/cookies";
+import { useTableCookie } from "@admin/src/hooks/useTableCookie";
 
 interface PagesTableProps {
 	columns: ColumnDef<Page>[];
@@ -59,71 +50,27 @@ export function PagesTable(props: PagesTableProps) {
 		props.data.breadcrumbs.length > 0 ? { id: props.group.id } : null,
 		{ initialData: props.data },
 	).data;
-	const cookie = React.useMemo(
-		() =>
-			getParsedCookie<TableCookie>(
-				"pages-table",
-				props.cookie ?? { id: "name", desc: false, pageSize: 10 },
-			),
-		[props.cookie],
-	);
 
-	const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
-	const [sorting, setSorting] = React.useState<SortingState>(() => [
-		{ id: cookie.id, desc: cookie.desc },
-	]);
-
-	const [pagination, setPagination] = React.useState<PaginationState>(() => ({
-		pageIndex: props.pagination?.pageIndex ?? 0,
-		pageSize: cookie.pageSize ?? 10,
-	}));
-	const { setSearchParams } = useSearchParams({
-		onChanged: (searchParams) => {
-			setPagination((pagination) => ({
-				...pagination,
-				pageIndex: parseInt(searchParams.get("pageIndex") ?? "0"),
-			}));
+	const reactTableProps = useTableCookie({
+		cookie: {
+			name: "pages-table",
+			contents: props.cookie,
+			default: { id: "name", desc: false, pageSize: 10 },
+		},
+		pagination: {
+			pageIndex: props.pagination?.pageIndex ?? 0,
 		},
 	});
-
-	React.useEffect(() => {
-		setSearchParams({
-			pageIndex: pagination.pageIndex === 0 ? undefined : pagination.pageIndex,
-		} satisfies SearchParams);
-	}, [pagination.pageIndex, setSearchParams]);
-	React.useEffect(() => {
-		setCookie(
-			"pages-table" satisfies CookieName,
-			JSON.stringify({ ...sorting[0], pageSize: pagination.pageSize } as TableCookie),
-			permanentCookieOptions,
-		);
-	}, [pagination, sorting]);
 
 	const table = useReactTable({
 		data: data.pages,
 		columns: props.columns,
 		getCoreRowModel: getCoreRowModel(),
-		onColumnFiltersChange: setColumnFilters,
 		getFilteredRowModel: getFilteredRowModel(),
-		onSortingChange: (value) => {
-			setSorting(value);
-			setCookie(
-				"pages-table" satisfies CookieName,
-				// @ts-expect-error `value` type is weird
-				// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-				JSON.stringify({ ...value()[0], pageSize: pagination.pageSize } as TableCookie),
-				permanentCookieOptions,
-			);
-		},
 		getSortedRowModel: getSortedRowModel(),
 		getPaginationRowModel: getPaginationRowModel(),
-		onPaginationChange: setPagination,
 		autoResetPageIndex: false,
-		state: {
-			columnFilters,
-			sorting,
-			pagination,
-		},
+		...reactTableProps,
 	});
 
 	const [openAddPage, setOpenAddPage] = React.useState(false);

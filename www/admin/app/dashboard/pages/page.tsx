@@ -8,8 +8,8 @@ export const dynamic = "force-dynamic";
 
 export type SearchParams =
 	| {
-			pageIndex?: number;
-	  }
+		pageIndex?: number;
+	}
 	| undefined;
 
 export default async function Pages({ searchParams }: { searchParams: SearchParams }) {
