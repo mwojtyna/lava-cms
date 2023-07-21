@@ -1,7 +1,6 @@
 import { cookies } from "next/headers";
 import { caller } from "@admin/src/trpc/routes/private/_private";
 import { PagesTable } from "./PagesTable";
-import { columns } from "./PagesTableColumns";
 import { type CookieName, tableCookieSchema } from "@admin/src/utils/cookies";
 
 export const dynamic = "force-dynamic";
@@ -21,7 +20,6 @@ export default async function Pages({ searchParams }: { searchParams: SearchPara
 
 	return (
 		<PagesTable
-			columns={columns}
 			data={{ pages: data.pages, breadcrumbs: [] }}
 			group={rootGroup!}
 			pagination={searchParams}

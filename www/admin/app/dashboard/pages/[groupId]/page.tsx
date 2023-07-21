@@ -1,7 +1,6 @@
 import { caller } from "@admin/src/trpc/routes/private/_private";
 import { cookies } from "next/headers";
 import { PagesTable } from "../PagesTable";
-import { columns } from "../PagesTableColumns";
 import { notFound } from "next/navigation";
 import type { SearchParams } from "../page";
 import { type CookieName, tableCookieSchema } from "@admin/src/utils/cookies";
@@ -26,7 +25,6 @@ export default async function Group({
 
 	return (
 		<PagesTable
-			columns={columns}
 			data={{ pages, breadcrumbs }}
 			group={group}
 			pagination={searchParams}

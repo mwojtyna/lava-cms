@@ -1,9 +1,14 @@
 import * as React from "react";
-import type {
-	ColumnFiltersState,
-	PaginationState,
-	SortingState,
+import {
+	getCoreRowModel,
+	getFilteredRowModel,
+	getPaginationRowModel,
+	getSortedRowModel,
+	type ColumnFiltersState,
+	type PaginationState,
+	type SortingState,
 	useReactTable,
+	type ColumnDef,
 } from "@tanstack/react-table";
 import { setCookie } from "cookies-next";
 import type { SearchParams } from "@admin/app/dashboard/pages/page";
@@ -14,8 +19,12 @@ import {
 	type TableCookie,
 } from "@admin/src/utils/cookies";
 import { useSearchParams } from "./useSearchParams";
+import { Input } from "../components/ui/client";
+import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 
-interface UseTableCookieOptions {
+interface Options<T> {
+	data: T[];
+	columns: ColumnDef<T>[];
 	cookie: {
 		name: CookieName;
 		contents: TableCookie | null;
@@ -24,7 +33,8 @@ interface UseTableCookieOptions {
 	pagination: SearchParams;
 }
 
-export function useTableCookie(options: UseTableCookieOptions) {
+/** A hook that provides data for a table with sorting, filtering, and pagination, all saved to a cookie. **/
+export function useTable<T>(options: Options<T>) {
 	const parsedCookie = React.useMemo(
 		() =>
 			getJsonCookie<TableCookie>(
@@ -65,7 +75,14 @@ export function useTableCookie(options: UseTableCookieOptions) {
 		);
 	}, [options.cookie, pagination, sorting]);
 
-	const reactTableProps = {
+	const table = useReactTable({
+		data: options.data,
+		columns: options.columns,
+		getCoreRowModel: getCoreRowModel(),
+		getFilteredRowModel: getFilteredRowModel(),
+		getSortedRowModel: getSortedRowModel(),
+		getPaginationRowModel: getPaginationRowModel(),
+		autoResetPageIndex: false,
 		onColumnFiltersChange: setColumnFilters,
 		onSortingChange: (value) => {
 			setSorting(value);
@@ -83,7 +100,20 @@ export function useTableCookie(options: UseTableCookieOptions) {
 			sorting,
 			pagination,
 		},
-	} satisfies Partial<Parameters<typeof useReactTable>[0]>;
+	});
 
-	return reactTableProps;
+	const searchElement = (
+		<Input
+			type="search"
+			className="mr-auto w-auto"
+			value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
+			onChange={(e) => table.getColumn("name")?.setFilterValue(e.target.value)}
+			icon={<MagnifyingGlassIcon className="w-4" />}
+		/>
+	);
+
+	return {
+		table,
+		searchElement,
+	};
 }

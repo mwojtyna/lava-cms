@@ -20,7 +20,7 @@ const inputVariants = cva(
 		defaultVariants: {
 			size: "md",
 		},
-	}
+	},
 );
 
 interface InputProps
@@ -47,17 +47,17 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
 			setRightButtonState,
 			...props
 		},
-		ref
+		ref,
 	) => {
 		const [passwordVisible, setPasswordVisible] = React.useState(false);
 
 		return (
-			<div className="relative flex w-full items-center justify-center">
+			<div className={cn("relative flex w-full items-center justify-center", className)}>
 				{icon && <div className="absolute left-3 w-5">{icon}</div>}
 
 				<input
 					type={type === "password" ? (passwordVisible ? "text" : "password") : type}
-					className={cn(inputVariants({ className, size }), icon && "pl-10")}
+					className={cn(inputVariants({ size }), icon && "pl-10")}
 					ref={ref}
 					{...props}
 				/>
@@ -97,7 +97,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
 				)}
 			</div>
 		);
-	}
+	},
 );
 Input.displayName = "Input";
 
