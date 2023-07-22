@@ -34,11 +34,13 @@ export function Body({ children, fonts, ...props }: Props) {
 			className={cn(
 				store.colorTheme,
 				fonts.map((font) => font.variable),
-				"antialiased"
+				"antialiased",
 			)}
 			{...props}
 		>
-			{children}
+			<div className="selection:bg-orange-500 selection:text-background dark:selection:bg-orange-600 dark:selection:text-foreground">
+				{children}
+			</div>
 		</body>
 	);
 }
