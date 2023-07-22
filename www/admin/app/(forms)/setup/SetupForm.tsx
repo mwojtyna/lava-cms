@@ -38,6 +38,7 @@ export function SetupForm() {
 	const onSubmit: SubmitHandler<Inputs> = (data) => {
 		setConfigMutation.mutate(data, {
 			onSuccess: async () => {
+				// TODO: Replace with 'seed' endpoint
 				await addPageMutation.mutateAsync({
 					name: "Root",
 					url: "",

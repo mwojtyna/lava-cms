@@ -56,24 +56,75 @@ model Config {
     @@schema("frontend")
 }
 
-model Page {
-    id          String   @id @default(cuid())
-    name        String
-    url         String   @unique
-    parent      Page?    @relation("Tree", fields: [parent_id], references: [id], onDelete: Cascade)
-    parent_id   String?
-    children    Page[]   @relation("Tree")
-    is_group    Boolean  @default(false)
-    last_update DateTime @default(now())
-
-    @@map("page")
-    @@schema("frontend")
-}
-
 model Token {
     id    String @id @default(cuid())
     token String
 
     @@map("token")
+    @@schema("frontend")
+}
+
+model Page {
+    id          String   @id @default(cuid())
+    name        String
+    url         String   @unique
+    parent      Page?    @relation("page", fields: [parent_id], references: [id], onDelete: Cascade)
+    parent_id   String?
+    children    Page[]   @relation("page")
+    is_group    Boolean  @default(false)
+    last_update DateTime @default(now())
+
+    @@index([parent_id])
+    @@map("page")
+    @@schema("frontend")
+}
+
+model ComponentGroup {
+    id         String      @id @default(cuid())
+    name       String
+    components Component[]
+
+    @@map("component_group")
+    @@schema("frontend")
+}
+
+model Component {
+    id          String          @id @default(cuid())
+    name        String
+    group       ComponentGroup  @relation(fields: [group_id], references: [id], onDelete: Cascade)
+    group_id    String
+    data        ComponentData[]
+    data_id     String
+    last_update DateTime        @default(now())
+
+    @@index([group_id])
+    @@map("component")
+    @@schema("frontend")
+}
+
+model ComponentData {
+    id           String            @id @default(cuid())
+    name         String
+    component    Component?        @relation(fields: [component_id], references: [id]) @ignore
+    component_id String?           @ignore
+    type         ComponentDataType @relation(fields: [type_id], references: [id])
+    type_id      String
+
+    // If type is a primitive type, then data is a string
+    // If type is a complex type, then data is a JSON object
+    // If type is a component, then data is that component's id
+    data String
+
+    @@index([component_id])
+    @@map("component_data")
+    @@schema("frontend")
+}
+
+model ComponentDataType {
+    id   String          @id @default(cuid())
+    name String
+    data ComponentData[] @ignore
+
+    @@map("component_data_type")
     @@schema("frontend")
 }
