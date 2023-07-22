@@ -573,8 +573,8 @@ export function AddDialog(props: AddDialogProps) {
 			{
 				name: data.name,
 				url,
-				parent_id: props.group.id,
-				is_group: props.isGroup,
+				parentId: props.group.id,
+				isGroup: props.isGroup,
 			},
 			{
 				onSuccess: (id) => {
@@ -674,8 +674,8 @@ export function DuplicateDialog(props: EditDialogProps) {
 			{
 				name: data.name,
 				url,
-				parent_id: data.newParentId,
-				is_group: false,
+				parentId: data.newParentId,
+				isGroup: false,
 			},
 			{
 				onSuccess: (id) => {

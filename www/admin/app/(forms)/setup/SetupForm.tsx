@@ -42,8 +42,8 @@ export function SetupForm() {
 				await addPageMutation.mutateAsync({
 					name: "Root",
 					url: "",
-					is_group: true,
-					parent_id: null,
+					isGroup: true,
+					parentId: null,
 				});
 				await generateTokenMutation.mutateAsync();
 				router.replace("/dashboard");

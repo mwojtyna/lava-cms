@@ -9,8 +9,8 @@ vi.mock("@admin/prisma/client");
 const PAGE: Parameters<typeof caller.pages.addPage>[0] = {
 	name: "Page",
 	url: "/page",
-	parent_id: "cju0q2q2h0000g0q2q2h00001",
-	is_group: false,
+	parentId: "cju0q2q2h0000g0q2q2h00001",
+	isGroup: false,
 };
 const ID = "cju0q2q2h0000g0q2q2h00000";
 
@@ -31,12 +31,12 @@ it("throws a trpc 409 'CONFLICT' error if the page url already exists", async ()
 				meta: {
 					target: ["url"],
 				},
-			}
-		)
+			},
+		),
 	);
 
 	await expect(caller.pages.addPage(PAGE)).rejects.toThrowError(
-		"CONFLICT" satisfies TRPC_ERROR_CODE_KEY
+		"CONFLICT" satisfies TRPC_ERROR_CODE_KEY,
 	);
 });
 
@@ -44,6 +44,6 @@ it("throws a trpc 500 'INTERNAL_SERVER_ERROR' error if any other error occurs", 
 	prisma.page.create.mockRejectedValueOnce(new Error("Unknown error"));
 
 	await expect(caller.pages.addPage(PAGE)).rejects.toThrowError(
-		"INTERNAL_SERVER_ERROR" satisfies TRPC_ERROR_CODE_KEY
+		"INTERNAL_SERVER_ERROR" satisfies TRPC_ERROR_CODE_KEY,
 	);
 });
