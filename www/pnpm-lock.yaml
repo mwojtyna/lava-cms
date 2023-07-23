@@ -92,7 +92,7 @@ importers:
         version: 1.0.6(@types/react-dom@18.2.7)(@types/react@18.2.15)(react-dom@18.2.0)(react@18.2.0)
       '@t3-oss/env-nextjs':
         specifier: ^0.6.0
-        version: 0.6.0(typescript@5.1.6)(zod@3.21.4)
+        version: 0.6.0(typescript@5.1.6)(zod@3.21.1)
       '@tabler/icons-react':
         specifier: ^2.25.0
         version: 2.25.0(react@18.2.0)
@@ -172,8 +172,8 @@ importers:
         specifier: ^1.0.6
         version: 1.0.6(tailwindcss@3.3.3)
       zod:
-        specifier: ^3.20.2
-        version: 3.21.4
+        specifier: ^3.21.1
+        version: 3.21.1
       zustand:
         specifier: ^4.3.9
         version: 4.3.9(react@18.2.0)
@@ -231,7 +231,7 @@ importers:
         version: 3.3.3
       trpc-panel:
         specifier: ^1.3.4
-        version: 1.3.4(@trpc/server@10.34.0)(zod@3.21.4)
+        version: 1.3.4(@trpc/server@10.34.0)(zod@3.21.1)
       vite:
         specifier: 4.2.2
         version: 4.2.2(@types/node@18.16.19)
@@ -241,6 +241,9 @@ importers:
       vitest-mock-extended:
         specifier: 1.0.9
         version: 1.0.9(typescript@5.1.6)(vitest@0.28.3)
+      zod-prisma-types:
+        specifier: ^2.7.4
+        version: 2.7.4
 
   frontend:
     dependencies:
@@ -1767,12 +1770,33 @@ packages:
       '@prisma/engines-version': 4.17.0-26.6b0aef69b7cdfc787f822ecd7cdc76d5f1991584
       prisma: 5.0.0
 
+  /@prisma/debug@4.16.2:
+    resolution: {integrity: sha512-7L7WbG0qNNZYgLpsVB8rCHCXEyHFyIycRlRDNwkVfjQmACC2OW6AWCYCbfdjQhkF/t7+S3njj8wAWAocSs+Brw==}
+    dependencies:
+      '@types/debug': 4.1.8
+      debug: 4.3.4
+      strip-ansi: 6.0.1
+    transitivePeerDependencies:
+      - supports-color
+    dev: true
+
   /@prisma/engines-version@4.17.0-26.6b0aef69b7cdfc787f822ecd7cdc76d5f1991584:
     resolution: {integrity: sha512-HHiUF6NixsldsP3JROq07TYBLEjXFKr6PdH8H4gK/XAoTmIplOJBCgrIUMrsRAnEuGyRoRLXKXWUb943+PFoKQ==}
 
   /@prisma/engines@5.0.0:
     resolution: {integrity: sha512-kyT/8fd0OpWmhAU5YnY7eP31brW1q1YrTGoblWrhQJDiN/1K+Z8S1kylcmtjqx5wsUGcP1HBWutayA/jtyt+sg==}
     requiresBuild: true
+
+  /@prisma/generator-helper@4.16.2:
+    resolution: {integrity: sha512-bMOH7y73Ui7gpQrioFeavMQA+Tf8ksaVf8Nhs9rQNzuSg8SSV6E9baczob0L5KGZTSgYoqnrRxuo03kVJYrnIg==}
+    dependencies:
+      '@prisma/debug': 4.16.2
+      '@types/cross-spawn': 6.0.2
+      cross-spawn: 7.0.3
+      kleur: 4.1.5
+    transitivePeerDependencies:
+      - supports-color
+    dev: true
 
   /@radix-ui/number@1.0.1:
     resolution: {integrity: sha512-T5gIdVO2mmPW3NNhjNgEP3cqMXjXL9UbO0BzWcXfvdBs+BohbQxvd/K5hSVKmn9/lbTdsQVKbUcP5WLCwvUbBg==}
@@ -2772,25 +2796,25 @@ packages:
       tslib: 2.5.0
     dev: false
 
-  /@t3-oss/env-core@0.6.0(typescript@5.1.6)(zod@3.21.4):
+  /@t3-oss/env-core@0.6.0(typescript@5.1.6)(zod@3.21.1):
     resolution: {integrity: sha512-3FkPAba069WRZVVab/sB1m3eSGn/rZeypx5k+sWEu1d+k0OQdRDnvFS+7MtxYgqVrwaRk3b7yVnX2dgSPVmWPQ==}
     peerDependencies:
       typescript: '>=4.7.2'
       zod: ^3.0.0
     dependencies:
       typescript: 5.1.6
-      zod: 3.21.4
+      zod: 3.21.1
     dev: false
 
-  /@t3-oss/env-nextjs@0.6.0(typescript@5.1.6)(zod@3.21.4):
+  /@t3-oss/env-nextjs@0.6.0(typescript@5.1.6)(zod@3.21.1):
     resolution: {integrity: sha512-SpzcGNIbUYcQw4zPPFeRJqCC1560zL7QmB0puIqOnuCsmykPkqHPX+n9CNZLXVQerboHzfvb7Kd+jAdouk72Vw==}
     peerDependencies:
       typescript: '>=4.7.2'
       zod: ^3.0.0
     dependencies:
-      '@t3-oss/env-core': 0.6.0(typescript@5.1.6)(zod@3.21.4)
+      '@t3-oss/env-core': 0.6.0(typescript@5.1.6)(zod@3.21.1)
       typescript: 5.1.6
-      zod: 3.21.4
+      zod: 3.21.1
     dev: false
 
   /@tabler/icons-react@2.25.0(react@18.2.0):
@@ -2930,6 +2954,12 @@ packages:
   /@types/cookie@0.4.1:
     resolution: {integrity: sha512-XW/Aa8APYr6jSVVA1y/DEIZX0/GMKLEVekNG727R8cs56ahETkRAy/3DR7+fJyh7oUgGwNQaRfXCun0+KbWY7Q==}
     dev: false
+
+  /@types/cross-spawn@6.0.2:
+    resolution: {integrity: sha512-KuwNhp3eza+Rhu8IFI5HUXRP0LIhqH5cAjubUvGXXthh4YYBuP2ntwEX+Cz8GJoZUHlKo247wPWOfA9LYEq4cw==}
+    dependencies:
+      '@types/node': 18.16.19
+    dev: true
 
   /@types/debug@4.1.8:
     resolution: {integrity: sha512-/vPO1EPOs306Cvhwv7KfVfYvOJqA/S/AXjaHQiJboCZzcNDb+TIJFN9/2C9DZ//ijSKWioNyUxD792QmDJ+HKQ==}
@@ -4018,6 +4048,10 @@ packages:
     transitivePeerDependencies:
       - '@types/react'
     dev: false
+
+  /code-block-writer@11.0.3:
+    resolution: {integrity: sha512-NiujjUFB4SwScJq2bwbYUtXbZhBSlY6vYzm++3Q6oC+U+injTqfPYFK8wS9COOmb2lueqp0ZRB4nK1VYeHgNyw==}
+    dev: true
 
   /code-block-writer@12.0.0:
     resolution: {integrity: sha512-q4dMFMlXtKR3XNBHyMHt/3pwYNA69EDk00lloMOaaUMKPUXBw6lpXtbu3MMVG6/uOihGnRDOlkyqsONEUj60+w==}
@@ -7664,7 +7698,7 @@ packages:
       recast: 0.23.3
       ts-morph: 18.0.0
       tsconfig-paths: 4.2.0
-      zod: 3.21.4
+      zod: 3.21.1
     transitivePeerDependencies:
       - supports-color
     dev: true
@@ -8189,7 +8223,7 @@ packages:
   /trough@2.1.0:
     resolution: {integrity: sha512-AqTiAOLcj85xS7vQ8QkAV41hPDIJ71XJB4RCUrzo/1GM2CQwhkJGaf9Hgr7BOugMRpgGUrqRg/DrBDl4H40+8g==}
 
-  /trpc-panel@1.3.4(@trpc/server@10.34.0)(zod@3.21.4):
+  /trpc-panel@1.3.4(@trpc/server@10.34.0)(zod@3.21.1):
     resolution: {integrity: sha512-u5/dCi/AAp2tpJcCL5ZCfrdJtHHu8hrtm2hzSBZCE7z9Tw6MB1rCcliSQvgMPIEXMQrgwXk4t4IedfWkxioKng==}
     peerDependencies:
       '@trpc/server': ^10.0.0
@@ -8199,8 +8233,8 @@ packages:
       fuzzysort: 2.0.4
       path: 0.12.7
       url: 0.11.1
-      zod: 3.21.4
-      zod-to-json-schema: 3.21.2(zod@3.21.4)
+      zod: 3.21.1
+      zod-to-json-schema: 3.21.2(zod@3.21.1)
     dev: true
 
   /ts-api-utils@1.0.1(typescript@5.1.6):
@@ -9072,13 +9106,28 @@ packages:
     resolution: {integrity: sha512-9bnSc/HEW2uRy67wc+T8UwauLuPJVn28jb+GtJY16iiKWyvmYJRXVT4UamsAEGQfPohgr2q4Tq0sQbQlxTfi1g==}
     engines: {node: '>=12.20'}
 
-  /zod-to-json-schema@3.21.2(zod@3.21.4):
+  /zod-prisma-types@2.7.4:
+    resolution: {integrity: sha512-D+mUndT6r/H9E9ZMtA9+A1WfHHrluWwRqcBq0ayw5EHax8WBuDStgkdw1H6pWMW06AtKd95Yv2ugY3Y/exSeFw==}
+    hasBin: true
+    dependencies:
+      '@prisma/generator-helper': 4.16.2
+      code-block-writer: 11.0.3
+      lodash: 4.17.21
+      zod: 3.21.1
+    transitivePeerDependencies:
+      - supports-color
+    dev: true
+
+  /zod-to-json-schema@3.21.2(zod@3.21.1):
     resolution: {integrity: sha512-02yfKymfmIf2rM/5LYGlyw0daEel/f3MsSGMNJZWWf44ato+Y+diFugOpDtgvEUn3cYM5oDAGWW2NHeSD4mByw==}
     peerDependencies:
       zod: ^3.21.4
     dependencies:
-      zod: 3.21.4
+      zod: 3.21.1
     dev: true
+
+  /zod@3.21.1:
+    resolution: {integrity: sha512-+dTu2m6gmCbO9Ahm4ZBDapx2O6ZY9QSPXst2WXjcznPMwf2YNpn3RevLx4KkZp1OPW/ouFcoBtBzFz/LeY69oA==}
 
   /zod@3.21.4:
     resolution: {integrity: sha512-m46AKbrzKVzOzs/DZgVnG5H55N1sv1M8qZU3A8RIKbs3mrACDNeIOeilDymVb2HdmP8uwshOCF4uJ8uM9rCqJw==}

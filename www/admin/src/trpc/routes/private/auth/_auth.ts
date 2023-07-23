@@ -14,5 +14,3 @@ export const authRouter = router({
 	signOut,
 	signUp,
 });
-
-export type AuthRouter = typeof authRouter;

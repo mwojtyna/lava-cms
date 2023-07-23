@@ -18,5 +18,3 @@ export const pagesRouter = router({
 	getGroupContents,
 	movePage,
 });
-
-export type PagesRouter = typeof pagesRouter;

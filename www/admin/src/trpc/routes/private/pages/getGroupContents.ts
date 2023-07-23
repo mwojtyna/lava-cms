@@ -39,12 +39,20 @@ export const getGroupContents = privateProcedure
 
 async function getBreadcrumbs(group: Page) {
 	const breadcrumbs = [group];
-	let parent = await prisma.page.findUnique({ where: { id: group.parent_id ?? "" } });
+	let parent = await prisma.page.findUnique({
+		where: {
+			id: group.parent_id ?? "",
+		},
+	});
 
 	// Ignore root group so we can add a custom breadcrumb for it
 	while (parent && parent.parent_id) {
 		breadcrumbs.push(parent);
-		parent = await prisma.page.findUnique({ where: { id: parent.parent_id ?? "" } });
+		parent = await prisma.page.findUnique({
+			where: {
+				id: parent.parent_id,
+			},
+		});
 	}
 
 	return breadcrumbs.reverse();

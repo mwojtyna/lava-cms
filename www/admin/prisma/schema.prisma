@@ -3,6 +3,12 @@ generator client {
     previewFeatures = ["multiSchema"]
 }
 
+generator zod {
+    provider                 = "zod-prisma-types"
+    createInputTypes         = false
+    writeNullishInModelTypes = true
+}
+
 datasource db {
     provider = "postgresql"
     url      = env("DATABASE_URL")
@@ -11,12 +17,13 @@ datasource db {
 
 // Admin schema
 model User {
-    id           String    @id @unique
+    id        String @id @unique
+    name      String
+    last_name String
+    email     String @unique
+
     auth_session Session[]
     auth_key     Key[]
-    name         String
-    last_name    String
-    email        String    @unique
 
     @@map("user")
     @@schema("admin")
@@ -27,7 +34,8 @@ model Session {
     user_id        String
     active_expires BigInt
     idle_expires   BigInt
-    user           User   @relation(references: [id], fields: [user_id], onDelete: Cascade)
+
+    user User @relation(references: [id], fields: [user_id], onDelete: Cascade)
 
     @@index([user_id])
     @@map("session")
@@ -38,7 +46,8 @@ model Key {
     id              String  @id @unique
     hashed_password String?
     user_id         String
-    user            User    @relation(references: [id], fields: [user_id], onDelete: Cascade)
+
+    user User @relation(references: [id], fields: [user_id], onDelete: Cascade)
 
     @@index([user_id])
     @@map("key")
@@ -68,63 +77,96 @@ model Page {
     id          String   @id @default(cuid())
     name        String
     url         String   @unique
-    parent      Page?    @relation("page", fields: [parent_id], references: [id], onDelete: Cascade)
     parent_id   String?
-    children    Page[]   @relation("page")
     is_group    Boolean  @default(false)
     last_update DateTime @default(now())
+
+    parent     Page?               @relation("page", fields: [parent_id], references: [id], onDelete: Cascade)
+    children   Page[]              @relation("page")
+    components ComponentInstance[]
 
     @@index([parent_id])
     @@map("page")
     @@schema("frontend")
 }
 
-model ComponentGroup {
-    id         String      @id @default(cuid())
-    name       String
-    components Component[]
+model ComponentDefinitionGroup {
+    id              String  @id @default(cuid())
+    name            String
+    parent_group_id String?
 
-    @@map("component_group")
+    parent_group         ComponentDefinitionGroup?  @relation("component_definition_group", fields: [parent_group_id], references: [id], onDelete: Cascade)
+    groups               ComponentDefinitionGroup[] @relation("component_definition_group")
+    component_definitons ComponentDefinition[]
+
+    @@map("component_definition_group")
     @@schema("frontend")
 }
 
-model Component {
-    id          String          @id @default(cuid())
+model ComponentDefinition {
+    id          String   @id @default(cuid())
     name        String
-    group       ComponentGroup  @relation(fields: [group_id], references: [id], onDelete: Cascade)
     group_id    String
-    data        ComponentData[]
-    data_id     String
-    last_update DateTime        @default(now())
+    last_update DateTime @default(now())
+
+    group             ComponentDefinitionGroup   @relation(fields: [group_id], references: [id], onDelete: Cascade)
+    field_definitions ComponentFieldDefinition[]
+    components        ComponentInstance[]
 
     @@index([group_id])
-    @@map("component")
+    @@map("component_definition")
     @@schema("frontend")
 }
 
-model ComponentData {
-    id           String            @id @default(cuid())
-    name         String
-    component    Component?        @relation(fields: [component_id], references: [id]) @ignore
-    component_id String?           @ignore
-    type         ComponentDataType @relation(fields: [type_id], references: [id])
-    type_id      String
+model ComponentFieldDefinition {
+    id                      String             @id @default(cuid())
+    name                    String
+    type                    ComponentFieldType
+    component_definition_id String
 
-    // If type is a primitive type, then data is a string
-    // If type is a complex type, then data is a JSON object
-    // If type is a component, then data is that component's id
-    data String
+    component_definition ComponentDefinition @relation(fields: [component_definition_id], references: [id], onDelete: Cascade)
+
+    @@index([component_definition_id])
+    @@map("component_field_definition")
+    @@schema("frontend")
+}
+
+model ComponentInstanceField {
+    id           String @id @default(cuid())
+    component_id String
+    /// If type is a primitive type, then data is a string
+    /// If type is a complex type, then data is a JSON object
+    /// If type is a component, then data is that component's id
+    data         String
+
+    component ComponentInstance @relation(fields: [component_id], references: [id])
 
     @@index([component_id])
-    @@map("component_data")
+    @@map("component_instance_field")
     @@schema("frontend")
 }
 
-model ComponentDataType {
-    id   String          @id @default(cuid())
-    name String
-    data ComponentData[] @ignore
+model ComponentInstance {
+    id            String @id @default(cuid())
+    name          String
+    page_id       String
+    definition_id String
 
-    @@map("component_data_type")
+    page       Page                     @relation(fields: [page_id], references: [id])
+    definition ComponentDefinition      @relation(fields: [definition_id], references: [id])
+    fields     ComponentInstanceField[]
+
+    @@index([page_id])
+    @@map("component_instance")
+    @@schema("frontend")
+}
+
+enum ComponentFieldType {
+    STRING
+    NUMBER
+    BOOLEAN
+    COMPONENT
+
+    @@map("component_field_type")
     @@schema("frontend")
 }

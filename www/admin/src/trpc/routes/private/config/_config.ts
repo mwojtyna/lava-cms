@@ -6,5 +6,3 @@ export const configRouter = router({
 	setConfig,
 	getConfig,
 });
-
-export type ConfigRouter = typeof configRouter;
