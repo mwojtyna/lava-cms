@@ -2,7 +2,7 @@ import { caller } from "@admin/src/trpc/routes/private/_private";
 import { cookies } from "next/headers";
 import { PagesTable } from "../PagesTable";
 import { notFound } from "next/navigation";
-import type { SearchParams } from "../page";
+import type { PagesTableSearchParams } from "../page";
 import { type CookieName, tableCookieSchema } from "@admin/src/utils/cookies";
 
 export const dynamic = "force-dynamic";
@@ -12,7 +12,7 @@ export default async function Group({
 	searchParams,
 }: {
 	params: { groupId: string };
-	searchParams: SearchParams;
+	searchParams: PagesTableSearchParams;
 }) {
 	const group = await caller.pages.getGroup({ id: params.groupId });
 	if (!group) {

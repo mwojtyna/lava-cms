@@ -52,9 +52,9 @@ export function DataTable<T>({ table, columns: columnsLength }: Props<T>) {
 									{header.isPlaceholder
 										? null
 										: flexRender(
-												header.column.columnDef.header,
-												header.getContext(),
-										  )}
+											header.column.columnDef.header,
+											header.getContext(),
+										)}
 								</TableHead>
 							))}
 						</TableRow>
@@ -96,14 +96,20 @@ interface Breadcrumb {
 	id: string;
 	name: string;
 }
-export function DataTableBreadcrumbs<T extends Breadcrumb>({ breadcrumbs }: { breadcrumbs: T[] }) {
+export function DataTableBreadcrumbs<T extends Breadcrumb>({
+	breadcrumbs,
+	rootUrl,
+}: {
+	breadcrumbs: T[];
+	rootUrl: string;
+}) {
 	return (
 		<>
 			{breadcrumbs.length > 0 && (
 				<Stepper
 					className="-mb-2"
 					steps={[
-						<Link key={0} href={"/dashboard/pages"}>
+						<Link key={0} href={rootUrl}>
 							<ActionIcon className="-mr-2">
 								<HomeIcon className="w-5 text-foreground" />
 							</ActionIcon>

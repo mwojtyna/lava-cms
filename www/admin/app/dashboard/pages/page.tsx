@@ -5,13 +5,13 @@ import { type CookieName, tableCookieSchema } from "@admin/src/utils/cookies";
 
 export const dynamic = "force-dynamic";
 
-export type SearchParams =
+export type PagesTableSearchParams =
 	| {
 		pageIndex?: number;
 	}
 	| undefined;
 
-export default async function Pages({ searchParams }: { searchParams: SearchParams }) {
+export default async function Pages({ searchParams }: { searchParams: PagesTableSearchParams }) {
 	const rootGroup = await caller.pages.getGroup();
 	const data = await caller.pages.getGroupContents();
 

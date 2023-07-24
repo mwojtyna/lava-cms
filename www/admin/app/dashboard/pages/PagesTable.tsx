@@ -7,7 +7,7 @@ import { DocumentPlusIcon, FolderPlusIcon } from "@heroicons/react/24/outline";
 import { trpc } from "@admin/src/utils/trpc";
 import { AddDialog } from "./dialogs";
 import { DataTable, DataTableBreadcrumbs, DataTablePagination } from "@admin/src/components";
-import type { SearchParams } from "./page";
+import type { PagesTableSearchParams } from "./page";
 import { type TableCookie } from "@admin/src/utils/cookies";
 import { useTable } from "@admin/src/hooks/useTable";
 import { columns } from "./PagesTableColumns";
@@ -15,7 +15,7 @@ import { columns } from "./PagesTableColumns";
 interface Props {
 	group: Page;
 	data: { pages: Page[]; breadcrumbs: Page[] };
-	pagination: SearchParams;
+	pagination: PagesTableSearchParams;
 	cookie: TableCookie | null;
 }
 
@@ -36,6 +36,7 @@ export function PagesTable(props: Props) {
 		pagination: {
 			pageIndex: props.pagination?.pageIndex ?? 0,
 		},
+		searchColumn: "name",
 	});
 
 	const [openAddPage, setOpenAddPage] = React.useState(false);
@@ -66,7 +67,7 @@ export function PagesTable(props: Props) {
 					</div>
 				</div>
 
-				<DataTableBreadcrumbs breadcrumbs={data.breadcrumbs} />
+				<DataTableBreadcrumbs breadcrumbs={data.breadcrumbs} rootUrl="/dashboard/pages" />
 				<DataTable table={table} columns={columns} />
 
 				<DataTablePagination table={table} />

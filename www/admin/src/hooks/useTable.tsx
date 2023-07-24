@@ -11,7 +11,7 @@ import {
 	type ColumnDef,
 } from "@tanstack/react-table";
 import { setCookie } from "cookies-next";
-import type { SearchParams } from "@admin/app/dashboard/pages/page";
+import type { PagesTableSearchParams } from "@admin/app/dashboard/pages/page";
 import {
 	getJsonCookie,
 	permanentCookieOptions,
@@ -30,7 +30,8 @@ interface Options<T> {
 		contents: TableCookie | null;
 		default: TableCookie;
 	};
-	pagination: SearchParams;
+	pagination: PagesTableSearchParams;
+	searchColumn: string;
 }
 
 /** A hook that provides data for a table with sorting, filtering, and pagination, all saved to a cookie. **/
@@ -65,7 +66,7 @@ export function useTable<T>(options: Options<T>) {
 	React.useEffect(() => {
 		setSearchParams({
 			pageIndex: pagination.pageIndex === 0 ? undefined : pagination.pageIndex,
-		} satisfies SearchParams);
+		} satisfies PagesTableSearchParams);
 	}, [pagination.pageIndex, setSearchParams]);
 	React.useEffect(() => {
 		setCookie(
@@ -106,7 +107,7 @@ export function useTable<T>(options: Options<T>) {
 		<Input
 			type="search"
 			className="mr-auto w-auto"
-			value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
+			value={(table.getColumn(options.searchColumn)?.getFilterValue() as string) ?? ""}
 			onChange={(e) => table.getColumn("name")?.setFilterValue(e.target.value)}
 			icon={<MagnifyingGlassIcon className="w-4" />}
 		/>
