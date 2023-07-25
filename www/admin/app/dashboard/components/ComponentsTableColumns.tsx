@@ -1,11 +1,21 @@
 "use client";
-
+import * as React from "react";
 import Link from "next/link";
 import { sortingFns, type ColumnDef } from "@tanstack/react-table";
+import { EllipsisHorizontalIcon } from "@heroicons/react/20/solid";
+import { CubeIcon, FolderIcon, TrashIcon } from "@heroicons/react/24/outline";
 import type { ComponentsTableItem } from "./ComponentsTable";
-import { Button, Checkbox } from "@admin/src/components/ui/client";
-import { CubeIcon, FolderIcon } from "@heroicons/react/24/outline";
+import {
+	ActionIcon,
+	Button,
+	Checkbox,
+	DropdownMenu,
+	DropdownMenuContent,
+	DropdownMenuItem,
+	DropdownMenuTrigger,
+} from "@admin/src/components/ui/client";
 import { DataTableSortableHeader, dateFormatOptions } from "@admin/src/components/DataTable";
+import { DeleteDialog } from "./dialogs/SharedDialogs";
 
 export const columns: ColumnDef<ComponentsTableItem>[] = [
 	{
@@ -79,4 +89,44 @@ export const columns: ColumnDef<ComponentsTableItem>[] = [
 		accessorFn: (item) =>
 			new Intl.DateTimeFormat("en-GB", dateFormatOptions).format(item.lastUpdate),
 	},
+	{
+		id: "actions",
+		// header: ({ table }) =>
+		// 	(table.getIsSomePageRowsSelected() || table.getIsAllPageRowsSelected()) && (
+		// 		<PagesTableBulkActions
+		// 			pages={table.getSelectedRowModel().flatRows.map((row) => row.original)}
+		// 			onSubmit={table.resetRowSelection}
+		// 		/>
+		// 	),
+		cell: ({ row }) => <ComponentsTableActions item={row.original} />,
+		size: 0,
+	},
 ];
+
+function ComponentsTableActions({ item }: { item: ComponentsTableItem }) {
+	const [openDelete, setOpenDelete] = React.useState(false);
+
+	return (
+		<>
+			<DropdownMenu>
+				<DropdownMenuTrigger asChild>
+					<ActionIcon>
+						<EllipsisHorizontalIcon className="w-5" />
+					</ActionIcon>
+				</DropdownMenuTrigger>
+
+				<DropdownMenuContent>
+					<DropdownMenuItem
+						className="text-destructive"
+						onClick={() => setOpenDelete(true)}
+					>
+						<TrashIcon className="w-4" />
+						<span>Delete</span>
+					</DropdownMenuItem>
+				</DropdownMenuContent>
+			</DropdownMenu>
+
+			<DeleteDialog item={item} open={openDelete} setOpen={setOpenDelete} />
+		</>
+	);
+}

@@ -1,3 +1,4 @@
+export { AlertDialog } from "./AlertDialog";
 export { Body } from "./Body";
 export { Combobox, type ComboboxData } from "./Combobox";
 export {

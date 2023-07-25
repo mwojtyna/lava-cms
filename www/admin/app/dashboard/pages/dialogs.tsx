@@ -38,7 +38,7 @@ import {
 	PencilSquareIcon,
 	TrashIcon,
 } from "@heroicons/react/24/outline";
-import { Combobox } from "@admin/src/components";
+import { AlertDialog, Combobox } from "@admin/src/components";
 import { TypographyList, TypographyMuted } from "@admin/src/components/ui/server";
 import slugify from "slugify";
 import { usePagePreferences } from "@admin/src/hooks";
@@ -74,33 +74,21 @@ export function DeleteDialog(props: EditDialogProps) {
 	}
 
 	return (
-		<Dialog open={props.open} onOpenChange={props.setOpen}>
-			<DialogContent className="!max-w-sm" withCloseButton={false}>
-				<DialogHeader>
-					<DialogTitle>Delete {props.page.is_group ? "group" : "page"}?</DialogTitle>
-					<DialogDescription>
-						{props.page.is_group
-							? "Are you sure you want to delete the group and all its pages? This action cannot be undone!"
-							: "Are you sure you want to delete the page? This action cannot be undone!"}
-					</DialogDescription>
-				</DialogHeader>
-
-				<DialogFooter>
-					<Button variant={"ghost"} onClick={() => props.setOpen(false)}>
-						No, don&apos;t delete
-					</Button>
-					<Button
-						loading={mutation.isLoading}
-						type="submit"
-						variant={"destructive"}
-						icon={<TrashIcon className="w-5" />}
-						onClick={handleSubmit}
-					>
-						Delete
-					</Button>
-				</DialogFooter>
-			</DialogContent>
-		</Dialog>
+		<AlertDialog
+			open={props.open}
+			setOpen={props.setOpen}
+			mutation={mutation}
+			icon={<TrashIcon className="w-5" />}
+			title={`Delete ${props.page.is_group ? "group" : "page"} "${props.page.name}"?`}
+			description={
+				props.page.is_group
+					? "Are you sure you want to delete the group and all its pages? This action cannot be undone!"
+					: "Are you sure you want to delete the page? This action cannot be undone!"
+			}
+			noMessage="No, don't delete"
+			yesMessage="Delete"
+			onSubmit={handleSubmit}
+		/>
 	);
 }
 export function BulkDeleteDialog(props: BulkEditDialogProps) {
@@ -121,34 +109,17 @@ export function BulkDeleteDialog(props: BulkEditDialogProps) {
 	}
 
 	return (
-		<Dialog open={props.open} onOpenChange={props.setOpen}>
-			<DialogContent className="!max-w-sm" withCloseButton={false}>
-				<DialogHeader>
-					<DialogTitle>
-						Delete {props.pages.length} item{props.pages.length > 1 && "s"}?
-					</DialogTitle>
-					<DialogDescription>
-						Are you sure you want to delete {props.pages.length} items? This action
-						cannot be undone!
-					</DialogDescription>
-				</DialogHeader>
-
-				<DialogFooter>
-					<Button variant={"ghost"} onClick={() => props.setOpen(false)}>
-						No, don&apos;t delete
-					</Button>
-					<Button
-						loading={mutation.isLoading}
-						type="submit"
-						variant={"destructive"}
-						icon={<TrashIcon className="w-5" />}
-						onClick={handleSubmit}
-					>
-						Delete
-					</Button>
-				</DialogFooter>
-			</DialogContent>
-		</Dialog>
+		<AlertDialog
+			open={props.open}
+			setOpen={props.setOpen}
+			mutation={mutation}
+			icon={<TrashIcon className="w-5" />}
+			title={`Delete ${props.pages.length} items?`}
+			description={`Are you sure you want to delete ${props.pages.length} items? This action cannot be undone!`}
+			noMessage="No, don't delete"
+			yesMessage="Delete"
+			onSubmit={handleSubmit}
+		/>
 	);
 }
 
