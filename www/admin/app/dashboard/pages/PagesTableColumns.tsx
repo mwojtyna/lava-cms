@@ -30,7 +30,7 @@ import {
 	EditDetailsDialog,
 	MoveDialog,
 } from "./dialogs";
-import { DataTableSortableHeader } from "@admin/src/components/DataTable";
+import { DataTableSortableHeader, dateFormatOptions } from "@admin/src/components/DataTable";
 
 export const columns: ColumnDef<Page>[] = [
 	{
@@ -99,17 +99,8 @@ export const columns: ColumnDef<Page>[] = [
 		id: "last_updated",
 		header: ({ column }) => <DataTableSortableHeader column={column} name="Last Updated" />,
 		sortingFn: sortingFns.datetime,
-		accessorFn: (page) => {
-			const options: Intl.DateTimeFormatOptions = {
-				year: "numeric",
-				month: "long",
-				day: "2-digit",
-				hour: "2-digit",
-				minute: "2-digit",
-				hour12: false,
-			};
-			return new Intl.DateTimeFormat("en-GB", options).format(page.last_update);
-		},
+		accessorFn: (page) =>
+			new Intl.DateTimeFormat("en-GB", dateFormatOptions).format(page.last_update),
 	},
 	{
 		id: "actions",

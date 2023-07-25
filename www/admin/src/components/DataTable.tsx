@@ -35,6 +35,15 @@ import {
 } from "./ui/client";
 import { ChevronDownIcon, ChevronUpDownIcon, ChevronUpIcon } from "@heroicons/react/20/solid";
 
+export const dateFormatOptions: Intl.DateTimeFormatOptions = {
+	year: "numeric",
+	month: "long",
+	day: "2-digit",
+	hour: "2-digit",
+	minute: "2-digit",
+	hour12: false,
+};
+
 interface Props<T> {
 	table: TableType<T>;
 	columns: ColumnDef<T>[];
@@ -57,9 +66,9 @@ export function DataTable<T>(props: Props<T>) {
 									{header.isPlaceholder
 										? null
 										: flexRender(
-											header.column.columnDef.header,
-											header.getContext(),
-										)}
+												header.column.columnDef.header,
+												header.getContext(),
+										  )}
 								</TableHead>
 							))}
 						</TableRow>

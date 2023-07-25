@@ -3,7 +3,7 @@ import { sortingFns, type ColumnDef } from "@tanstack/react-table";
 import type { ComponentsTableItem } from "./ComponentsTable";
 import { Button, Checkbox } from "@admin/src/components/ui/client";
 import { CubeIcon, FolderIcon } from "@heroicons/react/24/outline";
-import { DataTableSortableHeader } from "@admin/src/components/DataTable";
+import { DataTableSortableHeader, dateFormatOptions } from "@admin/src/components/DataTable";
 
 export const columns: ColumnDef<ComponentsTableItem>[] = [
 	{
@@ -69,16 +69,7 @@ export const columns: ColumnDef<ComponentsTableItem>[] = [
 		id: "last_updated",
 		header: ({ column }) => <DataTableSortableHeader column={column} name="Last Updated" />,
 		sortingFn: sortingFns.datetime,
-		accessorFn: (item) => {
-			const options: Intl.DateTimeFormatOptions = {
-				year: "numeric",
-				month: "long",
-				day: "2-digit",
-				hour: "2-digit",
-				minute: "2-digit",
-				hour12: false,
-			};
-			return new Intl.DateTimeFormat("en-GB", options).format(item.lastUpdate);
-		},
+		accessorFn: (item) =>
+			new Intl.DateTimeFormat("en-GB", dateFormatOptions).format(item.lastUpdate),
 	},
 ];

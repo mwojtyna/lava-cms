@@ -14,7 +14,6 @@ export const getGroup = privateProcedure
 	)
 	.query(async ({ input }) => {
 		// Get root group if no input is provided
-		console.log(input);
 		if (!input) {
 			const group = await prisma.componentDefinitionGroup.findFirstOrThrow({
 				where: {
