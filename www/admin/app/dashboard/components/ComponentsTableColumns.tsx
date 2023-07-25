@@ -1,3 +1,5 @@
+"use client";
+
 import Link from "next/link";
 import { sortingFns, type ColumnDef } from "@tanstack/react-table";
 import type { ComponentsTableItem } from "./ComponentsTable";
@@ -57,6 +59,11 @@ export const columns: ColumnDef<ComponentsTableItem>[] = [
 				</div>
 			);
 		},
+	},
+	{
+		id: "instances",
+		header: ({ column }) => <DataTableSortableHeader column={column} name="Instances" />,
+		cell: ({ row }) => (row.original.isGroup ? "-" : row.original.instances.length),
 	},
 	{
 		id: "type",

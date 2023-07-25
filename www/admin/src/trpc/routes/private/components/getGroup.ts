@@ -3,6 +3,7 @@ import type { ComponentDefinitionGroup } from "@prisma/client";
 import { prisma } from "@admin/prisma/client";
 import { privateProcedure } from "@admin/src/trpc";
 import { TRPCError } from "@trpc/server";
+import { Play } from "next/font/google";
 
 export const getGroup = privateProcedure
 	.input(
@@ -21,7 +22,11 @@ export const getGroup = privateProcedure
 				},
 				include: {
 					groups: true,
-					component_definitons: true,
+					component_definitons: {
+						include: {
+							components: true,
+						},
+					},
 				},
 			});
 
@@ -37,7 +42,11 @@ export const getGroup = privateProcedure
 			},
 			include: {
 				groups: true,
-				component_definitons: true,
+				component_definitons: {
+					include: {
+						components: true,
+					},
+				},
 			},
 		});
 		if (!group) {

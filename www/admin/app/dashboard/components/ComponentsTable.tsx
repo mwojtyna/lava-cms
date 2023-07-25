@@ -18,8 +18,15 @@ export type ComponentsTableItem = {
 	id: string;
 	name: string;
 	lastUpdate: Date;
-	isGroup: boolean;
-};
+} & (
+	| {
+			isGroup: false;
+			instances: Props["data"]["group"]["component_definitons"][number]["components"];
+	  }
+	| {
+			isGroup: true;
+	  }
+);
 
 export function ComponentsTable(props: Props) {
 	const data = trpc.components.getGroup.useQuery(
@@ -35,11 +42,12 @@ export function ComponentsTable(props: Props) {
 			isGroup: true,
 		}));
 		const components: ComponentsTableItem[] = data.group.component_definitons.map(
-			(component) => ({
+			(component, i) => ({
 				id: component.id,
 				name: component.name,
 				lastUpdate: component.last_update,
 				isGroup: false,
+				instances: data.group.component_definitons[i]!.components,
 			}),
 		);
 
