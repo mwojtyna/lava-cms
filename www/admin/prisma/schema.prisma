@@ -91,9 +91,10 @@ model Page {
 }
 
 model ComponentDefinitionGroup {
-    id              String  @id @default(cuid())
+    id              String   @id @default(cuid())
     name            String
     parent_group_id String?
+    last_update     DateTime @default(now())
 
     parent_group         ComponentDefinitionGroup?  @relation("component_definition_group", fields: [parent_group_id], references: [id], onDelete: Cascade)
     groups               ComponentDefinitionGroup[] @relation("component_definition_group")

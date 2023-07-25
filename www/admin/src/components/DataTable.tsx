@@ -1,7 +1,12 @@
 "use client";
 
 import Link from "next/link";
-import { flexRender, type ColumnDef, type Table as TableType } from "@tanstack/react-table";
+import {
+	flexRender,
+	type ColumnDef,
+	type Table as TableType,
+	type Column,
+} from "@tanstack/react-table";
 import {
 	HomeIcon,
 	ChevronRightIcon,
@@ -28,18 +33,18 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from "./ui/client";
+import { ChevronDownIcon, ChevronUpDownIcon, ChevronUpIcon } from "@heroicons/react/20/solid";
 
 interface Props<T> {
 	table: TableType<T>;
 	columns: ColumnDef<T>[];
 }
-
-export function DataTable<T>({ table, columns: columnsLength }: Props<T>) {
+export function DataTable<T>(props: Props<T>) {
 	return (
 		<div className="rounded-md border">
 			<Table>
 				<TableHeader>
-					{table.getHeaderGroups().map((headerGroup) => (
+					{props.table.getHeaderGroups().map((headerGroup) => (
 						<TableRow
 							key={headerGroup.id}
 							className="whitespace-nowrap hover:bg-inherit"
@@ -62,8 +67,8 @@ export function DataTable<T>({ table, columns: columnsLength }: Props<T>) {
 				</TableHeader>
 
 				<TableBody>
-					{table.getRowModel().rows?.length ? (
-						table.getRowModel().rows.map((row) => (
+					{props.table.getRowModel().rows?.length ? (
+						props.table.getRowModel().rows.map((row) => (
 							<TableRow key={row.id} data-state={row.getIsSelected() && "selected"}>
 								{row.getVisibleCells().map((cell, i, cells) => (
 									<TableCell
@@ -81,7 +86,7 @@ export function DataTable<T>({ table, columns: columnsLength }: Props<T>) {
 						))
 					) : (
 						<TableRow>
-							<TableCell colSpan={columnsLength.length} className="h-24 text-center">
+							<TableCell colSpan={props.columns.length} className="h-24 text-center">
 								No results.
 							</TableCell>
 						</TableRow>
@@ -124,7 +129,7 @@ export function DataTableBreadcrumbs<T extends Breadcrumb>({
 								)}
 								asChild
 							>
-								<Link key={i} href={`/dashboard/pages/${breadcrumb.id}`}>
+								<Link key={i} href={`${rootUrl}/${breadcrumb.id}`}>
 									{breadcrumb.name}
 								</Link>
 							</Button>
@@ -139,10 +144,7 @@ export function DataTableBreadcrumbs<T extends Breadcrumb>({
 	);
 }
 
-interface DataTablePaginationProps<TData> {
-	table: TableType<TData>;
-}
-export function DataTablePagination<TData>({ table }: DataTablePaginationProps<TData>) {
+export function DataTablePagination<TData>({ table }: { table: TableType<TData> }) {
 	return (
 		<div className="ml-auto flex flex-wrap items-center justify-between">
 			<div className="flex items-center gap-6">
@@ -211,5 +213,32 @@ export function DataTablePagination<TData>({ table }: DataTablePaginationProps<T
 				</div>
 			</div>
 		</div>
+	);
+}
+
+export function DataTableSortableHeader<T>({
+	column,
+	name,
+}: {
+	column: Column<T, unknown>;
+	name: string;
+}) {
+	return (
+		<Button
+			className="-ml-3 h-fit px-3 py-2"
+			variant={"ghost"}
+			onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+		>
+			{name}{" "}
+			{column.getIsSorted() ? (
+				column.getIsSorted() === "desc" ? (
+					<ChevronUpIcon className="w-4" />
+				) : (
+					<ChevronDownIcon className="w-4" />
+				)
+			) : (
+				<ChevronUpDownIcon className="w-4" />
+			)}
+		</Button>
 	);
 }

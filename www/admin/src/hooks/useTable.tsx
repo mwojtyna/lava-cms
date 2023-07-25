@@ -11,7 +11,6 @@ import {
 	type ColumnDef,
 } from "@tanstack/react-table";
 import { setCookie } from "cookies-next";
-import type { PagesTableSearchParams } from "@admin/app/dashboard/pages/page";
 import {
 	getJsonCookie,
 	permanentCookieOptions,
@@ -22,15 +21,21 @@ import { useSearchParams } from "./useSearchParams";
 import { Input } from "../components/ui/client";
 import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 
+export type TableSearchParams =
+	| {
+		pageIndex?: number;
+	}
+	| undefined;
+
 interface Options<T> {
 	data: T[];
 	columns: ColumnDef<T>[];
 	cookie: {
 		name: CookieName;
-		contents: TableCookie | null;
+		serverContents: TableCookie | null;
 		default: TableCookie;
 	};
-	pagination: PagesTableSearchParams;
+	pagination: TableSearchParams;
 	searchColumn: string;
 }
 
@@ -40,7 +45,7 @@ export function useTable<T>(options: Options<T>) {
 		() =>
 			getJsonCookie<TableCookie>(
 				options.cookie.name,
-				options.cookie.contents ?? options.cookie.default,
+				options.cookie.serverContents ?? options.cookie.default,
 			),
 		[options.cookie],
 	);
@@ -66,7 +71,7 @@ export function useTable<T>(options: Options<T>) {
 	React.useEffect(() => {
 		setSearchParams({
 			pageIndex: pagination.pageIndex === 0 ? undefined : pagination.pageIndex,
-		} satisfies PagesTableSearchParams);
+		} satisfies TableSearchParams);
 	}, [pagination.pageIndex, setSearchParams]);
 	React.useEffect(() => {
 		setCookie(

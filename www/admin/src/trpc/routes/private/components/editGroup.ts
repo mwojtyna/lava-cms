@@ -16,6 +16,7 @@ export const editGroup = privateProcedure
 			data: {
 				name: input.newName,
 				parent_group_id: input.newGroupId,
+				last_update: new Date(),
 			},
 		});
 	});

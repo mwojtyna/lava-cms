@@ -2,7 +2,7 @@ import { z } from "zod";
 import { getCookie } from "cookies-next";
 import type { OptionsType } from "cookies-next/lib/types";
 
-export type CookieName = "color-theme" | "pages-table";
+export type CookieName = "color-theme" | "pages-table" | "components-table";
 
 /**
  * Get a cookie as a JSON object

@@ -2,16 +2,11 @@ import { cookies } from "next/headers";
 import { caller } from "@admin/src/trpc/routes/private/_private";
 import { PagesTable } from "./PagesTable";
 import { type CookieName, tableCookieSchema } from "@admin/src/utils/cookies";
+import type { TableSearchParams } from "@admin/src/hooks";
 
 export const dynamic = "force-dynamic";
 
-export type PagesTableSearchParams =
-	| {
-		pageIndex?: number;
-	}
-	| undefined;
-
-export default async function Pages({ searchParams }: { searchParams: PagesTableSearchParams }) {
+export default async function Pages({ searchParams }: { searchParams: TableSearchParams }) {
 	const rootGroup = await caller.pages.getGroup();
 	const data = await caller.pages.getGroupContents();
 

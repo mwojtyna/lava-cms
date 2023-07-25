@@ -7,15 +7,15 @@ import { DocumentPlusIcon, FolderPlusIcon } from "@heroicons/react/24/outline";
 import { trpc } from "@admin/src/utils/trpc";
 import { AddDialog } from "./dialogs";
 import { DataTable, DataTableBreadcrumbs, DataTablePagination } from "@admin/src/components";
-import type { PagesTableSearchParams } from "./page";
+import { useTable, type TableSearchParams } from "@admin/src/hooks";
 import { type TableCookie } from "@admin/src/utils/cookies";
-import { useTable } from "@admin/src/hooks/useTable";
 import { columns } from "./PagesTableColumns";
+import type { caller } from "@admin/src/trpc/routes/private/_private";
 
 interface Props {
 	group: Page;
-	data: { pages: Page[]; breadcrumbs: Page[] };
-	pagination: PagesTableSearchParams;
+	data: Awaited<ReturnType<typeof caller.pages.getGroupContents>>;
+	pagination: TableSearchParams;
 	cookie: TableCookie | null;
 }
 
@@ -30,7 +30,7 @@ export function PagesTable(props: Props) {
 		columns,
 		cookie: {
 			name: "pages-table",
-			contents: props.cookie,
+			serverContents: props.cookie,
 			default: { id: "name", desc: false, pageSize: 10 },
 		},
 		pagination: {
@@ -69,7 +69,6 @@ export function PagesTable(props: Props) {
 
 				<DataTableBreadcrumbs breadcrumbs={data.breadcrumbs} rootUrl="/dashboard/pages" />
 				<DataTable table={table} columns={columns} />
-
 				<DataTablePagination table={table} />
 			</div>
 

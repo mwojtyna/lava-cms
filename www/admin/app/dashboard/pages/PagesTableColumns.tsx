@@ -11,7 +11,7 @@ import {
 	PencilSquareIcon,
 	DocumentDuplicateIcon,
 } from "@heroicons/react/24/outline";
-import { type Column, type ColumnDef, sortingFns } from "@tanstack/react-table";
+import { type ColumnDef, sortingFns } from "@tanstack/react-table";
 import {
 	ActionIcon,
 	Button,
@@ -21,12 +21,7 @@ import {
 	DropdownMenuItem,
 	DropdownMenuTrigger,
 } from "@admin/src/components/ui/client";
-import {
-	ChevronDownIcon,
-	ChevronUpDownIcon,
-	ChevronUpIcon,
-	EllipsisHorizontalIcon,
-} from "@heroicons/react/20/solid";
+import { EllipsisHorizontalIcon } from "@heroicons/react/20/solid";
 import {
 	BulkDeleteDialog,
 	BulkMoveDialog,
@@ -35,6 +30,7 @@ import {
 	EditDetailsDialog,
 	MoveDialog,
 } from "./dialogs";
+import { DataTableSortableHeader } from "@admin/src/components/DataTable";
 
 export const columns: ColumnDef<Page>[] = [
 	{
@@ -61,7 +57,7 @@ export const columns: ColumnDef<Page>[] = [
 		size: 0,
 	},
 	{
-		header: ({ column }) => <SortableHeader column={column} name="Name" />,
+		header: ({ column }) => <DataTableSortableHeader column={column} name="Name" />,
 		accessorKey: "name",
 		sortingFn: sortingFns.alphanumericCaseSensitive,
 		cell: ({ row }) => {
@@ -88,20 +84,20 @@ export const columns: ColumnDef<Page>[] = [
 		},
 	},
 	{
-		header: ({ column }) => <SortableHeader column={column} name="Path" />,
+		header: ({ column }) => <DataTableSortableHeader column={column} name="Path" />,
 		accessorKey: "url",
 		size: 500,
 	},
 	{
 		id: "type",
-		header: ({ column }) => <SortableHeader column={column} name="Type" />,
+		header: ({ column }) => <DataTableSortableHeader column={column} name="Type" />,
 		accessorFn: (page) => {
 			return page.is_group ? "Group" : "Page";
 		},
 	},
 	{
 		id: "last_updated",
-		header: ({ column }) => <SortableHeader column={column} name="Last Updated" />,
+		header: ({ column }) => <DataTableSortableHeader column={column} name="Last Updated" />,
 		sortingFn: sortingFns.datetime,
 		accessorFn: (page) => {
 			const options: Intl.DateTimeFormatOptions = {
@@ -221,26 +217,5 @@ function PagesTableBulkActions({ pages, onSubmit }: { pages: Page[]; onSubmit: (
 				onSubmit={onSubmit}
 			/>
 		</>
-	);
-}
-
-function SortableHeader({ column, name }: { column: Column<Page, unknown>; name: string }) {
-	return (
-		<Button
-			className="-ml-3 h-fit px-3 py-2"
-			variant={"ghost"}
-			onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-		>
-			{name}{" "}
-			{column.getIsSorted() ? (
-				column.getIsSorted() === "desc" ? (
-					<ChevronUpIcon className="w-4" />
-				) : (
-					<ChevronDownIcon className="w-4" />
-				)
-			) : (
-				<ChevronUpDownIcon className="w-4" />
-			)}
-		</Button>
 	);
 }

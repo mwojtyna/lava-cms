@@ -12,49 +12,45 @@ export const getGroup = privateProcedure
 			})
 			.nullish(),
 	)
-	.query(
-		async ({
-			input,
-		}): Promise<{
-			group: ComponentDefinitionGroup;
-			breadcrumbs: ComponentDefinitionGroup[];
-		}> => {
-			// Get root group if no input is provided
-			if (!input) {
-				return {
-					group: await prisma.componentDefinitionGroup.findFirstOrThrow({
-						where: {
-							parent_group_id: null,
-						},
-						include: {
-							groups: true,
-							component_definitons: true,
-						},
-					}),
-					breadcrumbs: [],
-				};
-			}
-
-			const group = await prisma.componentDefinitionGroup.findUnique({
+	.query(async ({ input }) => {
+		// Get root group if no input is provided
+		console.log(input);
+		if (!input) {
+			const group = await prisma.componentDefinitionGroup.findFirstOrThrow({
 				where: {
-					id: input.id,
+					parent_group_id: null,
 				},
 				include: {
-					component_definitons: true,
 					groups: true,
+					component_definitons: true,
 				},
 			});
-			if (!group) {
-				throw new TRPCError({ code: "NOT_FOUND" });
-			}
 
-			const breadcrumbs = await getBreadcrumbs(group);
 			return {
 				group,
-				breadcrumbs,
+				breadcrumbs: [],
 			};
-		},
-	);
+		}
+
+		const group = await prisma.componentDefinitionGroup.findUnique({
+			where: {
+				id: input.id,
+			},
+			include: {
+				groups: true,
+				component_definitons: true,
+			},
+		});
+		if (!group) {
+			throw new TRPCError({ code: "NOT_FOUND" });
+		}
+
+		const breadcrumbs = await getBreadcrumbs(group);
+		return {
+			group,
+			breadcrumbs,
+		};
+	});
 
 async function getBreadcrumbs(group: ComponentDefinitionGroup) {
 	const breadcrumbs = [group];
