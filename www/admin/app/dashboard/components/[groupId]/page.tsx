@@ -14,15 +14,20 @@ export default async function Group({
 	params: { groupId: string };
 	searchParams: TableSearchParams;
 }) {
-	const { group, breadcrumbs } = await caller.components.getGroup({ id: params.groupId });
-	if (!group) {
+	try {
+		const { group, breadcrumbs } = await caller.components.getGroup({ id: params.groupId });
+
+		const rawCookie = cookies().get("components-table" satisfies CookieName)?.value;
+		const cookie = rawCookie ? await tableCookieSchema.parseAsync(JSON.parse(rawCookie)) : null;
+
+		return (
+			<ComponentsTable
+				data={{ group, breadcrumbs }}
+				pagination={searchParams}
+				cookie={cookie}
+			/>
+		);
+	} catch (e) {
 		notFound();
 	}
-
-	const rawCookie = cookies().get("components-table" satisfies CookieName)?.value;
-	const cookie = rawCookie ? await tableCookieSchema.parseAsync(JSON.parse(rawCookie)) : null;
-
-	return (
-		<ComponentsTable data={{ group, breadcrumbs }} pagination={searchParams} cookie={cookie} />
-	);
 }
