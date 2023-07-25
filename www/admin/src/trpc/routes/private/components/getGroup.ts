@@ -22,7 +22,7 @@ export const getGroup = privateProcedure
 				},
 				include: {
 					groups: true,
-					component_definitons: {
+					component_definitions: {
 						include: {
 							components: true,
 						},
@@ -42,7 +42,7 @@ export const getGroup = privateProcedure
 			},
 			include: {
 				groups: true,
-				component_definitons: {
+				component_definitions: {
 					include: {
 						components: true,
 					},

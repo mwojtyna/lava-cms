@@ -6,7 +6,14 @@ import { trpc } from "@admin/src/utils/trpc";
 import type { caller } from "@admin/src/trpc/routes/private/_private";
 import type { TableCookie } from "@admin/src/utils/cookies";
 import { columns } from "./ComponentsTableColumns";
-import { DataTable, DataTableBreadcrumbs, DataTablePagination } from "@admin/src/components";
+import {
+	DataTable,
+	DataTableActions,
+	DataTableBreadcrumbs,
+	DataTablePagination,
+} from "@admin/src/components";
+import { CubeIcon } from "@heroicons/react/24/outline";
+import { AddGroupDialog } from "./dialogs/GroupDialogs";
 
 interface Props {
 	data: Awaited<ReturnType<typeof caller.components.getGroup>>;
@@ -21,7 +28,7 @@ export type ComponentsTableItem = {
 } & (
 	| {
 			isGroup: false;
-			instances: Props["data"]["group"]["component_definitons"][number]["components"];
+			instances: Props["data"]["group"]["component_definitions"][number]["components"];
 	  }
 	| {
 			isGroup: true;
@@ -41,17 +48,17 @@ export function ComponentsTable(props: Props) {
 			lastUpdate: group.last_update,
 			isGroup: true,
 		}));
-		const components: ComponentsTableItem[] = data.group.component_definitons.map(
+		const componentDefinitions: ComponentsTableItem[] = data.group.component_definitions.map(
 			(component, i) => ({
 				id: component.id,
 				name: component.name,
 				lastUpdate: component.last_update,
 				isGroup: false,
-				instances: data.group.component_definitons[i]!.components,
+				instances: data.group.component_definitions[i]!.components,
 			}),
 		);
 
-		return [...groups, ...components];
+		return [...groups, ...componentDefinitions];
 	}, [data]);
 
 	const { table, searchElement } = useTable({
@@ -68,13 +75,32 @@ export function ComponentsTable(props: Props) {
 		searchColumn: "name",
 	});
 
-	return (
-		<div className="flex flex-col gap-4" data-testid="component-definitons-table">
-			<div className="flex justify-between gap-2">{searchElement}</div>
+	const [openAddGroup, setOpenAddGroup] = React.useState(false);
 
-			<DataTableBreadcrumbs breadcrumbs={data.breadcrumbs} rootUrl="/dashboard/components" />
-			<DataTable table={table} columns={columns} />
-			<DataTablePagination table={table} />
-		</div>
+	return (
+		<>
+			<div className="flex flex-col gap-4" data-testid="component-definitions-table">
+				<DataTableActions
+					searchElement={searchElement}
+					itemName="component"
+					itemIcon={<CubeIcon className="w-5" />}
+					// addItem={() => setOpenAddPage(true)}
+					onAddGroup={() => setOpenAddGroup(true)}
+				/>
+
+				<DataTableBreadcrumbs
+					breadcrumbs={data.breadcrumbs}
+					rootUrl="/dashboard/components"
+				/>
+				<DataTable table={table} columns={columns} />
+				<DataTablePagination table={table} />
+			</div>
+
+			<AddGroupDialog
+				group={props.data.group}
+				open={openAddGroup}
+				setOpen={setOpenAddGroup}
+			/>
+		</>
 	);
 }

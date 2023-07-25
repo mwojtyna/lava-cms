@@ -13,6 +13,7 @@ import {
 	ChevronDoubleLeftIcon,
 	ChevronDoubleRightIcon,
 	ChevronLeftIcon,
+	FolderIcon,
 } from "@heroicons/react/24/outline";
 import {
 	Table,
@@ -249,5 +250,34 @@ export function DataTableSortableHeader<T>({
 				<ChevronUpDownIcon className="w-4" />
 			)}
 		</Button>
+	);
+}
+
+interface DataTableActionsProps {
+	searchElement: React.ReactNode;
+	itemName: string;
+	itemIcon: React.ReactNode;
+	onAddItem: () => void;
+	onAddGroup: () => void;
+}
+export function DataTableActions(props: DataTableActionsProps) {
+	return (
+		<div className="flex justify-between gap-2">
+			{props.searchElement}
+
+			<div className="flex gap-2">
+				<Button onClick={props.onAddItem} icon={props.itemIcon} data-testid="add-item">
+					Add {props.itemName}
+				</Button>
+				<Button
+					onClick={props.onAddGroup}
+					variant={"secondary"}
+					icon={<FolderIcon className="w-5" />}
+					data-testid="add-group"
+				>
+					Add group
+				</Button>
+			</div>
+		</div>
 	);
 }

@@ -2,11 +2,15 @@
 
 import * as React from "react";
 import type { Page } from "@prisma/client";
-import { Button } from "@admin/src/components/ui/client";
-import { DocumentPlusIcon, FolderPlusIcon } from "@heroicons/react/24/outline";
+import { DocumentIcon } from "@heroicons/react/24/outline";
 import { trpc } from "@admin/src/utils/trpc";
 import { AddDialog } from "./dialogs";
-import { DataTable, DataTableBreadcrumbs, DataTablePagination } from "@admin/src/components";
+import {
+	DataTable,
+	DataTableBreadcrumbs,
+	DataTablePagination,
+	DataTableActions,
+} from "@admin/src/components";
 import { useTable, type TableSearchParams } from "@admin/src/hooks";
 import { type TableCookie } from "@admin/src/utils/cookies";
 import { columns } from "./PagesTableColumns";
@@ -45,27 +49,13 @@ export function PagesTable(props: Props) {
 	return (
 		<>
 			<div className="flex flex-col gap-4" data-testid="pages-table">
-				<div className="flex justify-between gap-2">
-					{searchElement}
-
-					<div className="flex gap-2">
-						<Button
-							onClick={() => setOpenAddPage(true)}
-							icon={<DocumentPlusIcon className="w-5" />}
-							data-testid="add-page"
-						>
-							Page
-						</Button>
-						<Button
-							onClick={() => setOpenAddGroup(true)}
-							variant={"secondary"}
-							icon={<FolderPlusIcon className="w-5" />}
-							data-testid="add-group"
-						>
-							Group
-						</Button>
-					</div>
-				</div>
+				<DataTableActions
+					searchElement={searchElement}
+					itemName="page"
+					itemIcon={<DocumentIcon className="w-5" />}
+					onAddItem={() => setOpenAddPage(true)}
+					onAddGroup={() => setOpenAddGroup(true)}
+				/>
 
 				<DataTableBreadcrumbs breadcrumbs={data.breadcrumbs} rootUrl="/dashboard/pages" />
 				<DataTable table={table} columns={columns} />

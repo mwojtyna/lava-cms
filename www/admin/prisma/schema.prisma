@@ -96,9 +96,9 @@ model ComponentDefinitionGroup {
     parent_group_id String?
     last_update     DateTime @default(now())
 
-    parent_group         ComponentDefinitionGroup?  @relation("component_definition_group", fields: [parent_group_id], references: [id], onDelete: Cascade)
-    groups               ComponentDefinitionGroup[] @relation("component_definition_group")
-    component_definitons ComponentDefinition[]
+    parent_group          ComponentDefinitionGroup?  @relation("component_definition_group", fields: [parent_group_id], references: [id], onDelete: Cascade)
+    groups                ComponentDefinitionGroup[] @relation("component_definition_group")
+    component_definitions ComponentDefinition[]
 
     @@map("component_definition_group")
     @@schema("frontend")

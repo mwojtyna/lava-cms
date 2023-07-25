@@ -17,7 +17,7 @@ async function checkRow(
 	rowIndex: number,
 	name: string,
 	url: string,
-	type: "Page" | "Group"
+	type: "Page" | "Group",
 ) {
 	const row = page.locator("tbody > tr").nth(rowIndex);
 	await expect(row.locator("td").nth(1)).toHaveText(name);
@@ -121,7 +121,7 @@ test.describe("page", () => {
 
 		// waitUntil: "networkidle" is needed because webkit is great as always
 		await page.goto("/admin/dashboard/pages", { waitUntil: "networkidle" });
-		await page.getByTestId("add-page").click();
+		await page.getByTestId("add-item").click();
 
 		const dialog = await fillAddEditDialog(page, "Test", "/test");
 		await expect(dialog.locator("input[name='slug']")).toHaveAttribute("aria-invalid", "true");
