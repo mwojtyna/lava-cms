@@ -17,7 +17,7 @@ interface Props {
 export type ComponentsTableItem = {
 	id: string;
 	name: string;
-	lastUpdated: Date;
+	lastUpdate: Date;
 	isGroup: boolean;
 };
 
@@ -31,14 +31,14 @@ export function ComponentsTable(props: Props) {
 		const groups: ComponentsTableItem[] = data.group.groups.map((group) => ({
 			id: group.id,
 			name: group.name,
-			lastUpdated: group.last_update,
+			lastUpdate: group.last_update,
 			isGroup: true,
 		}));
 		const components: ComponentsTableItem[] = data.group.component_definitons.map(
 			(component) => ({
 				id: component.id,
 				name: component.name,
-				lastUpdated: component.last_update,
+				lastUpdate: component.last_update,
 				isGroup: false,
 			}),
 		);

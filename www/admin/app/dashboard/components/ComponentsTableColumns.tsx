@@ -48,7 +48,7 @@ export const columns: ColumnDef<ComponentsTableItem>[] = [
 								row.original.isGroup
 									? `/dashboard/components/${row.original.id}`
 									: // TODO: Open an edit sheet
-									`https://www.youtube.com/watch?v=dQw4w9WgXcQ`
+									  `https://www.youtube.com/watch?v=dQw4w9WgXcQ`
 							}
 						>
 							{row.original.name}
@@ -69,7 +69,7 @@ export const columns: ColumnDef<ComponentsTableItem>[] = [
 		id: "last_updated",
 		header: ({ column }) => <DataTableSortableHeader column={column} name="Last Updated" />,
 		sortingFn: sortingFns.datetime,
-		accessorFn: (page) => {
+		accessorFn: (item) => {
 			const options: Intl.DateTimeFormatOptions = {
 				year: "numeric",
 				month: "long",
@@ -78,7 +78,7 @@ export const columns: ColumnDef<ComponentsTableItem>[] = [
 				minute: "2-digit",
 				hour12: false,
 			};
-			return new Intl.DateTimeFormat("en-GB", options).format(page.last_update);
+			return new Intl.DateTimeFormat("en-GB", options).format(item.lastUpdate);
 		},
 	},
 ];
