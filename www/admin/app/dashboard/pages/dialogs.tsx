@@ -433,11 +433,14 @@ function NameSlugInput<T extends EditDialogInputs>({
 						<FormControl>
 							<Input
 								className="flex-row"
-								rightButtonIconOn={<LockClosedIcon className="w-4" />}
-								rightButtonIconOff={<LockOpenIcon className="w-4" />}
-								rightButtonState={slugLocked}
-								setRightButtonState={setSlugLocked}
-								rightButtonTooltip="Toggle lock slug autofill"
+								rightButton={{
+									state: !!slugLocked,
+									setState: setSlugLocked,
+									onClick: null,
+									iconOn: <LockClosedIcon className="w-4" />,
+									iconOff: <LockOpenIcon className="w-4" />,
+									tooltip: "Toggle lock slug autofill",
+								}}
 								aria-required
 								{...field}
 							/>

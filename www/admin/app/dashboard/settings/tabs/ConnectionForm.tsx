@@ -73,31 +73,22 @@ const TokenInput = ({ token }: { token: string }) => {
 		<div className="flex items-center gap-2">
 			<Input
 				className="font-mono"
-				type="password"
 				value={token}
+				rightButton={{
+					state: copied,
+					setState: null,
+					onClick: async () => {
+						await navigator.clipboard.writeText(token);
+						setCopied(true);
+					},
+					iconOn: <CheckIcon className="w-5 text-green-600" />,
+					iconOff: <ClipboardIcon className="w-5" />,
+					tooltip: "Copy to clipboard",
+				}}
 				readOnly
 				aria-label="Token input"
 			/>
 			<span className="flex" data-testid="token-actions">
-				<Tooltip>
-					<TooltipTrigger asChild>
-						<ActionIcon
-							onClick={async () => {
-								await navigator.clipboard.writeText(token);
-								setCopied(true);
-							}}
-							aria-label="Copy to clipboard"
-						>
-							{copied ? (
-								<CheckIcon className="w-5 text-green-600" />
-							) : (
-								<ClipboardIcon className="w-5" />
-							)}
-						</ActionIcon>
-					</TooltipTrigger>
-					<TooltipContent>Copy to clipboard</TooltipContent>
-				</Tooltip>
-
 				<Tooltip>
 					<TooltipTrigger asChild>
 						<ActionIcon

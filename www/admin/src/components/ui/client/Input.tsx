@@ -27,28 +27,24 @@ interface InputProps
 	extends Omit<React.InputHTMLAttributes<HTMLInputElement>, "children" | "size">,
 		VariantProps<typeof inputVariants> {
 	icon?: React.ReactNode;
-	rightButtonIconOn?: React.ReactNode;
-	rightButtonIconOff?: React.ReactNode;
-	rightButtonState?: boolean;
-	setRightButtonState?: (state: boolean) => void;
-	rightButtonTooltip?: React.ReactNode;
+	rightButton?: {
+		iconOn: React.ReactNode;
+		iconOff: React.ReactNode;
+		tooltip: React.ReactNode;
+		state: boolean;
+	} & (
+		| {
+				onClick: null;
+				setState: (state: boolean) => void;
+		  }
+		| {
+				onClick: () => void;
+				setState: null;
+		  }
+	);
 }
 const Input = React.forwardRef<HTMLInputElement, InputProps>(
-	(
-		{
-			className,
-			type = "text",
-			icon,
-			size,
-			rightButtonIconOff,
-			rightButtonIconOn,
-			rightButtonTooltip,
-			rightButtonState,
-			setRightButtonState,
-			...props
-		},
-		ref,
-	) => {
+	({ className, type = "text", icon, size, rightButton, ...props }, ref) => {
 		const [passwordVisible, setPasswordVisible] = React.useState(false);
 
 		return (
@@ -64,7 +60,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
 
 				{type === "password" ? (
 					<ActionIcon
-						className="absolute right-2 bg-background"
+						className="absolute right-1.5 bg-background"
 						onClick={() => setPasswordVisible(!passwordVisible)}
 						size={size}
 						aria-label="Toggle password visibility"
@@ -76,22 +72,27 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
 						)}
 					</ActionIcon>
 				) : (
-					rightButtonIconOn &&
-					rightButtonIconOff && (
+					rightButton && (
 						<Tooltip>
 							<TooltipTrigger asChild>
 								<ActionIcon
-									className="absolute right-2 bg-background"
+									className="absolute right-1.5 bg-background"
 									onClick={() => {
-										setRightButtonState!(!rightButtonState);
+										if (!rightButton.onClick) {
+											rightButton.setState(!rightButton.state);
+										} else {
+											rightButton.onClick();
+										}
 									}}
 									size={size}
 								>
-									{rightButtonState ? rightButtonIconOn : rightButtonIconOff}
+									{rightButton.state ? rightButton.iconOn : rightButton.iconOff}
 								</ActionIcon>
 							</TooltipTrigger>
 
-							<TooltipContent>{rightButtonTooltip}</TooltipContent>
+							<TooltipContent className="font-sans">
+								{rightButton.tooltip}
+							</TooltipContent>
 						</Tooltip>
 					)
 				)}
