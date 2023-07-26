@@ -10,12 +10,9 @@ import { url } from "./utils/server";
 
 export const auth = lucia({
 	adapter: prisma(prismaClient, {
-		modelNames: {
-			user: "user",
-			session: "session",
-			key: "key",
-		},
-		userRelationKey: "user",
+		user: "user",
+		session: "session",
+		key: "key",
 	}),
 	env: env.NODE_ENV !== "production" ? "DEV" : "PROD", // DEV means http, PROD means https
 	middleware: nextjs(),
