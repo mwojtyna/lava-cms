@@ -1,9 +1,10 @@
 "use client";
+
 import * as React from "react";
 import Link from "next/link";
 import { sortingFns, type ColumnDef } from "@tanstack/react-table";
 import { EllipsisHorizontalIcon } from "@heroicons/react/20/solid";
-import { CubeIcon, FolderIcon, TrashIcon } from "@heroicons/react/24/outline";
+import { CubeIcon, FolderIcon, PencilSquareIcon, TrashIcon } from "@heroicons/react/24/outline";
 import type { ComponentsTableItem } from "./ComponentsTable";
 import {
 	ActionIcon,
@@ -16,6 +17,7 @@ import {
 } from "@admin/src/components/ui/client";
 import { DataTableSortableHeader, dateFormatOptions } from "@admin/src/components/DataTable";
 import { DeleteDialog } from "./dialogs/SharedDialogs";
+import { EditGroupDialog } from "./dialogs/GroupDialogs";
 
 export const columns: ColumnDef<ComponentsTableItem>[] = [
 	{
@@ -104,6 +106,7 @@ export const columns: ColumnDef<ComponentsTableItem>[] = [
 ];
 
 function ComponentsTableActions({ item }: { item: ComponentsTableItem }) {
+	const [openEdit, setOpenEdit] = React.useState(false);
 	const [openDelete, setOpenDelete] = React.useState(false);
 
 	return (
@@ -116,6 +119,11 @@ function ComponentsTableActions({ item }: { item: ComponentsTableItem }) {
 				</DropdownMenuTrigger>
 
 				<DropdownMenuContent>
+					<DropdownMenuItem onClick={() => setOpenEdit(true)}>
+						<PencilSquareIcon className="w-4" />
+						<span>Edit</span>
+					</DropdownMenuItem>
+
 					<DropdownMenuItem
 						className="text-destructive"
 						onClick={() => setOpenDelete(true)}
@@ -126,6 +134,10 @@ function ComponentsTableActions({ item }: { item: ComponentsTableItem }) {
 				</DropdownMenuContent>
 			</DropdownMenu>
 
+			{/* TODO: Add component definition edit dialog */}
+			{item.isGroup ? (
+				<EditGroupDialog item={item} open={openEdit} setOpen={setOpenEdit} />
+			) : null}
 			<DeleteDialog item={item} open={openDelete} setOpen={setOpenDelete} />
 		</>
 	);

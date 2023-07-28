@@ -84,7 +84,7 @@ export function ComponentsTable(props: Props) {
 					searchElement={searchElement}
 					itemName="component"
 					itemIcon={<CubeIcon className="w-5" />}
-					// addItem={() => setOpenAddPage(true)}
+					// addAddItem={() => setOpenAddPage(true)}
 					onAddGroup={() => setOpenAddGroup(true)}
 				/>
 

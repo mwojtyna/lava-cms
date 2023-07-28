@@ -23,8 +23,8 @@ import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 
 export type TableSearchParams =
 	| {
-		pageIndex?: number;
-	}
+			pageIndex?: number;
+	  }
 	| undefined;
 
 interface Options<T> {
