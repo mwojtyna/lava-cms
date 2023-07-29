@@ -5,6 +5,7 @@ import { deleteComponentDefinition } from "./deleteComponentDefinition";
 import { addGroup } from "./addGroup";
 import { editGroup } from "./editGroup";
 import { deleteGroup } from "./deleteGroup";
+import { getAllGroups } from "./getAllGroups";
 import { getGroup } from "./getGroup";
 
 export const componentsRouter = router({
@@ -14,5 +15,6 @@ export const componentsRouter = router({
 	addGroup,
 	editGroup,
 	deleteGroup,
+	getAllGroups,
 	getGroup,
 });

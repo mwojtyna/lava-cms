@@ -4,7 +4,13 @@ import * as React from "react";
 import Link from "next/link";
 import { sortingFns, type ColumnDef } from "@tanstack/react-table";
 import { EllipsisHorizontalIcon } from "@heroicons/react/20/solid";
-import { CubeIcon, FolderIcon, PencilSquareIcon, TrashIcon } from "@heroicons/react/24/outline";
+import {
+	CubeIcon,
+	FolderArrowDownIcon,
+	FolderIcon,
+	PencilSquareIcon,
+	TrashIcon,
+} from "@heroicons/react/24/outline";
 import type { ComponentsTableItem } from "./ComponentsTable";
 import {
 	ActionIcon,
@@ -16,7 +22,7 @@ import {
 	DropdownMenuTrigger,
 } from "@admin/src/components/ui/client";
 import { DataTableSortableHeader, dateFormatOptions } from "@admin/src/components/DataTable";
-import { DeleteDialog } from "./dialogs/SharedDialogs";
+import { DeleteDialog, MoveDialog } from "./dialogs/SharedDialogs";
 import { EditGroupDialog } from "./dialogs/GroupDialogs";
 
 export const columns: ColumnDef<ComponentsTableItem>[] = [
@@ -46,7 +52,6 @@ export const columns: ColumnDef<ComponentsTableItem>[] = [
 	{
 		header: ({ column }) => <DataTableSortableHeader column={column} name="Name" />,
 		accessorKey: "name",
-		sortingFn: sortingFns.alphanumericCaseSensitive,
 		size: 500,
 		cell: ({ row }) => {
 			return (
@@ -73,21 +78,21 @@ export const columns: ColumnDef<ComponentsTableItem>[] = [
 		},
 	},
 	{
-		id: "instances",
+		accessorKey: "instances",
 		header: ({ column }) => <DataTableSortableHeader column={column} name="Instances" />,
 		cell: ({ row }) => (row.original.isGroup ? "-" : row.original.instances.length),
 	},
 	{
-		id: "type",
+		accessorKey: "type",
 		header: ({ column }) => <DataTableSortableHeader column={column} name="Type" />,
 		accessorFn: (item) => {
 			return item.isGroup ? "Group" : "Component Definition";
 		},
 	},
 	{
-		id: "last_updated",
+		accessorKey: "last_updated",
 		header: ({ column }) => <DataTableSortableHeader column={column} name="Last Updated" />,
-		sortingFn: sortingFns.datetime,
+		sortingFn: (a, b) => b.original.lastUpdate.getTime() - a.original.lastUpdate.getTime(),
 		accessorFn: (item) =>
 			new Intl.DateTimeFormat("en-GB", dateFormatOptions).format(item.lastUpdate),
 	},
@@ -107,6 +112,7 @@ export const columns: ColumnDef<ComponentsTableItem>[] = [
 
 function ComponentsTableActions({ item }: { item: ComponentsTableItem }) {
 	const [openEdit, setOpenEdit] = React.useState(false);
+	const [openMove, setOpenMove] = React.useState(false);
 	const [openDelete, setOpenDelete] = React.useState(false);
 
 	return (
@@ -124,6 +130,11 @@ function ComponentsTableActions({ item }: { item: ComponentsTableItem }) {
 						<span>Edit</span>
 					</DropdownMenuItem>
 
+					<DropdownMenuItem onClick={() => setOpenMove(true)}>
+						<FolderArrowDownIcon className="w-4" />
+						<span>Move</span>
+					</DropdownMenuItem>
+
 					<DropdownMenuItem
 						className="text-destructive"
 						onClick={() => setOpenDelete(true)}
@@ -138,6 +149,8 @@ function ComponentsTableActions({ item }: { item: ComponentsTableItem }) {
 			{item.isGroup ? (
 				<EditGroupDialog item={item} open={openEdit} setOpen={setOpenEdit} />
 			) : null}
+
+			<MoveDialog item={item} open={openMove} setOpen={setOpenMove} />
 			<DeleteDialog item={item} open={openDelete} setOpen={setOpenDelete} />
 		</>
 	);

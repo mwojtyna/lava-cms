@@ -7,5 +7,6 @@ export {
 	DataTableBreadcrumbs,
 	DataTableActions,
 } from "./DataTable";
+export { NewParentSelect, type MoveDialogInputs } from "./DataTableDialogs";
 export { InfoTooltip } from "./InfoTooltip";
 export { PageTitle } from "./PageTitle";

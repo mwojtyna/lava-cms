@@ -37,10 +37,11 @@ import {
 	PencilSquareIcon,
 	TrashIcon,
 } from "@heroicons/react/24/outline";
-import { AlertDialog, Combobox } from "@admin/src/components";
-import { TypographyList, TypographyMuted } from "@admin/src/components/ui/server";
+import { AlertDialog, NewParentSelect, type MoveDialogInputs } from "@admin/src/components";
+import { TypographyList } from "@admin/src/components/ui/server";
 import slugify from "slugify";
 import { usePagePreferences } from "@admin/src/hooks";
+import type { ItemParent } from "@admin/src/components/DataTableDialogs";
 
 interface AddDialogProps {
 	group: Page;
@@ -122,73 +123,25 @@ export function BulkDeleteDialog(props: BulkEditDialogProps) {
 	);
 }
 
-interface MoveDialogInputs {
-	newParentId: string;
-}
-function NewParentSelect<T extends MoveDialogInputs>({
-	form,
-	groups,
-	label,
-}: {
-	form: UseFormReturn<T>;
-	groups?: Page[];
-	label?: React.ReactNode;
-}) {
-	return (
-		<FormField
-			control={form.control}
-			name={"newParentId" as Path<T>}
-			render={({ field }) => (
-				<FormItem>
-					{label && <FormLabel>{label}</FormLabel>}
-					<FormControl>
-						<Combobox
-							className="w-full"
-							contentProps={{
-								align: "start",
-								className: "w-[335px]",
-								placeholder: "Search groups...",
-							}}
-							placeholder="Select a group..."
-							notFoundContent="No groups found."
-							data={
-								groups?.map((group) => ({
-									label: (
-										<span className="flex items-baseline gap-2">
-											<span>{group.name}</span>{" "}
-											<TypographyMuted className="text-xs">
-												{group.url === "" ? "/" : group.url}
-											</TypographyMuted>
-										</span>
-									),
-									value: group.id,
-									filterValue: group.name,
-								})) ?? []
-							}
-							aria-required
-							{...field}
-						/>
-					</FormControl>
-					<FormError />
-				</FormItem>
-			)}
-		/>
-	);
-}
-
 export function MoveDialog(props: EditDialogProps) {
 	const allGroups = trpc.pages.getAllGroups.useQuery().data;
 	const groups = React.useMemo(
 		() =>
 			allGroups
-				?.filter((group) => {
-					return (
+				?.filter(
+					(group) =>
 						props.page.parent_id !== group.id &&
 						props.page.id !== group.id &&
-						!group.url.startsWith(props.page.url + "/")
-					);
-				})
-				.sort((a, b) => a.url.localeCompare(b.url)),
+						!group.url.startsWith(props.page.url + "/"),
+				)
+				.map(
+					(group) =>
+						({
+							id: group.id,
+							name: group.name,
+							extraInfo: group.url === "" ? "/" : group.url,
+						}) satisfies ItemParent,
+				),
 		[allGroups, props.page],
 	);
 	const mutation = trpc.pages.movePage.useMutation();
@@ -206,7 +159,7 @@ export function MoveDialog(props: EditDialogProps) {
 					if (err.data?.code === "CONFLICT") {
 						const destinationUrl = groups!.find(
 							(group) => group.id === data.newParentId,
-						)!.url;
+						)!.extraInfo;
 
 						const newPath =
 							destinationUrl +
@@ -245,7 +198,7 @@ export function MoveDialog(props: EditDialogProps) {
 
 				<FormProvider {...form}>
 					<form className="flex flex-col gap-4" onSubmit={form.handleSubmit(onSubmit)}>
-						<NewParentSelect form={form} groups={groups} />
+						<NewParentSelect form={form} parents={groups ?? []} />
 
 						<DialogFooter>
 							<Button
@@ -279,7 +232,14 @@ export function BulkMoveDialog(props: BulkEditDialogProps) {
 						)
 					);
 				})
-				.sort((a, b) => a.url.localeCompare(b.url)),
+				.map(
+					(group) =>
+						({
+							id: group.id,
+							name: group.name,
+							extraInfo: group.url === "" ? "/" : group.url,
+						}) satisfies ItemParent,
+				),
 		[allGroups, props.pages],
 	);
 
@@ -341,7 +301,7 @@ export function BulkMoveDialog(props: BulkEditDialogProps) {
 
 				<FormProvider {...form}>
 					<form className="flex flex-col gap-4" onSubmit={form.handleSubmit(onSubmit)}>
-						<NewParentSelect form={form} groups={groups} />
+						<NewParentSelect form={form} parents={groups ?? []} />
 
 						<DialogFooter>
 							<Button
@@ -702,7 +662,7 @@ export function DuplicateDialog(props: EditDialogProps) {
 							slugLocked={slugLocked}
 							setSlugLocked={setSlugLocked}
 						/>
-						<NewParentSelect form={form} groups={sortedGroups} label="Group" />
+						<NewParentSelect form={form} parents={sortedGroups} label="Group" />
 
 						<DialogFooter>
 							<Button

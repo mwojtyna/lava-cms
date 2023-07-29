@@ -57,9 +57,8 @@ export const columns: ColumnDef<Page>[] = [
 		size: 0,
 	},
 	{
-		header: ({ column }) => <DataTableSortableHeader column={column} name="Name" />,
 		accessorKey: "name",
-		sortingFn: sortingFns.alphanumericCaseSensitive,
+		header: ({ column }) => <DataTableSortableHeader column={column} name="Name" />,
 		cell: ({ row }) => {
 			return (
 				<div className="flex items-center gap-3">
@@ -84,21 +83,21 @@ export const columns: ColumnDef<Page>[] = [
 		},
 	},
 	{
-		header: ({ column }) => <DataTableSortableHeader column={column} name="Path" />,
 		accessorKey: "url",
+		header: ({ column }) => <DataTableSortableHeader column={column} name="Path" />,
 		size: 500,
 	},
 	{
-		id: "type",
+		accessorKey: "type",
 		header: ({ column }) => <DataTableSortableHeader column={column} name="Type" />,
 		accessorFn: (page) => {
 			return page.is_group ? "Group" : "Page";
 		},
 	},
 	{
-		id: "last_updated",
+		accessorKey: "last_updated",
 		header: ({ column }) => <DataTableSortableHeader column={column} name="Last Updated" />,
-		sortingFn: sortingFns.datetime,
+		sortingFn: (a, b) => b.original.last_update.getTime() - a.original.last_update.getTime(),
 		accessorFn: (page) =>
 			new Intl.DateTimeFormat("en-GB", dateFormatOptions).format(page.last_update),
 	},
