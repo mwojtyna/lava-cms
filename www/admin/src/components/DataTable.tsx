@@ -107,7 +107,7 @@ export function DataTable<T>(props: Props<T>) {
 	);
 }
 
-interface Breadcrumb {
+export interface Breadcrumb {
 	id: string;
 	name: string;
 }
