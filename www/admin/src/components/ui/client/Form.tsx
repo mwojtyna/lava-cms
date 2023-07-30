@@ -15,7 +15,7 @@ import { TypographyMuted } from "../server";
 
 type FormFieldContextValue<
 	TFieldValues extends FieldValues = FieldValues,
-	TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>
+	TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
 > = {
 	name: TName;
 };
@@ -24,7 +24,7 @@ const FormFieldContext = React.createContext<FormFieldContextValue>({} as FormFi
 
 const FormField = <
 	TFieldValues extends FieldValues = FieldValues,
-	TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>
+	TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
 >({
 	defaultValue,
 	...props
@@ -77,7 +77,7 @@ const FormItem = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivEl
 				<div ref={ref} className={cn("flex flex-col gap-2", className)} {...props} />
 			</FormItemContext.Provider>
 		);
-	}
+	},
 );
 FormItem.displayName = "FormItem";
 
@@ -106,6 +106,7 @@ const FormControl = React.forwardRef<
 	React.ComponentPropsWithoutRef<typeof Slot>
 >(({ className, ...props }, ref) => {
 	const { error, formItemId, formDescriptionId, formMessageId } = useFormField();
+	console.log(error);
 
 	return (
 		<Slot

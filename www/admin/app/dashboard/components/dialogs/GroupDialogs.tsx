@@ -10,6 +10,7 @@ import {
 	DialogHeader,
 	DialogTitle,
 	FormControl,
+	FormError,
 	FormField,
 	FormItem,
 	FormLabel,
@@ -34,6 +35,11 @@ export function AddGroupDialog(props: AddGroupDialogProps) {
 
 	const form = useForm<AddGroupDialogInputs>();
 	const onSubmit: SubmitHandler<AddGroupDialogInputs> = (data) => {
+		if (data.name.trim() === "") {
+			form.setError("name", {});
+			return;
+		}
+
 		mutation.mutate(
 			{
 				name: data.name,
@@ -65,6 +71,7 @@ export function AddGroupDialog(props: AddGroupDialogProps) {
 									<FormControl>
 										<Input {...field} />
 									</FormControl>
+									<FormError />
 								</FormItem>
 							)}
 						/>

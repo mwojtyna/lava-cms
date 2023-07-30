@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { FolderArrowDownIcon, TrashIcon } from "@heroicons/react/24/outline";
+import { FolderArrowDownIcon, FolderIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { trpc } from "@admin/src/utils/trpc";
 import type { ComponentsTableItem } from "../ComponentsTable";
 import { AlertDialog, type MoveDialogInputs, NewParentSelect } from "@admin/src/components";
@@ -64,22 +64,31 @@ export function MoveDialog(props: Props) {
 			allGroups
 				?.filter(
 					(group) =>
-						// TODO: Check if this group isn't a deep child of the item
-						group.parent_group_id !== props.item.id &&
+						!group.hierarchy.includes(props.item.id) &&
 						group.id !== props.item.id &&
 						group.id !== props.item.parentGroupId,
 				)
-				.map((group) => {
-					const childrenCount = group._count.component_definitions + group._count.groups;
-
-					return {
-						id: group.id,
-						name: group.name,
-						extraInfo:
-							(group.parent_group ? `in ${group.parent_group.name}, ` : "") +
-							`contains ${childrenCount} ${childrenCount === 1 ? "item" : "items"}`,
-					} satisfies ItemParent;
-				}),
+				.map(
+					(group) =>
+						({
+							id: group.id,
+							name: group.name,
+							extraInfo: (
+								<span className="flex items-center">
+									{group.parent_group_name && (
+										<>
+											in&nbsp;
+											<FolderIcon className="inline w-[14px]" />
+											&nbsp;
+											{group.parent_group_name},&nbsp;
+										</>
+									)}
+									contains {group.children_count.toString()}{" "}
+									{group.children_count === 1 ? "item" : "items"}
+								</span>
+							),
+						}) satisfies ItemParent,
+				),
 		[allGroups, props.item],
 	);
 

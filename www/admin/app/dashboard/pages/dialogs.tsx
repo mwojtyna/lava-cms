@@ -662,7 +662,7 @@ export function DuplicateDialog(props: EditDialogProps) {
 							slugLocked={slugLocked}
 							setSlugLocked={setSlugLocked}
 						/>
-						<NewParentSelect form={form} parents={sortedGroups} label="Group" />
+						<NewParentSelect form={form} parents={sortedGroups ?? []} label="Group" />
 
 						<DialogFooter>
 							<Button

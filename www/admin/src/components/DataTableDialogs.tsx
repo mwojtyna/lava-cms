@@ -9,7 +9,7 @@ export interface MoveDialogInputs {
 export interface ItemParent {
 	id: string;
 	name: string;
-	extraInfo: string;
+	extraInfo: React.ReactNode;
 }
 
 interface NewParentSelectProps<T extends MoveDialogInputs> {
@@ -27,8 +27,9 @@ export function NewParentSelect<T extends MoveDialogInputs>(props: NewParentSele
 						<Combobox
 							className="w-full"
 							contentProps={{
-								align: "start",
-								className: "w-[335px]",
+								align: "center",
+								className:
+									"min-w-[335px] w-fit max-w-[97.5vw] max-h-[47.5vh] overflow-auto",
 								placeholder: "Search groups...",
 							}}
 							placeholder="Select a group..."
@@ -37,11 +38,13 @@ export function NewParentSelect<T extends MoveDialogInputs>(props: NewParentSele
 								props.parents.map((group) => ({
 									label: (
 										<span className="flex items-baseline gap-2">
-											<span>{group.name}</span>{" "}
-											<TypographyMuted className="text-xs">
-												{group.extraInfo}
-											</TypographyMuted>
+											{group.name}{" "}
 										</span>
+									),
+									description: (
+										<TypographyMuted className="text-xs">
+											{group.extraInfo}
+										</TypographyMuted>
 									),
 									value: group.id,
 									filterValue: group.name,

@@ -14,13 +14,21 @@ import {
 	Popover,
 	PopoverContent,
 	PopoverTrigger,
+	ScrollArea,
 } from "@admin/src/components/ui/client";
 
-type ComboboxData = { value: string; label: React.ReactNode; filterValue: string }[];
+type ComboboxData = Array<{
+	value: string;
+	label: React.ReactNode;
+	description: React.ReactNode;
+	filterValue: string;
+}>;
 interface ComboboxProps extends Omit<React.ComponentPropsWithoutRef<typeof Button>, "onChange"> {
 	data: ComboboxData;
 	contentProps?: React.ComponentPropsWithoutRef<typeof PopoverContent>;
-	notFoundContent?: React.ReactNode;
+	notFoundContent: React.ReactNode;
+
+	// react-hook-form props
 	value: string;
 	// Can't figure out how to type this
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -29,13 +37,13 @@ interface ComboboxProps extends Omit<React.ComponentPropsWithoutRef<typeof Butto
 const Combobox = React.forwardRef<React.ComponentRef<typeof Button>, ComboboxProps>(
 	(
 		{ data, className, contentProps, placeholder, notFoundContent, value, onChange, ...props },
-		ref
+		ref,
 	) => {
 		const [open, setOpen] = React.useState(false);
 		const [search, setSearch] = React.useState("");
 
 		return (
-			<Popover open={open} onOpenChange={setOpen}>
+			<Popover open={open} onOpenChange={setOpen} modal={true}>
 				<PopoverTrigger asChild>
 					<FormControl>
 						<Button
@@ -44,8 +52,8 @@ const Combobox = React.forwardRef<React.ComponentRef<typeof Button>, ComboboxPro
 							role="combobox"
 							aria-expanded={open}
 							className={cn(
-								"w-[200px] justify-between active:translate-y-0",
-								className
+								"w-[200px] justify-between overflow-hidden text-left active:translate-y-0",
+								className,
 							)}
 							{...props}
 						>
@@ -83,10 +91,13 @@ const Combobox = React.forwardRef<React.ComponentRef<typeof Button>, ComboboxPro
 										<CheckIcon
 											className={cn(
 												"mr-2 h-4 w-4",
-												value === item.value ? "opacity-100" : "opacity-0"
+												value === item.value ? "opacity-100" : "opacity-0",
 											)}
 										/>
-										{item.label}
+										<div>
+											{item.label}
+											{item.description}
+										</div>
 									</CommandItem>
 								);
 							})}
@@ -95,7 +106,7 @@ const Combobox = React.forwardRef<React.ComponentRef<typeof Button>, ComboboxPro
 				</PopoverContent>
 			</Popover>
 		);
-	}
+	},
 );
 Combobox.displayName = "Combobox";
 
