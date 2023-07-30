@@ -24,6 +24,7 @@ interface Props {
 export type ComponentsTableItem = {
 	id: string;
 	name: string;
+	parentGroupId: string | null;
 	lastUpdate: Date;
 } & (
 	| {
@@ -45,6 +46,7 @@ export function ComponentsTable(props: Props) {
 		const groups: ComponentsTableItem[] = data.group.groups.map((group) => ({
 			id: group.id,
 			name: group.name,
+			parentGroupId: group.parent_group_id,
 			lastUpdate: group.last_update,
 			isGroup: true,
 		}));
@@ -52,6 +54,7 @@ export function ComponentsTable(props: Props) {
 			(component, i) => ({
 				id: component.id,
 				name: component.name,
+				parentGroupId: component.group_id,
 				lastUpdate: component.last_update,
 				isGroup: false,
 				instances: data.group.component_definitions[i]!.components,

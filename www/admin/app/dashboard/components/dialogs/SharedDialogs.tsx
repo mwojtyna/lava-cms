@@ -65,7 +65,9 @@ export function MoveDialog(props: Props) {
 				?.filter(
 					(group) =>
 						// TODO: Check if this group isn't a deep child of the item
-						group.parent_group_id !== props.item.id && group.id !== props.item.id,
+						group.parent_group_id !== props.item.id &&
+						group.id !== props.item.id &&
+						group.id !== props.item.parentGroupId,
 				)
 				.map((group) => {
 					const childrenCount = group._count.component_definitions + group._count.groups;
