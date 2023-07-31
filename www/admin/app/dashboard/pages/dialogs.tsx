@@ -488,7 +488,7 @@ export function EditDetailsDialog(props: EditDialogProps) {
 								loading={mutation.isLoading}
 								icon={<PencilSquareIcon className="w-5" />}
 							>
-								Save
+								Edit
 							</Button>
 						</DialogFooter>
 					</form>

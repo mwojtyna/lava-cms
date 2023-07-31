@@ -150,7 +150,7 @@ export function EditGroupDialog(props: EditGroupDialogProps) {
 								loading={mutation.isLoading}
 								icon={<PencilSquareIcon className="w-5" />}
 							>
-								Save
+								Edit
 							</Button>
 						</DialogFooter>
 					</form>
