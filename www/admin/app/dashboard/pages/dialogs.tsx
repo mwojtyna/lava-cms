@@ -124,7 +124,10 @@ export function BulkDeleteDialog(props: BulkEditDialogProps) {
 }
 
 export function MoveDialog(props: EditDialogProps) {
-	const allGroups = trpc.pages.getAllGroups.useQuery().data;
+	const allGroups = trpc.pages.getAllGroups.useQuery(undefined, {
+		enabled: props.open,
+		refetchOnWindowFocus: false,
+	}).data;
 	const groups = React.useMemo(
 		() =>
 			allGroups
@@ -217,7 +220,10 @@ export function MoveDialog(props: EditDialogProps) {
 	);
 }
 export function BulkMoveDialog(props: BulkEditDialogProps) {
-	const allGroups = trpc.pages.getAllGroups.useQuery().data;
+	const allGroups = trpc.pages.getAllGroups.useQuery(undefined, {
+		enabled: props.open,
+		refetchOnWindowFocus: false,
+	}).data;
 	const groups = React.useMemo(
 		() =>
 			allGroups
@@ -585,6 +591,7 @@ type DuplicateDialogInputs = z.infer<typeof duplicateDialogSchema>;
 
 export function DuplicateDialog(props: EditDialogProps) {
 	const groups = trpc.pages.getAllGroups.useQuery(undefined, {
+		enabled: props.open,
 		refetchOnWindowFocus: false,
 	}).data;
 	const sortedGroups = React.useMemo(

@@ -58,7 +58,10 @@ export function MoveDialog(props: Props) {
 		? trpc.components.editGroup.useMutation()
 		: trpc.components.editComponentDefinition.useMutation();
 
-	const allGroups = trpc.components.getAllGroups.useQuery().data;
+	const allGroups = trpc.components.getAllGroups.useQuery(undefined, {
+		enabled: props.open,
+		refetchOnWindowFocus: false,
+	}).data;
 	const groups = React.useMemo(
 		() =>
 			allGroups

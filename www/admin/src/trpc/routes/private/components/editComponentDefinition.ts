@@ -32,6 +32,7 @@ export const editComponentDefinition = privateProcedure
 					})),
 					delete: input.deleteFields?.map((id) => ({ id })),
 				},
+				last_update: new Date(),
 			},
 		});
 	});
