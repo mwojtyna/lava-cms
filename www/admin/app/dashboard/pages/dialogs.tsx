@@ -590,13 +590,21 @@ const duplicateDialogSchema = editDialogSchema.extend({
 type DuplicateDialogInputs = z.infer<typeof duplicateDialogSchema>;
 
 export function DuplicateDialog(props: EditDialogProps) {
-	const groups = trpc.pages.getAllGroups.useQuery(undefined, {
+	const allGroups = trpc.pages.getAllGroups.useQuery(undefined, {
 		enabled: props.open,
 		refetchOnWindowFocus: false,
 	}).data;
-	const sortedGroups = React.useMemo(
-		() => groups?.sort((a, b) => a.url.localeCompare(b.url)),
-		[groups],
+	const groups = React.useMemo(
+		() =>
+			allGroups?.map(
+				(group) =>
+					({
+						id: group.id,
+						name: group.name,
+						extraInfo: group.url === "" ? "/" : group.url,
+					}) satisfies ItemParent,
+			),
+		[allGroups, props.page],
 	);
 
 	const mutation = trpc.pages.addPage.useMutation();
@@ -607,7 +615,7 @@ export function DuplicateDialog(props: EditDialogProps) {
 		resolver: zodResolver(duplicateDialogSchema),
 	});
 	const onSubmit: SubmitHandler<DuplicateDialogInputs> = (data) => {
-		const newParent = groups!.find((group) => group.id === data.newParentId)!;
+		const newParent = allGroups!.find((group) => group.id === data.newParentId)!;
 		const url = newParent.url + data.slug;
 
 		mutation.mutate(
@@ -669,7 +677,7 @@ export function DuplicateDialog(props: EditDialogProps) {
 							slugLocked={slugLocked}
 							setSlugLocked={setSlugLocked}
 						/>
-						<NewParentSelect form={form} parents={sortedGroups ?? []} label="Group" />
+						<NewParentSelect form={form} parents={groups ?? []} label="Group" />
 
 						<DialogFooter>
 							<Button

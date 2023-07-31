@@ -1,5 +1,5 @@
 import type { Path, UseFormReturn } from "react-hook-form";
-import { FormControl, FormError, FormField, FormItem } from "./ui/client";
+import { FormControl, FormError, FormField, FormItem, FormLabel } from "./ui/client";
 import { Combobox } from "./Combobox";
 import { TypographyMuted } from "./ui/server";
 
@@ -15,6 +15,7 @@ export interface ItemParent {
 interface NewParentSelectProps<T extends MoveDialogInputs> {
 	form: UseFormReturn<T>;
 	parents: ItemParent[];
+	label?: string;
 }
 export function NewParentSelect<T extends MoveDialogInputs>(props: NewParentSelectProps<T>) {
 	return (
@@ -23,6 +24,7 @@ export function NewParentSelect<T extends MoveDialogInputs>(props: NewParentSele
 			name={"newParentId" as Path<T>}
 			render={({ field }) => (
 				<FormItem>
+					{props.label && <FormLabel>{props.label}</FormLabel>}
 					<FormControl>
 						<Combobox
 							className="w-full"
