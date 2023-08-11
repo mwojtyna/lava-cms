@@ -235,7 +235,7 @@ export function DataTableSortableHeader<T>({
 }) {
 	return (
 		<Button
-			className="-ml-3 h-fit px-3 py-2"
+			className="-ml-3 px-3"
 			variant={"ghost"}
 			onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
 		>
@@ -267,7 +267,9 @@ export function DataTableActions(props: DataTableActionsProps) {
 
 			<div className="flex gap-2">
 				<Button onClick={props.onAddItem} icon={props.itemIcon} data-testid="add-item">
-					Add {props.itemName}
+					<span className="whitespace-nowrap">
+						Add <span className="max-sm:hidden">{props.itemName}</span>
+					</span>
 				</Button>
 				<Button
 					onClick={props.onAddGroup}
@@ -275,7 +277,9 @@ export function DataTableActions(props: DataTableActionsProps) {
 					icon={<FolderIcon className="w-5" />}
 					data-testid="add-group"
 				>
-					Add group
+					<span className="whitespace-nowrap">
+						Add <span className="max-sm:hidden">group</span>
+					</span>
 				</Button>
 			</div>
 		</div>

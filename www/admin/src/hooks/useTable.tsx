@@ -111,7 +111,7 @@ export function useTable<T>(options: Options<T>) {
 	const searchElement = (
 		<Input
 			type="search"
-			className="mr-auto w-auto"
+			className="mr-auto w-auto min-w-[8rem]"
 			value={(table.getColumn(options.searchColumn)?.getFilterValue() as string) ?? ""}
 			onChange={(e) => table.getColumn("name")?.setFilterValue(e.target.value)}
 			icon={<MagnifyingGlassIcon className="w-4" />}

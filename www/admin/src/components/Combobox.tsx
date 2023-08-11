@@ -14,7 +14,6 @@ import {
 	Popover,
 	PopoverContent,
 	PopoverTrigger,
-	ScrollArea,
 } from "@admin/src/components/ui/client";
 
 type ComboboxData = Array<{
