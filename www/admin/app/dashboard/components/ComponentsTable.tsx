@@ -14,6 +14,7 @@ import {
 } from "@admin/src/components";
 import { CubeIcon } from "@heroicons/react/24/outline";
 import { AddGroupDialog } from "./dialogs/GroupDialogs";
+import { AddComponentDefDialog } from "./dialogs/component-definition";
 
 interface Props {
 	data: Awaited<ReturnType<typeof caller.components.getGroup>>;
@@ -78,6 +79,7 @@ export function ComponentsTable(props: Props) {
 		searchColumn: "name",
 	});
 
+	const [openAddComponentDef, setOpenAddComponentDef] = React.useState(false);
 	const [openAddGroup, setOpenAddGroup] = React.useState(false);
 
 	return (
@@ -85,9 +87,9 @@ export function ComponentsTable(props: Props) {
 			<div className="flex flex-col gap-4" data-testid="component-definitions-table">
 				<DataTableActions
 					searchElement={searchElement}
-					itemName="component"
+					itemName="definition"
 					itemIcon={<CubeIcon className="w-5" />}
-					// addAddItem={() => setOpenAddPage(true)}
+					onAddItem={() => setOpenAddComponentDef(true)}
 					onAddGroup={() => setOpenAddGroup(true)}
 				/>
 
@@ -99,6 +101,11 @@ export function ComponentsTable(props: Props) {
 				<DataTablePagination table={table} />
 			</div>
 
+			<AddComponentDefDialog
+				group={props.data.group}
+				open={openAddComponentDef}
+				setOpen={setOpenAddComponentDef}
+			/>
 			<AddGroupDialog
 				group={props.data.group}
 				open={openAddGroup}

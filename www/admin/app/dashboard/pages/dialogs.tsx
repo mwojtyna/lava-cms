@@ -194,7 +194,7 @@ export function MoveDialog(props: EditDialogProps) {
 
 	return (
 		<Dialog open={props.open} onOpenChange={props.setOpen}>
-			<DialogContent className="!max-w-sm">
+			<DialogContent>
 				<DialogHeader>
 					<DialogTitle>Move {props.page.is_group ? "group" : "page"}</DialogTitle>
 				</DialogHeader>
@@ -298,7 +298,7 @@ export function BulkMoveDialog(props: BulkEditDialogProps) {
 
 	return (
 		<Dialog open={props.open} onOpenChange={props.setOpen}>
-			<DialogContent className="!max-w-sm">
+			<DialogContent>
 				<DialogHeader>
 					<DialogTitle>
 						Move {props.pages.length} item{props.pages.length > 1 && "s"}
@@ -467,7 +467,7 @@ export function EditDetailsDialog(props: EditDialogProps) {
 
 	return (
 		<Dialog open={props.open} onOpenChange={props.setOpen}>
-			<DialogContent className="!max-w-sm">
+			<DialogContent>
 				<DialogHeader>
 					<DialogTitle>Edit details</DialogTitle>
 				</DialogHeader>
@@ -549,7 +549,7 @@ export function AddDialog(props: AddDialogProps) {
 
 	return (
 		<Dialog open={props.open} onOpenChange={props.setOpen}>
-			<DialogContent className="!max-w-sm">
+			<DialogContent>
 				<DialogHeader>
 					<DialogTitle>Add {props.isGroup ? "group" : "page"}</DialogTitle>
 				</DialogHeader>
@@ -661,11 +661,11 @@ export function DuplicateDialog(props: EditDialogProps) {
 			form.clearErrors();
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [props.open, form]);
+	}, [props.open]);
 
 	return (
 		<Dialog open={props.open} onOpenChange={props.setOpen}>
-			<DialogContent className="!max-w-sm">
+			<DialogContent>
 				<DialogHeader>
 					<DialogTitle>Duplicate page</DialogTitle>
 				</DialogHeader>

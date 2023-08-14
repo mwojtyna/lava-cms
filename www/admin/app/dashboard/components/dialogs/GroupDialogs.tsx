@@ -55,7 +55,7 @@ export function AddGroupDialog(props: AddGroupDialogProps) {
 
 	return (
 		<Dialog open={props.open} onOpenChange={props.setOpen}>
-			<DialogContent className="!max-w-sm">
+			<DialogContent>
 				<DialogHeader>
 					<DialogTitle>Add group</DialogTitle>
 				</DialogHeader>
@@ -120,11 +120,12 @@ export function EditGroupDialog(props: EditGroupDialogProps) {
 		if (props.open) {
 			form.setValue("name", props.item.name);
 		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [props.open]);
 
 	return (
 		<Dialog open={props.open} onOpenChange={props.setOpen}>
-			<DialogContent className="!max-w-sm">
+			<DialogContent>
 				<DialogHeader>
 					<DialogTitle>Edit group</DialogTitle>
 				</DialogHeader>

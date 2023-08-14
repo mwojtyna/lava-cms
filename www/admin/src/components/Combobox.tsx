@@ -28,10 +28,10 @@ interface ComboboxProps extends Omit<React.ComponentPropsWithoutRef<typeof Butto
 	notFoundContent: React.ReactNode;
 
 	// react-hook-form props
-	value: string;
+	value?: string;
 	// Can't figure out how to type this
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	onChange: (value: any) => void;
+	onChange?: (value: any) => void;
 }
 const Combobox = React.forwardRef<React.ComponentRef<typeof Button>, ComboboxProps>(
 	(
@@ -51,12 +51,18 @@ const Combobox = React.forwardRef<React.ComponentRef<typeof Button>, ComboboxPro
 							role="combobox"
 							aria-expanded={open}
 							className={cn(
-								"w-[200px] justify-between overflow-hidden text-left active:translate-y-0",
+								"justify-between overflow-hidden px-3 text-left active:translate-y-0",
 								className,
 							)}
 							{...props}
 						>
-							{value ? data.find((item) => item.value === value)?.label : placeholder}
+							{value ? (
+								data.find((item) => item.value === value)?.label
+							) : (
+								<span className="font-normal text-muted-foreground">
+									{placeholder}
+								</span>
+							)}
 							<ChevronUpDownIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
 						</Button>
 					</FormControl>
@@ -82,15 +88,20 @@ const Combobox = React.forwardRef<React.ComponentRef<typeof Button>, ComboboxPro
 									<CommandItem
 										key={i}
 										value={item.value}
-										onSelect={(currentValue) => {
-											onChange(currentValue === value ? "" : currentValue);
+										onSelect={() => {
+											// We don't use the provided value from onSelect because it's automatically
+											// inferred from the textContent of <CommandItem> and not the value prop
+											// for some stupid reason
+
+											// If newValue is the same as the current value, then we clear it
+											onChange?.(item.value === value ? "" : item.value);
 											setOpen(false);
 										}}
 									>
 										<CheckIcon
 											className={cn(
 												"mr-2 h-4 w-4",
-												value === item.value ? "opacity-100" : "opacity-0",
+												value === item.value ? "visible" : "invisible",
 											)}
 										/>
 										<div>

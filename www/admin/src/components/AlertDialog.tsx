@@ -26,7 +26,7 @@ export function AlertDialog<TData, TError, TVariables, TContext>(
 ) {
 	return (
 		<Dialog open={props.open} onOpenChange={props.setOpen}>
-			<DialogContent className="!max-w-md" withCloseButton={false}>
+			<DialogContent className="max-w-md" withCloseButton={false}>
 				<DialogHeader>
 					<DialogTitle>{props.title}</DialogTitle>
 					<DialogDescription>{props.description}</DialogDescription>

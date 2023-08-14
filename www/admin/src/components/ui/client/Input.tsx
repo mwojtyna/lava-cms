@@ -26,6 +26,7 @@ const inputVariants = cva(
 interface InputProps
 	extends Omit<React.InputHTMLAttributes<HTMLInputElement>, "children" | "size">,
 		VariantProps<typeof inputVariants> {
+	inputClassName?: string;
 	icon?: React.ReactNode;
 	rightButton?: {
 		iconOn: React.ReactNode;
@@ -44,7 +45,7 @@ interface InputProps
 	);
 }
 const Input = React.forwardRef<HTMLInputElement, InputProps>(
-	({ className, type = "text", icon, size, rightButton, ...props }, ref) => {
+	({ className, type = "text", icon, size, rightButton, inputClassName, ...props }, ref) => {
 		const [passwordVisible, setPasswordVisible] = React.useState(false);
 
 		return (
@@ -53,7 +54,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
 
 				<input
 					type={type === "password" ? (passwordVisible ? "text" : "password") : type}
-					className={cn(inputVariants({ size }), icon && "pl-10")}
+					className={cn(inputVariants({ size }), icon && "pl-10", inputClassName)}
 					ref={ref}
 					{...props}
 				/>

@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import Link from "next/link";
-import { sortingFns, type ColumnDef } from "@tanstack/react-table";
+import { type ColumnDef } from "@tanstack/react-table";
 import { EllipsisHorizontalIcon } from "@heroicons/react/20/solid";
 import {
 	CubeIcon,

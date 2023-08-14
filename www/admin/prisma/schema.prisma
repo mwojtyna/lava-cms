@@ -106,7 +106,7 @@ model ComponentDefinitionGroup {
 
 model ComponentDefinition {
     id          String   @id @default(cuid())
-    name        String
+    name        String   @unique
     group_id    String
     last_update DateTime @default(now())
 
@@ -123,6 +123,7 @@ model ComponentFieldDefinition {
     id                      String             @id @default(cuid())
     name                    String
     type                    ComponentFieldType
+    order                   Int
     component_definition_id String
 
     component_definition ComponentDefinition @relation(fields: [component_definition_id], references: [id], onDelete: Cascade)
@@ -163,9 +164,9 @@ model ComponentInstance {
 }
 
 enum ComponentFieldType {
-    STRING
+    TEXT
     NUMBER
-    BOOLEAN
+    SWITCH
     COMPONENT
 
     @@map("component_field_type")

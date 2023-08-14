@@ -103,7 +103,7 @@ export function MoveDialog(props: Props) {
 
 	return (
 		<Dialog open={props.open} onOpenChange={props.setOpen}>
-			<DialogContent className="!max-w-sm">
+			<DialogContent>
 				<DialogHeader>
 					<DialogTitle>
 						Move {props.item.isGroup ? "group" : "component definition"}
