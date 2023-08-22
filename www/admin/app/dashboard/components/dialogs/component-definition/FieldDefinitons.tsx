@@ -147,7 +147,6 @@ interface FieldDefProps {
 }
 function FieldDef(props: FieldDefProps) {
 	const [isEditing, setIsEditing] = React.useState(false);
-
 	const form = useForm<FieldDefinition>({
 		defaultValues: props.field,
 	});
@@ -238,7 +237,7 @@ function FieldDef(props: FieldDefProps) {
 							<ArrowRightIcon className="w-5" />
 						</ActionIcon>
 
-						<ActionIcon variant={"simple"} onClick={() => cancel()}>
+						<ActionIcon variant={"simple"} onClick={cancel}>
 							<XMarkIcon className="w-5" />
 						</ActionIcon>
 					</>
