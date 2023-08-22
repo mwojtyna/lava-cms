@@ -13,6 +13,11 @@ import { cn } from "@admin/src/utils/styling";
 import { Label } from "@admin/src/components/ui/client";
 import { TypographyMuted } from "../server";
 
+interface FormFieldProps<T> {
+	value: T;
+	onChange: (value: T) => void;
+}
+
 type FormFieldContextValue<
 	TFieldValues extends FieldValues = FieldValues,
 	TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
@@ -161,4 +166,5 @@ export {
 	FormDescription,
 	FormError,
 	FormField,
+	type FormFieldProps,
 };

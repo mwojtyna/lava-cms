@@ -11,6 +11,7 @@ import {
 	FormError,
 	Button,
 	ActionIcon,
+	type FormFieldProps,
 } from "@admin/src/components/ui/client";
 import { Card, TypographyMuted } from "@admin/src/components/ui/server";
 import { IconGripVertical } from "@tabler/icons-react";
@@ -29,80 +30,71 @@ export const fieldDefinitionSchema = z.object({
 });
 export type FieldDefinition = z.infer<typeof fieldDefinitionSchema>;
 
-// TODO: Make a generic interface for value and onChange props (for use in forms)
-interface AddFieldDefsProps {
-	value: FieldDefinition[];
-	onChange: (value: FieldDefinition[]) => void;
-}
-export const AddFieldDefs = React.forwardRef<React.ComponentRef<"div">, AddFieldDefsProps>(
-	(props, ref) => {
-		const form = useForm<FieldDefinition>({
-			resolver: zodResolver(fieldDefinitionSchema),
-		});
-		const onSubmit: SubmitHandler<FieldDefinition> = (data) => {
-			props.onChange([...props.value, data]);
-		};
+export const AddFieldDefs = React.forwardRef<
+	React.ComponentRef<"div">,
+	FormFieldProps<FieldDefinition[]>
+>((props, ref) => {
+	const form = useForm<FieldDefinition>({
+		resolver: zodResolver(fieldDefinitionSchema),
+	});
+	const onSubmit: SubmitHandler<FieldDefinition> = (data) => {
+		props.onChange([...props.value, data]);
+	};
 
-		return (
-			<div ref={ref} className="flex gap-2">
-				<div className="grid grid-cols-2">
-					<FormField
-						control={form.control}
-						name="name"
-						render={({ field }) => (
-							<FormItem>
-								<FormControl>
-									<Input
-										inputClassName="rounded-r-none"
-										placeholder="Name"
-										onKeyDown={async (e) => {
-											if (e.key === "Enter") {
-												e.preventDefault();
-												await form.handleSubmit(onSubmit)();
-											}
-										}}
-										aria-required
-										{...field}
-									/>
-								</FormControl>
-								<FormError />
-							</FormItem>
-						)}
-					/>
+	return (
+		<div ref={ref} className="flex gap-2">
+			<div className="grid grid-cols-2">
+				<FormField
+					control={form.control}
+					name="name"
+					render={({ field }) => (
+						<FormItem>
+							<FormControl>
+								<Input
+									inputClassName="rounded-r-none"
+									placeholder="Name"
+									onKeyDown={async (e) => {
+										if (e.key === "Enter") {
+											e.preventDefault();
+											await form.handleSubmit(onSubmit)();
+										}
+									}}
+									aria-required
+									{...field}
+								/>
+							</FormControl>
+							<FormError />
+						</FormItem>
+					)}
+				/>
 
-					<FormField
-						control={form.control}
-						name="type"
-						render={({ field }) => (
-							<FormItem>
-								<FormControl>
-									<FieldTypePicker
-										className="rounded-l-none border-l-0"
-										{...field}
-									/>
-								</FormControl>
-								<FormError />
-							</FormItem>
-						)}
-					/>
-				</div>
-
-				<Button
-					variant={"secondary"}
-					disabled={!form.formState.isValid}
-					onClick={() => onSubmit(form.getValues())}
-				>
-					Add
-				</Button>
+				<FormField
+					control={form.control}
+					name="type"
+					render={({ field }) => (
+						<FormItem>
+							<FormControl>
+								<FieldTypePicker className="rounded-l-none border-l-0" {...field} />
+							</FormControl>
+							<FormError />
+						</FormItem>
+					)}
+				/>
 			</div>
-		);
-	},
-);
+
+			<Button
+				variant={"secondary"}
+				disabled={!form.formState.isValid}
+				onClick={() => onSubmit(form.getValues())}
+			>
+				Add
+			</Button>
+		</div>
+	);
+});
 AddFieldDefs.displayName = "AddFieldDefs";
 
-interface FieldDefsProps {
-	value: FieldDefinition[];
-	onChange: (value: FieldDefinition[]) => void;
+interface FieldDefsProps extends FormFieldProps<FieldDefinition[]> {
 	dialogType: "add" | "edit";
 }
 export const FieldDefs = React.forwardRef<React.ComponentRef<"div">, FieldDefsProps>(

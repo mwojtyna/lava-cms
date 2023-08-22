@@ -66,7 +66,7 @@ export const columns: ColumnDef<ComponentsTableItem>[] = [
 							href={
 								row.original.isGroup
 									? `/dashboard/components/${row.original.id}`
-									: // TODO: Open an edit sheet
+									: // TODO: Open an edit dialog
 									  `https://www.youtube.com/watch?v=dQw4w9WgXcQ`
 							}
 						>

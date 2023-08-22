@@ -3,6 +3,7 @@ import { Combobox, type ComboboxData } from "@admin/src/components";
 import { ComponentFieldType } from "@prisma/client";
 import type { ComponentFieldTypeType } from "@admin/prisma/generated/zod";
 import { cn } from "@admin/src/utils/styling";
+import type { FormFieldProps } from "@admin/src/components/ui/client";
 
 export const fieldTypeMap: Record<string, string> = Object.values(ComponentFieldType).reduce(
 	(acc, type) => {
@@ -14,9 +15,7 @@ export const fieldTypeMap: Record<string, string> = Object.values(ComponentField
 	{} as Record<string, string>,
 );
 
-interface FieldTypePickerProps {
-	value: ComponentFieldTypeType;
-	onChange: (value: ComponentFieldTypeType) => void;
+interface FieldTypePickerProps extends FormFieldProps<ComponentFieldTypeType> {
 	className?: string;
 	onKeyDown?: (e: React.KeyboardEvent<HTMLButtonElement>) => void;
 }
