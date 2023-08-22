@@ -147,7 +147,6 @@ interface FieldDefProps {
 }
 function FieldDef(props: FieldDefProps) {
 	const [isEditing, setIsEditing] = React.useState(false);
-	const nameLengthElement = React.useRef<HTMLSpanElement>(null);
 
 	const form = useForm<FieldDefinition>({
 		defaultValues: props.field,
@@ -165,12 +164,6 @@ function FieldDef(props: FieldDefProps) {
 
 	return (
 		<Card className="group flex-row gap-4 md:p-3">
-			{/* TODO: Make reusable */}
-			{/* Hack to get the width of the name element */}
-			<span ref={nameLengthElement} className="absolute left-0 top-0 text-base opacity-0">
-				{form.watch("name")}
-			</span>
-
 			<div className="flex items-center gap-3">
 				<IconGripVertical className="w-5 cursor-move text-muted-foreground" />
 				{isEditing ? (
@@ -182,12 +175,6 @@ function FieldDef(props: FieldDefProps) {
 								<FormControl>
 									<Input
 										inputClassName="-ml-1 px-1 py-0 h-fit text-base text-left rounded-sm max-w-[150px]"
-										style={{
-											width: `${
-												(nameLengthElement.current?.clientWidth ?? 0) + 16
-											}px`,
-										}}
-										onSubmit={() => console.log("edit done")}
 										onKeyDown={async (e) => {
 											if (e.key === "Escape") {
 												e.preventDefault();
