@@ -55,7 +55,7 @@ export function AddComponentDefDialog(props: Props) {
 
 	return (
 		<Dialog open={props.open} onOpenChange={props.setOpen}>
-			<DialogContent className="max-h-[95vh] max-w-md overflow-auto">
+			<DialogContent className="max-w-md">
 				<DialogHeader>
 					<DialogTitle>Add component definition</DialogTitle>
 				</DialogHeader>
@@ -93,7 +93,7 @@ export function AddComponentDefDialog(props: Props) {
 							control={form.control}
 							name="fields"
 							render={({ field }) => (
-								<FormItem>
+								<FormItem className="max-h-[50vh] overflow-auto">
 									<FormControl>
 										<FieldDefs dialogType="add" {...field} />
 									</FormControl>

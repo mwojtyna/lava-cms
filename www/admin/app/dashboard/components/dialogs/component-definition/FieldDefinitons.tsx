@@ -26,6 +26,7 @@ import {
 	useSortable,
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
+import { restrictToParentElement } from "@dnd-kit/modifiers";
 import { ComponentFieldDefinitionSchema } from "@admin/prisma/generated/zod";
 import {
 	FormField,
@@ -135,7 +136,12 @@ export const FieldDefs = React.forwardRef<React.ComponentRef<"div">, FieldDefsPr
 	}
 
 	return props.value.length > 0 ? (
-		<DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={reorder}>
+		<DndContext
+			sensors={sensors}
+			collisionDetection={closestCenter}
+			modifiers={[restrictToParentElement]}
+			onDragEnd={reorder}
+		>
 			<SortableContext items={ids} strategy={verticalListSortingStrategy}>
 				{props.value.map((field, i) => (
 					<FieldDef
@@ -183,9 +189,9 @@ function FieldDef(props: FieldDefProps) {
 		setIsEditing(false);
 	};
 
-	const { attributes, listeners, setNodeRef, transform, transition } = useSortable({
+	const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
 		id: props.id,
-		// We have no stable unique property to use as a key, so we have to disable this
+		// We have no stable unique property to use as id, so we have to disable this
 		// or the list will reshuffle on drop
 		// https://github.com/clauderic/dnd-kit/issues/767#issuecomment-1140556346
 		animateLayoutChanges: () => false,
@@ -193,6 +199,7 @@ function FieldDef(props: FieldDefProps) {
 	const style: React.CSSProperties = {
 		transform: CSS.Transform.toString(transform),
 		transition,
+		zIndex: isDragging ? 1 : undefined,
 	};
 
 	function cancel() {
