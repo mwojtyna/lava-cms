@@ -182,7 +182,8 @@ interface FieldDefProps {
 function FieldDef(props: FieldDefProps) {
 	const [isEditing, setIsEditing] = React.useState(false);
 	const form = useForm<FieldDefinition>({
-		defaultValues: props.field,
+		// Must set `values` instead of `defaultValues` because after reordering, the old values were kept
+		values: props.field,
 	});
 	const onSubmit: SubmitHandler<FieldDefinition> = (data) => {
 		props.onEditSubmit(props.field, data);
@@ -195,13 +196,13 @@ function FieldDef(props: FieldDefProps) {
 		// or the list will reshuffle on drop
 		// https://github.com/clauderic/dnd-kit/issues/767#issuecomment-1140556346
 		animateLayoutChanges: () => false,
+		disabled: props.anyEditing,
 	});
 	const style: React.CSSProperties = {
 		transform: CSS.Transform.toString(transform),
 		transition,
 		zIndex: isDragging ? 1 : undefined,
 	};
-
 	function cancel() {
 		setIsEditing(false);
 		props.onEditCancel();
@@ -209,11 +210,17 @@ function FieldDef(props: FieldDefProps) {
 	}
 
 	return (
-		<Card ref={setNodeRef} style={style} className="group flex-row gap-4 md:p-3">
+		<Card ref={setNodeRef} style={style} className={cn("group flex-row gap-4 md:p-3")}>
 			<div className="flex items-center gap-3">
 				<div {...attributes} {...listeners}>
-					<IconGripVertical className="w-5 cursor-move text-muted-foreground" />
+					<IconGripVertical
+						className={cn(
+							"w-5 cursor-move text-muted-foreground",
+							props.anyEditing && "cursor-auto text-muted-foreground/50",
+						)}
+					/>
 				</div>
+
 				{isEditing ? (
 					<FormField
 						control={form.control}
@@ -244,6 +251,7 @@ function FieldDef(props: FieldDefProps) {
 						{props.field.name}
 					</span>
 				)}
+
 				{isEditing ? (
 					<FormField
 						control={form.control}
