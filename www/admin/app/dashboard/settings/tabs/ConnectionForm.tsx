@@ -74,17 +74,21 @@ const TokenInput = ({ token }: { token: string }) => {
 			<Input
 				className="font-mono"
 				value={token}
-				rightButton={{
-					state: copied,
-					setState: null,
-					onClick: async () => {
-						await navigator.clipboard.writeText(token);
-						setCopied(true);
-					},
-					iconOn: <CheckIcon className="w-5 text-green-600" />,
-					iconOff: <ClipboardIcon className="w-5" />,
-					tooltip: "Copy to clipboard",
-				}}
+				rightButton={
+					typeof navigator.clipboard !== "undefined"
+						? {
+								state: copied,
+								setState: null,
+								onClick: async () => {
+									await navigator.clipboard.writeText(token);
+									setCopied(true);
+								},
+								iconOn: <CheckIcon className="w-5 text-green-600" />,
+								iconOff: <ClipboardIcon className="w-5" />,
+								tooltip: "Copy to clipboard",
+						  }
+						: undefined
+				}
 				readOnly
 				aria-label="Token input"
 			/>
