@@ -2,6 +2,30 @@ import * as React from "react";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { IconGripVertical } from "@tabler/icons-react";
+import {
+	ArrowRightIcon,
+	PencilSquareIcon,
+	TrashIcon,
+	XMarkIcon,
+} from "@heroicons/react/24/outline";
+import {
+	DndContext,
+	closestCenter,
+	KeyboardSensor,
+	PointerSensor,
+	useSensor,
+	useSensors,
+	type DragEndEvent,
+} from "@dnd-kit/core";
+import {
+	arrayMove,
+	SortableContext,
+	sortableKeyboardCoordinates,
+	verticalListSortingStrategy,
+	useSortable,
+} from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
 import { ComponentFieldDefinitionSchema } from "@admin/prisma/generated/zod";
 import {
 	FormField,
@@ -14,13 +38,6 @@ import {
 	type FormFieldProps,
 } from "@admin/src/components/ui/client";
 import { Card, TypographyMuted } from "@admin/src/components/ui/server";
-import { IconGripVertical } from "@tabler/icons-react";
-import {
-	ArrowRightIcon,
-	PencilSquareIcon,
-	TrashIcon,
-	XMarkIcon,
-} from "@heroicons/react/24/outline";
 import { cn } from "@admin/src/utils/styling";
 import { FieldTypePicker, fieldTypeMap } from "./shared";
 
@@ -97,15 +114,33 @@ AddFieldDefs.displayName = "AddFieldDefs";
 interface FieldDefsProps extends FormFieldProps<FieldDefinition[]> {
 	dialogType: "add" | "edit";
 }
-export const FieldDefs = React.forwardRef<React.ComponentRef<"div">, FieldDefsProps>(
-	(props, ref) => {
-		const [anyEditing, setAnyEditing] = React.useState(false);
+export const FieldDefs = React.forwardRef<React.ComponentRef<"div">, FieldDefsProps>((props, _) => {
+	const [anyEditing, setAnyEditing] = React.useState(false);
 
-		return props.value.length > 0 ? (
-			<div ref={ref} className="flex flex-col gap-2">
+	const ids: string[] = React.useMemo(
+		() => props.value.map((_, i) => i.toString()),
+		[props.value],
+	);
+	const sensors = useSensors(
+		useSensor(PointerSensor),
+		useSensor(KeyboardSensor, {
+			coordinateGetter: sortableKeyboardCoordinates,
+		}),
+	);
+	function reorder(e: DragEndEvent) {
+		const { active, over } = e;
+		if (over && active.id !== over.id) {
+			props.onChange(arrayMove(props.value, Number(active.id), Number(over.id)));
+		}
+	}
+
+	return props.value.length > 0 ? (
+		<DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={reorder}>
+			<SortableContext items={ids} strategy={verticalListSortingStrategy}>
 				{props.value.map((field, i) => (
 					<FieldDef
 						key={i}
+						id={i.toString()}
 						field={field}
 						anyEditing={anyEditing}
 						onEditBegin={() => setAnyEditing(true)}
@@ -121,15 +156,16 @@ export const FieldDefs = React.forwardRef<React.ComponentRef<"div">, FieldDefsPr
 						}
 					/>
 				))}
-			</div>
-		) : (
-			<TypographyMuted>No fields added</TypographyMuted>
-		);
-	},
-);
+			</SortableContext>
+		</DndContext>
+	) : (
+		<TypographyMuted>No fields added</TypographyMuted>
+	);
+});
 FieldDefs.displayName = "FieldDefs";
 
 interface FieldDefProps {
+	id: string;
 	field: FieldDefinition;
 	anyEditing: boolean;
 	onEditBegin: () => void;
@@ -147,6 +183,18 @@ function FieldDef(props: FieldDefProps) {
 		setIsEditing(false);
 	};
 
+	const { attributes, listeners, setNodeRef, transform, transition } = useSortable({
+		id: props.id,
+		// We have no stable unique property to use as a key, so we have to disable this
+		// or the list will reshuffle on drop
+		// https://github.com/clauderic/dnd-kit/issues/767#issuecomment-1140556346
+		animateLayoutChanges: () => false,
+	});
+	const style: React.CSSProperties = {
+		transform: CSS.Transform.toString(transform),
+		transition,
+	};
+
 	function cancel() {
 		setIsEditing(false);
 		props.onEditCancel();
@@ -154,9 +202,11 @@ function FieldDef(props: FieldDefProps) {
 	}
 
 	return (
-		<Card className="group flex-row gap-4 md:p-3">
+		<Card ref={setNodeRef} style={style} className="group flex-row gap-4 md:p-3">
 			<div className="flex items-center gap-3">
-				<IconGripVertical className="w-5 cursor-move text-muted-foreground" />
+				<div {...attributes} {...listeners}>
+					<IconGripVertical className="w-5 cursor-move text-muted-foreground" />
+				</div>
 				{isEditing ? (
 					<FormField
 						control={form.control}
@@ -187,7 +237,6 @@ function FieldDef(props: FieldDefProps) {
 						{props.field.name}
 					</span>
 				)}
-
 				{isEditing ? (
 					<FormField
 						control={form.control}
