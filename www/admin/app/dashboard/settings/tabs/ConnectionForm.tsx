@@ -29,7 +29,6 @@ export function ConnectionForm(props: { token: string | undefined }) {
 	const token =
 		trpc.auth.getToken.useQuery(undefined, {
 			initialData: props.token,
-			refetchOnWindowFocus: false,
 		}).data ?? "";
 	const form = useForm();
 

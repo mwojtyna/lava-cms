@@ -126,7 +126,6 @@ export function BulkDeleteDialog(props: BulkEditDialogProps) {
 export function MoveDialog(props: EditDialogProps) {
 	const allGroups = trpc.pages.getAllGroups.useQuery(undefined, {
 		enabled: props.open,
-		refetchOnWindowFocus: false,
 	}).data;
 	const groups = React.useMemo(
 		() =>
@@ -222,7 +221,6 @@ export function MoveDialog(props: EditDialogProps) {
 export function BulkMoveDialog(props: BulkEditDialogProps) {
 	const allGroups = trpc.pages.getAllGroups.useQuery(undefined, {
 		enabled: props.open,
-		refetchOnWindowFocus: false,
 	}).data;
 	const groups = React.useMemo(
 		() =>
@@ -592,7 +590,6 @@ type DuplicateDialogInputs = z.infer<typeof duplicateDialogSchema>;
 export function DuplicateDialog(props: EditDialogProps) {
 	const allGroups = trpc.pages.getAllGroups.useQuery(undefined, {
 		enabled: props.open,
-		refetchOnWindowFocus: false,
 	}).data;
 	const groups = React.useMemo(
 		() =>
@@ -604,7 +601,7 @@ export function DuplicateDialog(props: EditDialogProps) {
 						extraInfo: group.url === "" ? "/" : group.url,
 					}) satisfies ItemParent,
 			),
-		[allGroups, props.page],
+		[allGroups],
 	);
 
 	const mutation = trpc.pages.addPage.useMutation();
