@@ -43,6 +43,7 @@ interface Props {
 export function EditComponentDefDialog(props: Props) {
 	const mutation = trpc.components.editComponentDefinition.useMutation();
 	const originalFields = props.componentDef.fieldDefinitions;
+	const [anyEditing, setAnyEditing] = React.useState(false);
 
 	const form = useForm<EditComponentDefDialogInputs>({
 		resolver: zodResolver(editComponentDefDialogInputsSchema),
@@ -139,7 +140,12 @@ export function EditComponentDefDialog(props: Props) {
 							render={({ field }) => (
 								<FormItem className="max-h-[50vh] overflow-auto">
 									<FormControl>
-										<FieldDefs dialogType="edit" {...field} />
+										<FieldDefs
+											dialogType="edit"
+											anyEditing={anyEditing}
+											setAnyEditing={setAnyEditing}
+											{...field}
+										/>
 									</FormControl>
 								</FormItem>
 							)}
@@ -148,6 +154,7 @@ export function EditComponentDefDialog(props: Props) {
 						<DialogFooter>
 							<Button
 								type="submit"
+								disabled={anyEditing}
 								loading={mutation.isLoading}
 								icon={<PencilSquareIcon className="w-5" />}
 							>

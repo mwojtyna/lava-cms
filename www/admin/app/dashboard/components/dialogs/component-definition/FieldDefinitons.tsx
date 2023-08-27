@@ -114,10 +114,10 @@ AddFieldDefs.displayName = "AddFieldDefs";
 
 interface FieldDefsProps extends FormFieldProps<FieldDefinition[]> {
 	dialogType: "add" | "edit";
+	anyEditing: boolean;
+	setAnyEditing: (value: boolean) => void;
 }
 export const FieldDefs = React.forwardRef<React.ComponentRef<"div">, FieldDefsProps>((props, _) => {
-	const [anyEditing, setAnyEditing] = React.useState(false);
-
 	const ids: string[] = React.useMemo(
 		() => props.value.map((_, i) => i.toString()),
 		[props.value],
@@ -148,15 +148,15 @@ export const FieldDefs = React.forwardRef<React.ComponentRef<"div">, FieldDefsPr
 						key={i}
 						id={i.toString()}
 						field={field}
-						anyEditing={anyEditing}
-						onEditBegin={() => setAnyEditing(true)}
+						anyEditing={props.anyEditing}
+						onEditBegin={() => props.setAnyEditing(true)}
 						onEditSubmit={(before, after) => {
 							props.onChange(
 								props.value.map((field) => (field === before ? after : field)),
 							);
-							setAnyEditing(false);
+							props.setAnyEditing(false);
 						}}
-						onEditCancel={() => setAnyEditing(false)}
+						onEditCancel={() => props.setAnyEditing(false)}
 						onDelete={(toDelete) =>
 							props.onChange(props.value.filter((field) => field !== toDelete))
 						}
