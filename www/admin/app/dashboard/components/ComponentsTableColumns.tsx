@@ -24,6 +24,7 @@ import {
 import { DataTableSortableHeader, dateFormatOptions } from "@admin/src/components/DataTable";
 import { DeleteDialog, MoveDialog } from "./dialogs/SharedDialogs";
 import { EditGroupDialog } from "./dialogs/GroupDialogs";
+import { EditComponentDefDialog } from "./dialogs/component-definition";
 
 export const columns: ColumnDef<ComponentsTableItem>[] = [
 	{
@@ -145,10 +146,11 @@ function ComponentsTableActions({ item }: { item: ComponentsTableItem }) {
 				</DropdownMenuContent>
 			</DropdownMenu>
 
-			{/* TODO: Add component definition edit dialog */}
 			{item.isGroup ? (
-				<EditGroupDialog item={item} open={openEdit} setOpen={setOpenEdit} />
-			) : null}
+				<EditGroupDialog group={item} open={openEdit} setOpen={setOpenEdit} />
+			) : (
+				<EditComponentDefDialog componentDef={item} open={openEdit} setOpen={setOpenEdit} />
+			)}
 
 			<MoveDialog item={item} open={openMove} setOpen={setOpenMove} />
 			<DeleteDialog item={item} open={openDelete} setOpen={setOpenDelete} />

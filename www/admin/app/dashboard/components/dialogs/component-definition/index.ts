@@ -1,1 +1,2 @@
-export * from "./AddComponentDef";
+export * from "./AddComponentDefDialog";
+export * from "./EditComponentDefDialog";

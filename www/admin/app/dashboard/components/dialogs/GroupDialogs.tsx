@@ -93,7 +93,7 @@ export function AddGroupDialog(props: AddGroupDialogProps) {
 }
 
 interface EditGroupDialogProps extends Props {
-	item: ComponentsTableItem;
+	group: Omit<Extract<ComponentsTableItem, { isGroup: true }>, "isGroup">;
 }
 interface EditGroupDialogInputs {
 	name: string;
@@ -105,7 +105,7 @@ export function EditGroupDialog(props: EditGroupDialogProps) {
 	const onSubmit: SubmitHandler<EditGroupDialogInputs> = (data) => {
 		mutation.mutate(
 			{
-				id: props.item.id,
+				id: props.group.id,
 				newName: data.name,
 			},
 			{
@@ -118,7 +118,7 @@ export function EditGroupDialog(props: EditGroupDialogProps) {
 
 	React.useEffect(() => {
 		if (props.open) {
-			form.setValue("name", props.item.name);
+			form.setValue("name", props.group.name);
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [props.open]);

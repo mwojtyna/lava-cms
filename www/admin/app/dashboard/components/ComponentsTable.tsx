@@ -31,6 +31,7 @@ export type ComponentsTableItem = {
 	| {
 			isGroup: false;
 			instances: Props["data"]["group"]["component_definitions"][number]["components"];
+			fieldDefinitions: Props["data"]["group"]["component_definitions"][number]["field_definitions"];
 	  }
 	| {
 			isGroup: true;
@@ -59,6 +60,7 @@ export function ComponentsTable(props: Props) {
 				lastUpdate: component.last_update,
 				isGroup: false,
 				instances: data.group.component_definitions[i]!.components,
+				fieldDefinitions: data.group.component_definitions[i]!.field_definitions,
 			}),
 		);
 

@@ -1,9 +1,10 @@
 import { z } from "zod";
-import type { ComponentDefinitionGroup } from "@prisma/client";
+import type { ComponentDefinitionGroup, Prisma } from "@prisma/client";
 import { prisma } from "@admin/prisma/client";
 import { privateProcedure } from "@admin/src/trpc";
 import { TRPCError } from "@trpc/server";
 import type { Breadcrumb } from "@admin/src/components/DataTable";
+import type { DefaultArgs } from "@prisma/client/runtime/library";
 
 export const getGroup = privateProcedure
 	.input(
@@ -14,20 +15,27 @@ export const getGroup = privateProcedure
 			.nullish(),
 	)
 	.query(async ({ input }) => {
+		const include = {
+			groups: true,
+			component_definitions: {
+				include: {
+					components: true,
+					field_definitions: {
+						orderBy: {
+							order: "asc",
+						},
+					},
+				},
+			},
+		} satisfies Prisma.ComponentDefinitionGroupInclude<DefaultArgs>;
+
 		// Get root group if no input is provided
 		if (!input) {
 			const group = await prisma.componentDefinitionGroup.findFirstOrThrow({
 				where: {
 					parent_group_id: null,
 				},
-				include: {
-					groups: true,
-					component_definitions: {
-						include: {
-							components: true,
-						},
-					},
-				},
+				include,
 			});
 
 			return {
@@ -40,14 +48,7 @@ export const getGroup = privateProcedure
 			where: {
 				id: input.id,
 			},
-			include: {
-				groups: true,
-				component_definitions: {
-					include: {
-						components: true,
-					},
-				},
-			},
+			include,
 		});
 		if (!group) {
 			throw new TRPCError({ code: "NOT_FOUND" });

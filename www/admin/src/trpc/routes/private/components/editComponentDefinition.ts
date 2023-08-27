@@ -9,13 +9,13 @@ export const editComponentDefinition = privateProcedure
 			id: z.string().cuid(),
 			newName: z.string().optional(),
 			newGroupId: z.string().cuid().optional(),
-			addFields: z
-				.array(ComponentFieldDefinitionSchema.pick({ name: true, type: true }))
+			addedFields: z
+				.array(ComponentFieldDefinitionSchema.pick({ name: true, type: true, order: true }))
 				.optional(),
-			updateFields: z
+			editedFields: z
 				.array(ComponentFieldDefinitionSchema.omit({ component_definition_id: true }))
 				.optional(),
-			deleteFields: z.array(z.string().cuid()).optional(),
+			deletedFieldIds: z.array(z.string().cuid()).optional(),
 		}),
 	)
 	.mutation(async ({ input }) => {
@@ -25,12 +25,12 @@ export const editComponentDefinition = privateProcedure
 				name: input.newName,
 				group_id: input.newGroupId,
 				field_definitions: {
-					create: input.addFields,
-					update: input.updateFields?.map((field) => ({
+					create: input.addedFields,
+					update: input.editedFields?.map((field) => ({
 						where: { id: field.id },
 						data: field,
 					})),
-					delete: input.deleteFields?.map((id) => ({ id })),
+					delete: input.deletedFieldIds?.map((id) => ({ id })),
 				},
 				last_update: new Date(),
 			},
