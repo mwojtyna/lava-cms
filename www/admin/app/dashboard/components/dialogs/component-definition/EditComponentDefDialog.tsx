@@ -121,7 +121,7 @@ export function EditComponentDefDialog(props: Props) {
 								<FormItem>
 									<FormLabel>Fields</FormLabel>
 									<FormControl>
-										<AddFieldDefs dialogType="edit" {...field} />
+										<AddFieldDefs anyEditing={anyEditing} {...field} />
 									</FormControl>
 									<FormError />
 								</FormItem>

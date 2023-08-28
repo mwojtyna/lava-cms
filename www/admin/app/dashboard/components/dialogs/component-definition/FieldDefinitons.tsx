@@ -48,7 +48,7 @@ import {
 } from "./shared";
 
 interface AddFieldDefsProps extends FormFieldProps<FieldDefinitionUI[]> {
-	dialogType: "add" | "edit";
+	anyEditing: boolean;
 }
 export const AddFieldDefs = React.forwardRef<React.ComponentRef<"div">, AddFieldDefsProps>(
 	(props, ref) => {
@@ -105,7 +105,7 @@ export const AddFieldDefs = React.forwardRef<React.ComponentRef<"div">, AddField
 
 				<Button
 					variant={"secondary"}
-					disabled={!form.formState.isValid}
+					disabled={!form.formState.isValid || props.anyEditing}
 					onClick={() => onSubmit(form.getValues())}
 				>
 					Add
