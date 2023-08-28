@@ -25,7 +25,7 @@ import { fieldDefinitionUISchema } from "./shared";
 
 const editComponentDefDialogInputsSchema = z.object({
 	name: z.string().nonempty({ message: " " }),
-	fields: z.array(fieldDefinitionUISchema.omit({ diff: true })),
+	fields: z.array(fieldDefinitionUISchema),
 });
 type EditComponentDefDialogInputs = z.infer<typeof editComponentDefDialogInputsSchema>;
 
@@ -45,10 +45,10 @@ export function EditComponentDefDialog(props: Props) {
 	const onSubmit: SubmitHandler<EditComponentDefDialogInputs> = (data) => {
 		const addedFields = data.fields
 			.map((f, i) => ({ ...f, order: i }))
-			.filter((f) => f.id === undefined);
+			.filter((f) => f.diff === "added");
 
 		const deletedFieldIds = originalFields
-			.filter((of) => !data.fields.find((f) => f.id === of.id))
+			.filter((of) => data.fields.find((f) => f.id === of.id && f.diff === "deleted"))
 			.map((of) => of.id);
 
 		const editedFields = data.fields
@@ -61,9 +61,7 @@ export function EditComponentDefDialog(props: Props) {
 			}))
 			.filter((f, fOrder) =>
 				originalFields.find(
-					(of) =>
-						f.id === of.id &&
-						(f.name !== of.name || f.type !== of.type || fOrder !== of.order),
+					(of) => f.id === of.id && (f.diff === "edited" || fOrder !== of.order),
 				),
 			);
 
@@ -86,7 +84,12 @@ export function EditComponentDefDialog(props: Props) {
 		if (props.open) {
 			form.reset({
 				name: props.componentDef.name,
-				fields: originalFields,
+				fields: originalFields.map((of) => ({
+					id: of.id,
+					name: of.name,
+					type: of.type,
+					diff: undefined,
+				})),
 			});
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps

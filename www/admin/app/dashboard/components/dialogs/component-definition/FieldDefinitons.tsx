@@ -150,7 +150,7 @@ export const FieldDefs = React.forwardRef<React.ComponentRef<"div">, FieldDefsPr
 			props.value.map((field) => {
 				if (field === before) {
 					if (props.dialogType === "edit") {
-						const original = props.originalFields.find((of) => of.id === field.id)!;
+						const original = props.originalFields.find((of) => of.id === after.id)!;
 						return original.name === after.name && original.type === after.type
 							? { ...after, diff: undefined }
 							: { ...after, diff: "edited" };
@@ -185,12 +185,28 @@ export const FieldDefs = React.forwardRef<React.ComponentRef<"div">, FieldDefsPr
 								? props.originalFields.find((of) => of.id === field.id)!
 								: undefined
 						}
-						onEditBegin={() => props.setAnyEditing(true)}
+						onEditToggle={(value) => props.setAnyEditing(value)}
 						onEditSubmit={onEditSubmit}
-						onEditCancel={() => props.setAnyEditing(false)}
 						onDelete={(toDelete) =>
-							props.onChange(props.value.filter((field) => field !== toDelete))
+							props.onChange(
+								props.dialogType === "add"
+									? props.value.filter((field) => field !== toDelete)
+									: props.value.map((field) =>
+											field === toDelete
+												? { ...field, diff: "deleted" }
+												: field,
+									  ),
+							)
 						}
+						onUnDelete={(toUnDelete) => {
+							props.onChange(
+								props.value.map((field) =>
+									field === toUnDelete ? { ...field, diff: undefined } : field,
+								),
+							);
+							// To preserve "edit" diff
+							onEditSubmit(toUnDelete, toUnDelete);
+						}}
 					/>
 				))}
 			</SortableContext>
@@ -201,18 +217,18 @@ export const FieldDefs = React.forwardRef<React.ComponentRef<"div">, FieldDefsPr
 });
 FieldDefs.displayName = "FieldDefs";
 
-interface FieldDefProps {
+type FieldDefProps = {
 	id: string;
 	field: FieldDefinitionUI;
 	anyEditing: boolean;
 	diff?: FieldDefinitionUI["diff"];
 	original?: ComponentFieldDefinition;
 
-	onEditBegin: () => void;
+	onEditToggle: (value: boolean) => void;
 	onEditSubmit: (beforeEdit: FieldDefinitionUI, afterEdit: FieldDefinitionUI) => void;
-	onEditCancel: () => void;
 	onDelete: (toDelete: FieldDefinitionUI) => void;
-}
+	onUnDelete?: (toUnDelete: FieldDefinitionUI) => void;
+};
 function FieldDef(props: FieldDefProps) {
 	const [isEditing, setIsEditing] = React.useState(false);
 	const form = useForm<FieldDefinitionUI>({
@@ -223,14 +239,9 @@ function FieldDef(props: FieldDefProps) {
 		props.onEditSubmit(props.field, data);
 		setIsEditing(false);
 	};
-	const diffColor: Record<NonNullable<typeof props.diff>, string> = {
-		added: "border-l-green-500",
-		edited: "border-l-yellow-500",
-		deleted: "border-l-red-500",
-	};
 	function cancel() {
 		setIsEditing(false);
-		props.onEditCancel();
+		props.onEditToggle(false);
 		form.reset();
 	}
 
@@ -240,12 +251,17 @@ function FieldDef(props: FieldDefProps) {
 		// or the list will reshuffle on drop
 		// https://github.com/clauderic/dnd-kit/issues/767#issuecomment-1140556346
 		animateLayoutChanges: () => false,
-		disabled: props.anyEditing,
+		disabled: props.anyEditing || props.diff === "deleted",
 	});
 	const style: React.CSSProperties = {
 		transform: CSS.Transform.toString(transform),
 		transition,
 		zIndex: isDragging ? 1 : undefined,
+	};
+	const diffStyle: Record<NonNullable<typeof props.diff>, string> = {
+		added: "border-l-green-500",
+		edited: "border-l-yellow-500",
+		deleted: "border-l-red-500",
 	};
 
 	return (
@@ -254,7 +270,7 @@ function FieldDef(props: FieldDefProps) {
 			style={style}
 			className={cn(
 				"group flex-row gap-4 md:p-3",
-				props.diff && `border-l-[3px] ${diffColor[props.diff]}`,
+				props.diff && `border-l-[3px] ${diffStyle[props.diff]}`,
 			)}
 		>
 			<div className="flex items-center gap-3">
@@ -262,7 +278,8 @@ function FieldDef(props: FieldDefProps) {
 					<IconGripVertical
 						className={cn(
 							"w-5 cursor-move text-muted-foreground",
-							props.anyEditing && "cursor-auto text-muted-foreground/50",
+							(props.anyEditing || props.diff === "deleted") &&
+								"cursor-auto text-muted-foreground/50",
 						)}
 					/>
 				</div>
@@ -330,51 +347,56 @@ function FieldDef(props: FieldDefProps) {
 					!isEditing && props.anyEditing && "pointer-events-none opacity-0",
 				)}
 			>
-				{!isEditing && props.diff === "edited" && (
+				{!isEditing && (props.diff === "edited" || props.diff === "deleted") && (
 					<ActionIcon
 						variant={"simple"}
 						className="mr-0.5"
-						onClick={() => props.onEditSubmit(props.field, props.original!)}
+						onClick={() => {
+							props.diff === "edited"
+								? props.onEditSubmit(props.field, props.original!)
+								: props.onUnDelete!(props.field);
+						}}
 					>
 						<ArrowUturnLeftIcon className="w-5" />
 					</ActionIcon>
 				)}
 
-				{isEditing ? (
-					<>
-						<ActionIcon
-							variant={"simple"}
-							onClick={() => form.handleSubmit(onSubmit)()}
-						>
-							<ArrowRightIcon className="w-5" />
-						</ActionIcon>
+				{props.diff !== "deleted" &&
+					(isEditing ? (
+						<>
+							<ActionIcon
+								variant={"simple"}
+								onClick={() => form.handleSubmit(onSubmit)()}
+							>
+								<ArrowRightIcon className="w-5" />
+							</ActionIcon>
 
-						<ActionIcon variant={"simple"} onClick={cancel}>
-							<XMarkIcon className="w-5" />
-						</ActionIcon>
-					</>
-				) : (
-					<>
-						<ActionIcon
-							variant={"simple"}
-							className={cn(isEditing && "text-foreground")}
-							onClick={() => {
-								setIsEditing(true);
-								props.onEditBegin();
-							}}
-						>
-							<PencilSquareIcon className="w-5" />
-						</ActionIcon>
+							<ActionIcon variant={"simple"} onClick={cancel}>
+								<XMarkIcon className="w-5" />
+							</ActionIcon>
+						</>
+					) : (
+						<>
+							<ActionIcon
+								variant={"simple"}
+								className={cn(isEditing && "text-foreground")}
+								onClick={() => {
+									setIsEditing(true);
+									props.onEditToggle(true);
+								}}
+							>
+								<PencilSquareIcon className="w-5" />
+							</ActionIcon>
 
-						<ActionIcon
-							variant={"simple"}
-							className="text-destructive/75 hover:text-destructive"
-							onClick={() => props.onDelete(props.field)}
-						>
-							<TrashIcon className="w-5" />
-						</ActionIcon>
-					</>
-				)}
+							<ActionIcon
+								variant={"simple"}
+								className="text-destructive/75 hover:text-destructive"
+								onClick={() => props.onDelete(props.field)}
+							>
+								<TrashIcon className="w-5" />
+							</ActionIcon>
+						</>
+					))}
 			</div>
 		</Card>
 	);
