@@ -1,10 +1,10 @@
 import * as React from "react";
 import { useForm, type SubmitHandler } from "react-hook-form";
-import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { IconGripVertical } from "@tabler/icons-react";
 import {
 	ArrowRightIcon,
+	ArrowUturnLeftIcon,
 	PencilSquareIcon,
 	TrashIcon,
 	XMarkIcon,
@@ -27,7 +27,7 @@ import {
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { restrictToParentElement } from "@dnd-kit/modifiers";
-import { ComponentFieldDefinitionSchema } from "@admin/prisma/generated/zod";
+import type { ComponentFieldDefinition } from "@prisma/client";
 import {
 	FormField,
 	FormItem,
@@ -40,83 +40,94 @@ import {
 } from "@admin/src/components/ui/client";
 import { Card, TypographyMuted } from "@admin/src/components/ui/server";
 import { cn } from "@admin/src/utils/styling";
-import { FieldTypePicker, fieldTypeMap } from "./shared";
+import {
+	FieldTypePicker,
+	fieldDefinitionUISchema,
+	fieldTypeMap,
+	type FieldDefinitionUI,
+} from "./shared";
 
-export const fieldDefinitionSchema = z.object({
-	name: z.string().nonempty(),
-	type: ComponentFieldDefinitionSchema.shape.type,
-});
-export type FieldDefinition = z.infer<typeof fieldDefinitionSchema>;
+interface AddFieldDefsProps extends FormFieldProps<FieldDefinitionUI[]> {
+	dialogType: "add" | "edit";
+}
+export const AddFieldDefs = React.forwardRef<React.ComponentRef<"div">, AddFieldDefsProps>(
+	(props, ref) => {
+		const form = useForm<FieldDefinitionUI>({
+			resolver: zodResolver(fieldDefinitionUISchema.omit({ id: true, diff: true })),
+		});
+		const onSubmit: SubmitHandler<FieldDefinitionUI> = (data) => {
+			props.onChange([...props.value, { ...data, diff: "added" }]);
+		};
 
-export const AddFieldDefs = React.forwardRef<
-	React.ComponentRef<"div">,
-	FormFieldProps<FieldDefinition[]>
->((props, ref) => {
-	const form = useForm<FieldDefinition>({
-		resolver: zodResolver(fieldDefinitionSchema),
-	});
-	const onSubmit: SubmitHandler<FieldDefinition> = (data) => {
-		props.onChange([...props.value, data]);
-	};
+		return (
+			<div ref={ref} className="flex gap-2">
+				<div className="grid grid-cols-2">
+					<FormField
+						control={form.control}
+						name="name"
+						render={({ field }) => (
+							<FormItem>
+								<FormControl>
+									<Input
+										inputClassName="rounded-r-none"
+										placeholder="Name"
+										onKeyDown={async (e) => {
+											if (e.key === "Enter") {
+												e.preventDefault();
+												await form.handleSubmit(onSubmit)();
+											}
+										}}
+										aria-required
+										{...field}
+									/>
+								</FormControl>
+								<FormError />
+							</FormItem>
+						)}
+					/>
 
-	return (
-		<div ref={ref} className="flex gap-2">
-			<div className="grid grid-cols-2">
-				<FormField
-					control={form.control}
-					name="name"
-					render={({ field }) => (
-						<FormItem>
-							<FormControl>
-								<Input
-									inputClassName="rounded-r-none"
-									placeholder="Name"
-									onKeyDown={async (e) => {
-										if (e.key === "Enter") {
-											e.preventDefault();
-											await form.handleSubmit(onSubmit)();
-										}
-									}}
-									aria-required
-									{...field}
-								/>
-							</FormControl>
-							<FormError />
-						</FormItem>
-					)}
-				/>
+					<FormField
+						control={form.control}
+						name="type"
+						render={({ field }) => (
+							<FormItem>
+								<FormControl>
+									<FieldTypePicker
+										className="rounded-l-none border-l-0"
+										{...field}
+									/>
+								</FormControl>
+								<FormError />
+							</FormItem>
+						)}
+					/>
+				</div>
 
-				<FormField
-					control={form.control}
-					name="type"
-					render={({ field }) => (
-						<FormItem>
-							<FormControl>
-								<FieldTypePicker className="rounded-l-none border-l-0" {...field} />
-							</FormControl>
-							<FormError />
-						</FormItem>
-					)}
-				/>
+				<Button
+					variant={"secondary"}
+					disabled={!form.formState.isValid}
+					onClick={() => onSubmit(form.getValues())}
+				>
+					Add
+				</Button>
 			</div>
-
-			<Button
-				variant={"secondary"}
-				disabled={!form.formState.isValid}
-				onClick={() => onSubmit(form.getValues())}
-			>
-				Add
-			</Button>
-		</div>
-	);
-});
+		);
+	},
+);
 AddFieldDefs.displayName = "AddFieldDefs";
 
-interface FieldDefsProps extends FormFieldProps<FieldDefinition[]> {
-	dialogType: "add" | "edit";
+type FieldDefsProps = FormFieldProps<FieldDefinitionUI[]> & {
 	anyEditing: boolean;
 	setAnyEditing: (value: boolean) => void;
-}
+} & (
+		| {
+				dialogType: "add";
+		  }
+		| {
+				dialogType: "edit";
+				originalFields: ComponentFieldDefinition[];
+		  }
+	);
 export const FieldDefs = React.forwardRef<React.ComponentRef<"div">, FieldDefsProps>((props, _) => {
 	const ids: string[] = React.useMemo(
 		() => props.value.map((_, i) => i.toString()),
@@ -134,6 +145,25 @@ export const FieldDefs = React.forwardRef<React.ComponentRef<"div">, FieldDefsPr
 			props.onChange(arrayMove(props.value, Number(active.id), Number(over.id)));
 		}
 	}
+	function onEditSubmit(before: FieldDefinitionUI, after: FieldDefinitionUI) {
+		props.onChange(
+			props.value.map((field) => {
+				if (field === before) {
+					if (props.dialogType === "edit") {
+						const original = props.originalFields.find((of) => of.id === field.id)!;
+						return original.name === after.name && original.type === after.type
+							? { ...after, diff: undefined }
+							: { ...after, diff: "edited" };
+					} else {
+						return after;
+					}
+				} else {
+					return field;
+				}
+			}),
+		);
+		props.setAnyEditing(false);
+	}
 
 	return props.value.length > 0 ? (
 		<DndContext
@@ -149,13 +179,14 @@ export const FieldDefs = React.forwardRef<React.ComponentRef<"div">, FieldDefsPr
 						id={i.toString()}
 						field={field}
 						anyEditing={props.anyEditing}
+						diff={props.dialogType === "edit" ? field.diff : undefined}
+						original={
+							props.dialogType === "edit"
+								? props.originalFields.find((of) => of.id === field.id)!
+								: undefined
+						}
 						onEditBegin={() => props.setAnyEditing(true)}
-						onEditSubmit={(before, after) => {
-							props.onChange(
-								props.value.map((field) => (field === before ? after : field)),
-							);
-							props.setAnyEditing(false);
-						}}
+						onEditSubmit={onEditSubmit}
 						onEditCancel={() => props.setAnyEditing(false)}
 						onDelete={(toDelete) =>
 							props.onChange(props.value.filter((field) => field !== toDelete))
@@ -172,23 +203,36 @@ FieldDefs.displayName = "FieldDefs";
 
 interface FieldDefProps {
 	id: string;
-	field: FieldDefinition;
+	field: FieldDefinitionUI;
 	anyEditing: boolean;
+	diff?: FieldDefinitionUI["diff"];
+	original?: ComponentFieldDefinition;
+
 	onEditBegin: () => void;
-	onEditSubmit: (beforeEdit: FieldDefinition, afterEdit: FieldDefinition) => void;
+	onEditSubmit: (beforeEdit: FieldDefinitionUI, afterEdit: FieldDefinitionUI) => void;
 	onEditCancel: () => void;
-	onDelete: (toDelete: FieldDefinition) => void;
+	onDelete: (toDelete: FieldDefinitionUI) => void;
 }
 function FieldDef(props: FieldDefProps) {
 	const [isEditing, setIsEditing] = React.useState(false);
-	const form = useForm<FieldDefinition>({
+	const form = useForm<FieldDefinitionUI>({
 		// Must set `values` instead of `defaultValues` because after reordering, the old values were kept
 		values: props.field,
 	});
-	const onSubmit: SubmitHandler<FieldDefinition> = (data) => {
+	const onSubmit: SubmitHandler<FieldDefinitionUI> = (data) => {
 		props.onEditSubmit(props.field, data);
 		setIsEditing(false);
 	};
+	const diffColor: Record<NonNullable<typeof props.diff>, string> = {
+		added: "border-l-green-500",
+		edited: "border-l-yellow-500",
+		deleted: "border-l-red-500",
+	};
+	function cancel() {
+		setIsEditing(false);
+		props.onEditCancel();
+		form.reset();
+	}
 
 	const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
 		id: props.id,
@@ -203,14 +247,16 @@ function FieldDef(props: FieldDefProps) {
 		transition,
 		zIndex: isDragging ? 1 : undefined,
 	};
-	function cancel() {
-		setIsEditing(false);
-		props.onEditCancel();
-		form.reset();
-	}
 
 	return (
-		<Card ref={setNodeRef} style={style} className={cn("group flex-row gap-4 md:p-3")}>
+		<Card
+			ref={setNodeRef}
+			style={style}
+			className={cn(
+				"group flex-row gap-4 md:p-3",
+				props.diff && `border-l-[3px] ${diffColor[props.diff]}`,
+			)}
+		>
 			<div className="flex items-center gap-3">
 				<div {...attributes} {...listeners}>
 					<IconGripVertical
@@ -284,6 +330,16 @@ function FieldDef(props: FieldDefProps) {
 					!isEditing && props.anyEditing && "pointer-events-none opacity-0",
 				)}
 			>
+				{!isEditing && props.diff === "edited" && (
+					<ActionIcon
+						variant={"simple"}
+						className="mr-0.5"
+						onClick={() => props.onEditSubmit(props.field, props.original!)}
+					>
+						<ArrowUturnLeftIcon className="w-5" />
+					</ActionIcon>
+				)}
+
 				{isEditing ? (
 					<>
 						<ActionIcon

@@ -1,9 +1,13 @@
 import * as React from "react";
 import { Combobox, type ComboboxData } from "@admin/src/components";
 import { ComponentFieldType } from "@prisma/client";
-import type { ComponentFieldTypeType } from "@admin/prisma/generated/zod";
+import {
+	ComponentFieldDefinitionSchema,
+	type ComponentFieldTypeType,
+} from "@admin/prisma/generated/zod";
 import { cn } from "@admin/src/utils/styling";
 import type { FormFieldProps } from "@admin/src/components/ui/client";
+import { z } from "zod";
 
 export const fieldTypeMap: Record<string, string> = Object.values(ComponentFieldType).reduce(
 	(acc, type) => {
@@ -54,3 +58,11 @@ export const FieldTypePicker = React.forwardRef<
 	);
 });
 FieldTypePicker.displayName = "FieldTypePicker";
+
+export const fieldDefinitionUISchema = z.object({
+	id: z.string().cuid().optional(),
+	name: z.string().nonempty(),
+	type: ComponentFieldDefinitionSchema.shape.type,
+	diff: z.union([z.literal("added"), z.literal("deleted"), z.literal("edited")]).optional(),
+});
+export type FieldDefinitionUI = z.infer<typeof fieldDefinitionUISchema>;

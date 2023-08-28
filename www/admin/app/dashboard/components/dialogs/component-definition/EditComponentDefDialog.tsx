@@ -19,19 +19,13 @@ import { useForm, type SubmitHandler } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { PencilSquareIcon } from "@heroicons/react/24/outline";
-import { AddFieldDefs, FieldDefs, fieldDefinitionSchema } from "./FieldDefinitons";
+import { AddFieldDefs, FieldDefs } from "./FieldDefinitons";
 import type { ComponentsTableItem } from "../../ComponentsTable";
+import { fieldDefinitionUISchema } from "./shared";
 
 const editComponentDefDialogInputsSchema = z.object({
 	name: z.string().nonempty({ message: " " }),
-	fields: z.array(
-		fieldDefinitionSchema.merge(
-			z.object({
-				// `optional`, because the field could be new and without id assigned by the db
-				id: z.string().cuid().optional(),
-			}),
-		),
-	),
+	fields: z.array(fieldDefinitionUISchema.omit({ diff: true })),
 });
 type EditComponentDefDialogInputs = z.infer<typeof editComponentDefDialogInputsSchema>;
 
@@ -127,7 +121,7 @@ export function EditComponentDefDialog(props: Props) {
 								<FormItem>
 									<FormLabel>Fields</FormLabel>
 									<FormControl>
-										<AddFieldDefs {...field} />
+										<AddFieldDefs dialogType="edit" {...field} />
 									</FormControl>
 									<FormError />
 								</FormItem>
@@ -144,6 +138,7 @@ export function EditComponentDefDialog(props: Props) {
 											dialogType="edit"
 											anyEditing={anyEditing}
 											setAnyEditing={setAnyEditing}
+											originalFields={originalFields}
 											{...field}
 										/>
 									</FormControl>

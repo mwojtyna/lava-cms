@@ -20,11 +20,12 @@ import { useForm, type SubmitHandler } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { CubeIcon } from "@heroicons/react/24/outline";
-import { AddFieldDefs, FieldDefs, fieldDefinitionSchema } from "./FieldDefinitons";
+import { AddFieldDefs, FieldDefs } from "./FieldDefinitons";
+import { fieldDefinitionUISchema } from "./shared";
 
 const addComponentDefDialogInputsSchema = z.object({
 	name: z.string().nonempty({ message: " " }),
-	fields: z.array(fieldDefinitionSchema),
+	fields: z.array(fieldDefinitionUISchema.omit({ id: true, diff: true })),
 });
 type AddComponentDefDialogInputs = z.infer<typeof addComponentDefDialogInputsSchema>;
 
@@ -35,6 +36,7 @@ interface Props {
 }
 export function AddComponentDefDialog(props: Props) {
 	const mutation = trpc.components.addComponentDefinition.useMutation();
+	const [anyEditing, setAnyEditing] = React.useState(false);
 
 	const form = useForm<AddComponentDefDialogInputs>({
 		resolver: zodResolver(addComponentDefDialogInputsSchema),
@@ -44,7 +46,7 @@ export function AddComponentDefDialog(props: Props) {
 		mutation.mutate(
 			{
 				name: data.name,
-				fields: data.fields,
+				fields: data.fields.map((f) => ({ name: f.name, type: f.type })),
 				groupId: props.group.id,
 			},
 			{
@@ -82,7 +84,7 @@ export function AddComponentDefDialog(props: Props) {
 								<FormItem>
 									<FormLabel>Fields</FormLabel>
 									<FormControl>
-										<AddFieldDefs {...field} />
+										<AddFieldDefs dialogType="add" {...field} />
 									</FormControl>
 									<FormError />
 								</FormItem>
@@ -95,7 +97,12 @@ export function AddComponentDefDialog(props: Props) {
 							render={({ field }) => (
 								<FormItem className="max-h-[50vh] overflow-auto">
 									<FormControl>
-										<FieldDefs dialogType="add" {...field} />
+										<FieldDefs
+											dialogType="add"
+											anyEditing={anyEditing}
+											setAnyEditing={setAnyEditing}
+											{...field}
+										/>
 									</FormControl>
 								</FormItem>
 							)}
@@ -104,6 +111,7 @@ export function AddComponentDefDialog(props: Props) {
 						<DialogFooter>
 							<Button
 								type="submit"
+								disabled={anyEditing}
 								loading={mutation.isLoading}
 								icon={<CubeIcon className="w-5" />}
 							>
