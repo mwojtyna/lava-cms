@@ -166,14 +166,26 @@ export const FieldDefs = React.forwardRef<React.ComponentRef<"div">, FieldDefsPr
 		props.setAnyEditing(false);
 	}
 	function onDelete(toDelete: FieldDefinitionUI) {
-		const fields: FieldDefinitionUI[] =
-			props.dialogType === "add"
-				? props.value.filter((field) => field !== toDelete)
-				: props.value.map((field) =>
-						field === toDelete
-							? { ...field, diffs: [...(toDelete.diffs ?? []), "deleted"] }
-							: field,
-				  );
+		let fields: FieldDefinitionUI[] = [];
+
+		if (props.dialogType === "add") {
+			fields = props.value.filter((field) => field !== toDelete);
+		} else if (props.dialogType === "edit") {
+			if (toDelete.diffs && toDelete.diffs.at(-1) === "added") {
+				fields = props.value.filter((field) => field !== toDelete);
+			} else {
+				fields = props.value.map((field) => {
+					if (field !== toDelete) {
+						return field;
+					}
+					return {
+						...field,
+						diffs: [...(toDelete.diffs ?? []), "deleted"],
+					};
+				});
+			}
+		}
+
 		props.onChange(fields);
 	}
 	function onUnDelete(toUnDelete: FieldDefinitionUI) {
@@ -196,23 +208,31 @@ export const FieldDefs = React.forwardRef<React.ComponentRef<"div">, FieldDefsPr
 			onDragEnd={reorder}
 		>
 			<SortableContext items={ids} strategy={verticalListSortingStrategy}>
-				{props.value.map((field, i) => (
-					<FieldDef
-						key={i}
-						id={i.toString()}
-						field={field}
-						anyEditing={props.anyEditing}
-						original={
-							props.dialogType === "edit"
-								? props.originalFields.find((of) => of.id === field.id)!
-								: undefined
-						}
-						onEditToggle={(value) => props.setAnyEditing(value)}
-						onEditSubmit={onEditSubmit}
-						onDelete={onDelete}
-						onUnDelete={props.dialogType === "edit" ? onUnDelete : undefined}
-					/>
-				))}
+				{props.value.map((field, i) => {
+					const sharedProps: Omit<
+						Extract<FieldDefProps, { dialogType: "add" }>,
+						"dialogType"
+					> = {
+						id: i.toString(),
+						field,
+						anyEditing: props.anyEditing,
+						onEditToggle: (value) => props.setAnyEditing(value),
+						onEditSubmit,
+						onDelete,
+					};
+
+					return props.dialogType === "add" ? (
+						<FieldDef key={i} dialogType={props.dialogType} {...sharedProps} />
+					) : (
+						<FieldDef
+							key={i}
+							dialogType={props.dialogType}
+							{...sharedProps}
+							original={props.originalFields.find((of) => of.id === field.id)!}
+							onUnDelete={onUnDelete}
+						/>
+					);
+				})}
 			</SortableContext>
 		</DndContext>
 	) : (
@@ -225,13 +245,20 @@ type FieldDefProps = {
 	id: string;
 	field: FieldDefinitionUI;
 	anyEditing: boolean;
-	original?: ComponentFieldDefinition;
 
 	onEditToggle: (value: boolean) => void;
 	onEditSubmit: (beforeEdit: FieldDefinitionUI, afterEdit: FieldDefinitionUI) => void;
 	onDelete: (toDelete: FieldDefinitionUI) => void;
-	onUnDelete?: (toUnDelete: FieldDefinitionUI) => void;
-};
+} & (
+	| {
+			dialogType: "add";
+	  }
+	| {
+			dialogType: "edit";
+			original: ComponentFieldDefinition;
+			onUnDelete: (toUnDelete: FieldDefinitionUI) => void;
+	  }
+);
 function FieldDef(props: FieldDefProps) {
 	const [isEditing, setIsEditing] = React.useState(false);
 	const form = useForm<FieldDefinitionUI>({
@@ -274,7 +301,7 @@ function FieldDef(props: FieldDefProps) {
 			style={style}
 			className={cn(
 				"group flex-row gap-4 md:p-3",
-				lastDiff && `border-l-[3px] ${diffStyle[lastDiff]}`,
+				props.dialogType === "edit" && lastDiff && `border-l-[3px] ${diffStyle[lastDiff]}`,
 			)}
 		>
 			<div className="flex items-center gap-3">
@@ -351,19 +378,21 @@ function FieldDef(props: FieldDefProps) {
 					!isEditing && props.anyEditing && "pointer-events-none opacity-0",
 				)}
 			>
-				{!isEditing && (lastDiff === "edited" || lastDiff === "deleted") && (
-					<ActionIcon
-						variant={"simple"}
-						className="mr-0.5"
-						onClick={() => {
-							lastDiff === "edited"
-								? props.onEditSubmit(props.field, props.original!)
-								: props.onUnDelete!(props.field);
-						}}
-					>
-						<ArrowUturnLeftIcon className="w-5" />
-					</ActionIcon>
-				)}
+				{props.dialogType === "edit" &&
+					!isEditing &&
+					(lastDiff === "edited" || lastDiff === "deleted") && (
+						<ActionIcon
+							variant={"simple"}
+							className="mr-0.5"
+							onClick={() => {
+								lastDiff === "edited"
+									? props.onEditSubmit(props.field, props.original)
+									: props.onUnDelete(props.field);
+							}}
+						>
+							<ArrowUturnLeftIcon className="w-5" />
+						</ActionIcon>
+					)}
 
 				{lastDiff !== "deleted" &&
 					(isEditing ? (

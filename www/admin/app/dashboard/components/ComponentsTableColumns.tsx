@@ -63,16 +63,16 @@ export const columns: ColumnDef<ComponentsTableItem>[] = [
 						<CubeIcon className="w-5 text-muted-foreground" />
 					)}
 					<Button variant={"link"} className="font-normal" asChild>
-						<Link
-							href={
-								row.original.isGroup
-									? `/dashboard/components/${row.original.id}`
-									: // TODO: Open an edit dialog
-									  `https://www.youtube.com/watch?v=dQw4w9WgXcQ`
-							}
-						>
-							{row.original.name}
-						</Link>
+						{row.original.isGroup ? (
+							<Link href={`/dashboard/components/${row.original.id}`}>
+								{row.original.name}
+							</Link>
+						) : (
+							// TODO: Open edit dialog
+							<Button variant={"link"} className="font-normal">
+								{row.original.name}
+							</Button>
+						)}
 					</Button>
 				</div>
 			);
