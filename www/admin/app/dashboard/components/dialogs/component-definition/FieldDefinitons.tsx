@@ -150,14 +150,14 @@ export const FieldDefs = React.forwardRef<React.ComponentRef<"div">, FieldDefsPr
 		const fields: FieldDefinitionUI[] = props.value.map((field) => {
 			if (field === before) {
 				// Don't add any diff info in add dialog or when added a field in edit dialog
-				if (props.dialogType === "add" || before.diffs?.at(-1) === "added") {
+				if (props.dialogType === "add" || before.diffs.at(-1) === "added") {
 					return after;
 				}
 
 				const original = props.originalFields.find((of) => of.id === after.id)!;
-				return original.name === after.name && original.type === after.type
-					? { ...after, diffs: undefined }
-					: { ...after, diffs: [...(after.diffs ?? []), "edited"] };
+				return after.name === original.name && after.type === original.type
+					? { ...after, diffs: [] }
+					: { ...after, diffs: [...after.diffs, "edited"] };
 			} else {
 				return field;
 			}
@@ -171,7 +171,7 @@ export const FieldDefs = React.forwardRef<React.ComponentRef<"div">, FieldDefsPr
 		if (props.dialogType === "add") {
 			fields = props.value.filter((field) => field !== toDelete);
 		} else if (props.dialogType === "edit") {
-			if (toDelete.diffs && toDelete.diffs.at(-1) === "added") {
+			if (toDelete.diffs.at(-1) === "added") {
 				fields = props.value.filter((field) => field !== toDelete);
 			} else {
 				fields = props.value.map((field) => {
@@ -180,7 +180,7 @@ export const FieldDefs = React.forwardRef<React.ComponentRef<"div">, FieldDefsPr
 					}
 					return {
 						...field,
-						diffs: [...(toDelete.diffs ?? []), "deleted"],
+						diffs: [...toDelete.diffs, "deleted"],
 					};
 				});
 			}
@@ -193,7 +193,7 @@ export const FieldDefs = React.forwardRef<React.ComponentRef<"div">, FieldDefsPr
 			field === toUnDelete
 				? {
 						...field,
-						diffs: toUnDelete.diffs?.filter((diff) => diff !== "deleted"),
+						diffs: toUnDelete.diffs.filter((diff) => diff !== "deleted"),
 				  }
 				: field,
 		);
@@ -281,7 +281,7 @@ function FieldDef(props: FieldDefProps) {
 		// or the list will reshuffle on drop
 		// https://github.com/clauderic/dnd-kit/issues/767#issuecomment-1140556346
 		animateLayoutChanges: () => false,
-		disabled: props.anyEditing || props.field.diffs?.at(-1) === "deleted",
+		disabled: props.anyEditing || props.field.diffs.at(-1) === "deleted",
 	});
 	const style: React.CSSProperties = {
 		transform: CSS.Transform.toString(transform),
@@ -293,7 +293,7 @@ function FieldDef(props: FieldDefProps) {
 		edited: "border-l-yellow-500",
 		deleted: "border-l-red-500",
 	};
-	const lastDiff = props.field.diffs?.at(-1);
+	const lastDiff = props.field.diffs.at(-1);
 
 	return (
 		<Card
@@ -386,7 +386,10 @@ function FieldDef(props: FieldDefProps) {
 							className="mr-0.5"
 							onClick={() => {
 								lastDiff === "edited"
-									? props.onEditSubmit(props.field, props.original)
+									? props.onEditSubmit(props.field, {
+											...props.original,
+											diffs: [],
+									  })
 									: props.onUnDelete(props.field);
 							}}
 						>

@@ -25,7 +25,8 @@ import { fieldDefinitionUISchema } from "./shared";
 
 const addComponentDefDialogInputsSchema = z.object({
 	name: z.string().nonempty({ message: " " }),
-	fields: z.array(fieldDefinitionUISchema.omit({ id: true, diffs: true })),
+	// Omitting id because it's not available when adding a new component definition
+	fields: z.array(fieldDefinitionUISchema.omit({ id: true })),
 });
 type AddComponentDefDialogInputs = z.infer<typeof addComponentDefDialogInputsSchema>;
 

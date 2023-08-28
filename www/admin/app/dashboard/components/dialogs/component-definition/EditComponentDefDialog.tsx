@@ -45,25 +45,23 @@ export function EditComponentDefDialog(props: Props) {
 	const onSubmit: SubmitHandler<EditComponentDefDialogInputs> = (data) => {
 		const addedFields = data.fields
 			.map((f, i) => ({ ...f, order: i }))
-			.filter((f) => f.diffs?.at(-1) === "added");
+			.filter((f) => f.diffs.at(-1) === "added");
 
 		const deletedFieldIds = originalFields
-			.filter((of) =>
-				data.fields.find((f) => f.id === of.id && f.diffs?.at(-1) === "deleted"),
-			)
+			.filter((of) => data.fields.find((f) => f.id === of.id && f.diffs.at(-1) === "deleted"))
 			.map((of) => of.id);
 
 		const editedFields = data.fields
 			.map((ef, i) => ({
 				...ef,
 				// We know for a fact that `editedFields` contains fields that are
-				// already in the db, thus having the `id` property for certain
+				// already in the db, so they have the `id` property for sure
 				id: ef.id!,
 				order: i,
 			}))
 			.filter((f, fOrder) =>
 				originalFields.find(
-					(of) => f.id === of.id && (f.diffs?.at(-1) === "edited" || fOrder !== of.order),
+					(of) => f.id === of.id && (f.diffs.at(-1) === "edited" || fOrder !== of.order),
 				),
 			);
 
@@ -92,7 +90,7 @@ export function EditComponentDefDialog(props: Props) {
 							id: of.id,
 							name: of.name,
 							type: of.type,
-							diffs: undefined,
+							diffs: [],
 						}) satisfies FieldDefinitionUI,
 				),
 			});
