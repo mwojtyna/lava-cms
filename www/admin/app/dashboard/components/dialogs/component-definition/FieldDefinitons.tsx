@@ -53,10 +53,10 @@ interface AddFieldDefsProps extends FormFieldProps<FieldDefinitionUI[]> {
 export const AddFieldDefs = React.forwardRef<React.ComponentRef<"div">, AddFieldDefsProps>(
 	(props, ref) => {
 		const form = useForm<FieldDefinitionUI>({
-			resolver: zodResolver(fieldDefinitionUISchema.omit({ id: true, diff: true })),
+			resolver: zodResolver(fieldDefinitionUISchema.omit({ id: true, diffs: true })),
 		});
 		const onSubmit: SubmitHandler<FieldDefinitionUI> = (data) => {
-			props.onChange([...props.value, { ...data, diff: "added" }]);
+			props.onChange([...props.value, { ...data, diffs: ["added"] }]);
 		};
 
 		return (
@@ -145,24 +145,47 @@ export const FieldDefs = React.forwardRef<React.ComponentRef<"div">, FieldDefsPr
 			props.onChange(arrayMove(props.value, Number(active.id), Number(over.id)));
 		}
 	}
+
 	function onEditSubmit(before: FieldDefinitionUI, after: FieldDefinitionUI) {
-		props.onChange(
-			props.value.map((field) => {
-				if (field === before) {
-					if (props.dialogType === "edit") {
-						const original = props.originalFields.find((of) => of.id === after.id)!;
-						return original.name === after.name && original.type === after.type
-							? { ...after, diff: undefined }
-							: { ...after, diff: "edited" };
-					} else {
-						return after;
-					}
-				} else {
-					return field;
+		const fields: FieldDefinitionUI[] = props.value.map((field) => {
+			if (field === before) {
+				// Don't add any diff info in add dialog or when added a field in edit dialog
+				if (props.dialogType === "add" || before.diffs?.at(-1) === "added") {
+					return after;
 				}
-			}),
-		);
+
+				const original = props.originalFields.find((of) => of.id === after.id)!;
+				return original.name === after.name && original.type === after.type
+					? { ...after, diffs: undefined }
+					: { ...after, diffs: [...(after.diffs ?? []), "edited"] };
+			} else {
+				return field;
+			}
+		});
+		props.onChange(fields);
 		props.setAnyEditing(false);
+	}
+	function onDelete(toDelete: FieldDefinitionUI) {
+		const fields: FieldDefinitionUI[] =
+			props.dialogType === "add"
+				? props.value.filter((field) => field !== toDelete)
+				: props.value.map((field) =>
+						field === toDelete
+							? { ...field, diffs: [...(toDelete.diffs ?? []), "deleted"] }
+							: field,
+				  );
+		props.onChange(fields);
+	}
+	function onUnDelete(toUnDelete: FieldDefinitionUI) {
+		const fields: FieldDefinitionUI[] = props.value.map((field) =>
+			field === toUnDelete
+				? {
+						...field,
+						diffs: toUnDelete.diffs?.filter((diff) => diff !== "deleted"),
+				  }
+				: field,
+		);
+		props.onChange(fields);
 	}
 
 	return props.value.length > 0 ? (
@@ -179,7 +202,6 @@ export const FieldDefs = React.forwardRef<React.ComponentRef<"div">, FieldDefsPr
 						id={i.toString()}
 						field={field}
 						anyEditing={props.anyEditing}
-						diff={props.dialogType === "edit" ? field.diff : undefined}
 						original={
 							props.dialogType === "edit"
 								? props.originalFields.find((of) => of.id === field.id)!
@@ -187,26 +209,8 @@ export const FieldDefs = React.forwardRef<React.ComponentRef<"div">, FieldDefsPr
 						}
 						onEditToggle={(value) => props.setAnyEditing(value)}
 						onEditSubmit={onEditSubmit}
-						onDelete={(toDelete) =>
-							props.onChange(
-								props.dialogType === "add"
-									? props.value.filter((field) => field !== toDelete)
-									: props.value.map((field) =>
-											field === toDelete
-												? { ...field, diff: "deleted" }
-												: field,
-									  ),
-							)
-						}
-						onUnDelete={(toUnDelete) => {
-							props.onChange(
-								props.value.map((field) =>
-									field === toUnDelete ? { ...field, diff: undefined } : field,
-								),
-							);
-							// To preserve "edit" diff
-							onEditSubmit(toUnDelete, toUnDelete);
-						}}
+						onDelete={onDelete}
+						onUnDelete={props.dialogType === "edit" ? onUnDelete : undefined}
 					/>
 				))}
 			</SortableContext>
@@ -221,7 +225,6 @@ type FieldDefProps = {
 	id: string;
 	field: FieldDefinitionUI;
 	anyEditing: boolean;
-	diff?: FieldDefinitionUI["diff"];
 	original?: ComponentFieldDefinition;
 
 	onEditToggle: (value: boolean) => void;
@@ -251,18 +254,19 @@ function FieldDef(props: FieldDefProps) {
 		// or the list will reshuffle on drop
 		// https://github.com/clauderic/dnd-kit/issues/767#issuecomment-1140556346
 		animateLayoutChanges: () => false,
-		disabled: props.anyEditing || props.diff === "deleted",
+		disabled: props.anyEditing || props.field.diffs?.at(-1) === "deleted",
 	});
 	const style: React.CSSProperties = {
 		transform: CSS.Transform.toString(transform),
 		transition,
 		zIndex: isDragging ? 1 : undefined,
 	};
-	const diffStyle: Record<NonNullable<typeof props.diff>, string> = {
+	const diffStyle: Record<NonNullable<FieldDefinitionUI["diffs"]>[number], string> = {
 		added: "border-l-green-500",
 		edited: "border-l-yellow-500",
 		deleted: "border-l-red-500",
 	};
+	const lastDiff = props.field.diffs?.at(-1);
 
 	return (
 		<Card
@@ -270,7 +274,7 @@ function FieldDef(props: FieldDefProps) {
 			style={style}
 			className={cn(
 				"group flex-row gap-4 md:p-3",
-				props.diff && `border-l-[3px] ${diffStyle[props.diff]}`,
+				lastDiff && `border-l-[3px] ${diffStyle[lastDiff]}`,
 			)}
 		>
 			<div className="flex items-center gap-3">
@@ -278,7 +282,7 @@ function FieldDef(props: FieldDefProps) {
 					<IconGripVertical
 						className={cn(
 							"w-5 cursor-move text-muted-foreground",
-							(props.anyEditing || props.diff === "deleted") &&
+							(props.anyEditing || lastDiff === "deleted") &&
 								"cursor-auto text-muted-foreground/50",
 						)}
 					/>
@@ -347,12 +351,12 @@ function FieldDef(props: FieldDefProps) {
 					!isEditing && props.anyEditing && "pointer-events-none opacity-0",
 				)}
 			>
-				{!isEditing && (props.diff === "edited" || props.diff === "deleted") && (
+				{!isEditing && (lastDiff === "edited" || lastDiff === "deleted") && (
 					<ActionIcon
 						variant={"simple"}
 						className="mr-0.5"
 						onClick={() => {
-							props.diff === "edited"
+							lastDiff === "edited"
 								? props.onEditSubmit(props.field, props.original!)
 								: props.onUnDelete!(props.field);
 						}}
@@ -361,7 +365,7 @@ function FieldDef(props: FieldDefProps) {
 					</ActionIcon>
 				)}
 
-				{props.diff !== "deleted" &&
+				{lastDiff !== "deleted" &&
 					(isEditing ? (
 						<>
 							<ActionIcon

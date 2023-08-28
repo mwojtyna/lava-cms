@@ -21,7 +21,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { PencilSquareIcon } from "@heroicons/react/24/outline";
 import { AddFieldDefs, FieldDefs } from "./FieldDefinitons";
 import type { ComponentsTableItem } from "../../ComponentsTable";
-import { fieldDefinitionUISchema } from "./shared";
+import { fieldDefinitionUISchema, type FieldDefinitionUI } from "./shared";
 
 const editComponentDefDialogInputsSchema = z.object({
 	name: z.string().nonempty({ message: " " }),
@@ -45,10 +45,12 @@ export function EditComponentDefDialog(props: Props) {
 	const onSubmit: SubmitHandler<EditComponentDefDialogInputs> = (data) => {
 		const addedFields = data.fields
 			.map((f, i) => ({ ...f, order: i }))
-			.filter((f) => f.diff === "added");
+			.filter((f) => f.diffs?.at(-1) === "added");
 
 		const deletedFieldIds = originalFields
-			.filter((of) => data.fields.find((f) => f.id === of.id && f.diff === "deleted"))
+			.filter((of) =>
+				data.fields.find((f) => f.id === of.id && f.diffs?.at(-1) === "deleted"),
+			)
 			.map((of) => of.id);
 
 		const editedFields = data.fields
@@ -61,7 +63,7 @@ export function EditComponentDefDialog(props: Props) {
 			}))
 			.filter((f, fOrder) =>
 				originalFields.find(
-					(of) => f.id === of.id && (f.diff === "edited" || fOrder !== of.order),
+					(of) => f.id === of.id && (f.diffs?.at(-1) === "edited" || fOrder !== of.order),
 				),
 			);
 
@@ -84,12 +86,15 @@ export function EditComponentDefDialog(props: Props) {
 		if (props.open) {
 			form.reset({
 				name: props.componentDef.name,
-				fields: originalFields.map((of) => ({
-					id: of.id,
-					name: of.name,
-					type: of.type,
-					diff: undefined,
-				})),
+				fields: originalFields.map(
+					(of) =>
+						({
+							id: of.id,
+							name: of.name,
+							type: of.type,
+							diffs: undefined,
+						}) satisfies FieldDefinitionUI,
+				),
 			});
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps

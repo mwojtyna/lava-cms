@@ -25,7 +25,7 @@ import { fieldDefinitionUISchema } from "./shared";
 
 const addComponentDefDialogInputsSchema = z.object({
 	name: z.string().nonempty({ message: " " }),
-	fields: z.array(fieldDefinitionUISchema.omit({ id: true, diff: true })),
+	fields: z.array(fieldDefinitionUISchema.omit({ id: true, diffs: true })),
 });
 type AddComponentDefDialogInputs = z.infer<typeof addComponentDefDialogInputsSchema>;
 
@@ -46,7 +46,7 @@ export function AddComponentDefDialog(props: Props) {
 		mutation.mutate(
 			{
 				name: data.name,
-				fields: data.fields.map((f) => ({ name: f.name, type: f.type })),
+				fields: data.fields,
 				groupId: props.group.id,
 			},
 			{
