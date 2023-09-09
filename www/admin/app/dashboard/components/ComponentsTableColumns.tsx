@@ -25,6 +25,7 @@ import { DataTableSortableHeader, dateFormatOptions } from "@admin/src/component
 import { DeleteDialog, MoveDialog } from "./dialogs/SharedDialogs";
 import { EditGroupDialog } from "./dialogs/GroupDialogs";
 import { EditComponentDefDialog } from "./dialogs/component-definition";
+import { BulkDeleteDialog } from "./dialogs/BulkDialogs";
 
 export const columns: ColumnDef<ComponentsTableItem>[] = [
 	{
@@ -99,13 +100,13 @@ export const columns: ColumnDef<ComponentsTableItem>[] = [
 	},
 	{
 		id: "actions",
-		// header: ({ table }) =>
-		// 	(table.getIsSomePageRowsSelected() || table.getIsAllPageRowsSelected()) && (
-		// 		<PagesTableBulkActions
-		// 			pages={table.getSelectedRowModel().flatRows.map((row) => row.original)}
-		// 			onSubmit={table.resetRowSelection}
-		// 		/>
-		// 	),
+		header: ({ table }) =>
+			(table.getIsSomePageRowsSelected() || table.getIsAllPageRowsSelected()) && (
+				<ComponentsTableBulkActions
+					items={table.getSelectedRowModel().flatRows.map((row) => row.original)}
+					onSubmit={table.resetRowSelection}
+				/>
+			),
 		cell: ({ row }) => <ComponentsTableActions item={row.original} />,
 		size: 0,
 	},
@@ -154,6 +155,50 @@ function ComponentsTableActions({ item }: { item: ComponentsTableItem }) {
 
 			<MoveDialog item={item} open={openMove} setOpen={setOpenMove} />
 			<DeleteDialog item={item} open={openDelete} setOpen={setOpenDelete} />
+		</>
+	);
+}
+function ComponentsTableBulkActions(props: { items: ComponentsTableItem[]; onSubmit: () => void }) {
+	const [openMove, setOpenMove] = React.useState(false);
+	const [openDelete, setOpenDelete] = React.useState(false);
+
+	return (
+		<>
+			<DropdownMenu>
+				<DropdownMenuTrigger asChild>
+					<ActionIcon>
+						<EllipsisHorizontalIcon className="w-5" />
+					</ActionIcon>
+				</DropdownMenuTrigger>
+
+				<DropdownMenuContent>
+					<DropdownMenuItem onClick={() => setOpenMove(true)}>
+						<FolderArrowDownIcon className="w-4" />
+						<span>Move</span>
+					</DropdownMenuItem>
+
+					<DropdownMenuItem
+						className="text-destructive"
+						onClick={() => setOpenDelete(true)}
+					>
+						<TrashIcon className="w-4" />
+						<span>Delete</span>
+					</DropdownMenuItem>
+				</DropdownMenuContent>
+			</DropdownMenu>
+
+			{/* <BulkMoveDialog */}
+			{/* 	items={props.items} */}
+			{/* 	open={openMove} */}
+			{/* 	setOpen={setOpenMove} */}
+			{/* 	onSubmit={props.onSubmit} */}
+			{/* /> */}
+			<BulkDeleteDialog
+				items={props.items}
+				open={openDelete}
+				setOpen={setOpenDelete}
+				onSubmit={props.onSubmit}
+			/>
 		</>
 	);
 }

@@ -11,7 +11,7 @@ import {
 	PencilSquareIcon,
 	DocumentDuplicateIcon,
 } from "@heroicons/react/24/outline";
-import { type ColumnDef, sortingFns } from "@tanstack/react-table";
+import { type ColumnDef } from "@tanstack/react-table";
 import {
 	ActionIcon,
 	Button,
@@ -165,7 +165,7 @@ function PagesTableActions({ page }: { page: Page }) {
 		</>
 	);
 }
-function PagesTableBulkActions({ pages, onSubmit }: { pages: Page[]; onSubmit: () => void }) {
+function PagesTableBulkActions(props: { pages: Page[]; onSubmit: () => void }) {
 	const [openMove, setOpenMove] = React.useState(false);
 	const [openDelete, setOpenDelete] = React.useState(false);
 
@@ -195,16 +195,16 @@ function PagesTableBulkActions({ pages, onSubmit }: { pages: Page[]; onSubmit: (
 			</DropdownMenu>
 
 			<BulkMoveDialog
-				pages={pages}
+				pages={props.pages}
 				open={openMove}
 				setOpen={setOpenMove}
-				onSubmit={onSubmit}
+				onSubmit={props.onSubmit}
 			/>
 			<BulkDeleteDialog
-				pages={pages}
+				pages={props.pages}
 				open={openDelete}
 				setOpen={setOpenDelete}
-				onSubmit={onSubmit}
+				onSubmit={props.onSubmit}
 			/>
 		</>
 	);

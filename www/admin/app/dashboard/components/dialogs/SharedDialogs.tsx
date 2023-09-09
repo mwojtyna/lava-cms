@@ -45,7 +45,7 @@ export function DeleteDialog(props: Props) {
 			}
 			yesMessage="Delete"
 			noMessage="No, don't delete"
-			mutation={mutation}
+			loading={mutation.isLoading}
 			onSubmit={handleSubmit}
 			open={props.open}
 			setOpen={props.setOpen}

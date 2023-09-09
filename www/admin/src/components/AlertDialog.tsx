@@ -6,24 +6,21 @@ import {
 	DialogDescription,
 } from "@admin/src/components/ui/client";
 import { DialogHeader, DialogFooter, Button } from "./ui/client";
-import type { UseTRPCMutationResult } from "@trpc/react-query/dist/shared";
 
-interface Props<TData, TError, TVariables, TContext> {
+interface Props {
 	icon: React.ReactNode;
 	title: React.ReactNode;
 	description: React.ReactNode;
 	yesMessage: string;
 	noMessage: string;
-	mutation: UseTRPCMutationResult<TData, TError, TVariables, TContext>;
+	loading: boolean;
 	onSubmit: () => void;
 
 	open: boolean;
 	setOpen: (value: boolean) => void;
 }
 
-export function AlertDialog<TData, TError, TVariables, TContext>(
-	props: Props<TData, TError, TVariables, TContext>,
-) {
+export function AlertDialog(props: Props) {
 	return (
 		<Dialog open={props.open} onOpenChange={props.setOpen}>
 			<DialogContent className="max-w-md" withCloseButton={false}>
@@ -37,7 +34,7 @@ export function AlertDialog<TData, TError, TVariables, TContext>(
 						{props.noMessage}
 					</Button>
 					<Button
-						loading={props.mutation.isLoading}
+						loading={props.loading}
 						type="submit"
 						variant={"destructive"}
 						icon={<TrashIcon className="w-5" />}

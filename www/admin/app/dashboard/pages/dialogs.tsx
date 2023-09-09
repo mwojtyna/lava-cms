@@ -77,7 +77,7 @@ export function DeleteDialog(props: EditDialogProps) {
 		<AlertDialog
 			open={props.open}
 			setOpen={props.setOpen}
-			mutation={mutation}
+			loading={mutation.isLoading}
 			icon={<TrashIcon className="w-5" />}
 			title={`Delete ${props.page.is_group ? "group" : "page"} "${props.page.name}"?`}
 			description={
@@ -93,6 +93,7 @@ export function DeleteDialog(props: EditDialogProps) {
 }
 export function BulkDeleteDialog(props: BulkEditDialogProps) {
 	const mutation = trpc.pages.deletePage.useMutation();
+	const [loading, setLoading] = React.useState(false);
 	// const [preferences, setPreferences] = usePagePreferences(props.pages[0].id);
 
 	async function handleSubmit() {
@@ -101,7 +102,9 @@ export function BulkDeleteDialog(props: BulkEditDialogProps) {
 				id: page.id,
 			}),
 		);
+		setLoading(true);
 		await Promise.all(promises);
+		setLoading(false);
 		// setPreferences({ ...preferences, [props.pages[0].id]: undefined });
 
 		props.setOpen(false);
@@ -112,7 +115,7 @@ export function BulkDeleteDialog(props: BulkEditDialogProps) {
 		<AlertDialog
 			open={props.open}
 			setOpen={props.setOpen}
-			mutation={mutation}
+			loading={loading}
 			icon={<TrashIcon className="w-5" />}
 			title={`Delete ${props.pages.length} items?`}
 			description={`Are you sure you want to delete ${props.pages.length} items? This action cannot be undone!`}
