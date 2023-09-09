@@ -25,7 +25,7 @@ import { DataTableSortableHeader, dateFormatOptions } from "@admin/src/component
 import { DeleteDialog, MoveDialog } from "./dialogs/SharedDialogs";
 import { EditGroupDialog } from "./dialogs/GroupDialogs";
 import { EditComponentDefDialog } from "./dialogs/component-definition";
-import { BulkDeleteDialog } from "./dialogs/BulkDialogs";
+import { BulkDeleteDialog, BulkMoveDialog } from "./dialogs/BulkDialogs";
 
 export const columns: ColumnDef<ComponentsTableItem>[] = [
 	{
@@ -187,12 +187,12 @@ function ComponentsTableBulkActions(props: { items: ComponentsTableItem[]; onSub
 				</DropdownMenuContent>
 			</DropdownMenu>
 
-			{/* <BulkMoveDialog */}
-			{/* 	items={props.items} */}
-			{/* 	open={openMove} */}
-			{/* 	setOpen={setOpenMove} */}
-			{/* 	onSubmit={props.onSubmit} */}
-			{/* /> */}
+			<BulkMoveDialog
+				items={props.items}
+				open={openMove}
+				setOpen={setOpenMove}
+				onSubmit={props.onSubmit}
+			/>
 			<BulkDeleteDialog
 				items={props.items}
 				open={openDelete}

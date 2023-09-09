@@ -228,17 +228,16 @@ export function BulkMoveDialog(props: BulkEditDialogProps) {
 	const groups = React.useMemo(
 		() =>
 			allGroups
-				?.filter((group) => {
-					return (
+				?.filter(
+					(group) =>
 						props.pages.every(
 							(page) => page.parent_id !== group.id && page.id !== group.id,
 						) &&
 						props.pages.reduce(
 							(acc, curr) => acc && !group.url.startsWith(curr.url + "/"),
 							true,
-						)
-					);
-				})
+						),
+				)
 				.map(
 					(group) =>
 						({
@@ -262,11 +261,11 @@ export function BulkMoveDialog(props: BulkEditDialogProps) {
 			enabled: false,
 		},
 	);
+	const [loading, setLoading] = React.useState(false);
 
 	const onSubmit: SubmitHandler<MoveDialogInputs> = async (data) => {
 		try {
 			const { data: query } = await conflictQuery.refetch();
-
 			if (query?.conflict) {
 				form.setError("newParentId", {
 					message: (
@@ -280,9 +279,14 @@ export function BulkMoveDialog(props: BulkEditDialogProps) {
 			}
 
 			const promises = props.pages.map((page) =>
-				mutation.mutateAsync({ id: page.id, newParentId: data.newParentId }),
+				mutation.mutateAsync({
+					id: page.id,
+					newParentId: data.newParentId,
+				}),
 			);
+			setLoading(true);
 			await Promise.all(promises);
+			setLoading(false);
 
 			props.setOpen(false);
 			props.onSubmit();
@@ -314,7 +318,7 @@ export function BulkMoveDialog(props: BulkEditDialogProps) {
 							<Button
 								type="submit"
 								disabled={!form.watch("newParentId")}
-								loading={mutation.isLoading}
+								loading={loading}
 								icon={<FolderArrowDownIcon className="w-5" />}
 							>
 								Move

@@ -96,7 +96,10 @@ export function MoveDialog(props: Props) {
 
 	const form = useForm<MoveDialogInputs>();
 	const onSubmit: SubmitHandler<MoveDialogInputs> = async (data) => {
-		await mutation.mutateAsync({ id: props.item.id, newGroupId: data.newParentId });
+		await mutation.mutateAsync({
+			id: props.item.id,
+			newGroupId: data.newParentId,
+		});
 		props.setOpen(false);
 	};
 
