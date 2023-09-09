@@ -160,7 +160,9 @@ function PagesTableActions({ page }: { page: Page }) {
 
 			<EditDetailsDialog page={page} open={openEdit} setOpen={setOpenEdit} />
 			<MoveDialog page={page} open={openMove} setOpen={setOpenMove} />
-			<DuplicateDialog page={page} open={openDuplicate} setOpen={setOpenDuplicate} />
+			{!page.is_group && (
+				<DuplicateDialog page={page} open={openDuplicate} setOpen={setOpenDuplicate} />
+			)}
 			<DeleteDialog page={page} open={openDelete} setOpen={setOpenDelete} />
 		</>
 	);

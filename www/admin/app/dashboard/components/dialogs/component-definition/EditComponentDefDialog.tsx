@@ -19,7 +19,7 @@ import { useForm, type SubmitHandler } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { PencilSquareIcon } from "@heroicons/react/24/outline";
-import { AddFieldDefs, FieldDefs } from "./FieldDefinitons";
+import { AddFieldDefs, FieldDefs } from "./FieldDefinitions";
 import type { ComponentsTableItem } from "../../ComponentsTable";
 import { fieldDefinitionUISchema, type FieldDefinitionUI } from "./shared";
 

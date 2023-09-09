@@ -6,6 +6,7 @@ import { type ColumnDef } from "@tanstack/react-table";
 import { EllipsisHorizontalIcon } from "@heroicons/react/20/solid";
 import {
 	CubeIcon,
+	DocumentDuplicateIcon,
 	FolderArrowDownIcon,
 	FolderIcon,
 	PencilSquareIcon,
@@ -26,6 +27,7 @@ import { DeleteDialog, MoveDialog } from "./dialogs/SharedDialogs";
 import { EditGroupDialog } from "./dialogs/GroupDialogs";
 import { EditComponentDefDialog } from "./dialogs/component-definition";
 import { BulkDeleteDialog, BulkMoveDialog } from "./dialogs/BulkDialogs";
+import { DuplicateComponentDefDialog } from "./dialogs/component-definition/DuplicateComponentDefDialog";
 
 export const columns: ColumnDef<ComponentsTableItem>[] = [
 	{
@@ -115,6 +117,7 @@ export const columns: ColumnDef<ComponentsTableItem>[] = [
 function ComponentsTableActions({ item }: { item: ComponentsTableItem }) {
 	const [openEdit, setOpenEdit] = React.useState(false);
 	const [openMove, setOpenMove] = React.useState(false);
+	const [openDuplicate, setOpenDuplicate] = React.useState(false);
 	const [openDelete, setOpenDelete] = React.useState(false);
 
 	return (
@@ -137,6 +140,13 @@ function ComponentsTableActions({ item }: { item: ComponentsTableItem }) {
 						<span>Move</span>
 					</DropdownMenuItem>
 
+					{!item.isGroup && (
+						<DropdownMenuItem onClick={() => setOpenDuplicate(true)}>
+							<DocumentDuplicateIcon className="w-4" />
+							<span>Duplicate</span>
+						</DropdownMenuItem>
+					)}
+
 					<DropdownMenuItem
 						className="text-destructive"
 						onClick={() => setOpenDelete(true)}
@@ -154,6 +164,13 @@ function ComponentsTableActions({ item }: { item: ComponentsTableItem }) {
 			)}
 
 			<MoveDialog item={item} open={openMove} setOpen={setOpenMove} />
+			{!item.isGroup && (
+				<DuplicateComponentDefDialog
+					item={item}
+					open={openDuplicate}
+					setOpen={setOpenDuplicate}
+				/>
+			)}
 			<DeleteDialog item={item} open={openDelete} setOpen={setOpenDelete} />
 		</>
 	);

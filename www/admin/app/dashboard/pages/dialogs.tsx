@@ -659,10 +659,11 @@ export function DuplicateDialog(props: EditDialogProps) {
 
 	React.useEffect(() => {
 		if (props.open) {
-			form.setValue("name", props.page.name);
-			form.setValue("slug", getSlugFromUrl(props.page.url));
-			form.setValue("newParentId", props.page.parent_id!);
-			form.clearErrors();
+			form.reset({
+				name: props.page.name,
+				slug: getSlugFromUrl(props.page.url),
+				newParentId: props.page.parent_id!,
+			});
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [props.open]);

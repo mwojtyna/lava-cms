@@ -1,54 +1,55 @@
 import * as React from "react";
-import type { ComponentDefinitionGroup } from "@prisma/client";
 import { trpc } from "@admin/src/utils/trpc";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm, type SubmitHandler, FormProvider } from "react-hook-form";
+import { DocumentDuplicateIcon } from "@heroicons/react/24/outline";
 import {
-	Button,
-	Dialog,
-	DialogContent,
-	DialogFooter,
 	DialogHeader,
-	DialogTitle,
-	FormControl,
-	FormError,
 	FormField,
 	FormItem,
 	FormLabel,
-	FormProvider,
+	FormControl,
 	Input,
+	FormError,
+	DialogFooter,
+	Button,
+	Dialog,
+	DialogContent,
+	DialogTitle,
 } from "@admin/src/components/ui/client";
-import { useForm, type SubmitHandler } from "react-hook-form";
-import { z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { CubeIcon } from "@heroicons/react/24/outline";
 import { AddFieldDefs, FieldDefs } from "./FieldDefinitions";
-import { fieldDefinitionUISchema } from "./shared";
-
-export const addComponentDefDialogInputsSchema = z.object({
-	name: z.string().nonempty({ message: " " }),
-	// Omitting id because it's not available when adding a new component definition
-	fields: z.array(fieldDefinitionUISchema.omit({ id: true })),
-});
-export type AddComponentDefDialogInputs = z.infer<typeof addComponentDefDialogInputsSchema>;
+import {
+	addComponentDefDialogInputsSchema,
+	type AddComponentDefDialogInputs,
+} from "./AddComponentDefDialog";
+import type { ComponentsTableItem } from "../../ComponentsTable";
 
 interface Props {
 	open: boolean;
 	setOpen: (value: boolean) => void;
-	group: ComponentDefinitionGroup;
+	item: Omit<Extract<ComponentsTableItem, { isGroup: false }>, "isGroup">;
 }
-export function AddComponentDefDialog(props: Props) {
+export function DuplicateComponentDefDialog(props: Props) {
 	const mutation = trpc.components.addComponentDefinition.useMutation();
 	const [anyEditing, setAnyEditing] = React.useState(false);
 
 	const form = useForm<AddComponentDefDialogInputs>({
 		resolver: zodResolver(addComponentDefDialogInputsSchema),
-		defaultValues: { fields: [] },
+		defaultValues: {
+			name: props.item.name,
+			fields: props.item.fieldDefinitions.map((field) => ({
+				name: field.name,
+				type: field.type,
+				diffs: [],
+			})),
+		},
 	});
 	const onSubmit: SubmitHandler<AddComponentDefDialogInputs> = (data) => {
 		mutation.mutate(
 			{
 				name: data.name,
 				fields: data.fields,
-				groupId: props.group.id,
+				groupId: props.item.parentGroupId!,
 			},
 			{
 				onSuccess: () => props.setOpen(false),
@@ -60,7 +61,7 @@ export function AddComponentDefDialog(props: Props) {
 		<Dialog open={props.open} onOpenChange={props.setOpen}>
 			<DialogContent className="max-w-md">
 				<DialogHeader>
-					<DialogTitle>Add component definition</DialogTitle>
+					<DialogTitle>Duplicate component definition</DialogTitle>
 				</DialogHeader>
 
 				<FormProvider {...form}>
@@ -112,11 +113,10 @@ export function AddComponentDefDialog(props: Props) {
 						<DialogFooter>
 							<Button
 								type="submit"
-								disabled={anyEditing}
 								loading={mutation.isLoading}
-								icon={<CubeIcon className="w-5" />}
+								icon={<DocumentDuplicateIcon className="w-5" />}
 							>
-								Add
+								Duplicate
 							</Button>
 						</DialogFooter>
 					</form>
