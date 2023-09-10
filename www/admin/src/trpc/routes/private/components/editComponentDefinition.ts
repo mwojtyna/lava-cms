@@ -20,22 +20,25 @@ export const editComponentDefinition = privateProcedure
 		}),
 	)
 	.mutation(async ({ input }) => {
-		const alreadyExists = await prisma.componentDefinition.findUnique({
-			where: {
-				name: input.newName,
-			},
-			include: {
-				group: true,
-			},
-		});
-		if (alreadyExists) {
-			throw new TRPCError({
-				code: "CONFLICT",
-				message: JSON.stringify({
-					name: alreadyExists.group.name,
-					id: alreadyExists.group_id,
-				}),
+		// If editing, not moving the component definition
+		if (input.newName && !input.newGroupId) {
+			const alreadyExists = await prisma.componentDefinition.findUnique({
+				where: {
+					name: input.newName,
+				},
+				include: {
+					group: true,
+				},
 			});
+			if (alreadyExists) {
+				throw new TRPCError({
+					code: "CONFLICT",
+					message: JSON.stringify({
+						name: alreadyExists.group.name,
+						id: alreadyExists.group_id,
+					}),
+				});
+			}
 		}
 
 		await prisma.componentDefinition.update({
