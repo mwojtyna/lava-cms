@@ -52,16 +52,6 @@ export function DuplicateComponentDefDialog(props: Props) {
 
 	const form = useForm<DuplicateComponentDefDialogInputs>({
 		resolver: zodResolver(duplicateComponentDefDialogInputsSchema),
-		defaultValues: {
-			name: props.item.name,
-			fields: props.item.fieldDefinitions.map((field) => ({
-				name: field.name,
-				type: field.type,
-				diffs: [],
-			})),
-			// null -> undefined
-			newParentId: props.item.parentGroupId ?? undefined,
-		},
 	});
 	const onSubmit: SubmitHandler<DuplicateComponentDefDialogInputs> = (data) => {
 		mutation.mutate(
@@ -94,8 +84,18 @@ export function DuplicateComponentDefDialog(props: Props) {
 	};
 
 	React.useEffect(() => {
-		form.clearErrors();
-	}, [props.open, form]);
+		form.reset({
+			name: props.item.name,
+			fields: props.item.fieldDefinitions.map((field) => ({
+				name: field.name,
+				type: field.type,
+				diffs: [],
+			})),
+			// null -> undefined
+			newParentId: props.item.parentGroupId ?? undefined,
+		});
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [props.open]);
 
 	return (
 		<Dialog open={props.open} onOpenChange={props.setOpen}>

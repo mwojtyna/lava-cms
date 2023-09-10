@@ -25,7 +25,10 @@ import { ComponentDefinitionNameError, fieldDefinitionUISchema } from "./shared"
 import { TypographyMuted } from "@admin/src/components/ui/server";
 
 const addComponentDefDialogInputsSchema = z.object({
-	name: z.string().nonempty({ message: " " }),
+	// This is named `compName` instead of `name` because `name` is already used
+	// in the `FieldDefinitionUI` type and errors are duplicated.
+	// Also it's easier to change this name than the other one
+	compName: z.string().nonempty({ message: " " }),
 	// Omitting id because it's not available when adding a new component definition
 	fields: z.array(fieldDefinitionUISchema.omit({ id: true })),
 });
@@ -47,7 +50,7 @@ export function AddComponentDefDialog(props: Props) {
 	const onSubmit: SubmitHandler<AddComponentDefDialogInputs> = (data) => {
 		mutation.mutate(
 			{
-				name: data.name,
+				name: data.compName,
 				fields: data.fields,
 				groupId: props.group.id,
 			},
@@ -62,10 +65,10 @@ export function AddComponentDefDialog(props: Props) {
 							id: string;
 						};
 
-						form.setError("name", {
+						form.setError("compName", {
 							type: "manual",
 							message: (
-								<ComponentDefinitionNameError name={data.name} group={group} />
+								<ComponentDefinitionNameError name={data.compName} group={group} />
 							) as unknown as string,
 						});
 					}
@@ -85,7 +88,7 @@ export function AddComponentDefDialog(props: Props) {
 					<form className="flex flex-col gap-4" onSubmit={form.handleSubmit(onSubmit)}>
 						<FormField
 							control={form.control}
-							name="name"
+							name="compName"
 							render={({ field }) => (
 								<FormItem>
 									<FormLabel>
