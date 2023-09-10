@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { FolderArrowDownIcon, FolderIcon, TrashIcon } from "@heroicons/react/24/outline";
+import { FolderArrowDownIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { trpc } from "@admin/src/utils/trpc";
 import type { ComponentsTableItem } from "../ComponentsTable";
 import { AlertDialog, type MoveDialogInputs, NewParentSelect } from "@admin/src/components";
@@ -13,8 +13,11 @@ import {
 	DialogFooter,
 	DialogHeader,
 	DialogTitle,
+	FormControl,
+	FormField,
+	FormItem,
 } from "@admin/src/components/ui/client";
-import type { ItemParent } from "@admin/src/components/DataTableDialogs";
+import { groupsToComboboxEntries } from "./component-definition/shared";
 
 interface Props {
 	item: ComponentsTableItem;
@@ -63,34 +66,14 @@ export function MoveDialog(props: Props) {
 	}).data;
 	const groups = React.useMemo(
 		() =>
-			allGroups
-				?.filter(
+			groupsToComboboxEntries(
+				allGroups?.filter(
 					(group) =>
 						!group.hierarchy.includes(props.item.id) &&
 						group.id !== props.item.id &&
 						group.id !== props.item.parentGroupId,
-				)
-				.map(
-					(group) =>
-						({
-							id: group.id,
-							name: group.name,
-							extraInfo: (
-								<span className="flex items-center">
-									{group.parent_group_name && (
-										<>
-											in&nbsp;
-											<FolderIcon className="inline w-[14px]" />
-											&nbsp;
-											{group.parent_group_name},&nbsp;
-										</>
-									)}
-									contains {group.children_count.toString()}{" "}
-									{group.children_count === 1 ? "item" : "items"}
-								</span>
-							),
-						}) satisfies ItemParent,
-				),
+				) ?? [],
+			),
 		[allGroups, props.item],
 	);
 
@@ -115,7 +98,17 @@ export function MoveDialog(props: Props) {
 
 				<FormProvider {...form}>
 					<form className="flex flex-col gap-4" onSubmit={form.handleSubmit(onSubmit)}>
-						<NewParentSelect form={form} parents={groups ?? []} />
+						<FormField
+							control={form.control}
+							name="newParentId"
+							render={({ field }) => (
+								<FormItem>
+									<FormControl>
+										<NewParentSelect parents={groups ?? []} {...field} />
+									</FormControl>
+								</FormItem>
+							)}
+						/>
 
 						<DialogFooter>
 							<Button

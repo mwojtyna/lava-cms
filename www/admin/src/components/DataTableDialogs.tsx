@@ -1,6 +1,5 @@
-import type { Path, UseFormReturn } from "react-hook-form";
-import { FormControl, FormError, FormField, FormItem, FormLabel } from "./ui/client";
 import { Combobox } from "./Combobox";
+import type { FormFieldProps } from "./ui/client";
 import { TypographyMuted } from "./ui/server";
 
 export interface MoveDialogInputs {
@@ -12,53 +11,32 @@ export interface ItemParent {
 	extraInfo: React.ReactNode;
 }
 
-interface NewParentSelectProps<T extends MoveDialogInputs> {
-	form: UseFormReturn<T>;
+interface NewParentSelectProps extends FormFieldProps<string> {
 	parents: ItemParent[];
-	label?: string;
 }
-export function NewParentSelect<T extends MoveDialogInputs>(props: NewParentSelectProps<T>) {
+export function NewParentSelect(props: NewParentSelectProps) {
 	return (
-		<FormField
-			control={props.form.control}
-			name={"newParentId" as Path<T>}
-			render={({ field }) => (
-				<FormItem>
-					{props.label && <FormLabel>{props.label}</FormLabel>}
-					<FormControl>
-						<Combobox
-							className="w-full"
-							contentProps={{
-								align: "center",
-								className:
-									"min-w-[335px] w-fit max-w-[97.5vw] max-h-[47.5vh] overflow-auto",
-								placeholder: "Search groups...",
-							}}
-							placeholder="Select a group..."
-							notFoundContent="No groups found."
-							data={
-								props.parents.map((group) => ({
-									label: (
-										<span className="flex items-baseline gap-2">
-											{group.name}{" "}
-										</span>
-									),
-									description: (
-										<TypographyMuted className="text-xs">
-											{group.extraInfo}
-										</TypographyMuted>
-									),
-									value: group.id,
-									filterValue: group.name,
-								})) ?? []
-							}
-							aria-required
-							{...field}
-						/>
-					</FormControl>
-					<FormError />
-				</FormItem>
-			)}
+		<Combobox
+			className="w-full"
+			contentProps={{
+				align: "center",
+				className: "min-w-[335px] w-fit max-w-[97.5vw] max-h-[47.5vh] overflow-auto",
+				placeholder: "Search groups...",
+			}}
+			placeholder="Select a group..."
+			notFoundContent="No groups found."
+			data={
+				props.parents.map((group) => ({
+					label: <span className="flex items-baseline gap-2">{group.name} </span>,
+					description: (
+						<TypographyMuted className="text-xs">{group.extraInfo}</TypographyMuted>
+					),
+					value: group.id,
+					filterValue: group.name,
+				})) ?? []
+			}
+			aria-required
+			{...props}
 		/>
 	);
 }

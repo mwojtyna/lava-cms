@@ -205,7 +205,18 @@ export function MoveDialog(props: EditDialogProps) {
 
 				<FormProvider {...form}>
 					<form className="flex flex-col gap-4" onSubmit={form.handleSubmit(onSubmit)}>
-						<NewParentSelect form={form} parents={groups ?? []} />
+						<FormField
+							control={form.control}
+							name="newParentId"
+							render={({ field }) => (
+								<FormItem>
+									<FormControl>
+										<NewParentSelect parents={groups ?? []} {...field} />
+									</FormControl>
+									<FormError />
+								</FormItem>
+							)}
+						/>
 
 						<DialogFooter>
 							<Button
@@ -314,7 +325,18 @@ export function BulkMoveDialog(props: BulkEditDialogProps) {
 
 				<FormProvider {...form}>
 					<form className="flex flex-col gap-4" onSubmit={form.handleSubmit(onSubmit)}>
-						<NewParentSelect form={form} parents={groups ?? []} />
+						<FormField
+							control={form.control}
+							name="newParentId"
+							render={({ field }) => (
+								<FormItem>
+									<FormControl>
+										<NewParentSelect parents={groups ?? []} {...field} />
+									</FormControl>
+									<FormError />
+								</FormItem>
+							)}
+						/>
 
 						<DialogFooter>
 							<Button
@@ -684,7 +706,19 @@ export function DuplicateDialog(props: EditDialogProps) {
 							slugLocked={slugLocked}
 							setSlugLocked={setSlugLocked}
 						/>
-						<NewParentSelect form={form} parents={groups ?? []} label="Group" />
+						<FormField
+							control={form.control}
+							name="newParentId"
+							render={({ field }) => (
+								<FormItem>
+									<FormLabel>Group</FormLabel>
+									<FormControl>
+										<NewParentSelect parents={groups ?? []} {...field} />
+									</FormControl>
+									<FormError />
+								</FormItem>
+							)}
+						/>
 
 						<DialogFooter>
 							<Button

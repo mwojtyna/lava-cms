@@ -18,13 +18,23 @@ import {
 	DialogTitle,
 } from "@admin/src/components/ui/client";
 import { AddFieldDefs, FieldDefs } from "./FieldDefinitions";
-import {
-	addComponentDefDialogInputsSchema,
-	type AddComponentDefDialogInputs,
-} from "./AddComponentDefDialog";
 import type { ComponentsTableItem } from "../../ComponentsTable";
 import { TypographyMuted } from "@admin/src/components/ui/server";
-import { ComponentDefinitionNameError } from "./shared";
+import {
+	ComponentDefinitionNameError,
+	fieldDefinitionUISchema,
+	groupsToComboboxEntries,
+} from "./shared";
+import { z } from "zod";
+import { NewParentSelect } from "@admin/src/components";
+
+const duplicateComponentDefDialogInputsSchema = z.object({
+	name: z.string().nonempty({ message: " " }),
+	// Omitting id because it's not available when adding a new component definition
+	fields: z.array(fieldDefinitionUISchema.omit({ id: true })),
+	newParentId: z.string().cuid(),
+});
+type DuplicateComponentDefDialogInputs = z.infer<typeof duplicateComponentDefDialogInputsSchema>;
 
 interface Props {
 	open: boolean;
@@ -35,8 +45,13 @@ export function DuplicateComponentDefDialog(props: Props) {
 	const mutation = trpc.components.addComponentDefinition.useMutation();
 	const [anyEditing, setAnyEditing] = React.useState(false);
 
-	const form = useForm<AddComponentDefDialogInputs>({
-		resolver: zodResolver(addComponentDefDialogInputsSchema),
+	const allGroups = trpc.components.getAllGroups.useQuery(undefined, {
+		enabled: props.open,
+	}).data;
+	const groups = React.useMemo(() => groupsToComboboxEntries(allGroups ?? []), [allGroups]);
+
+	const form = useForm<DuplicateComponentDefDialogInputs>({
+		resolver: zodResolver(duplicateComponentDefDialogInputsSchema),
 		defaultValues: {
 			name: props.item.name,
 			fields: props.item.fieldDefinitions.map((field) => ({
@@ -44,14 +59,16 @@ export function DuplicateComponentDefDialog(props: Props) {
 				type: field.type,
 				diffs: [],
 			})),
+			// null -> undefined
+			newParentId: props.item.parentGroupId ?? undefined,
 		},
 	});
-	const onSubmit: SubmitHandler<AddComponentDefDialogInputs> = (data) => {
+	const onSubmit: SubmitHandler<DuplicateComponentDefDialogInputs> = (data) => {
 		mutation.mutate(
 			{
 				name: data.name,
 				fields: data.fields,
-				groupId: props.item.parentGroupId!,
+				groupId: data.newParentId,
 			},
 			{
 				onSuccess: () => props.setOpen(false),
@@ -130,6 +147,19 @@ export function DuplicateComponentDefDialog(props: Props) {
 											setAnyEditing={setAnyEditing}
 											{...field}
 										/>
+									</FormControl>
+								</FormItem>
+							)}
+						/>
+
+						<FormField
+							control={form.control}
+							name="newParentId"
+							render={({ field }) => (
+								<FormItem>
+									<FormLabel>Group</FormLabel>
+									<FormControl>
+										<NewParentSelect parents={groups ?? []} {...field} />
 									</FormControl>
 								</FormItem>
 							)}

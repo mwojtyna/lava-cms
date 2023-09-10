@@ -16,6 +16,9 @@ import {
 	DialogContent,
 	DialogTitle,
 	FormProvider,
+	FormField,
+	FormItem,
+	FormControl,
 } from "@admin/src/components/ui/client";
 import type { ComponentsTableItem } from "../ComponentsTable";
 
@@ -129,7 +132,17 @@ export function BulkMoveDialog(props: Props) {
 
 				<FormProvider {...form}>
 					<form className="flex flex-col gap-4" onSubmit={form.handleSubmit(onSubmit)}>
-						<NewParentSelect form={form} parents={groups ?? []} />
+						<FormField
+							control={form.control}
+							name="newParentId"
+							render={({ field }) => (
+								<FormItem>
+									<FormControl>
+										<NewParentSelect parents={groups ?? []} {...field} />
+									</FormControl>
+								</FormItem>
+							)}
+						/>
 
 						<DialogFooter>
 							<Button

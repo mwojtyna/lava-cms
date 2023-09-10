@@ -1,6 +1,6 @@
 import * as React from "react";
 import Link from "next/link";
-import { Combobox, type ComboboxData } from "@admin/src/components";
+import { Combobox, type ComboboxData, type ItemParent } from "@admin/src/components";
 import { ComponentFieldType } from "@prisma/client";
 import { z } from "zod";
 import { ArrowTopRightOnSquareIcon } from "@heroicons/react/20/solid";
@@ -10,6 +10,8 @@ import {
 } from "@admin/prisma/generated/zod";
 import { cn } from "@admin/src/utils/styling";
 import { Button, type FormFieldProps } from "@admin/src/components/ui/client";
+import type { caller } from "@admin/src/trpc/routes/private/_private";
+import { FolderIcon } from "@heroicons/react/24/outline";
 
 export const fieldTypeMap: Record<string, string> = Object.values(ComponentFieldType).reduce(
 	(acc, type) => {
@@ -84,5 +86,31 @@ export function ComponentDefinitionNameError(props: {
 				<ArrowTopRightOnSquareIcon className="w-4" />
 			</Button>
 		</>
+	);
+}
+
+export function groupsToComboboxEntries(
+	groups: Awaited<ReturnType<typeof caller.components.getAllGroups>>,
+): ItemParent[] {
+	return groups.map(
+		(group) =>
+			({
+				id: group.id,
+				name: group.name,
+				extraInfo: (
+					<span className="flex items-center">
+						{group.parent_group_name && (
+							<>
+								in&nbsp;
+								<FolderIcon className="inline w-[14px]" />
+								&nbsp;
+								{group.parent_group_name},&nbsp;
+							</>
+						)}
+						contains {group.children_count.toString()}{" "}
+						{group.children_count === 1 ? "item" : "items"}
+					</span>
+				),
+			}) satisfies ItemParent,
 	);
 }

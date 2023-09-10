@@ -116,7 +116,7 @@ const FormControl = React.forwardRef<
 		<Slot
 			ref={ref}
 			id={formItemId}
-			className={cn(className, error && "border-destructive")}
+			className={cn(className, error && "border-destructive outline-destructive")}
 			aria-describedby={!error ? formDescriptionId : `${formDescriptionId} ${formMessageId}`}
 			aria-invalid={!!error}
 			{...props}

@@ -24,12 +24,12 @@ import { AddFieldDefs, FieldDefs } from "./FieldDefinitions";
 import { ComponentDefinitionNameError, fieldDefinitionUISchema } from "./shared";
 import { TypographyMuted } from "@admin/src/components/ui/server";
 
-export const addComponentDefDialogInputsSchema = z.object({
+const addComponentDefDialogInputsSchema = z.object({
 	name: z.string().nonempty({ message: " " }),
 	// Omitting id because it's not available when adding a new component definition
 	fields: z.array(fieldDefinitionUISchema.omit({ id: true })),
 });
-export type AddComponentDefDialogInputs = z.infer<typeof addComponentDefDialogInputsSchema>;
+type AddComponentDefDialogInputs = z.infer<typeof addComponentDefDialogInputsSchema>;
 
 interface Props {
 	open: boolean;
