@@ -23,6 +23,8 @@ import {
 	type AddComponentDefDialogInputs,
 } from "./AddComponentDefDialog";
 import type { ComponentsTableItem } from "../../ComponentsTable";
+import { TypographyMuted } from "@admin/src/components/ui/server";
+import { ComponentDefinitionNameError } from "./shared";
 
 interface Props {
 	open: boolean;
@@ -53,9 +55,30 @@ export function DuplicateComponentDefDialog(props: Props) {
 			},
 			{
 				onSuccess: () => props.setOpen(false),
+				// Can't extract the whole handler to a shared function
+				// because the type of `err` is impossible to specify
+				onError: (err) => {
+					if (err.data?.code === "CONFLICT") {
+						const group = JSON.parse(err.message) as {
+							name: string;
+							id: string;
+						};
+
+						form.setError("name", {
+							type: "manual",
+							message: (
+								<ComponentDefinitionNameError name={data.name} group={group} />
+							) as unknown as string,
+						});
+					}
+				},
 			},
 		);
 	};
+
+	React.useEffect(() => {
+		form.clearErrors();
+	}, [props.open, form]);
 
 	return (
 		<Dialog open={props.open} onOpenChange={props.setOpen}>
@@ -71,7 +94,9 @@ export function DuplicateComponentDefDialog(props: Props) {
 							name="name"
 							render={({ field }) => (
 								<FormItem>
-									<FormLabel>Name</FormLabel>
+									<FormLabel>
+										Name&nbsp;<TypographyMuted>(unique)</TypographyMuted>
+									</FormLabel>
 									<FormControl>
 										<Input {...field} aria-required />
 									</FormControl>

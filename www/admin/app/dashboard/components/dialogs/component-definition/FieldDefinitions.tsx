@@ -33,7 +33,6 @@ import {
 	FormItem,
 	FormControl,
 	Input,
-	FormError,
 	Button,
 	ActionIcon,
 	type FormFieldProps,
@@ -81,7 +80,6 @@ export const AddFieldDefs = React.forwardRef<React.ComponentRef<"div">, AddField
 										{...field}
 									/>
 								</FormControl>
-								<FormError />
 							</FormItem>
 						)}
 					/>
@@ -97,7 +95,6 @@ export const AddFieldDefs = React.forwardRef<React.ComponentRef<"div">, AddField
 										{...field}
 									/>
 								</FormControl>
-								<FormError />
 							</FormItem>
 						)}
 					/>

@@ -27,7 +27,7 @@ import { DeleteDialog, MoveDialog } from "./dialogs/SharedDialogs";
 import { EditGroupDialog } from "./dialogs/GroupDialogs";
 import { EditComponentDefDialog } from "./dialogs/component-definition";
 import { BulkDeleteDialog, BulkMoveDialog } from "./dialogs/BulkDialogs";
-import { DuplicateComponentDefDialog } from "./dialogs/component-definition/DuplicateComponentDefDialog";
+import { DuplicateComponentDefDialog } from "./dialogs/component-definition";
 
 export const columns: ColumnDef<ComponentsTableItem>[] = [
 	{

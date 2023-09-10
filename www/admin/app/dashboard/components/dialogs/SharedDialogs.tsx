@@ -108,7 +108,8 @@ export function MoveDialog(props: Props) {
 			<DialogContent>
 				<DialogHeader>
 					<DialogTitle>
-						Move {props.item.isGroup ? "group" : "component definition"}
+						Move {props.item.isGroup ? "group" : "component definition"} &quot;
+						{props.item.name}&quot;
 					</DialogTitle>
 				</DialogHeader>
 

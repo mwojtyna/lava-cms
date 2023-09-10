@@ -2,6 +2,7 @@ import { z } from "zod";
 import { privateProcedure } from "@admin/src/trpc";
 import { ComponentFieldDefinitionSchema } from "@admin/prisma/generated/zod";
 import { prisma } from "@admin/prisma/client";
+import { TRPCError } from "@trpc/server";
 
 export const editComponentDefinition = privateProcedure
 	.input(
@@ -19,6 +20,24 @@ export const editComponentDefinition = privateProcedure
 		}),
 	)
 	.mutation(async ({ input }) => {
+		const alreadyExists = await prisma.componentDefinition.findUnique({
+			where: {
+				name: input.newName,
+			},
+			include: {
+				group: true,
+			},
+		});
+		if (alreadyExists) {
+			throw new TRPCError({
+				code: "CONFLICT",
+				message: JSON.stringify({
+					name: alreadyExists.group.name,
+					id: alreadyExists.group_id,
+				}),
+			});
+		}
+
 		await prisma.componentDefinition.update({
 			where: { id: input.id },
 			data: {

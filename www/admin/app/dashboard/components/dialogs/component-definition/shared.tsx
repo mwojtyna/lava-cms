@@ -1,13 +1,15 @@
 import * as React from "react";
+import Link from "next/link";
 import { Combobox, type ComboboxData } from "@admin/src/components";
 import { ComponentFieldType } from "@prisma/client";
+import { z } from "zod";
+import { ArrowTopRightOnSquareIcon } from "@heroicons/react/20/solid";
 import {
 	ComponentFieldDefinitionSchema,
 	type ComponentFieldTypeType,
 } from "@admin/prisma/generated/zod";
 import { cn } from "@admin/src/utils/styling";
-import type { FormFieldProps } from "@admin/src/components/ui/client";
-import { z } from "zod";
+import { Button, type FormFieldProps } from "@admin/src/components/ui/client";
 
 export const fieldTypeMap: Record<string, string> = Object.values(ComponentFieldType).reduce(
 	(acc, type) => {
@@ -66,3 +68,21 @@ export const fieldDefinitionUISchema = z.object({
 	diffs: z.array(z.union([z.literal("added"), z.literal("deleted"), z.literal("edited")])),
 });
 export type FieldDefinitionUI = z.infer<typeof fieldDefinitionUISchema>;
+
+export function ComponentDefinitionNameError(props: {
+	name: string;
+	group: { name: string; id: string };
+}) {
+	return (
+		<>
+			A component definition with name{" "}
+			<strong className="whitespace-nowrap">{props.name}</strong> already exists in group{" "}
+			<Button className="inline-flex gap-0.5 font-bold text-destructive" variant={"link"}>
+				<Link href={`/dashboard/components/${props.group.id}`} target="_blank">
+					{props.group.name}
+				</Link>
+				<ArrowTopRightOnSquareIcon className="w-4" />
+			</Button>
+		</>
+	);
+}

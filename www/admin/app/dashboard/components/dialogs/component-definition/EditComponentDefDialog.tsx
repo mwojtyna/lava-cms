@@ -21,7 +21,12 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { PencilSquareIcon } from "@heroicons/react/24/outline";
 import { AddFieldDefs, FieldDefs } from "./FieldDefinitions";
 import type { ComponentsTableItem } from "../../ComponentsTable";
-import { fieldDefinitionUISchema, type FieldDefinitionUI } from "./shared";
+import {
+	fieldDefinitionUISchema,
+	type FieldDefinitionUI,
+	ComponentDefinitionNameError,
+} from "./shared";
+import { TypographyMuted } from "@admin/src/components/ui/server";
 
 const editComponentDefDialogInputsSchema = z.object({
 	name: z.string().nonempty({ message: " " }),
@@ -76,6 +81,23 @@ export function EditComponentDefDialog(props: Props) {
 			},
 			{
 				onSuccess: () => props.setOpen(false),
+				// Can't extract the whole handler to a shared function
+				// because the type of `err` is impossible to specify
+				onError: (err) => {
+					if (err.data?.code === "CONFLICT") {
+						const group = JSON.parse(err.message) as {
+							name: string;
+							id: string;
+						};
+
+						form.setError("name", {
+							type: "manual",
+							message: (
+								<ComponentDefinitionNameError name={data.name} group={group} />
+							) as unknown as string,
+						});
+					}
+				},
 			},
 		);
 	};
@@ -112,7 +134,9 @@ export function EditComponentDefDialog(props: Props) {
 							name="name"
 							render={({ field }) => (
 								<FormItem>
-									<FormLabel>Name</FormLabel>
+									<FormLabel>
+										Name&nbsp;<TypographyMuted>(unique)</TypographyMuted>
+									</FormLabel>
 									<FormControl>
 										<Input {...field} aria-required />
 									</FormControl>

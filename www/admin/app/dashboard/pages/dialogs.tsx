@@ -198,7 +198,9 @@ export function MoveDialog(props: EditDialogProps) {
 		<Dialog open={props.open} onOpenChange={props.setOpen}>
 			<DialogContent>
 				<DialogHeader>
-					<DialogTitle>Move {props.page.is_group ? "group" : "page"}</DialogTitle>
+					<DialogTitle>
+						Move {props.page.is_group ? "group" : "page"} &quot;{props.page.name}&quot;
+					</DialogTitle>
 				</DialogHeader>
 
 				<FormProvider {...form}>
