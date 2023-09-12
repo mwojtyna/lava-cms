@@ -69,7 +69,7 @@ export function ComponentsTable(props: Props) {
 
 	const { table, searchElement } = useTable({
 		data: tableData,
-		columns: columns,
+		columns,
 		cookie: {
 			name: "components-table",
 			serverContents: props.cookie,

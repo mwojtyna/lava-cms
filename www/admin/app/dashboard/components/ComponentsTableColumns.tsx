@@ -28,6 +28,7 @@ import { EditGroupDialog } from "./dialogs/GroupDialogs";
 import { EditComponentDefDialog } from "./dialogs/component-definition";
 import { BulkDeleteDialog, BulkMoveDialog } from "./dialogs/BulkDialogs";
 import { DuplicateComponentDefDialog } from "./dialogs/component-definition";
+import { useComponentDefEditDialogStore } from "@admin/src/data/stores/dashboard";
 
 export const columns: ColumnDef<ComponentsTableItem>[] = [
 	{
@@ -57,29 +58,36 @@ export const columns: ColumnDef<ComponentsTableItem>[] = [
 		header: ({ column }) => <DataTableSortableHeader column={column} name="Name" />,
 		accessorKey: "name",
 		size: 500,
-		cell: ({ row }) => {
-			return (
-				<div className="flex items-center gap-3">
-					{row.original.isGroup ? (
-						<FolderIcon className="w-5 text-muted-foreground" />
-					) : (
-						<CubeIcon className="w-5 text-muted-foreground" />
-					)}
+		cell: ({ row }) => (
+			<div className="flex items-center gap-3">
+				{row.original.isGroup ? (
+					<FolderIcon className="w-5 text-muted-foreground" />
+				) : (
+					<CubeIcon className="w-5 text-muted-foreground" />
+				)}
+
+				{row.original.isGroup ? (
 					<Button variant={"link"} className="font-normal" asChild>
-						{row.original.isGroup ? (
-							<Link href={`/dashboard/components/${row.original.id}`}>
-								{row.original.name}
-							</Link>
-						) : (
-							// TODO: Open edit dialog
-							<Button variant={"link"} className="font-normal">
-								{row.original.name}
-							</Button>
-						)}
+						<Link href={`/dashboard/components/${row.original.id}`}>
+							{row.original.name}
+						</Link>
 					</Button>
-				</div>
-			);
-		},
+				) : (
+					<Button
+						variant={"link"}
+						className="font-normal"
+						onClick={() =>
+							useComponentDefEditDialogStore.setState({
+								id: row.original.id,
+								open: true,
+							})
+						}
+					>
+						{row.original.name}
+					</Button>
+				)}
+			</div>
+		),
 	},
 	{
 		accessorKey: "instances",
@@ -115,10 +123,21 @@ export const columns: ColumnDef<ComponentsTableItem>[] = [
 ];
 
 function ComponentsTableActions({ item }: { item: ComponentsTableItem }) {
-	const [openEdit, setOpenEdit] = React.useState(false);
+	const [openEditDef, setOpenEditDef] = React.useState(false);
+	const [openEditGroup, setOpenEditGroup] = React.useState(false);
 	const [openMove, setOpenMove] = React.useState(false);
 	const [openDuplicate, setOpenDuplicate] = React.useState(false);
 	const [openDelete, setOpenDelete] = React.useState(false);
+
+	React.useEffect(() => {
+		const unsub = useComponentDefEditDialogStore.subscribe((state) => {
+			if (state.id === item.id) {
+				setOpenEditDef(state.open);
+			}
+		});
+		return unsub;
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
 
 	return (
 		<>
@@ -130,7 +149,15 @@ function ComponentsTableActions({ item }: { item: ComponentsTableItem }) {
 				</DropdownMenuTrigger>
 
 				<DropdownMenuContent>
-					<DropdownMenuItem onClick={() => setOpenEdit(true)}>
+					<DropdownMenuItem
+						onClick={() => {
+							if (item.isGroup) {
+								setOpenEditGroup(true);
+							} else {
+								setOpenEditDef(true);
+							}
+						}}
+					>
 						<PencilSquareIcon className="w-4" />
 						<span>Edit</span>
 					</DropdownMenuItem>
@@ -158,9 +185,13 @@ function ComponentsTableActions({ item }: { item: ComponentsTableItem }) {
 			</DropdownMenu>
 
 			{item.isGroup ? (
-				<EditGroupDialog group={item} open={openEdit} setOpen={setOpenEdit} />
+				<EditGroupDialog group={item} open={openEditGroup} setOpen={setOpenEditGroup} />
 			) : (
-				<EditComponentDefDialog componentDef={item} open={openEdit} setOpen={setOpenEdit} />
+				<EditComponentDefDialog
+					componentDef={item}
+					open={openEditDef}
+					setOpen={setOpenEditDef}
+				/>
 			)}
 
 			<MoveDialog item={item} open={openMove} setOpen={setOpenMove} />
