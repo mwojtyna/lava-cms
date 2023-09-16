@@ -31,21 +31,13 @@ export function SetupForm() {
 	const router = useRouter();
 
 	const setConfigMutation = trpc.config.setConfig.useMutation();
-	const addPageMutation = trpc.pages.addPage.useMutation();
-	const generateTokenMutation = trpc.auth.generateToken.useMutation();
+	const setupMutation = trpc.config.setup.useMutation();
 
 	const form = useForm<Inputs>({ resolver: zodResolver(schema) });
 	const onSubmit: SubmitHandler<Inputs> = (data) => {
 		setConfigMutation.mutate(data, {
 			onSuccess: async () => {
-				// TODO: Replace with 'seed' endpoint
-				await addPageMutation.mutateAsync({
-					name: "Root",
-					url: "",
-					isGroup: true,
-					parentId: null,
-				});
-				await generateTokenMutation.mutateAsync();
+				await setupMutation.mutateAsync();
 				router.replace("/dashboard");
 			},
 			onError: (err) => {
@@ -71,12 +63,7 @@ export function SetupForm() {
 					size="lg"
 					icon={<ArrowRightIcon className="w-5" />}
 					className="ml-auto shadow-lg shadow-primary/25"
-					loading={
-						setConfigMutation.isLoading ||
-						addPageMutation.isLoading ||
-						generateTokenMutation.isLoading ||
-						generateTokenMutation.isSuccess
-					}
+					loading={setConfigMutation.isLoading || setupMutation.isLoading}
 				>
 					Finish
 				</Button>

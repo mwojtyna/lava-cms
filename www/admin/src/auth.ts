@@ -1,5 +1,5 @@
 import { cookies } from "next/headers";
-import { lucia } from "lucia";
+import { lucia, type User } from "lucia";
 import { nextjs } from "lucia/middleware";
 import { prisma } from "@lucia-auth/adapter-prisma";
 import "lucia/polyfill/node";
@@ -38,7 +38,7 @@ export const auth = lucia({
 	allowedRequestOrigins: [url()],
 });
 
-export const getCurrentUser = async () => {
+export const getCurrentUser = async (): Promise<User | undefined> => {
 	const authReq = auth.handleRequest({ request: null, cookies });
 	const session = await authReq.validate();
 

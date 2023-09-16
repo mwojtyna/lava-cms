@@ -6,7 +6,7 @@ export const addGroup = privateProcedure
 	.input(
 		z.object({
 			name: z.string(),
-			parentId: z.string().cuid(),
+			parentId: z.string().cuid().nullable(),
 		}),
 	)
 	.mutation(async ({ input }) => {
