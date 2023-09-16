@@ -91,36 +91,35 @@ const TokenInput = ({ token }: { token: string }) => {
 				readOnly
 				aria-label="Token input"
 			/>
-			<span className="flex" data-testid="token-actions">
-				<Tooltip>
-					<TooltipTrigger asChild>
-						<ActionIcon
-							onClick={async () => {
-								setCopied(false);
-								try {
-									await mutation.mutateAsync();
-									toast({
-										title: "Success",
-										description:
-											"Token regenerated, previous token is now invalid.",
+
+			<Tooltip>
+				<TooltipTrigger asChild>
+					<ActionIcon
+						onClick={async () => {
+							setCopied(false);
+							try {
+								await mutation.mutateAsync();
+								toast({
+									title: "Success",
+									description:
+										"Token regenerated, previous token is now invalid.",
+								});
+							} catch (error) {
+								if (error instanceof Error) {
+									toastError({
+										title: "Error",
+										description: error.message.trim(),
 									});
-								} catch (error) {
-									if (error instanceof Error) {
-										toastError({
-											title: "Error",
-											description: error.message.trim(),
-										});
-									}
 								}
-							}}
-							aria-label="Regenerate token"
-						>
-							{mutation.isLoading ? <Loader /> : <ArrowPathIcon className="w-5" />}
-						</ActionIcon>
-					</TooltipTrigger>
-					<TooltipContent>Regenerate token</TooltipContent>
-				</Tooltip>
-			</span>
+							}
+						}}
+						aria-label="Regenerate token"
+					>
+						{mutation.isLoading ? <Loader /> : <ArrowPathIcon className="w-5" />}
+					</ActionIcon>
+				</TooltipTrigger>
+				<TooltipContent>Regenerate token</TooltipContent>
+			</Tooltip>
 		</div>
 	);
 };
