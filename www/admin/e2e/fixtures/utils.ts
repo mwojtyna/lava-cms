@@ -14,6 +14,7 @@ import { DEFAULT_SESSION_COOKIE_NAME } from "lucia";
 const STORAGE_STATE_PATH = "./e2e/storageState.json";
 
 export async function saveAuthedContext(browser: Browser) {
+	console.log("Saving signed in state...");
 	const page = await browser.newPage();
 
 	await page.goto("/admin/signin", { waitUntil: "networkidle" });
@@ -45,6 +46,7 @@ export async function saveAuthedContext(browser: Browser) {
 }
 
 export async function getAuthedContext(browser: Browser) {
+	console.log("Getting signed in state...");
 	// We have to check if the user exists because a test might create one
 	await deleteMockUser();
 	await createMockUser();
@@ -75,7 +77,7 @@ export async function getAuthedContext(browser: Browser) {
 
 	if (!fs.existsSync(STORAGE_STATE_PATH)) {
 		await saveAuthedContext(browser);
-		console.log("Saved signed in state");
+		console.log("Saved signed in state.");
 	}
 
 	// Check if cookies are not expired
