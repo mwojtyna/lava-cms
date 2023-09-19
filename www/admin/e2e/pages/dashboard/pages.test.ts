@@ -82,7 +82,7 @@ test("breadcrumbs", async ({ authedPage: page }) => {
 	await expect(breadcrumbs).toHaveCount(0);
 });
 
-test("searchbox filters pages", async ({ authedPage: page }) => {
+test("searchbox filters items", async ({ authedPage: page }) => {
 	const rootGroup = await prisma.page.findFirst();
 	await prisma.page.createMany({
 		data: [

@@ -69,6 +69,14 @@ export async function getAuthedContext(browser: Browser) {
 		},
 	});
 
+	await prisma.componentDefinitionGroup.deleteMany();
+	await prisma.componentDefinitionGroup.create({
+		data: {
+			name: "Root",
+			parent_group_id: null,
+		},
+	});
+
 	await prisma.token.create({
 		data: {
 			token: tokenMock,
@@ -120,5 +128,6 @@ export async function cleanUpAuthedContext() {
 		await prisma.config.deleteMany();
 	}
 	await prisma.page.deleteMany();
+	await prisma.componentDefinitionGroup.deleteMany();
 	await prisma.token.deleteMany();
 }
