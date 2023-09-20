@@ -198,40 +198,42 @@ export const FieldDefs = React.forwardRef<React.ComponentRef<"div">, FieldDefsPr
 	}
 
 	return props.value.length > 0 ? (
-		<DndContext
-			sensors={sensors}
-			collisionDetection={closestCenter}
-			modifiers={[restrictToParentElement]}
-			onDragEnd={reorder}
-		>
-			<SortableContext items={ids} strategy={verticalListSortingStrategy}>
-				{props.value.map((field, i) => {
-					const sharedProps: Omit<
-						Extract<FieldDefProps, { dialogType: "add" }>,
-						"dialogType"
-					> = {
-						id: i.toString(),
-						field,
-						anyEditing: props.anyEditing,
-						onEditToggle: (value) => props.setAnyEditing(value),
-						onEditSubmit,
-						onDelete,
-					};
+		<div className="flex flex-col gap-2" data-testid="component-fields">
+			<DndContext
+				sensors={sensors}
+				collisionDetection={closestCenter}
+				modifiers={[restrictToParentElement]}
+				onDragEnd={reorder}
+			>
+				<SortableContext items={ids} strategy={verticalListSortingStrategy}>
+					{props.value.map((field, i) => {
+						const sharedProps: Omit<
+							Extract<FieldDefProps, { dialogType: "add" }>,
+							"dialogType"
+						> = {
+							id: i.toString(),
+							field,
+							anyEditing: props.anyEditing,
+							onEditToggle: (value) => props.setAnyEditing(value),
+							onEditSubmit,
+							onDelete,
+						};
 
-					return props.dialogType === "add" ? (
-						<FieldDef key={i} dialogType={props.dialogType} {...sharedProps} />
-					) : (
-						<FieldDef
-							key={i}
-							dialogType={props.dialogType}
-							{...sharedProps}
-							original={props.originalFields.find((of) => of.id === field.id)!}
-							onUnDelete={onUnDelete}
-						/>
-					);
-				})}
-			</SortableContext>
-		</DndContext>
+						return props.dialogType === "add" ? (
+							<FieldDef key={i} dialogType={props.dialogType} {...sharedProps} />
+						) : (
+							<FieldDef
+								key={i}
+								dialogType={props.dialogType}
+								{...sharedProps}
+								original={props.originalFields.find((of) => of.id === field.id)!}
+								onUnDelete={onUnDelete}
+							/>
+						);
+					})}
+				</SortableContext>
+			</DndContext>
+		</div>
 	) : (
 		<TypographyMuted>No fields added</TypographyMuted>
 	);
@@ -285,7 +287,9 @@ function FieldDef(props: FieldDefProps) {
 		transition,
 		zIndex: isDragging ? 1 : undefined,
 	};
-	const diffStyle: Record<NonNullable<FieldDefinitionUI["diffs"]>[number], string> = {
+
+	type DiffType = NonNullable<FieldDefinitionUI["diffs"]>[number];
+	const diffStyle: Record<DiffType, string> = {
 		added: "border-l-green-500",
 		edited: "border-l-yellow-500",
 		deleted: "border-l-red-500",
@@ -390,7 +394,7 @@ function FieldDef(props: FieldDefProps) {
 									: props.onUnDelete(props.field);
 							}}
 						>
-							<ArrowUturnLeftIcon className="w-5" />
+							<ArrowUturnLeftIcon className="w-5" data-testid="restore-field-btn" />
 						</ActionIcon>
 					)}
 
@@ -401,11 +405,11 @@ function FieldDef(props: FieldDefProps) {
 								variant={"simple"}
 								onClick={() => form.handleSubmit(onSubmit)()}
 							>
-								<ArrowRightIcon className="w-5" />
+								<ArrowRightIcon className="w-5" data-testid="save-field-btn" />
 							</ActionIcon>
 
 							<ActionIcon variant={"simple"} onClick={cancel}>
-								<XMarkIcon className="w-5" />
+								<XMarkIcon className="w-5" data-testid="cancel-field-btn" />
 							</ActionIcon>
 						</>
 					) : (
@@ -418,7 +422,7 @@ function FieldDef(props: FieldDefProps) {
 									props.onEditToggle(true);
 								}}
 							>
-								<PencilSquareIcon className="w-5" />
+								<PencilSquareIcon className="w-5" data-testid="edit-field-btn" />
 							</ActionIcon>
 
 							<ActionIcon
@@ -426,7 +430,7 @@ function FieldDef(props: FieldDefProps) {
 								className="text-destructive/75 hover:text-destructive"
 								onClick={() => props.onDelete(props.field)}
 							>
-								<TrashIcon className="w-5" />
+								<TrashIcon className="w-5" data-testid="delete-field-btn" />
 							</ActionIcon>
 						</>
 					))}

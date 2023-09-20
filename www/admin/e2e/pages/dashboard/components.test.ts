@@ -1,4 +1,4 @@
-import { expect, type Page } from "@playwright/test";
+import { expect, type Locator, type Page } from "@playwright/test";
 import { test } from "@admin/e2e/fixtures";
 import { prisma } from "@admin/prisma/client";
 import type { FieldDefinitionUI } from "@admin/app/dashboard/components/dialogs/component-definition/shared";
@@ -24,6 +24,11 @@ async function fillAddCompDefDialog(page: Page, name: string, fields?: FieldDefi
 
 	return dialog;
 }
+async function clickAction(page: Page, actionLabel: string) {
+	await page.locator("tbody > tr").first().locator("td").last().click();
+	await page.getByRole("menu").getByRole("menuitem", { name: actionLabel }).click();
+}
+
 async function checkRow(
 	page: Page,
 	rowIndex: number,
@@ -35,6 +40,35 @@ async function checkRow(
 	await expect(row.locator("td").nth(3)).toHaveText(type);
 
 	return row;
+}
+async function checkFieldDefs(page: Page, fieldDefs: FieldDefinition[]) {
+	const fieldDefDivs = page.getByTestId("component-fields").locator("> div");
+	for (const [i, fieldDef] of fieldDefs.entries()) {
+		const fieldDefLabel = fieldDefDivs.nth(i).locator("span");
+		await expect(fieldDefLabel.first()).toHaveText(fieldDef.name);
+		await expect(fieldDefLabel.nth(1)).toHaveText(fieldDef.type, { ignoreCase: true });
+	}
+}
+
+async function editFieldDef(
+	page: Page,
+	index: number,
+	newName?: string,
+	newType?: FieldDefinition["type"],
+): Promise<Locator> {
+	const fieldDef = page.getByTestId("component-fields").locator("> div").nth(index);
+	await fieldDef.getByTestId("edit-field-btn").click();
+
+	if (newName) {
+		await fieldDef.locator("input[name='name']").fill(newName);
+	}
+	if (newType) {
+		await fieldDef.getByRole("combobox").click();
+		await page.getByRole("group").locator(`div[data-value='${newType.toLowerCase()}']`).click();
+	}
+
+	await fieldDef.getByTestId("save-field-btn").click();
+	return fieldDef;
 }
 
 test.afterEach(async () => {
@@ -163,11 +197,92 @@ test.describe("component definition", () => {
 
 		await page.goto(URL);
 		await checkRow(page, 0, comp.name, "Component Definition");
-
-		await page.locator("tbody > tr").first().locator("td").last().click();
-		await page.getByRole("menu").getByRole("menuitem", { name: "Delete" }).click();
+		await clickAction(page, "Delete");
 		await page.getByRole("dialog").locator("button[type='submit']").click();
 
 		await expect(page.locator("text=No results.")).toBeInViewport();
+	});
+
+	test("edits component definition", async ({ authedPage: page }) => {
+		const rootGroup = await prisma.componentDefinitionGroup.findFirst();
+		const comp = await prisma.componentDefinition.create({
+			data: {
+				name: "Test",
+				group_id: rootGroup!.id,
+				field_definitions: {
+					createMany: {
+						data: [
+							{
+								name: "Label",
+								type: "TEXT",
+								order: 0,
+							},
+							{
+								name: "Description",
+								type: "TEXT",
+								order: 1,
+							},
+						],
+					},
+				},
+			},
+			include: {
+				field_definitions: true,
+			},
+		});
+		await page.goto(URL);
+		const dialog = page.getByRole("dialog");
+
+		// Edit
+		await clickAction(page, "Edit");
+		await checkFieldDefs(page, comp.field_definitions);
+		await editFieldDef(page, 0, "Switch", "SWITCH");
+		await dialog.locator("button[type='submit']").click();
+		await expect(dialog).toBeHidden();
+
+		const editedCompDef = await prisma.componentDefinition.findFirst({
+			include: {
+				field_definitions: {
+					orderBy: { order: "asc" },
+				},
+			},
+		});
+		expect(editedCompDef!.field_definitions).toMatchObject([
+			{
+				name: "Switch",
+				type: "SWITCH",
+			} satisfies FieldDefinition,
+			{
+				name: "Description",
+				type: "TEXT",
+			} satisfies FieldDefinition,
+		]);
+
+		// Edit but restore
+		await clickAction(page, "Edit");
+		const fieldDef = await editFieldDef(page, 0, "Label", "TEXT");
+		await checkFieldDefs(page, comp.field_definitions);
+		await fieldDef.getByTestId("restore-field-btn").click();
+		await checkFieldDefs(page, editedCompDef!.field_definitions);
+		await dialog.locator("button[type='submit']").click();
+		await expect(dialog).toBeHidden();
+
+		const editedButRestoredCompDef = await prisma.componentDefinition.findFirst({
+			include: {
+				field_definitions: {
+					orderBy: { order: "asc" },
+				},
+			},
+		});
+		expect(editedButRestoredCompDef!.field_definitions).toMatchObject([
+			{
+				name: "Switch",
+				type: "SWITCH",
+			} satisfies FieldDefinition,
+			{
+				name: "Description",
+				type: "TEXT",
+			} satisfies FieldDefinition,
+		]);
 	});
 });
