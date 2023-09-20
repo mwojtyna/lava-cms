@@ -29,7 +29,7 @@ import {
 import { TypographyMuted } from "@admin/src/components/ui/server";
 
 const editComponentDefDialogInputsSchema = z.object({
-	name: z.string().nonempty({ message: " " }),
+	compName: z.string().nonempty({ message: " " }),
 	fields: z.array(fieldDefinitionUISchema),
 });
 type EditComponentDefDialogInputs = z.infer<typeof editComponentDefDialogInputsSchema>;
@@ -73,8 +73,8 @@ export function EditComponentDefDialog(props: Props) {
 		mutation.mutate(
 			{
 				id: props.componentDef.id,
-				newName: data.name,
-				newGroupId: props.componentDef.parentGroupId ?? undefined,
+				newName: data.compName,
+				newGroupId: props.componentDef.parentGroupId!,
 				addedFields,
 				deletedFieldIds,
 				editedFields,
@@ -90,12 +90,15 @@ export function EditComponentDefDialog(props: Props) {
 							id: string;
 						};
 
-						form.setError("name", {
+						form.setError("compName", {
 							type: "manual",
 							message: (
-								<ComponentDefinitionNameError name={data.name} group={group} />
+								<ComponentDefinitionNameError name={data.compName} group={group} />
 							) as unknown as string,
 						});
+						console.log(
+							"Lorem ipsum dolor sit amet, qui minim labore adipisicing minim sint cillum sint consectetur cupidatat.",
+						);
 					}
 				},
 			},
@@ -105,7 +108,7 @@ export function EditComponentDefDialog(props: Props) {
 	React.useEffect(() => {
 		if (props.open) {
 			form.reset({
-				name: props.componentDef.name,
+				compName: props.componentDef.name,
 				fields: originalFields.map(
 					(of) =>
 						({
@@ -131,7 +134,7 @@ export function EditComponentDefDialog(props: Props) {
 					<form className="flex flex-col gap-4" onSubmit={form.handleSubmit(onSubmit)}>
 						<FormField
 							control={form.control}
-							name="name"
+							name="compName"
 							render={({ field }) => (
 								<FormItem>
 									<FormLabel>

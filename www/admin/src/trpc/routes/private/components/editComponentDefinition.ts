@@ -21,7 +21,7 @@ export const editComponentDefinition = privateProcedure
 	)
 	.mutation(async ({ input }) => {
 		// If editing, not moving the component definition
-		if (input.newName && !input.newGroupId) {
+		if (input.newName) {
 			const alreadyExists = await prisma.componentDefinition.findUnique({
 				where: {
 					name: input.newName,
@@ -30,7 +30,9 @@ export const editComponentDefinition = privateProcedure
 					group: true,
 				},
 			});
-			if (alreadyExists) {
+
+			// If the new name already exists, but the component definition is not the one we are editing
+			if (alreadyExists && alreadyExists.id !== input.id) {
 				throw new TRPCError({
 					code: "CONFLICT",
 					message: JSON.stringify({
