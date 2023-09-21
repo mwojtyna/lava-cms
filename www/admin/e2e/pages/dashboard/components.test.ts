@@ -50,14 +50,17 @@ async function checkFieldDefs(page: Page, fieldDefs: FieldDefinition[]) {
 	}
 }
 
+function getFieldDef(page: Page, nth: number): Locator {
+	return page.getByTestId("component-fields").locator("> div").nth(nth);
+}
 async function editFieldDef(
 	page: Page,
-	index: number,
+	nth: number,
 	newName?: string,
 	newType?: FieldDefinition["type"],
 	save?: boolean,
 ): Promise<Locator> {
-	const fieldDef = page.getByTestId("component-fields").locator("> div").nth(index);
+	const fieldDef = getFieldDef(page, nth);
 	await fieldDef.getByTestId("edit-field-btn").click();
 
 	if (newName) {
@@ -326,9 +329,9 @@ test.describe("component definition", () => {
 			},
 		});
 		await page.goto(URL);
-		const dialog = page.getByRole("dialog");
 
 		await selectAction(page, 0, "Edit");
+		const dialog = page.getByRole("dialog");
 		await checkFieldDefs(page, originalComp.field_definitions);
 		const fieldDef = await editFieldDef(page, 0, "Switch", "SWITCH");
 
@@ -375,9 +378,9 @@ test.describe("component definition", () => {
 			},
 		});
 		await page.goto(URL);
-		const dialog = page.getByRole("dialog");
 
 		await selectAction(page, 0, "Edit");
+		const dialog = page.getByRole("dialog");
 		await checkFieldDefs(page, originalComp.field_definitions);
 
 		const fieldDef = await editFieldDef(page, 0, "Switch", "SWITCH", false);
@@ -400,5 +403,112 @@ test.describe("component definition", () => {
 
 		await selectAction(page, 0, "Edit");
 		await checkFieldDefs(page, editedButCancelledCompDef!.field_definitions);
+	});
+
+	test("deletes field definition", async ({ authedPage: page }) => {
+		const originalComp = await prisma.componentDefinition.create({
+			data: {
+				name: "Test",
+				group_id: (await prisma.componentDefinitionGroup.findFirst())!.id,
+				field_definitions: {
+					createMany: {
+						data: [
+							{
+								name: "Label",
+								type: "TEXT",
+								order: 0,
+							},
+							{
+								name: "Description",
+								type: "TEXT",
+								order: 1,
+							},
+						],
+					},
+				},
+			},
+			include: {
+				field_definitions: true,
+			},
+		});
+		await page.goto(URL);
+
+		await selectAction(page, 0, "Edit");
+		await checkFieldDefs(page, originalComp.field_definitions);
+
+		const fieldDef = getFieldDef(page, 0);
+		await fieldDef.getByTestId("delete-field-btn").click();
+
+		const dialog = page.getByRole("dialog");
+		await dialog.locator("button[type='submit']").click();
+		await dialog.waitFor({ state: "hidden" });
+
+		const editedCompDef = await prisma.componentDefinition.findFirst({
+			include: {
+				field_definitions: {
+					orderBy: { order: "asc" },
+				},
+			},
+		});
+		expect(editedCompDef!.field_definitions).toMatchObject([
+			{
+				name: "Description",
+				type: "TEXT",
+			} satisfies FieldDefinition,
+		]);
+
+		await selectAction(page, 0, "Edit");
+		await checkFieldDefs(page, editedCompDef!.field_definitions);
+	});
+	test("deletes field definition but restores", async ({ authedPage: page }) => {
+		const originalComp = await prisma.componentDefinition.create({
+			data: {
+				name: "Test",
+				group_id: (await prisma.componentDefinitionGroup.findFirst())!.id,
+				field_definitions: {
+					createMany: {
+						data: [
+							{
+								name: "Label",
+								type: "TEXT",
+								order: 0,
+							},
+							{
+								name: "Description",
+								type: "TEXT",
+								order: 1,
+							},
+						],
+					},
+				},
+			},
+			include: {
+				field_definitions: true,
+			},
+		});
+		await page.goto(URL);
+
+		await selectAction(page, 0, "Edit");
+		await checkFieldDefs(page, originalComp.field_definitions);
+
+		const fieldDef = getFieldDef(page, 0);
+		await fieldDef.getByTestId("delete-field-btn").click();
+		await fieldDef.getByTestId("restore-field-btn").click();
+
+		const dialog = page.getByRole("dialog");
+		await dialog.locator("button[type='submit']").click();
+		await dialog.waitFor({ state: "hidden" });
+
+		const editedCompDef = await prisma.componentDefinition.findFirst({
+			include: {
+				field_definitions: {
+					orderBy: { order: "asc" },
+				},
+			},
+		});
+		expect(editedCompDef!.field_definitions).toMatchObject(originalComp.field_definitions);
+
+		await selectAction(page, 0, "Edit");
+		await checkFieldDefs(page, originalComp.field_definitions);
 	});
 });
