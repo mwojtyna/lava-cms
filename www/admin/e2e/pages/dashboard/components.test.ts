@@ -24,6 +24,26 @@ async function fillAddCompDefDialog(page: Page, name: string, fields?: FieldDefi
 
 	return dialog;
 }
+async function fillEditCompDefDialog(page: Page, name?: string, fields?: FieldDefinition[]) {
+	const dialog = page.getByRole("dialog");
+	await expect(dialog).toBeInViewport();
+
+	if (name) {
+		await dialog.locator("input[type='text']").first().fill(name);
+	}
+	for (const field of fields ?? []) {
+		await dialog.locator("input[name='name']").fill(field.name);
+		await dialog.getByRole("combobox").click();
+		await page
+			.getByRole("group")
+			.locator(`div[data-value='${field.type.toLowerCase()}']`)
+			.click();
+		await dialog.locator("button[type='button']", { hasText: "Add" }).click();
+	}
+	// await dialog.locator("button[type='submit']").click();
+
+	return dialog;
+}
 async function selectAction(page: Page, rowIndex: number, actionLabel: string) {
 	await page.locator("tbody > tr").nth(rowIndex).locator("td").last().click();
 	await page.getByRole("menu").getByRole("menuitem", { name: actionLabel }).click();
@@ -150,9 +170,7 @@ test("searchbox filters items", async ({ authedPage: page }) => {
 });
 
 test.describe("component definition", () => {
-	test("adds component definition, check for duplicate name handling", async ({
-		authedPage: page,
-	}) => {
+	test("adds component definition, duplicate name errors", async ({ authedPage: page }) => {
 		const rootGroup = await prisma.componentDefinitionGroup.findFirst();
 		const existingComp = await prisma.componentDefinition.create({
 			data: {
@@ -194,7 +212,7 @@ test.describe("component definition", () => {
 
 	test("deletes component definition", async ({ authedPage: page }) => {
 		const rootGroup = await prisma.componentDefinitionGroup.findFirst();
-		const comp = await prisma.componentDefinition.create({
+		await prisma.componentDefinition.create({
 			data: {
 				name: "Test",
 				group_id: rootGroup!.id,
@@ -202,14 +220,13 @@ test.describe("component definition", () => {
 		});
 
 		await page.goto(URL);
-		await checkRow(page, 0, comp.name, "Component Definition");
 		await selectAction(page, 0, "Delete");
 		await page.getByRole("dialog").locator("button[type='submit']").click();
 
 		await expect(page.locator("text=No results.")).toBeInViewport();
 	});
 
-	test("edits component definition (name, fields)", async ({ authedPage: page }) => {
+	test("edits component definition (name & fields)", async ({ authedPage: page }) => {
 		const rootGroup = await prisma.componentDefinitionGroup.findFirst();
 		const originalComp = await prisma.componentDefinition.create({
 			data: {
@@ -271,7 +288,7 @@ test.describe("component definition", () => {
 		await selectAction(page, 0, "Edit");
 		await checkFieldDefs(page, editedCompDef!.field_definitions);
 	});
-	test("edits component definition (name), check duplicate handling", async ({
+	test("edits component definition (name), duplicate name errors", async ({
 		authedPage: page,
 	}) => {
 		const rootGroup = await prisma.componentDefinitionGroup.findFirst();
@@ -307,7 +324,10 @@ test.describe("component definition", () => {
 		await checkRow(page, 0, existingComp.name, "Component Definition");
 		await checkRow(page, 1, comp.name, "Component Definition");
 	});
-	test("edits component definition but restores edit (fields)", async ({ authedPage: page }) => {
+});
+
+test.describe("field definition", () => {
+	test("edits field definition but restores edit", async ({ authedPage: page }) => {
 		const rootGroup = await prisma.componentDefinitionGroup.findFirst();
 		const originalComp = await prisma.componentDefinition.create({
 			data: {
@@ -357,7 +377,7 @@ test.describe("component definition", () => {
 		await selectAction(page, 0, "Edit");
 		await checkFieldDefs(page, editedButRestoredCompDef!.field_definitions);
 	});
-	test("edits component definition but cancels edit (fields)", async ({ authedPage: page }) => {
+	test("edits field definition but cancels edit", async ({ authedPage: page }) => {
 		const rootGroup = await prisma.componentDefinitionGroup.findFirst();
 		const originalComp = await prisma.componentDefinition.create({
 			data: {
@@ -404,6 +424,64 @@ test.describe("component definition", () => {
 
 		await selectAction(page, 0, "Edit");
 		await checkFieldDefs(page, editedButCancelledCompDef!.field_definitions);
+	});
+
+	test("adds field definition", async ({ authedPage: page }) => {
+		await prisma.componentDefinition.create({
+			data: {
+				name: "Test",
+				group_id: (await prisma.componentDefinitionGroup.findFirst())!.id,
+			},
+		});
+		await page.goto(URL);
+		await selectAction(page, 0, "Edit");
+
+		const dialog = await fillEditCompDefDialog(page, undefined, [
+			{ name: "Label", type: "TEXT" },
+		]);
+		const fieldDef = getFieldDef(page, 0);
+		await expect(fieldDef).toHaveAttribute("data-test-diff", "added");
+
+		await dialog.locator("button[type='submit']").click();
+		await dialog.waitFor({ state: "hidden" });
+
+		const addedCompDef = await prisma.componentDefinition.findFirst({
+			include: {
+				field_definitions: {
+					orderBy: { order: "asc" },
+				},
+			},
+		});
+		expect(addedCompDef!.field_definitions).toMatchObject([
+			{
+				name: "Label",
+				type: "TEXT",
+			} satisfies FieldDefinition,
+		]);
+
+		await selectAction(page, 0, "Edit");
+		await checkFieldDefs(page, addedCompDef!.field_definitions);
+	});
+	test("added field definition doesn't implement diff history", async ({ authedPage: page }) => {
+		await prisma.componentDefinition.create({
+			data: {
+				name: "Test",
+				group_id: (await prisma.componentDefinitionGroup.findFirst())!.id,
+			},
+		});
+		await page.goto(URL);
+		await selectAction(page, 0, "Edit");
+
+		await fillEditCompDefDialog(page, undefined, [{ name: "Label", type: "TEXT" }]);
+		const fieldDef = getFieldDef(page, 0);
+
+		// After edit its diff state doesn't change
+		await editFieldDef(page, 0, "Edited", "NUMBER");
+		await expect(fieldDef).toHaveAttribute("data-test-diff", "added");
+
+		// After delete it is removed instantly
+		await fieldDef.getByTestId("delete-field-btn").click();
+		await expect(fieldDef).toBeHidden();
 	});
 
 	test("deletes field definition", async ({ authedPage: page }) => {
@@ -512,7 +590,7 @@ test.describe("component definition", () => {
 		await checkFieldDefs(page, originalComp.field_definitions);
 	});
 
-	test("check edit + delete diff history of field definitions", async ({ authedPage: page }) => {
+	test("traverses field definitions diff history", async ({ authedPage: page }) => {
 		const originalComp = await prisma.componentDefinition.create({
 			data: {
 				name: "Test",

@@ -59,7 +59,7 @@ export const AddFieldDefs = React.forwardRef<React.ComponentRef<"div">, AddField
 		};
 
 		return (
-			<div ref={ref} className="flex gap-2">
+			<div ref={ref} className="flex gap-2" data-testid="add-field-definition">
 				<div className="grid grid-cols-2">
 					<FormField
 						control={form.control}
