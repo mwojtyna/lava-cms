@@ -10,7 +10,8 @@ import {
 } from "@admin/prisma/generated/zod";
 import { cn } from "@admin/src/utils/styling";
 import { Button, type FormFieldProps } from "@admin/src/components/ui/client";
-import type { caller } from "@admin/src/trpc/routes/private/_private";
+import type { PrivateRouter } from "@admin/src/trpc/routes/private/_private";
+import type { inferRouterOutputs } from "@trpc/server";
 import { FolderIcon } from "@heroicons/react/24/outline";
 
 export const fieldTypeMap: Record<string, string> = Object.values(ComponentFieldType).reduce(
@@ -90,7 +91,7 @@ export function ComponentDefinitionNameError(props: {
 }
 
 export function groupsToComboboxEntries(
-	groups: Awaited<ReturnType<typeof caller.components.getAllGroups>>,
+	groups: inferRouterOutputs<PrivateRouter>["components"]["getAllGroups"],
 ): ItemParent[] {
 	return groups.map(
 		(group) =>

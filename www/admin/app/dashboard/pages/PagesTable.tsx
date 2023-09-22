@@ -14,11 +14,12 @@ import {
 import { useTable, type TableSearchParams } from "@admin/src/hooks";
 import { type TableCookie } from "@admin/src/utils/cookies";
 import { columns } from "./PagesTableColumns";
-import type { caller } from "@admin/src/trpc/routes/private/_private";
+import type { PrivateRouter } from "@admin/src/trpc/routes/private/_private";
+import type { inferRouterOutputs } from "@trpc/server";
 
 interface Props {
 	group: Page;
-	data: Awaited<ReturnType<typeof caller.pages.getGroupContents>>;
+	data: inferRouterOutputs<PrivateRouter>["pages"]["getGroupContents"];
 	pagination: TableSearchParams;
 	cookie: TableCookie | null;
 }

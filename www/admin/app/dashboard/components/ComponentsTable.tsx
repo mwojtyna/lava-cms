@@ -3,7 +3,7 @@
 import * as React from "react";
 import { useTable, type TableSearchParams } from "@admin/src/hooks";
 import { trpc } from "@admin/src/utils/trpc";
-import type { caller } from "@admin/src/trpc/routes/private/_private";
+import type { PrivateRouter } from "@admin/src/trpc/routes/private/_private";
 import type { TableCookie } from "@admin/src/utils/cookies";
 import { columns } from "./ComponentsTableColumns";
 import {
@@ -15,9 +15,10 @@ import {
 import { CubeIcon } from "@heroicons/react/24/outline";
 import { AddGroupDialog } from "./dialogs/GroupDialogs";
 import { AddComponentDefDialog } from "./dialogs/component-definition";
+import type { inferRouterOutputs } from "@trpc/server";
 
 interface Props {
-	data: Awaited<ReturnType<typeof caller.components.getGroup>>;
+	data: inferRouterOutputs<PrivateRouter>["components"]["getGroup"];
 	pagination: TableSearchParams;
 	cookie: TableCookie | null;
 }
