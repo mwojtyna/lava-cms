@@ -6,21 +6,28 @@ import type { FieldDefinitionUI } from "@admin/app/dashboard/components/dialogs/
 const URL = "/admin/dashboard/components";
 
 type FieldDefinition = Pick<FieldDefinitionUI, "name" | "type">;
-async function fillAddCompDefDialog(page: Page, name: string, fields?: FieldDefinition[]) {
+async function fillAddCompDefDialog(
+	page: Page,
+	name: string,
+	fields?: FieldDefinition[],
+	submit = true,
+) {
 	const dialog = page.getByRole("dialog");
 	await expect(dialog).toBeInViewport();
 
 	await dialog.locator("input[type='text']").first().fill(name);
 	for (const field of fields ?? []) {
 		await dialog.locator("input[name='name']").fill(field.name);
-		await dialog.getByRole("combobox").click();
+		await dialog.getByRole("combobox").first().click();
 		await page
 			.getByRole("group")
 			.locator(`div[data-value='${field.type.toLowerCase()}']`)
 			.click();
 		await dialog.locator("button[type='button']", { hasText: "Add" }).click();
 	}
-	await dialog.locator("button[type='submit']").click();
+	if (submit) {
+		await dialog.locator("button[type='submit']").click();
+	}
 
 	return dialog;
 }
@@ -328,7 +335,7 @@ test.describe("component definition", () => {
 		await checkRow(page, 1, comp.name, "Component Definition");
 	});
 
-	test("move component definition", async ({ authedPage: page }) => {
+	test("moves component definition", async ({ authedPage: page }) => {
 		const rootGroup = await prisma.componentDefinitionGroup.findFirst({
 			include: {
 				groups: true,
@@ -369,6 +376,58 @@ test.describe("component definition", () => {
 
 		await getRow(page, 0).locator("td a").first().click();
 		await checkRow(page, 0, compDef.name, "Component Definition");
+	});
+
+	test("duplicates component definition, duplicate name errors", async ({ authedPage: page }) => {
+		const existingComp = await prisma.componentDefinition.create({
+			data: {
+				name: "Test",
+				group_id: (await prisma.componentDefinitionGroup.findFirst())!.id,
+			},
+		});
+		const destination = await prisma.componentDefinitionGroup.create({
+			data: {
+				name: "Group 1",
+				parent_group_id: (await prisma.componentDefinitionGroup.findFirst())!.id,
+			},
+		});
+
+		await page.goto(URL);
+		await selectAction(page, 1, "Duplicate");
+		const dialog = await fillAddCompDefDialog(page, existingComp.name, [
+			{ name: "Label", type: "TEXT" },
+		]);
+		await expect(getFieldDef(page, 0)).not.toHaveAttribute("data-test-diff", "added");
+		await expect(dialog.locator("input[name='compName']")).toHaveAttribute(
+			"aria-invalid",
+			"true",
+		);
+		await expect(dialog.locator("strong")).toHaveText(existingComp.name);
+
+		await fillAddCompDefDialog(page, "Test 2", undefined, false);
+		await dialog.getByRole("combobox").nth(1).click();
+		await dialog.getByRole("option", { name: destination.name }).click();
+
+		await dialog.locator("button[type='submit']").click();
+		await dialog.waitFor({ state: "hidden" });
+
+		const newComp = await prisma.componentDefinition.findFirst({
+			where: { name: "Test 2" },
+			include: {
+				field_definitions: {
+					select: { name: true, type: true },
+				},
+			},
+		});
+		expect(newComp!.field_definitions).toMatchObject([
+			{
+				name: "Label",
+				type: "TEXT",
+			} satisfies FieldDefinition,
+		]);
+
+		await getRow(page, 0).locator("td a").first().click();
+		await checkRow(page, 0, "Test 2", "Component Definition");
 	});
 });
 
@@ -485,6 +544,7 @@ test.describe("field definition", () => {
 		const dialog = await fillEditCompDefDialog(page, undefined, [
 			{ name: "Label", type: "TEXT" },
 		]);
+
 		const fieldDef = getFieldDef(page, 0);
 		await expect(fieldDef).toHaveAttribute("data-test-diff", "added");
 

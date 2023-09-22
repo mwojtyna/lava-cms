@@ -304,7 +304,7 @@ function FieldDef(props: FieldDefProps) {
 				"group flex-row gap-4 md:p-3",
 				props.dialogType === "edit" && lastDiff && `border-l-[3px] ${diffStyle[lastDiff]}`,
 			)}
-			data-test-diff={lastDiff}
+			data-test-diff={props.dialogType === "edit" ? lastDiff : undefined}
 		>
 			<div className="flex items-center gap-3">
 				<div {...attributes} {...listeners}>
