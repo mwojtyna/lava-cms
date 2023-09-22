@@ -31,6 +31,14 @@ async function fillAddCompDefDialog(
 
 	return dialog;
 }
+async function fillAddEditGroupDialog(page: Page, name: string) {
+	const dialog = page.getByRole("dialog");
+	await expect(dialog).toBeInViewport();
+	await dialog.locator("input[type='text']").first().fill(name);
+	await dialog.locator("button[type='submit']").click();
+
+	return dialog;
+}
 async function fillEditCompDefDialog(page: Page, name?: string, fields?: FieldDefinition[]) {
 	const dialog = page.getByRole("dialog");
 	await expect(dialog).toBeInViewport();
@@ -336,11 +344,7 @@ test.describe("component definition", () => {
 	});
 
 	test("moves component definition", async ({ authedPage: page }) => {
-		const rootGroup = await prisma.componentDefinitionGroup.findFirst({
-			include: {
-				groups: true,
-			},
-		});
+		const rootGroup = await prisma.componentDefinitionGroup.findFirst();
 		const compDef = await prisma.componentDefinition.create({
 			data: {
 				name: "Test",
@@ -351,6 +355,9 @@ test.describe("component definition", () => {
 			data: {
 				name: "Group 1",
 				parent_group_id: rootGroup!.id,
+			},
+			include: {
+				groups: true,
 			},
 		});
 
@@ -367,7 +374,7 @@ test.describe("component definition", () => {
 
 		const option = dialog.getByRole("option", { name: destination.name });
 		await expect(option.locator("p > span")).toHaveText(
-			`in ${rootGroup!.name}, contains ${rootGroup!.groups.length} items`,
+			`in ${rootGroup!.name}, contains ${destination.groups.length} items`,
 		);
 		await option.click();
 
@@ -731,5 +738,93 @@ test.describe("field definition", () => {
 		await fieldDef.getByTestId("restore-field-btn").click();
 		await expect(fieldDef).not.toHaveAttribute("data-test-diff", "edited");
 		await checkFieldDefs(page, originalComp.field_definitions);
+	});
+});
+
+test.describe("group", () => {
+	test("adds group", async ({ authedPage: page }) => {
+		await page.goto(URL);
+		await page.getByTestId("add-group").click();
+		const dialog = await fillAddEditGroupDialog(page, "Group 1");
+		await dialog.waitFor({ state: "hidden" });
+
+		const addedGroup = await prisma.componentDefinitionGroup.findFirst({
+			where: { name: "Group 1" },
+		});
+		await getRow(page, 0).getByRole("link").click();
+		await page.waitForURL(URL + `/${addedGroup!.id}`);
+		const breadcrumbs = page.getByTestId("breadcrumbs");
+		await expect(breadcrumbs).toContainText("Group 1");
+	});
+
+	test("edits group", async ({ authedPage: page }) => {
+		await prisma.componentDefinitionGroup.create({
+			data: {
+				name: "Group 1",
+				parent_group_id: (await prisma.componentDefinitionGroup.findFirst())!.id,
+			},
+		});
+		await page.goto(URL);
+
+		await selectAction(page, 0, "Edit");
+		const dialog = await fillAddEditGroupDialog(page, "Group 2");
+		await dialog.waitFor({ state: "hidden" });
+
+		await checkRow(page, 0, "Group 2", "Group");
+	});
+
+	test("moves group", async ({ authedPage: page }) => {
+		const rootGroup = await prisma.componentDefinitionGroup.findFirst();
+		const group = await prisma.componentDefinitionGroup.create({
+			data: {
+				name: "Group 1",
+				parent_group_id: rootGroup!.id,
+			},
+		});
+		const destination = await prisma.componentDefinitionGroup.create({
+			data: {
+				name: "Group 2",
+				parent_group_id: rootGroup!.id,
+			},
+			include: {
+				groups: true,
+			},
+		});
+
+		await page.goto(URL);
+		await selectAction(page, 0, "Move");
+
+		const dialog = page.getByRole("dialog");
+		await expect(dialog.getByRole("heading")).toHaveText(`Move group "${group.name}"`);
+
+		const combobox = dialog.getByRole("combobox");
+		await combobox.click();
+
+		const option = dialog.getByRole("option", { name: destination.name });
+		await expect(option.locator("p > span")).toHaveText(
+			`in ${rootGroup!.name}, contains ${destination.groups.length} items`,
+		);
+		await option.click();
+
+		await dialog.locator("button[type='submit']").click();
+		await dialog.waitFor({ state: "hidden" });
+
+		await getRow(page, 0).locator("td a").first().click();
+		await checkRow(page, 0, group.name, "Group");
+	});
+
+	test("deletes group", async ({ authedPage: page }) => {
+		await prisma.componentDefinitionGroup.create({
+			data: {
+				name: "Group 1",
+				parent_group_id: (await prisma.componentDefinitionGroup.findFirst())!.id,
+			},
+		});
+		await page.goto(URL);
+
+		await selectAction(page, 0, "Delete");
+		await page.getByRole("dialog").locator("button[type='submit']").click();
+
+		await expect(page.locator("text=No results.")).toBeInViewport();
 	});
 });
