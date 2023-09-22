@@ -49,13 +49,16 @@ async function selectAction(page: Page, rowIndex: number, actionLabel: string) {
 	await page.getByRole("menu").getByRole("menuitem", { name: actionLabel }).click();
 }
 
+function getRow(page: Page, rowIndex: number) {
+	return page.locator("tbody > tr").nth(rowIndex);
+}
 async function checkRow(
 	page: Page,
 	rowIndex: number,
 	name: string,
 	type: "Component Definition" | "Group",
 ) {
-	const row = page.locator("tbody > tr").nth(rowIndex);
+	const row = getRow(page, rowIndex);
 	await expect(row.locator("td").nth(1)).toHaveText(name);
 	await expect(row.locator("td").nth(3)).toHaveText(type);
 
@@ -323,6 +326,49 @@ test.describe("component definition", () => {
 
 		await checkRow(page, 0, existingComp.name, "Component Definition");
 		await checkRow(page, 1, comp.name, "Component Definition");
+	});
+
+	test("move component definition", async ({ authedPage: page }) => {
+		const rootGroup = await prisma.componentDefinitionGroup.findFirst({
+			include: {
+				groups: true,
+			},
+		});
+		const compDef = await prisma.componentDefinition.create({
+			data: {
+				name: "Test",
+				group_id: rootGroup!.id,
+			},
+		});
+		const destination = await prisma.componentDefinitionGroup.create({
+			data: {
+				name: "Group 1",
+				parent_group_id: rootGroup!.id,
+			},
+		});
+
+		await page.goto(URL);
+		await selectAction(page, 1, "Move");
+
+		const dialog = page.getByRole("dialog");
+		await expect(dialog.getByRole("heading")).toHaveText(
+			`Move component definition "${compDef.name}"`,
+		);
+
+		const combobox = dialog.getByRole("combobox");
+		await combobox.click();
+
+		const option = dialog.getByRole("option", { name: destination.name });
+		await expect(option.locator("p > span")).toHaveText(
+			`in ${rootGroup!.name}, contains ${rootGroup!.groups.length} items`,
+		);
+		await option.click();
+
+		await dialog.locator("button[type='submit']").click();
+		await dialog.waitFor({ state: "hidden" });
+
+		await getRow(page, 0).locator("td a").first().click();
+		await checkRow(page, 0, compDef.name, "Component Definition");
 	});
 });
 
