@@ -106,7 +106,7 @@ const config: PlaywrightTestConfig = {
 		// Run only the admin server
 		command: process.env.CI ? "pnpm start" : "pnpm dev",
 		url: "http://localhost:3001/admin/api/health",
-		reuseExistingServer: true,
+		reuseExistingServer: false,
 	},
 };
 

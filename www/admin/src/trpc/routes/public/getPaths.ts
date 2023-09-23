@@ -7,7 +7,7 @@ export const getPaths = publicProcedure
 	.input(
 		z.object({
 			groupUrl: z.string(),
-		})
+		}),
 	)
 	.query(async ({ input }): Promise<string[]> => {
 		const group = await prisma.page.findFirst({
@@ -15,6 +15,7 @@ export const getPaths = publicProcedure
 				url: input.groupUrl,
 				is_group: true,
 			},
+			// Only include pages that aren't groups or index pages
 			include: {
 				children: {
 					where: {

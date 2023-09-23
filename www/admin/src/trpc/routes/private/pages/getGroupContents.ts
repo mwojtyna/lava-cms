@@ -3,10 +3,11 @@ import type { Page } from "@prisma/client";
 import { privateProcedure } from "@admin/src/trpc";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
+import type { Breadcrumb } from "@admin/src/components/DataTable";
 
 export const getGroupContents = privateProcedure
 	.input(z.object({ id: z.string() }).nullish())
-	.query(async ({ input }): Promise<{ breadcrumbs: Page[]; pages: Page[] }> => {
+	.query(async ({ input }): Promise<{ breadcrumbs: Breadcrumb[]; pages: Page[] }> => {
 		// Return root group contents if no input is provided
 		if (!input) {
 			return {
@@ -37,15 +38,36 @@ export const getGroupContents = privateProcedure
 		};
 	});
 
-async function getBreadcrumbs(group: Page) {
-	const breadcrumbs = [group];
-	let parent = await prisma.page.findUnique({ where: { id: group.parent_id ?? "" } });
-
-	// Ignore root group so we can add a custom breadcrumb for it
-	while (parent && parent.parent_id) {
-		breadcrumbs.push(parent);
-		parent = await prisma.page.findUnique({ where: { id: parent.parent_id ?? "" } });
-	}
+async function getBreadcrumbs(page: Page): Promise<Breadcrumb[]> {
+	const breadcrumbs = await prisma.$queryRaw<Breadcrumb[]>`
+		WITH RECURSIVE breadcrumbs AS (
+  	  	  SELECT
+    		id,
+    		name,
+    		parent_id
+  	  	  FROM
+    		frontend.page
+  	  	  WHERE
+    		id = ${page.id}
+  	  	  UNION
+  	  	  SELECT
+    		p.id,
+    		p.name,
+    		p.parent_id
+  	  	  FROM
+    		frontend.page p
+  	  	  INNER JOIN
+    		breadcrumbs bc
+  	  	  ON
+    		p.id = bc.parent_id
+  	  	  WHERE p.parent_id IS NOT NULL
+		)
+		SELECT
+  	  	  id,
+  	  	  name
+		FROM
+  	  	  breadcrumbs;
+`;
 
 	return breadcrumbs.reverse();
 }

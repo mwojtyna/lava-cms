@@ -13,9 +13,14 @@ import { cn } from "@admin/src/utils/styling";
 import { Label } from "@admin/src/components/ui/client";
 import { TypographyMuted } from "../server";
 
+interface FormFieldProps<T> {
+	value: T;
+	onChange: (value: T) => void;
+}
+
 type FormFieldContextValue<
 	TFieldValues extends FieldValues = FieldValues,
-	TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>
+	TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
 > = {
 	name: TName;
 };
@@ -24,7 +29,7 @@ const FormFieldContext = React.createContext<FormFieldContextValue>({} as FormFi
 
 const FormField = <
 	TFieldValues extends FieldValues = FieldValues,
-	TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>
+	TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
 >({
 	defaultValue,
 	...props
@@ -77,7 +82,7 @@ const FormItem = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivEl
 				<div ref={ref} className={cn("flex flex-col gap-2", className)} {...props} />
 			</FormItemContext.Provider>
 		);
-	}
+	},
 );
 FormItem.displayName = "FormItem";
 
@@ -111,7 +116,7 @@ const FormControl = React.forwardRef<
 		<Slot
 			ref={ref}
 			id={formItemId}
-			className={cn(className, error && "border-destructive")}
+			className={cn(className, error && "border-destructive outline-destructive")}
 			aria-describedby={!error ? formDescriptionId : `${formDescriptionId} ${formMessageId}`}
 			aria-invalid={!!error}
 			{...props}
@@ -161,4 +166,5 @@ export {
 	FormDescription,
 	FormError,
 	FormField,
+	type FormFieldProps,
 };

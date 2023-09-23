@@ -4,7 +4,7 @@ import Layout from "@frontend/layouts/Layout.astro";
 
 export async function getStaticPaths(): Promise<Array<{ params: { product: string } }>> {
 	const cms = useLavaCms();
-	const paths = await cms.getPaths("/products");
+	const paths = await cms.getPaths("/products/category-1");
 	return paths.map((path) => ({ params: { product: path } }));
 }
 ---
