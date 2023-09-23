@@ -68,7 +68,7 @@ jobs:
         run: pnpm e2e --project ${{ inputs.browser }}
 
       - name: Upload report
-        uses: actions/upload-artifact@v3.1.2
+        uses: actions/upload-artifact@v3.1.3
         if: always()
         with:
           name: playwright-chromium-report
