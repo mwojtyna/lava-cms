@@ -28,7 +28,7 @@ const addComponentDefDialogInputsSchema = z.object({
 	// This is named `compName` instead of `name` because `name` is already used
 	// in the `FieldDefinitionUI` type and errors are duplicated.
 	// Also it's easier to change this name than the other one
-	compName: z.string().nonempty({ message: " " }),
+	compName: z.string().trim().nonempty({ message: "Name cannot be empty" }),
 	// Omitting id because it's not available when adding a new component definition
 	fields: z.array(fieldDefinitionUISchema.omit({ id: true })),
 });

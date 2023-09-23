@@ -188,7 +188,9 @@ test("searchbox filters items", async ({ authedPage: page }) => {
 });
 
 test.describe("component definition", () => {
-	test("adds component definition, duplicate name errors", async ({ authedPage: page }) => {
+	test("adds component definition, invalid or duplicate name errors", async ({
+		authedPage: page,
+	}) => {
 		const rootGroup = await prisma.componentDefinitionGroup.findFirst();
 		const existingComp = await prisma.componentDefinition.create({
 			data: {
@@ -199,6 +201,7 @@ test.describe("component definition", () => {
 
 		await page.goto(URL);
 		await page.getByTestId("add-item").click();
+
 		const dialog = await fillAddCompDefDialog(page, existingComp.name, [
 			{ name: "Label", type: "TEXT" },
 		]);
@@ -207,6 +210,12 @@ test.describe("component definition", () => {
 			"true",
 		);
 		await expect(dialog.locator("strong")).toHaveText(existingComp.name);
+
+		await fillAddCompDefDialog(page, "  ");
+		await expect(dialog.locator("input[name='compName']")).toHaveAttribute(
+			"aria-invalid",
+			"true",
+		);
 
 		await fillAddCompDefDialog(page, "Test 2");
 		await dialog.waitFor({ state: "hidden" });
