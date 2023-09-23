@@ -1,3 +1,5 @@
+"use client";
+
 import * as React from "react";
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/client";
 import { QuestionMarkCircleIcon } from "@heroicons/react/20/solid";
@@ -5,7 +7,7 @@ import { type VariantProps, cva } from "class-variance-authority";
 
 interface InfoTooltipProps
 	extends React.ComponentPropsWithoutRef<typeof Popover>,
-		VariantProps<typeof variants> {
+	VariantProps<typeof variants> {
 	iconClassName?: string;
 }
 
@@ -29,7 +31,7 @@ const InfoTooltip = React.forwardRef<React.ComponentRef<typeof PopoverTrigger>, 
 			</PopoverTrigger>
 			<PopoverContent variant={"tooltip"}>{children}</PopoverContent>
 		</Popover>
-	)
+	),
 );
 InfoTooltip.displayName = "InfoTooltip";
 

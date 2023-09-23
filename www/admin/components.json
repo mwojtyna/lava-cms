@@ -10,6 +10,6 @@
 	},
 	"aliases": {
 		"components": "@admin/src/components",
-		"utils": "@admin/src/utils"
+		"utils": "@admin/src/utils/styling"
 	}
 }

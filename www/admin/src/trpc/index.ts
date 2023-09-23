@@ -24,9 +24,7 @@ export const privateAuth = t.middleware(async (opts) => {
 	};
 
 	if (opts.meta?.noAuth || (await prisma.config.count()) === 0) {
-		return opts.next({
-			ctx,
-		});
+		return opts.next({ ctx });
 	}
 
 	if (!session) {

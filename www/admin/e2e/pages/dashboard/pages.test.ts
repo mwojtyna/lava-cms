@@ -17,7 +17,7 @@ async function checkRow(
 	rowIndex: number,
 	name: string,
 	url: string,
-	type: "Page" | "Group"
+	type: "Page" | "Group",
 ) {
 	const row = page.locator("tbody > tr").nth(rowIndex);
 	await expect(row.locator("td").nth(1)).toHaveText(name);
@@ -82,7 +82,7 @@ test("breadcrumbs", async ({ authedPage: page }) => {
 	await expect(breadcrumbs).toHaveCount(0);
 });
 
-test("searchbox filters pages", async ({ authedPage: page }) => {
+test("searchbox filters items", async ({ authedPage: page }) => {
 	const rootGroup = await prisma.page.findFirst();
 	await prisma.page.createMany({
 		data: [
@@ -121,7 +121,7 @@ test.describe("page", () => {
 
 		// waitUntil: "networkidle" is needed because webkit is great as always
 		await page.goto("/admin/dashboard/pages", { waitUntil: "networkidle" });
-		await page.getByTestId("add-page").click();
+		await page.getByTestId("add-item").click();
 
 		const dialog = await fillAddEditDialog(page, "Test", "/test");
 		await expect(dialog.locator("input[name='slug']")).toHaveAttribute("aria-invalid", "true");
@@ -536,8 +536,8 @@ test.describe("bulk", () => {
 		await prisma.page.createMany({
 			data: [
 				{
-					name: "Group 2",
-					url: "/group-1/group-2",
+					name: "Group 11",
+					url: "/group-1/group-11",
 					parent_id: group1.id,
 					is_group: true,
 				},
@@ -610,6 +610,6 @@ test.describe("bulk", () => {
 
 		await page.getByRole("link", { name: "Group 1" }).click();
 		await page.waitForURL("/admin/dashboard/pages/**");
-		await checkRow(page, 0, "Group 2", "/group-3/group-1/group-2", "Group");
+		await checkRow(page, 0, "Group 11", "/group-3/group-1/group-11", "Group");
 	});
 });

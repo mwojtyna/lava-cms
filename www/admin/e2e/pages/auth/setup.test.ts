@@ -47,28 +47,28 @@ test.describe("sign up step", () => {
 
 		await passwordField.first().fill("pass");
 		await expect(
-			page.locator("text=The password must be at least 8 characters long.")
+			page.locator("text=The password must be at least 8 characters long."),
 		).toBeInViewport();
 
 		await passwordField.first().fill("12345678");
 		await expect(
-			page.locator("text=The password must contain at least one lowercase letter.")
+			page.locator("text=The password must contain at least one lowercase letter."),
 		).toBeInViewport();
 
 		await passwordField.first().fill("password");
 		await expect(
-			page.locator("text=The password must contain at least one uppercase letter.")
+			page.locator("text=The password must contain at least one uppercase letter."),
 		).toBeInViewport();
 
 		await passwordField.first().fill("Password");
 		await expect(
-			page.locator("text=The password must contain at least one digit.")
+			page.locator("text=The password must contain at least one digit."),
 		).toBeInViewport();
 
 		await passwordField.first().fill("Password1");
 		await expect(page.locator("input[type='password']").first()).toHaveAttribute(
 			"aria-invalid",
-			"false"
+			"false",
 		);
 	});
 
@@ -101,13 +101,12 @@ test.describe("setup website step", () => {
 	test.beforeAll(async () => {
 		await createMockUser();
 	});
-	test.afterEach(async () => {
-		await prisma.page.deleteMany();
-	});
 	test.afterAll(async () => {
 		await deleteMockUser();
 		await prisma.config.deleteMany();
 		await prisma.page.deleteMany();
+		await prisma.componentDefinitionGroup.deleteMany();
+		await prisma.token.deleteMany();
 	});
 
 	test("light theme visual comparison", async ({ page }) => {
