@@ -1,9 +1,8 @@
 import { caller } from "@admin/src/trpc/routes/private/_private";
 import { cookies } from "next/headers";
 import { PagesTable } from "../PagesTable";
-import { columns } from "../PagesTableColumns";
 import { notFound } from "next/navigation";
-import type { SearchParams } from "../page";
+import type { TableSearchParams } from "@admin/src/hooks";
 import { type CookieName, tableCookieSchema } from "@admin/src/utils/cookies";
 
 export const dynamic = "force-dynamic";
@@ -13,11 +12,11 @@ export default async function Group({
 	searchParams,
 }: {
 	params: { groupId: string };
-	searchParams: SearchParams;
+	searchParams: TableSearchParams;
 }) {
 	const group = await caller.pages.getGroup({ id: params.groupId });
 	if (!group) {
-		return notFound();
+		notFound();
 	}
 	const { breadcrumbs, pages } = await caller.pages.getGroupContents({ id: params.groupId });
 
@@ -26,7 +25,6 @@ export default async function Group({
 
 	return (
 		<PagesTable
-			columns={columns}
 			data={{ pages, breadcrumbs }}
 			group={group}
 			pagination={searchParams}

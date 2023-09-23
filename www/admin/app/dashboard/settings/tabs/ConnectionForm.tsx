@@ -29,7 +29,6 @@ export function ConnectionForm(props: { token: string | undefined }) {
 	const token =
 		trpc.auth.getToken.useQuery(undefined, {
 			initialData: props.token,
-			refetchOnWindowFocus: false,
 		}).data ?? "";
 	const form = useForm();
 
@@ -73,60 +72,54 @@ const TokenInput = ({ token }: { token: string }) => {
 		<div className="flex items-center gap-2">
 			<Input
 				className="font-mono"
-				type="password"
 				value={token}
+				rightButton={
+					typeof navigator.clipboard !== "undefined"
+						? {
+								state: copied,
+								setState: null,
+								onClick: async () => {
+									await navigator.clipboard.writeText(token);
+									setCopied(true);
+								},
+								iconOn: <CheckIcon className="w-5 text-green-600" />,
+								iconOff: <ClipboardIcon className="w-5" />,
+								tooltip: "Copy to clipboard",
+						  }
+						: undefined
+				}
 				readOnly
 				aria-label="Token input"
 			/>
-			<span className="flex" data-testid="token-actions">
-				<Tooltip>
-					<TooltipTrigger asChild>
-						<ActionIcon
-							onClick={async () => {
-								await navigator.clipboard.writeText(token);
-								setCopied(true);
-							}}
-							aria-label="Copy to clipboard"
-						>
-							{copied ? (
-								<CheckIcon className="w-5 text-green-600" />
-							) : (
-								<ClipboardIcon className="w-5" />
-							)}
-						</ActionIcon>
-					</TooltipTrigger>
-					<TooltipContent>Copy to clipboard</TooltipContent>
-				</Tooltip>
 
-				<Tooltip>
-					<TooltipTrigger asChild>
-						<ActionIcon
-							onClick={async () => {
-								setCopied(false);
-								try {
-									await mutation.mutateAsync();
-									toast({
-										title: "Success",
-										description:
-											"Token regenerated, previous token is now invalid.",
+			<Tooltip>
+				<TooltipTrigger asChild>
+					<ActionIcon
+						onClick={async () => {
+							setCopied(false);
+							try {
+								await mutation.mutateAsync();
+								toast({
+									title: "Success",
+									description:
+										"Token regenerated, previous token is now invalid.",
+								});
+							} catch (error) {
+								if (error instanceof Error) {
+									toastError({
+										title: "Error",
+										description: error.message.trim(),
 									});
-								} catch (error) {
-									if (error instanceof Error) {
-										toastError({
-											title: "Error",
-											description: error.message.trim(),
-										});
-									}
 								}
-							}}
-							aria-label="Regenerate token"
-						>
-							{mutation.isLoading ? <Loader /> : <ArrowPathIcon className="w-5" />}
-						</ActionIcon>
-					</TooltipTrigger>
-					<TooltipContent>Regenerate token</TooltipContent>
-				</Tooltip>
-			</span>
+							}
+						}}
+						aria-label="Regenerate token"
+					>
+						{mutation.isLoading ? <Loader /> : <ArrowPathIcon className="w-5" />}
+					</ActionIcon>
+				</TooltipTrigger>
+				<TooltipContent>Regenerate token</TooltipContent>
+			</Tooltip>
 		</div>
 	);
 };

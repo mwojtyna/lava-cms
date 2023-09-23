@@ -11,7 +11,6 @@ services:
       - pgdata:/var/lib/postgresql/data
     ports:
       - 5432:5432
-    restart: always
 
   pgadmin:
     container_name: pgadmin
@@ -23,7 +22,6 @@ services:
       - pgadmin:/var/lib/pgadmin
     depends_on:
       - postgres
-    restart: always
 
   nginx:
     container_name: nginx
@@ -35,7 +33,6 @@ services:
     depends_on:
       - postgres
       - pgadmin
-    restart: always
 
 volumes:
   pgdata:

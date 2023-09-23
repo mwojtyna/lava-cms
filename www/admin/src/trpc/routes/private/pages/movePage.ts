@@ -9,7 +9,7 @@ export const movePage = privateProcedure
 		z.object({
 			id: z.string().cuid(),
 			newParentId: z.string().cuid(),
-		})
+		}),
 	)
 	.mutation(async ({ input }) => {
 		const [page, parentGroup] = await prisma.$transaction([

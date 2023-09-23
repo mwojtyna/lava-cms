@@ -17,9 +17,17 @@ export function TrpcProvider({ children }: { children: React.ReactNode }) {
 				}),
 			],
 			transformer: SuperJSON,
-		})
+		}),
 	);
-	const [queryClient] = useState(new QueryClient());
+	const [queryClient] = useState(
+		new QueryClient({
+			defaultOptions: {
+				queries: {
+					refetchOnWindowFocus: false,
+				},
+			},
+		}),
+	);
 
 	return (
 		<trpc.Provider client={trpcClient} queryClient={queryClient}>

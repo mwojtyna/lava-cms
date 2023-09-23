@@ -20,51 +20,54 @@ const inputVariants = cva(
 		defaultVariants: {
 			size: "md",
 		},
-	}
+	},
 );
 
 interface InputProps
 	extends Omit<React.InputHTMLAttributes<HTMLInputElement>, "children" | "size">,
 		VariantProps<typeof inputVariants> {
+	inputClassName?: string;
 	icon?: React.ReactNode;
-	rightButtonIconOn?: React.ReactNode;
-	rightButtonIconOff?: React.ReactNode;
-	rightButtonState?: boolean;
-	setRightButtonState?: (state: boolean) => void;
-	rightButtonTooltip?: React.ReactNode;
+	rightButton?: {
+		iconOn: React.ReactNode;
+		iconOff: React.ReactNode;
+		tooltip: React.ReactNode;
+		state: boolean;
+	} & (
+		| {
+				onClick: null;
+				setState: (state: boolean) => void;
+		  }
+		| {
+				onClick: () => void;
+				setState: null;
+		  }
+	);
 }
 const Input = React.forwardRef<HTMLInputElement, InputProps>(
-	(
-		{
-			className,
-			type = "text",
-			icon,
-			size,
-			rightButtonIconOff,
-			rightButtonIconOn,
-			rightButtonTooltip,
-			rightButtonState,
-			setRightButtonState,
-			...props
-		},
-		ref
-	) => {
+	({ className, type = "text", icon, size, rightButton, inputClassName, ...props }, ref) => {
 		const [passwordVisible, setPasswordVisible] = React.useState(false);
 
 		return (
-			<div className="relative flex w-full items-center justify-center">
+			<div className={cn("relative flex w-full items-center justify-center", className)}>
 				{icon && <div className="absolute left-3 w-5">{icon}</div>}
 
 				<input
 					type={type === "password" ? (passwordVisible ? "text" : "password") : type}
-					className={cn(inputVariants({ className, size }), icon && "pl-10")}
+					className={cn(
+						inputVariants({ size }),
+						icon && "pl-10",
+						inputClassName,
+						// Fix for red borders not showing up when form is invalid
+						className?.includes("border-destructive") && "border-destructive",
+					)}
 					ref={ref}
 					{...props}
 				/>
 
 				{type === "password" ? (
 					<ActionIcon
-						className="absolute right-2 bg-background"
+						className="absolute right-1.5 bg-background"
 						onClick={() => setPasswordVisible(!passwordVisible)}
 						size={size}
 						aria-label="Toggle password visibility"
@@ -76,28 +79,33 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
 						)}
 					</ActionIcon>
 				) : (
-					rightButtonIconOn &&
-					rightButtonIconOff && (
+					rightButton && (
 						<Tooltip>
 							<TooltipTrigger asChild>
 								<ActionIcon
-									className="absolute right-2 bg-background"
+									className="absolute right-1.5 bg-background"
 									onClick={() => {
-										setRightButtonState!(!rightButtonState);
+										if (!rightButton.onClick) {
+											rightButton.setState(!rightButton.state);
+										} else {
+											rightButton.onClick();
+										}
 									}}
 									size={size}
 								>
-									{rightButtonState ? rightButtonIconOn : rightButtonIconOff}
+									{rightButton.state ? rightButton.iconOn : rightButton.iconOff}
 								</ActionIcon>
 							</TooltipTrigger>
 
-							<TooltipContent>{rightButtonTooltip}</TooltipContent>
+							<TooltipContent className="font-sans">
+								{rightButton.tooltip}
+							</TooltipContent>
 						</Tooltip>
 					)
 				)}
 			</div>
 		);
-	}
+	},
 );
 Input.displayName = "Input";
 
