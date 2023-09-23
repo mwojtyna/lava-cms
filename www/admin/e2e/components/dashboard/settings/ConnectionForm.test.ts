@@ -3,7 +3,6 @@ import { test } from "@admin/e2e/fixtures";
 import { tokenMock } from "@admin/e2e/mocks";
 
 const TEST_ID = "connection-form";
-const BUTTONS_TEST_ID = "token-actions";
 
 test("visual comparison", async ({ authedPage: page }) => {
 	await page.goto("/admin/dashboard/settings/connection");
@@ -17,14 +16,14 @@ test("copies token into clipboard and changes into check mark", async ({
 }) => {
 	await page.goto("/admin/dashboard/settings/connection", { waitUntil: "networkidle" });
 
-	const copyButton = page.getByTestId(BUTTONS_TEST_ID).getByRole("button").first();
+	const copyButton = page.getByTestId(TEST_ID).getByRole("button").first();
 	const icon = await copyButton.locator("svg").innerHTML();
 	await copyButton.click();
 
 	// Firefox doesn't implement clipboard.readText() API, Webkit throws error when headless
 	if (browserName === "chromium" || (browserName !== "firefox" && !headless)) {
 		expect(await page.evaluate(async () => await navigator.clipboard.readText())).toBe(
-			tokenMock
+			tokenMock,
 		);
 	}
 	expect(icon).not.toBe(await copyButton.locator("svg").innerHTML());
@@ -33,10 +32,10 @@ test("copies token into clipboard and changes into check mark", async ({
 test("regenerates token", async ({ authedPage: page }) => {
 	await page.goto("/admin/dashboard/settings/connection", { waitUntil: "networkidle" });
 
-	const tokenInput = page.getByTestId(TEST_ID).locator("input[type='password']");
+	const tokenInput = page.getByTestId(TEST_ID).locator("input[type='text']");
 	const token = await tokenInput.inputValue();
 
-	const regenerateButton = page.getByTestId(BUTTONS_TEST_ID).getByRole("button").nth(1);
+	const regenerateButton = page.getByTestId(TEST_ID).getByRole("button").nth(1);
 	await regenerateButton.click();
 	await page.waitForResponse("**/api/private/auth.getToken**");
 

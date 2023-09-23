@@ -15,7 +15,6 @@ import {
 	Button,
 	Dialog,
 	DialogContent,
-	DialogDescription,
 	DialogFooter,
 	DialogHeader,
 	DialogTitle,
@@ -38,10 +37,11 @@ import {
 	PencilSquareIcon,
 	TrashIcon,
 } from "@heroicons/react/24/outline";
-import { Combobox } from "@admin/src/components";
-import { TypographyList, TypographyMuted } from "@admin/src/components/ui/server";
+import { AlertDialog, NewParentSelect, type MoveDialogInputs } from "@admin/src/components";
+import { TypographyList } from "@admin/src/components/ui/server";
 import slugify from "slugify";
 import { usePagePreferences } from "@admin/src/hooks";
+import type { ItemParent } from "@admin/src/components/DataTableDialogs";
 
 interface AddDialogProps {
 	group: Page;
@@ -74,37 +74,26 @@ export function DeleteDialog(props: EditDialogProps) {
 	}
 
 	return (
-		<Dialog open={props.open} onOpenChange={props.setOpen}>
-			<DialogContent className="!max-w-sm" withCloseButton={false}>
-				<DialogHeader>
-					<DialogTitle>Delete {props.page.is_group ? "group" : "page"}?</DialogTitle>
-					<DialogDescription>
-						{props.page.is_group
-							? "Are you sure you want to delete the group and all its pages? This action cannot be undone!"
-							: "Are you sure you want to delete the page? This action cannot be undone!"}
-					</DialogDescription>
-				</DialogHeader>
-
-				<DialogFooter>
-					<Button variant={"ghost"} onClick={() => props.setOpen(false)}>
-						No, don&apos;t delete
-					</Button>
-					<Button
-						loading={mutation.isLoading}
-						type="submit"
-						variant={"destructive"}
-						icon={<TrashIcon className="w-5" />}
-						onClick={handleSubmit}
-					>
-						Delete
-					</Button>
-				</DialogFooter>
-			</DialogContent>
-		</Dialog>
+		<AlertDialog
+			open={props.open}
+			setOpen={props.setOpen}
+			loading={mutation.isLoading}
+			icon={<TrashIcon className="w-5" />}
+			title={`Delete ${props.page.is_group ? "group" : "page"} "${props.page.name}"?`}
+			description={
+				props.page.is_group
+					? "Are you sure you want to delete the group and all its pages? This action cannot be undone!"
+					: "Are you sure you want to delete the page? This action cannot be undone!"
+			}
+			noMessage="No, don't delete"
+			yesMessage="Delete"
+			onSubmit={handleSubmit}
+		/>
 	);
 }
 export function BulkDeleteDialog(props: BulkEditDialogProps) {
 	const mutation = trpc.pages.deletePage.useMutation();
+	const [loading, setLoading] = React.useState(false);
 	// const [preferences, setPreferences] = usePagePreferences(props.pages[0].id);
 
 	async function handleSubmit() {
@@ -113,7 +102,9 @@ export function BulkDeleteDialog(props: BulkEditDialogProps) {
 				id: page.id,
 			}),
 		);
+		setLoading(true);
 		await Promise.all(promises);
+		setLoading(false);
 		// setPreferences({ ...preferences, [props.pages[0].id]: undefined });
 
 		props.setOpen(false);
@@ -121,104 +112,41 @@ export function BulkDeleteDialog(props: BulkEditDialogProps) {
 	}
 
 	return (
-		<Dialog open={props.open} onOpenChange={props.setOpen}>
-			<DialogContent className="!max-w-sm" withCloseButton={false}>
-				<DialogHeader>
-					<DialogTitle>
-						Delete {props.pages.length} item{props.pages.length > 1 && "s"}?
-					</DialogTitle>
-					<DialogDescription>
-						Are you sure you want to delete {props.pages.length} items? This action
-						cannot be undone!
-					</DialogDescription>
-				</DialogHeader>
-
-				<DialogFooter>
-					<Button variant={"ghost"} onClick={() => props.setOpen(false)}>
-						No, don&apos;t delete
-					</Button>
-					<Button
-						loading={mutation.isLoading}
-						type="submit"
-						variant={"destructive"}
-						icon={<TrashIcon className="w-5" />}
-						onClick={handleSubmit}
-					>
-						Delete
-					</Button>
-				</DialogFooter>
-			</DialogContent>
-		</Dialog>
-	);
-}
-
-interface MoveDialogInputs {
-	newParentId: string;
-}
-function NewParentSelect<T extends MoveDialogInputs>({
-	form,
-	groups,
-	label,
-}: {
-	form: UseFormReturn<T>;
-	groups?: Page[];
-	label?: React.ReactNode;
-}) {
-	return (
-		<FormField
-			control={form.control}
-			name={"newParentId" as Path<T>}
-			render={({ field }) => (
-				<FormItem>
-					{label && <FormLabel>{label}</FormLabel>}
-					<FormControl>
-						<Combobox
-							className="w-full"
-							contentProps={{
-								align: "start",
-								className: "w-[335px]",
-								placeholder: "Search groups...",
-							}}
-							placeholder="Select a group..."
-							notFoundContent="No groups found."
-							data={
-								groups?.map((group) => ({
-									label: (
-										<span className="flex items-baseline gap-2">
-											<span>{group.name}</span>{" "}
-											<TypographyMuted className="text-xs">
-												{group.url === "" ? "/" : group.url}
-											</TypographyMuted>
-										</span>
-									),
-									value: group.id,
-									filterValue: group.name,
-								})) ?? []
-							}
-							aria-required
-							{...field}
-						/>
-					</FormControl>
-					<FormError />
-				</FormItem>
-			)}
+		<AlertDialog
+			open={props.open}
+			setOpen={props.setOpen}
+			loading={loading}
+			icon={<TrashIcon className="w-5" />}
+			title={`Delete ${props.pages.length} items?`}
+			description={`Are you sure you want to delete ${props.pages.length} items? This action cannot be undone!`}
+			noMessage="No, don't delete"
+			yesMessage="Delete"
+			onSubmit={handleSubmit}
 		/>
 	);
 }
 
 export function MoveDialog(props: EditDialogProps) {
-	const allGroups = trpc.pages.getAllGroups.useQuery().data;
+	const allGroups = trpc.pages.getAllGroups.useQuery(undefined, {
+		enabled: props.open,
+	}).data;
 	const groups = React.useMemo(
 		() =>
 			allGroups
-				?.filter((group) => {
-					return (
+				?.filter(
+					(group) =>
 						props.page.parent_id !== group.id &&
 						props.page.id !== group.id &&
-						!group.url.startsWith(props.page.url + "/")
-					);
-				})
-				.sort((a, b) => a.url.localeCompare(b.url)),
+						!group.url.startsWith(props.page.url + "/"),
+				)
+				.map(
+					(group) =>
+						({
+							id: group.id,
+							name: group.name,
+							extraInfo: group.url === "" ? "/" : group.url,
+						}) satisfies ItemParent,
+				),
 		[allGroups, props.page],
 	);
 	const mutation = trpc.pages.movePage.useMutation();
@@ -236,7 +164,7 @@ export function MoveDialog(props: EditDialogProps) {
 					if (err.data?.code === "CONFLICT") {
 						const destinationUrl = groups!.find(
 							(group) => group.id === data.newParentId,
-						)!.url;
+						)!.extraInfo;
 
 						const newPath =
 							destinationUrl +
@@ -268,14 +196,27 @@ export function MoveDialog(props: EditDialogProps) {
 
 	return (
 		<Dialog open={props.open} onOpenChange={props.setOpen}>
-			<DialogContent className="!max-w-sm">
+			<DialogContent>
 				<DialogHeader>
-					<DialogTitle>Move {props.page.is_group ? "group" : "page"}</DialogTitle>
+					<DialogTitle>
+						Move {props.page.is_group ? "group" : "page"} &quot;{props.page.name}&quot;
+					</DialogTitle>
 				</DialogHeader>
 
 				<FormProvider {...form}>
 					<form className="flex flex-col gap-4" onSubmit={form.handleSubmit(onSubmit)}>
-						<NewParentSelect form={form} groups={groups} />
+						<FormField
+							control={form.control}
+							name="newParentId"
+							render={({ field }) => (
+								<FormItem>
+									<FormControl>
+										<NewParentSelect parents={groups ?? []} {...field} />
+									</FormControl>
+									<FormError />
+								</FormItem>
+							)}
+						/>
 
 						<DialogFooter>
 							<Button
@@ -294,22 +235,30 @@ export function MoveDialog(props: EditDialogProps) {
 	);
 }
 export function BulkMoveDialog(props: BulkEditDialogProps) {
-	const allGroups = trpc.pages.getAllGroups.useQuery().data;
+	const allGroups = trpc.pages.getAllGroups.useQuery(undefined, {
+		enabled: props.open,
+	}).data;
 	const groups = React.useMemo(
 		() =>
 			allGroups
-				?.filter((group) => {
-					return (
+				?.filter(
+					(group) =>
 						props.pages.every(
 							(page) => page.parent_id !== group.id && page.id !== group.id,
 						) &&
 						props.pages.reduce(
 							(acc, curr) => acc && !group.url.startsWith(curr.url + "/"),
 							true,
-						)
-					);
-				})
-				.sort((a, b) => a.url.localeCompare(b.url)),
+						),
+				)
+				.map(
+					(group) =>
+						({
+							id: group.id,
+							name: group.name,
+							extraInfo: group.url === "" ? "/" : group.url,
+						}) satisfies ItemParent,
+				),
 		[allGroups, props.pages],
 	);
 
@@ -325,11 +274,11 @@ export function BulkMoveDialog(props: BulkEditDialogProps) {
 			enabled: false,
 		},
 	);
+	const [loading, setLoading] = React.useState(false);
 
 	const onSubmit: SubmitHandler<MoveDialogInputs> = async (data) => {
 		try {
 			const { data: query } = await conflictQuery.refetch();
-
 			if (query?.conflict) {
 				form.setError("newParentId", {
 					message: (
@@ -343,9 +292,14 @@ export function BulkMoveDialog(props: BulkEditDialogProps) {
 			}
 
 			const promises = props.pages.map((page) =>
-				mutation.mutateAsync({ id: page.id, newParentId: data.newParentId }),
+				mutation.mutateAsync({
+					id: page.id,
+					newParentId: data.newParentId,
+				}),
 			);
+			setLoading(true);
 			await Promise.all(promises);
+			setLoading(false);
 
 			props.setOpen(false);
 			props.onSubmit();
@@ -362,7 +316,7 @@ export function BulkMoveDialog(props: BulkEditDialogProps) {
 
 	return (
 		<Dialog open={props.open} onOpenChange={props.setOpen}>
-			<DialogContent className="!max-w-sm">
+			<DialogContent>
 				<DialogHeader>
 					<DialogTitle>
 						Move {props.pages.length} item{props.pages.length > 1 && "s"}
@@ -371,13 +325,24 @@ export function BulkMoveDialog(props: BulkEditDialogProps) {
 
 				<FormProvider {...form}>
 					<form className="flex flex-col gap-4" onSubmit={form.handleSubmit(onSubmit)}>
-						<NewParentSelect form={form} groups={groups} />
+						<FormField
+							control={form.control}
+							name="newParentId"
+							render={({ field }) => (
+								<FormItem>
+									<FormControl>
+										<NewParentSelect parents={groups ?? []} {...field} />
+									</FormControl>
+									<FormError />
+								</FormItem>
+							)}
+						/>
 
 						<DialogFooter>
 							<Button
 								type="submit"
 								disabled={!form.watch("newParentId")}
-								loading={mutation.isLoading}
+								loading={loading}
 								icon={<FolderArrowDownIcon className="w-5" />}
 							>
 								Move
@@ -462,11 +427,14 @@ function NameSlugInput<T extends EditDialogInputs>({
 						<FormControl>
 							<Input
 								className="flex-row"
-								rightButtonIconOn={<LockClosedIcon className="w-4" />}
-								rightButtonIconOff={<LockOpenIcon className="w-4" />}
-								rightButtonState={slugLocked}
-								setRightButtonState={setSlugLocked}
-								rightButtonTooltip="Toggle lock slug autofill"
+								rightButton={{
+									state: !!slugLocked,
+									setState: setSlugLocked,
+									onClick: null,
+									iconOn: <LockClosedIcon className="w-4" />,
+									iconOff: <LockOpenIcon className="w-4" />,
+									tooltip: "Toggle lock slug autofill",
+								}}
 								aria-required
 								{...field}
 							/>
@@ -528,7 +496,7 @@ export function EditDetailsDialog(props: EditDialogProps) {
 
 	return (
 		<Dialog open={props.open} onOpenChange={props.setOpen}>
-			<DialogContent className="!max-w-sm">
+			<DialogContent>
 				<DialogHeader>
 					<DialogTitle>Edit details</DialogTitle>
 				</DialogHeader>
@@ -549,7 +517,7 @@ export function EditDetailsDialog(props: EditDialogProps) {
 								loading={mutation.isLoading}
 								icon={<PencilSquareIcon className="w-5" />}
 							>
-								Save
+								Edit
 							</Button>
 						</DialogFooter>
 					</form>
@@ -573,8 +541,8 @@ export function AddDialog(props: AddDialogProps) {
 			{
 				name: data.name,
 				url,
-				parent_id: props.group.id,
-				is_group: props.isGroup,
+				parentId: props.group.id,
+				isGroup: props.isGroup,
 			},
 			{
 				onSuccess: (id) => {
@@ -610,7 +578,7 @@ export function AddDialog(props: AddDialogProps) {
 
 	return (
 		<Dialog open={props.open} onOpenChange={props.setOpen}>
-			<DialogContent className="!max-w-sm">
+			<DialogContent>
 				<DialogHeader>
 					<DialogTitle>Add {props.isGroup ? "group" : "page"}</DialogTitle>
 				</DialogHeader>
@@ -651,12 +619,20 @@ const duplicateDialogSchema = editDialogSchema.extend({
 type DuplicateDialogInputs = z.infer<typeof duplicateDialogSchema>;
 
 export function DuplicateDialog(props: EditDialogProps) {
-	const groups = trpc.pages.getAllGroups.useQuery(undefined, {
-		refetchOnWindowFocus: false,
+	const allGroups = trpc.pages.getAllGroups.useQuery(undefined, {
+		enabled: props.open,
 	}).data;
-	const sortedGroups = React.useMemo(
-		() => groups?.sort((a, b) => a.url.localeCompare(b.url)),
-		[groups],
+	const groups = React.useMemo(
+		() =>
+			allGroups?.map(
+				(group) =>
+					({
+						id: group.id,
+						name: group.name,
+						extraInfo: group.url === "" ? "/" : group.url,
+					}) satisfies ItemParent,
+			),
+		[allGroups],
 	);
 
 	const mutation = trpc.pages.addPage.useMutation();
@@ -667,15 +643,15 @@ export function DuplicateDialog(props: EditDialogProps) {
 		resolver: zodResolver(duplicateDialogSchema),
 	});
 	const onSubmit: SubmitHandler<DuplicateDialogInputs> = (data) => {
-		const newParent = groups!.find((group) => group.id === data.newParentId)!;
+		const newParent = allGroups!.find((group) => group.id === data.newParentId)!;
 		const url = newParent.url + data.slug;
 
 		mutation.mutate(
 			{
 				name: data.name,
 				url,
-				parent_id: data.newParentId,
-				is_group: false,
+				parentId: data.newParentId,
+				isGroup: false,
 			},
 			{
 				onSuccess: (id) => {
@@ -707,17 +683,18 @@ export function DuplicateDialog(props: EditDialogProps) {
 
 	React.useEffect(() => {
 		if (props.open) {
-			form.setValue("name", props.page.name);
-			form.setValue("slug", getSlugFromUrl(props.page.url));
-			form.setValue("newParentId", props.page.parent_id!);
-			form.clearErrors();
+			form.reset({
+				name: props.page.name,
+				slug: getSlugFromUrl(props.page.url),
+				newParentId: props.page.parent_id!,
+			});
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [props.open, form]);
+	}, [props.open]);
 
 	return (
 		<Dialog open={props.open} onOpenChange={props.setOpen}>
-			<DialogContent className="!max-w-sm">
+			<DialogContent>
 				<DialogHeader>
 					<DialogTitle>Duplicate page</DialogTitle>
 				</DialogHeader>
@@ -729,7 +706,19 @@ export function DuplicateDialog(props: EditDialogProps) {
 							slugLocked={slugLocked}
 							setSlugLocked={setSlugLocked}
 						/>
-						<NewParentSelect form={form} groups={sortedGroups} label="Group" />
+						<FormField
+							control={form.control}
+							name="newParentId"
+							render={({ field }) => (
+								<FormItem>
+									<FormLabel>Group</FormLabel>
+									<FormControl>
+										<NewParentSelect parents={groups ?? []} {...field} />
+									</FormControl>
+									<FormError />
+								</FormItem>
+							)}
+						/>
 
 						<DialogFooter>
 							<Button

@@ -14,6 +14,7 @@ export const getPage = publicProcedure
 			where: { url: input.path, is_group: false },
 		});
 
+		// Handle trailing slash
 		if (!page) {
 			page = await prisma.page.findFirst({
 				where: { url: input.path + "/", is_group: false },

@@ -29,14 +29,16 @@ export const navMenuRoutes: NavMenuRoute[] = [
 	{
 		label: "Components",
 		path: "/dashboard/components",
-		description: "",
+		description: "Create and manage your component definitions.",
 		icon: <CubeIcon className="w-5" />,
+		hasChildren: true,
 	},
 	{
 		label: "Data",
 		path: "/dashboard/data",
 		description: "data",
 		icon: <CircleStackIcon className="w-5" />,
+		hasChildren: true,
 	},
 	{
 		label: "Settings",

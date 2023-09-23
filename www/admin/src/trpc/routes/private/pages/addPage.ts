@@ -10,9 +10,9 @@ export const addPage = privateProcedure
 		z.object({
 			name: z.string(),
 			url: z.string().regex(urlRegex),
-			parent_id: z.string().cuid().nullable(),
-			is_group: z.boolean(),
-		})
+			parentId: z.string().cuid().nullable(),
+			isGroup: z.boolean(),
+		}),
 	)
 	.mutation(async ({ input }): Promise<string> => {
 		try {
@@ -20,8 +20,8 @@ export const addPage = privateProcedure
 				data: {
 					name: input.name,
 					url: input.url,
-					parent_id: input.parent_id,
-					is_group: input.is_group,
+					parent_id: input.parentId,
+					is_group: input.isGroup,
 				},
 			});
 			return page.id;

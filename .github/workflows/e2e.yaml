@@ -23,14 +23,14 @@ jobs:
           node-version-file: ".nvmrc"
 
       - name: Setup pnpm
-        uses: pnpm/action-setup@v2.3.0
+        uses: pnpm/action-setup@v2.4.0
         id: pnpm-install
         with:
           version: 8
           run_install: false
 
       - name: Setup pnpm cache
-        uses: actions/cache@v3.3.1
+        uses: actions/cache@v3.3.2
         with:
           path: ${{ github.workspace }}/.pnpm-store/v3
           key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
@@ -50,7 +50,7 @@ jobs:
           pnpm db:push
 
       - name: Setup Next.js cache
-        uses: actions/cache@v3.3.1
+        uses: actions/cache@v3.3.2
         with:
           # See here for caching with `yarn` https://github.com/actions/cache/blob/main/examples.md#node---yarn or you can leverage caching with actions/setup-node https://github.com/actions/setup-node
           path: ${{ github.workspace }}/www/admin/.next/cache
@@ -68,7 +68,7 @@ jobs:
         run: pnpm e2e --project ${{ inputs.browser }}
 
       - name: Upload report
-        uses: actions/upload-artifact@v3.1.2
+        uses: actions/upload-artifact@v3.1.3
         if: always()
         with:
           name: playwright-chromium-report

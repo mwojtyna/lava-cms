@@ -18,7 +18,7 @@ const ActionIcon = React.forwardRef<HTMLButtonElement, ActionIconProps>(
 				{children}
 			</Button>
 		);
-	}
+	},
 );
 ActionIcon.displayName = "ActionIcon";
 

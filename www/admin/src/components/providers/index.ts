@@ -1,2 +1,2 @@
-export { ZustandProvider } from "./ZustandProvider";
-export { TrpcProvider } from "./TrpcProvider";
+export * from "./ZustandProvider";
+export * from "./TrpcProvider";
