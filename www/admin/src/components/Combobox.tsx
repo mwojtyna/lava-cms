@@ -92,8 +92,6 @@ const Combobox = React.forwardRef<React.ComponentRef<typeof Button>, ComboboxPro
 											// We don't use the provided value from onSelect because it's automatically
 											// inferred from the textContent of <CommandItem> and not the value prop
 											// for some stupid reason
-
-											// If newValue is the same as the current value, then we clear it
 											onChange?.(item.value === value ? "" : item.value);
 											setOpen(false);
 										}}

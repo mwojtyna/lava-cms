@@ -748,6 +748,76 @@ test.describe("field definition", () => {
 		await expect(fieldDef).not.toHaveAttribute("data-test-diff", "edited");
 		await checkFieldDefs(page, originalComp.field_definitions);
 	});
+
+	test("reorders field definitions", async ({ authedPage: page }) => {
+		const compDef = await prisma.componentDefinition.create({
+			data: {
+				name: "Test",
+				group_id: (await prisma.componentDefinitionGroup.findFirst())!.id,
+				field_definitions: {
+					createMany: {
+						data: [
+							{
+								name: "Label",
+								type: "TEXT",
+								order: 0,
+							},
+							{
+								name: "Description",
+								type: "TEXT",
+								order: 1,
+							},
+							{
+								name: "State",
+								type: "SWITCH",
+								order: 2,
+							},
+						],
+					},
+				},
+			},
+			include: {
+				field_definitions: true,
+			},
+		});
+		await page.goto(URL);
+
+		await selectAction(page, 0, "Edit");
+		const handle = getFieldDef(page, 2).locator("> div").first().getByRole("button");
+		await handle.hover();
+		await page.mouse.down();
+		await getFieldDef(page, 1).locator("> div").first().hover();
+		await page.mouse.up();
+
+		await checkFieldDefs(page, [
+			compDef.field_definitions[0]!,
+			compDef.field_definitions[2]!,
+			compDef.field_definitions[1]!,
+		]);
+
+		const dialog = page.getByRole("dialog");
+		await dialog.locator("button[type='submit']").click();
+		await dialog.waitFor({ state: "hidden" });
+
+		const reorderedCompDef = await prisma.componentDefinition.findFirst({
+			include: {
+				field_definitions: {
+					orderBy: { order: "asc" },
+				},
+			},
+		});
+		expect(reorderedCompDef!.field_definitions).toMatchObject([
+			compDef.field_definitions[0]!,
+			{
+				...compDef.field_definitions[2]!,
+				order: 1,
+			},
+			{
+				...compDef.field_definitions[1]!,
+				order: 2,
+			},
+		]);
+	});
 });
 
 test.describe("group", () => {
