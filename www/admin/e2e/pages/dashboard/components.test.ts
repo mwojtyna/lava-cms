@@ -742,10 +742,14 @@ test.describe("field definition", () => {
 });
 
 test.describe("group", () => {
-	test("adds group", async ({ authedPage: page }) => {
+	test("adds group, invalid name errors", async ({ authedPage: page }) => {
 		await page.goto(URL);
 		await page.getByTestId("add-group").click();
-		const dialog = await fillAddEditGroupDialog(page, "Group 1");
+
+		const dialog = await fillAddEditGroupDialog(page, "  ");
+		await expect(dialog.locator("input[name='name']")).toHaveAttribute("aria-invalid", "true");
+
+		await fillAddEditGroupDialog(page, "Group 1");
 		await dialog.waitFor({ state: "hidden" });
 
 		const addedGroup = await prisma.componentDefinitionGroup.findFirst({

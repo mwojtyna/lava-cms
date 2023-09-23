@@ -36,7 +36,7 @@ export function AddGroupDialog(props: AddGroupDialogProps) {
 	const form = useForm<AddGroupDialogInputs>();
 	const onSubmit: SubmitHandler<AddGroupDialogInputs> = (data) => {
 		if (data.name.trim() === "") {
-			form.setError("name", {});
+			form.setError("name", { message: "Name cannot be empty" });
 			return;
 		}
 
