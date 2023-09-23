@@ -536,8 +536,8 @@ test.describe("bulk", () => {
 		await prisma.page.createMany({
 			data: [
 				{
-					name: "Group 2",
-					url: "/group-1/group-2",
+					name: "Group 11",
+					url: "/group-1/group-11",
 					parent_id: group1.id,
 					is_group: true,
 				},
@@ -610,6 +610,6 @@ test.describe("bulk", () => {
 
 		await page.getByRole("link", { name: "Group 1" }).click();
 		await page.waitForURL("/admin/dashboard/pages/**");
-		await checkRow(page, 0, "Group 2", "/group-3/group-1/group-2", "Group");
+		await checkRow(page, 0, "Group 11", "/group-3/group-1/group-11", "Group");
 	});
 });

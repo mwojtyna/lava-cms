@@ -828,3 +828,70 @@ test.describe("group", () => {
 		await expect(page.locator("text=No results.")).toBeInViewport();
 	});
 });
+
+test.describe("bulk", () => {
+	test("deletes items and their children", async ({ authedPage: page }) => {
+		const rootGroup = await prisma.componentDefinitionGroup.findFirst();
+		await prisma.componentDefinitionGroup.create({
+			data: {
+				name: "Group 1",
+				parent_group_id: rootGroup!.id,
+			},
+		});
+		await prisma.componentDefinition.create({
+			data: {
+				name: "Component Definition 1",
+				group_id: rootGroup!.id,
+			},
+		});
+
+		await page.goto(URL);
+		await getRow(page, 0).locator("td").first().click();
+		await getRow(page, 1).locator("td").first().click();
+
+		await page.locator("thead > tr > th").last().click();
+		await page.getByRole("menu").getByRole("menuitem", { name: "Delete" }).click();
+		await page.getByRole("dialog").locator("button[type='submit']").click();
+
+		await expect(page.locator("text=No results.")).toBeInViewport();
+	});
+
+	test("moves items and their children", async ({ authedPage: page }) => {
+		const rootGroup = await prisma.componentDefinitionGroup.findFirst();
+		const group = await prisma.componentDefinitionGroup.create({
+			data: {
+				name: "Group 1",
+				parent_group_id: rootGroup!.id,
+			},
+		});
+		const destination = await prisma.componentDefinitionGroup.create({
+			data: {
+				name: "Group 2",
+				parent_group_id: rootGroup!.id,
+			},
+		});
+		const compDef = await prisma.componentDefinition.create({
+			data: {
+				name: "Component Definition 1",
+				group_id: rootGroup!.id,
+			},
+		});
+
+		await page.goto(URL);
+		await getRow(page, 0).locator("td").first().click();
+		await getRow(page, 1).locator("td").first().click();
+
+		await page.locator("thead > tr > th").last().click();
+		await page.getByRole("menu").getByRole("menuitem", { name: "Move" }).click();
+
+		const dialog = page.getByRole("dialog");
+		await dialog.getByRole("combobox").click();
+		await dialog.getByRole("option", { name: destination.name }).click();
+		await dialog.locator("button[type='submit']").click();
+		await dialog.waitFor({ state: "hidden" });
+
+		await getRow(page, 0).locator("td a").first().click();
+		await checkRow(page, 0, compDef.name, "Component Definition");
+		await checkRow(page, 1, group.name, "Group");
+	});
+});
