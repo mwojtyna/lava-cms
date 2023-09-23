@@ -14,7 +14,7 @@ dotenv.config({ path: ".env.test" });
 const config: PlaywrightTestConfig = {
 	testDir: "./e2e",
 	/* Maximum time one test can run for. */
-	timeout: 30000,
+	timeout: 60000,
 	expect: {
 		/**
 		 * Maximum time expect() should wait for the condition to be met.
@@ -32,7 +32,7 @@ const config: PlaywrightTestConfig = {
 	fullyParallel: true,
 	/* Fail the build on CI if you accidentally left test.only in the source code. */
 	forbidOnly: !!process.env.CI,
-	retries: 2,
+	retries: 1,
 	/* Opt out of parallel tests. */
 	workers: 1,
 	/* Reporter to use. See https://playwright.dev/docs/test-reporters */
@@ -40,7 +40,8 @@ const config: PlaywrightTestConfig = {
 	/* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
 	use: {
 		baseURL: "http://localhost:3001",
-		trace: "retain-on-failure",
+		trace: "on-first-retry",
+		video: "on-first-retry",
 	},
 
 	/* Configure projects for major browsers */

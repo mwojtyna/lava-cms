@@ -1,4 +1,4 @@
-import type { BrowserContextOptions, Browser } from "@playwright/test";
+import type { BrowserContextOptions, Browser, BrowserContext } from "@playwright/test";
 import fs from "node:fs";
 import { prisma } from "@admin/prisma/client";
 import {
@@ -45,7 +45,7 @@ export async function saveAuthedContext(browser: Browser) {
 	await prisma.session.deleteMany();
 }
 
-export async function getAuthedContext(browser: Browser) {
+export async function getAuthedContext(browser: Browser): Promise<BrowserContext> {
 	console.log("Getting signed in state...");
 	// We have to check if the user exists because a test might create one
 	await deleteMockUser();
@@ -122,7 +122,7 @@ export async function getAuthedContext(browser: Browser) {
 	});
 }
 
-export async function cleanUpAuthedContext() {
+export async function cleanUpAuthedContext(context: BrowserContext) {
 	await deleteMockUser();
 	if (await prisma.config.findFirst()) {
 		await prisma.config.deleteMany();
@@ -130,4 +130,6 @@ export async function cleanUpAuthedContext() {
 	await prisma.page.deleteMany();
 	await prisma.componentDefinitionGroup.deleteMany();
 	await prisma.token.deleteMany();
+
+	await context.close();
 }

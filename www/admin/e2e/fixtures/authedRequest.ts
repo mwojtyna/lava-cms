@@ -11,5 +11,5 @@ export const authedRequest = async (
 	// Run test
 	await use(authedRequest);
 
-	await cleanUpAuthedContext();
+	await cleanUpAuthedContext(authedContext);
 };
