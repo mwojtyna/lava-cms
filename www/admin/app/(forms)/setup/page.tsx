@@ -23,7 +23,7 @@ const reasonFormMap: Record<
 export default async function SetupLayout() {
 	const { reason } = await caller.auth.setupRequired();
 	if (!reason) {
-		redirect("/admin/signin");
+		redirect("/signin");
 	}
 
 	return (

@@ -1,7 +1,7 @@
 import * as React from "react";
 import { useRouter } from "next/navigation";
 import { useSearchParams as useNextSearchParams } from "next/navigation";
-import { usePathname } from "./usePathname";
+import { usePathname } from "next/navigation";
 
 interface Callbacks {
 	onChanged?: (value: URLSearchParams) => void;
@@ -18,7 +18,7 @@ export const useSearchParams = (callbacks?: Callbacks) => {
 		},
 		// If we include callbacks in the dependency array, it will call it infinitely
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-		[searchParams]
+		[searchParams],
 	);
 
 	const setSearchParams = React.useCallback(
@@ -44,7 +44,7 @@ export const useSearchParams = (callbacks?: Callbacks) => {
 				return params.toString();
 			}
 		},
-		[pathname, router, searchParams]
+		[pathname, router, searchParams],
 	);
 
 	return { searchParams, setSearchParams };

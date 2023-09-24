@@ -40,7 +40,7 @@ interface Options<T> {
 }
 
 /** A hook that provides data for a table with sorting, filtering, and pagination, all saved to a cookie. **/
-export function useTable<T>(options: Options<T>) {
+export function useDataTable<T>(options: Options<T>) {
 	const parsedCookie = React.useMemo(
 		() =>
 			getJsonCookie<TableCookie>(

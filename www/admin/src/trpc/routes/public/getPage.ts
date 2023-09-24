@@ -15,9 +15,13 @@ export const getPage = publicProcedure
 		});
 
 		// Handle trailing slash
-		if (!page) {
+		if (!page && !input.path.endsWith("/")) {
 			page = await prisma.page.findFirst({
 				where: { url: input.path + "/", is_group: false },
+			});
+		} else if (!page && input.path.endsWith("/")) {
+			page = await prisma.page.findFirst({
+				where: { url: input.path.replace(/\/$/, ""), is_group: false },
 			});
 		}
 

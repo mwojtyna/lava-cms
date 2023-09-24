@@ -182,7 +182,7 @@ test("searchbox filters items", async ({ authedPage: page }) => {
 	await page.goto(URL);
 	await expect(page.locator("tbody > tr")).toHaveCount(2);
 
-	await page.locator("input[type='search']").fill("Component");
+	await page.locator("input[type='search']").type("Component");
 	await expect(page.locator("tbody > tr")).toHaveCount(1);
 	await checkRow(page, 0, "Component 1", "Component Definition");
 });

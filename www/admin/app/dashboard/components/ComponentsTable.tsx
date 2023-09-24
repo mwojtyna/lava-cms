@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { useTable, type TableSearchParams } from "@admin/src/hooks";
+import { useDataTable, type TableSearchParams } from "@admin/src/hooks";
 import { trpc } from "@admin/src/utils/trpc";
 import type { PrivateRouter } from "@admin/src/trpc/routes/private/_private";
 import type { TableCookie } from "@admin/src/utils/cookies";
@@ -68,7 +68,7 @@ export function ComponentsTable(props: Props) {
 		return [...groups, ...componentDefinitions];
 	}, [data]);
 
-	const { table, searchElement } = useTable({
+	const { table, searchElement } = useDataTable({
 		data: tableData,
 		columns,
 		cookie: {

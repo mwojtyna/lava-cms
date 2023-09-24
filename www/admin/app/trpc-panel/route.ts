@@ -16,9 +16,9 @@ export const GET = async () => {
 					"Content-Type": "text/html",
 					"Cache-Control": "no-store",
 				},
-			}
+			},
 		);
 	} else {
-		redirect("/admin/signin");
+		redirect("/signin");
 	}
 };

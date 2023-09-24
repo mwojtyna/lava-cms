@@ -11,7 +11,7 @@ import {
 	DataTablePagination,
 	DataTableActions,
 } from "@admin/src/components";
-import { useTable, type TableSearchParams } from "@admin/src/hooks";
+import { useDataTable, type TableSearchParams } from "@admin/src/hooks";
 import { type TableCookie } from "@admin/src/utils/cookies";
 import { columns } from "./PagesTableColumns";
 import type { PrivateRouter } from "@admin/src/trpc/routes/private/_private";
@@ -30,7 +30,7 @@ export function PagesTable(props: Props) {
 		{ initialData: props.data },
 	).data;
 
-	const { table, searchElement } = useTable({
+	const { table, searchElement } = useDataTable({
 		data: data.pages,
 		columns,
 		cookie: {
