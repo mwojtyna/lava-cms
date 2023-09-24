@@ -17,7 +17,7 @@ export async function saveAuthedContext(browser: Browser) {
 	console.log("Saving signed in state...");
 	const page = await browser.newPage();
 
-	await page.goto("/admin/signin");
+	await page.goto("/admin/signin", { waitUntil: "networkidle" });
 	await page.locator("input[name='email']").type(userMock.email);
 	await page.locator("input[name='password']").type(userPasswordDecrypted);
 	await page.locator("button[type='submit']").click();

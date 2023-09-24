@@ -9,7 +9,7 @@ const MENU_DROPDOWN_ID = "user-menu-dropdown";
 // Check only dropdown because of different icons depending on theme
 test("light theme visual comparison", async ({ authedPage: page }) => {
 	await page.emulateMedia({ colorScheme: "light" });
-	await page.goto("/admin/dashboard");
+	await page.goto("/admin/dashboard", { waitUntil: "networkidle" });
 
 	const userMenu = page.getByTestId(MENU_ID).locator("visible=true");
 	await userMenu.click();
@@ -18,7 +18,7 @@ test("light theme visual comparison", async ({ authedPage: page }) => {
 });
 test("dark theme visual comparison", async ({ authedPage: page }) => {
 	await page.emulateMedia({ colorScheme: "dark" });
-	await page.goto("/admin/dashboard");
+	await page.goto("/admin/dashboard", { waitUntil: "networkidle" });
 
 	const userMenu = page.getByTestId(MENU_ID).locator("visible=true");
 	await userMenu.click();
@@ -27,7 +27,7 @@ test("dark theme visual comparison", async ({ authedPage: page }) => {
 });
 
 test("displays current user details", async ({ authedPage: page }) => {
-	await page.goto("/admin/dashboard");
+	await page.goto("/admin/dashboard", { waitUntil: "networkidle" });
 	const userMenu = page.getByTestId(MENU_ID).locator("visible=true");
 
 	await expect(userMenu).toContainText(
@@ -38,7 +38,7 @@ test("displays current user details", async ({ authedPage: page }) => {
 });
 
 test("changes color theme when button pressed", async ({ authedPage: page }) => {
-	await page.goto("/admin/dashboard");
+	await page.goto("/admin/dashboard", { waitUntil: "networkidle" });
 
 	const userMenu = page.getByTestId(MENU_ID).locator("visible=true");
 	const userMenuDropdown = page.getByTestId(MENU_DROPDOWN_ID);
@@ -57,7 +57,7 @@ test("changes color theme when button pressed", async ({ authedPage: page }) => 
 });
 
 test("signs out when button pressed", async ({ authedPage: page }) => {
-	await page.goto("/admin/dashboard");
+	await page.goto("/admin/dashboard", { waitUntil: "networkidle" });
 
 	await page.getByTestId(MENU_ID).locator("visible=true").click();
 	await page.getByTestId(MENU_DROPDOWN_ID).locator("[role='menuitem']").last().click();

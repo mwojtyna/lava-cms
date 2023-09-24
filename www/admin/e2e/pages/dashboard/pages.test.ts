@@ -32,7 +32,7 @@ test.afterEach(async () => {
 });
 
 test("displays message when no pages added", async ({ authedPage: page }) => {
-	await page.goto("/admin/dashboard/pages");
+	await page.goto("/admin/dashboard/pages", { waitUntil: "networkidle" });
 	await expect(page.locator("text=No results.")).toBeInViewport();
 });
 
@@ -63,7 +63,7 @@ test("breadcrumbs", async ({ authedPage: page }) => {
 		},
 	});
 
-	await page.goto("/admin/dashboard/pages");
+	await page.goto("/admin/dashboard/pages", { waitUntil: "networkidle" });
 	await expect(page.getByTestId("breadcrumbs")).toHaveCount(0);
 	await page.getByRole("link", { name: "Group 1" }).click();
 	await page.waitForURL(`/admin/dashboard/pages/${group1.id}`);
@@ -99,7 +99,7 @@ test("searchbox filters items", async ({ authedPage: page }) => {
 		],
 	});
 
-	await page.goto("/admin/dashboard/pages");
+	await page.goto("/admin/dashboard/pages", { waitUntil: "networkidle" });
 	await expect(page.locator("tbody > tr")).toHaveCount(2);
 
 	await page.locator("input[type='search']").type("Page 2");
@@ -118,7 +118,7 @@ test.describe("page", () => {
 			},
 		});
 
-		await page.goto("/admin/dashboard/pages");
+		await page.goto("/admin/dashboard/pages", { waitUntil: "networkidle" });
 		await page.getByTestId("add-item").click();
 
 		const dialog = await fillAddEditDialog(page, "Test", "/test");
@@ -139,7 +139,7 @@ test.describe("page", () => {
 				parent_id: rootGroup!.id,
 			},
 		});
-		await page.goto("/admin/dashboard/pages");
+		await page.goto("/admin/dashboard/pages", { waitUntil: "networkidle" });
 
 		await page.locator("tbody > tr").first().locator("td").last().click();
 		await page.getByRole("menu").getByRole("menuitem", { name: "Delete" }).click();
@@ -167,7 +167,7 @@ test.describe("page", () => {
 			],
 		});
 
-		await page.goto("/admin/dashboard/pages");
+		await page.goto("/admin/dashboard/pages", { waitUntil: "networkidle" });
 		await page.locator("tbody > tr").first().locator("td").last().click();
 		await page.getByRole("menu").getByRole("menuitem", { name: "Edit details" }).click();
 
@@ -212,7 +212,7 @@ test.describe("page", () => {
 			],
 		});
 
-		await page.goto("/admin/dashboard/pages");
+		await page.goto("/admin/dashboard/pages", { waitUntil: "networkidle" });
 		await page.locator("tbody > tr").last().locator("td").last().click();
 		await page.getByRole("menu").getByRole("menuitem", { name: "Move" }).click();
 
@@ -249,7 +249,7 @@ test.describe("page", () => {
 			},
 		});
 
-		await page.goto("/admin/dashboard/pages");
+		await page.goto("/admin/dashboard/pages", { waitUntil: "networkidle" });
 		const lastTableRow = page.locator("tbody > tr").last();
 		await lastTableRow.locator("td").last().click();
 		await page.getByRole("menu").getByRole("menuitem", { name: "Duplicate" }).click();
@@ -283,7 +283,7 @@ test.describe("group", () => {
 			},
 		});
 
-		await page.goto("/admin/dashboard/pages");
+		await page.goto("/admin/dashboard/pages", { waitUntil: "networkidle" });
 		await page.getByTestId("add-group").click();
 
 		const dialog = await fillAddEditDialog(page, "Test", "/test");
@@ -321,7 +321,7 @@ test.describe("group", () => {
 			},
 		});
 
-		await page.goto("/admin/dashboard/pages");
+		await page.goto("/admin/dashboard/pages", { waitUntil: "networkidle" });
 		await page.locator("tbody > tr").first().locator("td").last().click();
 		await page.getByRole("menu").getByRole("menuitem", { name: "Delete" }).click();
 
@@ -362,7 +362,7 @@ test.describe("group", () => {
 			],
 		});
 
-		await page.goto("/admin/dashboard/pages");
+		await page.goto("/admin/dashboard/pages", { waitUntil: "networkidle" });
 		await page.locator("tbody > tr").first().locator("td").last().click();
 		await page.getByRole("menu").getByRole("menuitem", { name: "Edit details" }).click();
 
@@ -388,7 +388,7 @@ test.describe("group", () => {
 			},
 		});
 
-		await page.goto("/admin/dashboard/pages");
+		await page.goto("/admin/dashboard/pages", { waitUntil: "networkidle" });
 		await page.locator("tbody > tr").first().locator("td").last().click();
 		await page.getByRole("menu").getByRole("menuitem", { name: "Edit details" }).click();
 
@@ -445,7 +445,7 @@ test.describe("group", () => {
 			},
 		});
 
-		await page.goto("/admin/dashboard/pages");
+		await page.goto("/admin/dashboard/pages", { waitUntil: "networkidle" });
 		await page.locator("tbody > tr").nth(1).locator("td").last().click();
 		await page.getByRole("menu").getByRole("menuitem", { name: "Move" }).click();
 
@@ -504,7 +504,7 @@ test.describe("bulk", () => {
 			],
 		});
 
-		await page.goto("/admin/dashboard/pages");
+		await page.goto("/admin/dashboard/pages", { waitUntil: "networkidle" });
 
 		const rows = page.locator("tbody > tr");
 		await rows.first().locator("td").first().click();
@@ -576,7 +576,7 @@ test.describe("bulk", () => {
 			],
 		});
 
-		await page.goto("/admin/dashboard/pages");
+		await page.goto("/admin/dashboard/pages", { waitUntil: "networkidle" });
 
 		const rows = page.locator("tbody > tr");
 		await rows.first().locator("td").first().click();

@@ -5,7 +5,7 @@ import { tokenMock } from "@admin/e2e/mocks";
 const TEST_ID = "connection-form";
 
 test("visual comparison", async ({ authedPage: page }) => {
-	await page.goto("/admin/dashboard/settings/connection");
+	await page.goto("/admin/dashboard/settings/connection", { waitUntil: "networkidle" });
 	await expect(page.getByTestId(TEST_ID)).toHaveScreenshot();
 });
 
@@ -14,7 +14,7 @@ test("copies token into clipboard and changes into check mark", async ({
 	browserName,
 	headless,
 }) => {
-	await page.goto("/admin/dashboard/settings/connection");
+	await page.goto("/admin/dashboard/settings/connection", { waitUntil: "networkidle" });
 
 	const copyButton = page.getByTestId(TEST_ID).getByRole("button").first();
 	const icon = await copyButton.locator("svg").innerHTML();
@@ -30,7 +30,7 @@ test("copies token into clipboard and changes into check mark", async ({
 });
 
 test("regenerates token", async ({ authedPage: page }) => {
-	await page.goto("/admin/dashboard/settings/connection");
+	await page.goto("/admin/dashboard/settings/connection", { waitUntil: "networkidle" });
 
 	const tokenInput = page.getByTestId(TEST_ID).locator("input[type='text']");
 	const token = await tokenInput.inputValue();

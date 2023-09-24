@@ -6,12 +6,12 @@ import { prisma } from "@admin/prisma/client";
 const TEST_ID = "seo-form";
 
 test("visual comparison", async ({ authedPage: page }) => {
-	await page.goto("/admin/dashboard/settings");
+	await page.goto("/admin/dashboard/settings", { waitUntil: "networkidle" });
 	await expect(page.getByTestId(TEST_ID)).toHaveScreenshot();
 });
 
 test("website config displayed", async ({ authedPage: page }) => {
-	await page.goto("/admin/dashboard/settings");
+	await page.goto("/admin/dashboard/settings", { waitUntil: "networkidle" });
 
 	const element = page.getByTestId(TEST_ID);
 	await expect(element).toBeInViewport();
@@ -24,7 +24,7 @@ test("website config displayed", async ({ authedPage: page }) => {
 	);
 });
 test("website config updates", async ({ authedPage: page }) => {
-	await page.goto("/admin/dashboard/settings");
+	await page.goto("/admin/dashboard/settings", { waitUntil: "networkidle" });
 
 	const element = page.getByTestId(TEST_ID);
 	await element.locator("input[type='text']").first().fill("My new website");
@@ -43,7 +43,7 @@ test("website config updates", async ({ authedPage: page }) => {
 });
 
 test("notification shows error when error occurs", async ({ authedPage: page }) => {
-	await page.goto("/admin/dashboard/settings");
+	await page.goto("/admin/dashboard/settings", { waitUntil: "networkidle" });
 
 	await page.route("**/api/private/config.setConfig**", (route) =>
 		route.fulfill({ status: 500 })
@@ -57,7 +57,7 @@ test("notification shows error when error occurs", async ({ authedPage: page }) 
 	await expect(page.locator("li[role=alert]")).toContainText("Error");
 });
 test("shows 'field required' errors", async ({ authedPage: page }) => {
-	await page.goto("/admin/dashboard/settings");
+	await page.goto("/admin/dashboard/settings", { waitUntil: "networkidle" });
 	const element = page.getByTestId(TEST_ID);
 
 	await element.locator("input[type='text']").first().clear();
@@ -77,7 +77,7 @@ test("shows 'field required' errors", async ({ authedPage: page }) => {
 	await expect(element).toHaveScreenshot();
 });
 test("shows error when language code invalid", async ({ authedPage: page }) => {
-	await page.goto("/admin/dashboard/settings");
+	await page.goto("/admin/dashboard/settings", { waitUntil: "networkidle" });
 
 	const languageInput = page.locator("input[type='text']").nth(1);
 	await languageInput.clear();

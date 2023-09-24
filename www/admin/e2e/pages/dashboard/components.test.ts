@@ -120,7 +120,7 @@ test.afterEach(async () => {
 });
 
 test("displays message when no pages added", async ({ authedPage: page }) => {
-	await page.goto(URL);
+	await page.goto(URL, { waitUntil: "networkidle" });
 	await expect(page.locator("text=No results.")).toBeInViewport();
 });
 
@@ -145,7 +145,7 @@ test("breadcrumbs", async ({ authedPage: page }) => {
 		},
 	});
 
-	await page.goto(URL);
+	await page.goto(URL, { waitUntil: "networkidle" });
 	await expect(page.getByTestId("breadcrumbs")).toHaveCount(0);
 	await page.getByRole("link", { name: "Group 1" }).click();
 	await page.waitForURL(URL + "/" + group1.id);
@@ -179,7 +179,7 @@ test("searchbox filters items", async ({ authedPage: page }) => {
 		},
 	});
 
-	await page.goto(URL);
+	await page.goto(URL, { waitUntil: "networkidle" });
 	await expect(page.locator("tbody > tr")).toHaveCount(2);
 
 	await page.locator("input[type='search']").type("Component");
@@ -199,7 +199,7 @@ test.describe("component definition", () => {
 			},
 		});
 
-		await page.goto(URL);
+		await page.goto(URL, { waitUntil: "networkidle" });
 		await page.getByTestId("add-item").click();
 
 		const dialog = await fillAddCompDefDialog(page, existingComp.name, [
@@ -246,7 +246,7 @@ test.describe("component definition", () => {
 			},
 		});
 
-		await page.goto(URL);
+		await page.goto(URL, { waitUntil: "networkidle" });
 		await selectAction(page, 0, "Delete");
 		await page.getByRole("dialog").locator("button[type='submit']").click();
 
@@ -280,7 +280,7 @@ test.describe("component definition", () => {
 				field_definitions: true,
 			},
 		});
-		await page.goto(URL);
+		await page.goto(URL, { waitUntil: "networkidle" });
 		const dialog = page.getByRole("dialog");
 
 		await selectAction(page, 0, "Edit");
@@ -332,7 +332,7 @@ test.describe("component definition", () => {
 			},
 		});
 
-		await page.goto(URL);
+		await page.goto(URL, { waitUntil: "networkidle" });
 		await selectAction(page, 1, "Edit");
 		const dialog = page.getByRole("dialog");
 		await dialog.locator("input[name='compName']").fill(existingComp.name);
@@ -370,7 +370,7 @@ test.describe("component definition", () => {
 			},
 		});
 
-		await page.goto(URL);
+		await page.goto(URL, { waitUntil: "networkidle" });
 		await selectAction(page, 1, "Move");
 
 		const dialog = page.getByRole("dialog");
@@ -408,7 +408,7 @@ test.describe("component definition", () => {
 			},
 		});
 
-		await page.goto(URL);
+		await page.goto(URL, { waitUntil: "networkidle" });
 		await selectAction(page, 1, "Duplicate");
 		const dialog = await fillAddCompDefDialog(page, existingComp.name, [
 			{ name: "Label", type: "TEXT" },
@@ -470,7 +470,7 @@ test.describe("field definition", () => {
 				field_definitions: true,
 			},
 		});
-		await page.goto(URL);
+		await page.goto(URL, { waitUntil: "networkidle" });
 
 		await selectAction(page, 0, "Edit");
 		const dialog = page.getByRole("dialog");
@@ -520,7 +520,7 @@ test.describe("field definition", () => {
 				field_definitions: true,
 			},
 		});
-		await page.goto(URL);
+		await page.goto(URL, { waitUntil: "networkidle" });
 
 		await selectAction(page, 0, "Edit");
 		const dialog = page.getByRole("dialog");
@@ -554,7 +554,7 @@ test.describe("field definition", () => {
 				group_id: (await prisma.componentDefinitionGroup.findFirst())!.id,
 			},
 		});
-		await page.goto(URL);
+		await page.goto(URL, { waitUntil: "networkidle" });
 		await selectAction(page, 0, "Edit");
 
 		const dialog = await fillEditCompDefDialog(page, undefined, [
@@ -591,7 +591,7 @@ test.describe("field definition", () => {
 				group_id: (await prisma.componentDefinitionGroup.findFirst())!.id,
 			},
 		});
-		await page.goto(URL);
+		await page.goto(URL, { waitUntil: "networkidle" });
 		await selectAction(page, 0, "Edit");
 
 		await fillEditCompDefDialog(page, undefined, [{ name: "Label", type: "TEXT" }]);
@@ -632,7 +632,7 @@ test.describe("field definition", () => {
 				field_definitions: true,
 			},
 		});
-		await page.goto(URL);
+		await page.goto(URL, { waitUntil: "networkidle" });
 
 		await selectAction(page, 0, "Edit");
 		const fieldDef = getFieldDef(page, 0);
@@ -686,7 +686,7 @@ test.describe("field definition", () => {
 				field_definitions: true,
 			},
 		});
-		await page.goto(URL);
+		await page.goto(URL, { waitUntil: "networkidle" });
 		await selectAction(page, 0, "Edit");
 
 		const fieldDef = getFieldDef(page, 0);
@@ -733,7 +733,7 @@ test.describe("field definition", () => {
 				field_definitions: true,
 			},
 		});
-		await page.goto(URL);
+		await page.goto(URL, { waitUntil: "networkidle" });
 
 		await selectAction(page, 0, "Edit");
 		const fieldDef = await editFieldDef(page, 0, "Switch", "SWITCH");
@@ -780,7 +780,7 @@ test.describe("field definition", () => {
 				field_definitions: true,
 			},
 		});
-		await page.goto(URL);
+		await page.goto(URL, { waitUntil: "networkidle" });
 
 		await selectAction(page, 0, "Edit");
 		const handle = getFieldDef(page, 2).locator("> div").first().getByRole("button");
@@ -822,7 +822,7 @@ test.describe("field definition", () => {
 
 test.describe("group", () => {
 	test("adds group, invalid name errors", async ({ authedPage: page }) => {
-		await page.goto(URL);
+		await page.goto(URL, { waitUntil: "networkidle" });
 		await page.getByTestId("add-group").click();
 
 		const dialog = await fillAddEditGroupDialog(page, "  ");
@@ -847,7 +847,7 @@ test.describe("group", () => {
 				parent_group_id: (await prisma.componentDefinitionGroup.findFirst())!.id,
 			},
 		});
-		await page.goto(URL);
+		await page.goto(URL, { waitUntil: "networkidle" });
 
 		await selectAction(page, 0, "Edit");
 		const dialog = await fillAddEditGroupDialog(page, "Group 2");
@@ -874,7 +874,7 @@ test.describe("group", () => {
 			},
 		});
 
-		await page.goto(URL);
+		await page.goto(URL, { waitUntil: "networkidle" });
 		await selectAction(page, 0, "Move");
 
 		const dialog = page.getByRole("dialog");
@@ -903,7 +903,7 @@ test.describe("group", () => {
 				parent_group_id: (await prisma.componentDefinitionGroup.findFirst())!.id,
 			},
 		});
-		await page.goto(URL);
+		await page.goto(URL, { waitUntil: "networkidle" });
 
 		await selectAction(page, 0, "Delete");
 		await page.getByRole("dialog").locator("button[type='submit']").click();
@@ -928,7 +928,7 @@ test.describe("bulk", () => {
 			},
 		});
 
-		await page.goto(URL);
+		await page.goto(URL, { waitUntil: "networkidle" });
 		await getRow(page, 0).locator("td").first().click();
 		await getRow(page, 1).locator("td").first().click();
 
@@ -960,7 +960,7 @@ test.describe("bulk", () => {
 			},
 		});
 
-		await page.goto(URL);
+		await page.goto(URL, { waitUntil: "networkidle" });
 		await getRow(page, 0).locator("td").first().click();
 		await getRow(page, 1).locator("td").first().click();
 

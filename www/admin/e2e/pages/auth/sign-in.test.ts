@@ -19,23 +19,23 @@ test.afterAll(async () => {
 
 test("light theme visual comparison", async ({ page }) => {
 	await page.emulateMedia({ colorScheme: "light" });
-	await page.goto("/admin/signin");
+	await page.goto("/admin/signin", { waitUntil: "networkidle" });
 	await expect(page).toHaveScreenshot();
 });
 test("dark theme visual comparison", async ({ page }) => {
 	await page.emulateMedia({ colorScheme: "dark" });
-	await page.goto("/admin/signin");
+	await page.goto("/admin/signin", { waitUntil: "networkidle" });
 	await expect(page).toHaveScreenshot();
 });
 
 test("shows 'field required' errors", async ({ page }) => {
-	await page.goto("/admin/signin");
+	await page.goto("/admin/signin", { waitUntil: "networkidle" });
 	await page.click("button[type=submit]");
 	await expect(page).toHaveScreenshot();
 });
 
 test("shows error when invalid credentials", async ({ page }) => {
-	await page.goto("/admin/signin");
+	await page.goto("/admin/signin", { waitUntil: "networkidle" });
 	const emailInput = page.locator("input[type='email']");
 	const passwordInput = page.locator("input[type='password']");
 	const submitButton = page.locator("button[type='submit']");
@@ -69,7 +69,7 @@ test("shows error when invalid credentials", async ({ page }) => {
 });
 
 test("shows error when server error", async ({ page }) => {
-	await page.goto("/admin/signin");
+	await page.goto("/admin/signin", { waitUntil: "networkidle" });
 	await page.locator("input[type='email']").type(userMock.email);
 	await page.locator("input[type='password']").type(userPasswordDecrypted);
 	await page.route("**/api/private/auth.signIn**", (route) =>
@@ -89,7 +89,7 @@ test("shows error when server error", async ({ page }) => {
 });
 
 test("shows error when email invalid", async ({ page }) => {
-	await page.goto("/admin/signin");
+	await page.goto("/admin/signin", { waitUntil: "networkidle" });
 	await page.click("button[type=submit]");
 	await page.locator("input[type='email']").type("invalid@domain");
 
@@ -97,7 +97,7 @@ test("shows error when email invalid", async ({ page }) => {
 });
 
 test("signs in when credentials are valid", async ({ page }) => {
-	await page.goto("/admin/signin");
+	await page.goto("/admin/signin", { waitUntil: "networkidle" });
 	await page.locator("input[type='email']").type(userMock.email);
 	await page.locator("input[type='password']").type(userPasswordDecrypted);
 	await page.locator("button[type='submit']").click();
