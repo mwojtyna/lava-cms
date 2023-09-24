@@ -17,7 +17,7 @@ async function checkRow(
 	rowIndex: number,
 	name: string,
 	url: string,
-	type: "Page" | "Group"
+	type: "Page" | "Group",
 ) {
 	const row = page.locator("tbody > tr").nth(rowIndex);
 	await expect(row.locator("td").nth(1)).toHaveText(name);
@@ -82,7 +82,7 @@ test("breadcrumbs", async ({ authedPage: page }) => {
 	await expect(breadcrumbs).toHaveCount(0);
 });
 
-test("searchbox filters pages", async ({ authedPage: page }) => {
+test("searchbox filters items", async ({ authedPage: page }) => {
 	const rootGroup = await prisma.page.findFirst();
 	await prisma.page.createMany({
 		data: [
@@ -99,8 +99,7 @@ test("searchbox filters pages", async ({ authedPage: page }) => {
 		],
 	});
 
-	// waitUntil: "networkidle" is needed because webkit is great as always
-	await page.goto("/admin/dashboard/pages", { waitUntil: "networkidle" });
+	await page.goto("/admin/dashboard/pages");
 	await expect(page.locator("tbody > tr")).toHaveCount(2);
 
 	await page.locator("input[type='search']").type("Page 2");
@@ -119,9 +118,8 @@ test.describe("page", () => {
 			},
 		});
 
-		// waitUntil: "networkidle" is needed because webkit is great as always
-		await page.goto("/admin/dashboard/pages", { waitUntil: "networkidle" });
-		await page.getByTestId("add-page").click();
+		await page.goto("/admin/dashboard/pages");
+		await page.getByTestId("add-item").click();
 
 		const dialog = await fillAddEditDialog(page, "Test", "/test");
 		await expect(dialog.locator("input[name='slug']")).toHaveAttribute("aria-invalid", "true");
@@ -141,7 +139,7 @@ test.describe("page", () => {
 				parent_id: rootGroup!.id,
 			},
 		});
-		await page.goto("/admin/dashboard/pages", { waitUntil: "networkidle" });
+		await page.goto("/admin/dashboard/pages");
 
 		await page.locator("tbody > tr").first().locator("td").last().click();
 		await page.getByRole("menu").getByRole("menuitem", { name: "Delete" }).click();
@@ -169,7 +167,7 @@ test.describe("page", () => {
 			],
 		});
 
-		await page.goto("/admin/dashboard/pages", { waitUntil: "networkidle" });
+		await page.goto("/admin/dashboard/pages");
 		await page.locator("tbody > tr").first().locator("td").last().click();
 		await page.getByRole("menu").getByRole("menuitem", { name: "Edit details" }).click();
 
@@ -214,7 +212,7 @@ test.describe("page", () => {
 			],
 		});
 
-		await page.goto("/admin/dashboard/pages", { waitUntil: "networkidle" });
+		await page.goto("/admin/dashboard/pages");
 		await page.locator("tbody > tr").last().locator("td").last().click();
 		await page.getByRole("menu").getByRole("menuitem", { name: "Move" }).click();
 
@@ -251,7 +249,7 @@ test.describe("page", () => {
 			},
 		});
 
-		await page.goto("/admin/dashboard/pages", { waitUntil: "networkidle" });
+		await page.goto("/admin/dashboard/pages");
 		const lastTableRow = page.locator("tbody > tr").last();
 		await lastTableRow.locator("td").last().click();
 		await page.getByRole("menu").getByRole("menuitem", { name: "Duplicate" }).click();
@@ -285,7 +283,7 @@ test.describe("group", () => {
 			},
 		});
 
-		await page.goto("/admin/dashboard/pages", { waitUntil: "networkidle" });
+		await page.goto("/admin/dashboard/pages");
 		await page.getByTestId("add-group").click();
 
 		const dialog = await fillAddEditDialog(page, "Test", "/test");
@@ -323,7 +321,7 @@ test.describe("group", () => {
 			},
 		});
 
-		await page.goto("/admin/dashboard/pages", { waitUntil: "networkidle" });
+		await page.goto("/admin/dashboard/pages");
 		await page.locator("tbody > tr").first().locator("td").last().click();
 		await page.getByRole("menu").getByRole("menuitem", { name: "Delete" }).click();
 
@@ -364,7 +362,7 @@ test.describe("group", () => {
 			],
 		});
 
-		await page.goto("/admin/dashboard/pages", { waitUntil: "networkidle" });
+		await page.goto("/admin/dashboard/pages");
 		await page.locator("tbody > tr").first().locator("td").last().click();
 		await page.getByRole("menu").getByRole("menuitem", { name: "Edit details" }).click();
 
@@ -390,7 +388,7 @@ test.describe("group", () => {
 			},
 		});
 
-		await page.goto("/admin/dashboard/pages", { waitUntil: "networkidle" });
+		await page.goto("/admin/dashboard/pages");
 		await page.locator("tbody > tr").first().locator("td").last().click();
 		await page.getByRole("menu").getByRole("menuitem", { name: "Edit details" }).click();
 
@@ -447,7 +445,7 @@ test.describe("group", () => {
 			},
 		});
 
-		await page.goto("/admin/dashboard/pages", { waitUntil: "networkidle" });
+		await page.goto("/admin/dashboard/pages");
 		await page.locator("tbody > tr").nth(1).locator("td").last().click();
 		await page.getByRole("menu").getByRole("menuitem", { name: "Move" }).click();
 
@@ -506,7 +504,7 @@ test.describe("bulk", () => {
 			],
 		});
 
-		await page.goto("/admin/dashboard/pages", { waitUntil: "networkidle" });
+		await page.goto("/admin/dashboard/pages");
 
 		const rows = page.locator("tbody > tr");
 		await rows.first().locator("td").first().click();
@@ -536,8 +534,8 @@ test.describe("bulk", () => {
 		await prisma.page.createMany({
 			data: [
 				{
-					name: "Group 2",
-					url: "/group-1/group-2",
+					name: "Group 11",
+					url: "/group-1/group-11",
 					parent_id: group1.id,
 					is_group: true,
 				},
@@ -610,6 +608,6 @@ test.describe("bulk", () => {
 
 		await page.getByRole("link", { name: "Group 1" }).click();
 		await page.waitForURL("/admin/dashboard/pages/**");
-		await checkRow(page, 0, "Group 2", "/group-3/group-1/group-2", "Group");
+		await checkRow(page, 0, "Group 11", "/group-3/group-1/group-11", "Group");
 	});
 });

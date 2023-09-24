@@ -35,13 +35,13 @@
 	},
 	"dependencies": {
 		"@lavacms/core": "workspace:*",
-		"camelcase": "^7.0.1"
+		"camelcase": "^8.0.0"
 	},
 	"devDependencies": {
-		"astro": "^2.8.2",
+		"astro": "^3.1.2",
 		"eslint-config-package": "workspace:*",
-		"typescript": "^5.1.6",
-		"vite": "^4.4.4"
+		"typescript": "^5.2.2",
+		"vite": "^4.4.9"
 	},
 	"peerDependencies": {
 		"astro": ">=2"

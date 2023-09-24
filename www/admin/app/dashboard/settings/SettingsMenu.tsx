@@ -4,7 +4,7 @@ import Link from "next/link";
 import { Button } from "@admin/src/components/ui/client";
 import type { SettingsRoute } from "@admin/src/data/routes/settings";
 import { cn } from "@admin/src/utils/styling";
-import { usePathname } from "@admin/src/hooks";
+import { usePathname } from "next/navigation";
 
 export function SettingsMenu({ routes }: { routes: SettingsRoute[] }) {
 	const segments = usePathname().split("/");
@@ -24,7 +24,7 @@ export function SettingsMenu({ routes }: { routes: SettingsRoute[] }) {
 							(lastSegment === route.path ||
 								(lastSegment === "settings" && route.path === "")) &&
 								"bg-accent",
-							"w-full justify-start whitespace-nowrap"
+							"w-full justify-start whitespace-nowrap",
 						)}
 						variant={"ghost"}
 						icon={route.icon}

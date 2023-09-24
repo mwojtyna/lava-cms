@@ -1,6 +1,5 @@
 import type { Config } from "tailwindcss";
 import { fontFamily } from "tailwindcss/defaultTheme";
-// @ts-expect-error - No type declarations for this package
 import tailwindAnimate from "tailwindcss-animate";
 
 const config: Config = {

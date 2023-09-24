@@ -11,5 +11,5 @@ export const authedPage = async (
 	// Run test
 	await use(authedPage);
 
-	await cleanUpAuthedContext();
+	await cleanUpAuthedContext(authedContext);
 };

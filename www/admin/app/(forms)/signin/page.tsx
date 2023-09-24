@@ -12,10 +12,10 @@ export default async function SignIn() {
 	const { reason } = await caller.auth.setupRequired();
 
 	if (reason) {
-		redirect("/admin/setup");
+		redirect("/setup");
 	}
 	if (await getCurrentUser()) {
-		redirect("/admin/dashboard");
+		redirect("/dashboard");
 	}
 
 	return <SignInForm />;

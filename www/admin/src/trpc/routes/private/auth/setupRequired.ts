@@ -8,10 +8,10 @@ export const setupRequired = privateProcedure
 		const config = await prisma.config.findFirst();
 
 		if (!user) {
-			return { reason: "no-user" as const };
+			return { reason: "no-user" };
 		}
 		if (!config) {
-			return { reason: "no-config" as const };
+			return { reason: "no-config" };
 		}
 		return { reason: null };
 	});

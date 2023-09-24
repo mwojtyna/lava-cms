@@ -1,6 +1,6 @@
 "use client";
 
-import { usePathname } from "@admin/src/hooks";
+import { usePathname } from "next/navigation";
 import { TypographyH1, TypographyMuted } from "./ui/server";
 import type { NavMenuRoute } from "@admin/src/data/routes/navMenu";
 import { getRoute } from "@admin/src/data/routes/common";

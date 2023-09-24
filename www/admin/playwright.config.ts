@@ -32,7 +32,7 @@ const config: PlaywrightTestConfig = {
 	fullyParallel: true,
 	/* Fail the build on CI if you accidentally left test.only in the source code. */
 	forbidOnly: !!process.env.CI,
-	retries: 2,
+	retries: 1,
 	/* Opt out of parallel tests. */
 	workers: 1,
 	/* Reporter to use. See https://playwright.dev/docs/test-reporters */
@@ -40,7 +40,8 @@ const config: PlaywrightTestConfig = {
 	/* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
 	use: {
 		baseURL: "http://localhost:3001",
-		trace: "retain-on-failure",
+		trace: "on-first-retry",
+		video: "on-first-retry",
 	},
 
 	/* Configure projects for major browsers */
@@ -104,9 +105,9 @@ const config: PlaywrightTestConfig = {
 	/* Run your local dev server before starting the tests */
 	webServer: {
 		// Run only the admin server
-		command: process.env.CI ? "pnpm start" : "pnpm dev",
+		command: "pnpm start",
 		url: "http://localhost:3001/admin/api/health",
-		reuseExistingServer: true,
+		reuseExistingServer: false,
 	},
 };
 

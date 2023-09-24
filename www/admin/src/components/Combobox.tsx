@@ -16,26 +16,33 @@ import {
 	PopoverTrigger,
 } from "@admin/src/components/ui/client";
 
-type ComboboxData = { value: string; label: React.ReactNode; filterValue: string }[];
+type ComboboxData = Array<{
+	value: string;
+	label: React.ReactNode;
+	description: React.ReactNode;
+	filterValue: string;
+}>;
 interface ComboboxProps extends Omit<React.ComponentPropsWithoutRef<typeof Button>, "onChange"> {
 	data: ComboboxData;
 	contentProps?: React.ComponentPropsWithoutRef<typeof PopoverContent>;
-	notFoundContent?: React.ReactNode;
-	value: string;
+	notFoundContent: React.ReactNode;
+
+	// react-hook-form props
+	value?: string;
 	// Can't figure out how to type this
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	onChange: (value: any) => void;
+	onChange?: (value: any) => void;
 }
 const Combobox = React.forwardRef<React.ComponentRef<typeof Button>, ComboboxProps>(
 	(
 		{ data, className, contentProps, placeholder, notFoundContent, value, onChange, ...props },
-		ref
+		ref,
 	) => {
 		const [open, setOpen] = React.useState(false);
 		const [search, setSearch] = React.useState("");
 
 		return (
-			<Popover open={open} onOpenChange={setOpen}>
+			<Popover open={open} onOpenChange={setOpen} modal={true}>
 				<PopoverTrigger asChild>
 					<FormControl>
 						<Button
@@ -44,12 +51,18 @@ const Combobox = React.forwardRef<React.ComponentRef<typeof Button>, ComboboxPro
 							role="combobox"
 							aria-expanded={open}
 							className={cn(
-								"w-[200px] justify-between active:translate-y-0",
-								className
+								"justify-between overflow-hidden px-3 text-left active:translate-y-0",
+								className,
 							)}
 							{...props}
 						>
-							{value ? data.find((item) => item.value === value)?.label : placeholder}
+							{value ? (
+								data.find((item) => item.value === value)?.label
+							) : (
+								<span className="font-normal text-muted-foreground">
+									{placeholder}
+								</span>
+							)}
 							<ChevronUpDownIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
 						</Button>
 					</FormControl>
@@ -75,18 +88,24 @@ const Combobox = React.forwardRef<React.ComponentRef<typeof Button>, ComboboxPro
 									<CommandItem
 										key={i}
 										value={item.value}
-										onSelect={(currentValue) => {
-											onChange(currentValue === value ? "" : currentValue);
+										onSelect={() => {
+											// We don't use the provided value from onSelect because it's automatically
+											// inferred from the textContent of <CommandItem> and not the value prop
+											// for some stupid reason
+											onChange?.(item.value === value ? "" : item.value);
 											setOpen(false);
 										}}
 									>
 										<CheckIcon
 											className={cn(
 												"mr-2 h-4 w-4",
-												value === item.value ? "opacity-100" : "opacity-0"
+												value === item.value ? "visible" : "invisible",
 											)}
 										/>
-										{item.label}
+										<div>
+											{item.label}
+											{item.description}
+										</div>
 									</CommandItem>
 								);
 							})}
@@ -95,7 +114,7 @@ const Combobox = React.forwardRef<React.ComponentRef<typeof Button>, ComboboxPro
 				</PopoverContent>
 			</Popover>
 		);
-	}
+	},
 );
 Combobox.displayName = "Combobox";
 

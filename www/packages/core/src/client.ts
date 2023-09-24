@@ -36,7 +36,7 @@ export class ApiClient {
 	public async getPage(path: string): Promise<{ name: string; components: Component[] }> {
 		const page = await this.connection.getPage.query({ path });
 		if (!page) {
-			throw new Error(`Page with path \`${path}\` not added in CMS`);
+			throw new Error(`Page with path \`${path}\` not found in CMS`);
 		}
 
 		const { name } = page;

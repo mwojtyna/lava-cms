@@ -1,5 +1,6 @@
 import "client-only";
 
-export * from "./usePathname";
-export * from "./useToast";
 export * from "./usePagePreferences";
+export * from "./useSearchParams";
+export * from "./useTable";
+export * from "./useToast";

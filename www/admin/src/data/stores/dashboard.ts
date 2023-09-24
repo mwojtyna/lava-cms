@@ -23,3 +23,12 @@ export const useColorThemeStore = create<ColorThemeState>((set) => ({
 		setCookie("color-theme" satisfies CookieName, theme, permanentCookieOptions);
 	},
 }));
+
+interface ComponentDefEditDialogStore {
+	open: boolean;
+	id: string;
+}
+export const useComponentDefEditDialogStore = create<ComponentDefEditDialogStore>(() => ({
+	open: false,
+	id: "",
+}));
