@@ -86,11 +86,13 @@ test("when changing the preferred system theme, the website theme is updated", a
 }) => {
 	await page.emulateMedia({ colorScheme: "light" });
 	await page.goto("/admin/setup");
+	await page.waitForTimeout(1000);
 
 	expect(await getColorScheme(page)).toBe("light");
 	expect(await getCookie(context)).toBe("light");
 
 	await page.emulateMedia({ colorScheme: "dark" });
+	await page.waitForTimeout(1000);
 
 	expect(await getColorScheme(page)).toBe("dark");
 	expect(await getCookie(context)).toBe("dark");

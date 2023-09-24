@@ -137,21 +137,21 @@ test.describe("setup website step", () => {
 		await expect(languageInput).toHaveAttribute("aria-invalid", "true");
 	});
 
-	test("go to dashboard when info is valid", async ({ authedPage }) => {
+	test("go to dashboard when info is valid", async ({ authedPage: page }) => {
 		// authedPage fixture automatically creates a config and a Root page
 		// we don't want that for this test because if it exists
 		// then it will redirect to /dashboard
 		await prisma.config.deleteMany();
 		await prisma.page.deleteMany();
 
-		await authedPage.goto("/admin/setup");
-		await authedPage.locator("input[type='text']").first().type(websiteSettingsMock.title);
-		await authedPage.locator("input[type='text']").nth(1).type(websiteSettingsMock.language);
-		await authedPage.locator("button[type='submit']").click();
-		await authedPage.waitForURL(/dashboard/);
+		await page.goto("/admin/setup");
+		await page.base.locator("input[type='text']").first().type(websiteSettingsMock.title);
+		await page.base.locator("input[type='text']").nth(1).type(websiteSettingsMock.language);
+		await page.base.locator("button[type='submit']").click();
+		await page.base.waitForURL(/dashboard/);
 
-		expect(authedPage.url()).toMatch(/dashboard/);
-		await expect(authedPage.locator("#content").first()).toBeInViewport();
+		expect(page.base.url()).toMatch(/dashboard/);
+		await expect(page.base.locator("#content").first()).toBeInViewport();
 		await expect(prisma.config.findFirstOrThrow()).resolves.toMatchObject({
 			title: websiteSettingsMock.title,
 			description: "",

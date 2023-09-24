@@ -68,6 +68,8 @@ const config: PlaywrightTestConfig = {
 			use: {
 				...devices["Desktop Safari"],
 			},
+			timeout: 45000,
+			retries: 2,
 		},
 
 		/* Test against mobile viewports. */

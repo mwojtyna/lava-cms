@@ -74,7 +74,10 @@ const TokenInput = ({ token }: { token: string }) => {
 				className="font-mono"
 				value={token}
 				rightButton={
-					typeof navigator.clipboard !== "undefined"
+					// Only show copy button if clipboard API is available
+					// Check on server because of potential hydration issues
+					(typeof window === "undefined" && typeof navigator === "undefined") ||
+					(typeof window !== "undefined" && typeof navigator.clipboard !== "undefined")
 						? {
 								state: copied,
 								setState: null,

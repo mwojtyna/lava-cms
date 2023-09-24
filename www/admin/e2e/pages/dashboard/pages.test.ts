@@ -33,7 +33,7 @@ test.afterEach(async () => {
 
 test("displays message when no pages added", async ({ authedPage: page }) => {
 	await page.goto("/admin/dashboard/pages");
-	await expect(page.locator("text=No results.")).toBeInViewport();
+	await expect(page.base.locator("text=No results.")).toBeInViewport();
 });
 
 test("breadcrumbs", async ({ authedPage: page }) => {
@@ -64,21 +64,21 @@ test("breadcrumbs", async ({ authedPage: page }) => {
 	});
 
 	await page.goto("/admin/dashboard/pages");
-	await expect(page.getByTestId("breadcrumbs")).toHaveCount(0);
-	await page.getByRole("link", { name: "Group 1" }).click();
-	await page.waitForURL(`/admin/dashboard/pages/${group1.id}`);
-	await page.getByRole("link", { name: "Group 2" }).click();
-	await page.waitForURL(`/admin/dashboard/pages/${group2.id}`);
+	await expect(page.base.getByTestId("breadcrumbs")).toHaveCount(0);
+	await page.base.getByRole("link", { name: "Group 1" }).click();
+	await page.base.waitForURL(`/admin/dashboard/pages/${group1.id}`);
+	await page.base.getByRole("link", { name: "Group 2" }).click();
+	await page.base.waitForURL(`/admin/dashboard/pages/${group2.id}`);
 
-	const breadcrumbs = page.getByTestId("breadcrumbs");
+	const breadcrumbs = page.base.getByTestId("breadcrumbs");
 	await expect(breadcrumbs).toContainText("Group 1 Group 2");
 
 	await breadcrumbs.getByRole("link", { name: "Group 1" }).click();
-	await expect(page).toHaveURL(`/admin/dashboard/pages/${group1.id}`);
+	await expect(page.base).toHaveURL(`/admin/dashboard/pages/${group1.id}`);
 	await expect(breadcrumbs).toContainText("Group 1");
 
 	await breadcrumbs.getByRole("link").first().click();
-	await expect(page).toHaveURL("/admin/dashboard/pages");
+	await expect(page.base).toHaveURL("/admin/dashboard/pages");
 	await expect(breadcrumbs).toHaveCount(0);
 });
 
@@ -100,11 +100,11 @@ test("searchbox filters items", async ({ authedPage: page }) => {
 	});
 
 	await page.goto("/admin/dashboard/pages");
-	await expect(page.locator("tbody > tr")).toHaveCount(2);
+	await expect(page.base.locator("tbody > tr")).toHaveCount(2);
 
-	await page.locator("input[type='search']").type("Page 2");
-	await expect(page.locator("tbody > tr")).toHaveCount(1);
-	await checkRow(page, 0, "Page 2", "/test-2", "Page");
+	await page.base.locator("input[type='search']").type("Page 2");
+	await expect(page.base.locator("tbody > tr")).toHaveCount(1);
+	await checkRow(page.base, 0, "Page 2", "/test-2", "Page");
 });
 
 test.describe("page", () => {
@@ -119,15 +119,15 @@ test.describe("page", () => {
 		});
 
 		await page.goto("/admin/dashboard/pages");
-		await page.getByTestId("add-item").click();
+		await page.base.getByTestId("add-item").click();
 
-		const dialog = await fillAddEditDialog(page, "Test", "/test");
+		const dialog = await fillAddEditDialog(page.base, "Test", "/test");
 		await expect(dialog.locator("input[name='slug']")).toHaveAttribute("aria-invalid", "true");
 		await expect(dialog.locator("strong")).toHaveText("/test");
-		await fillAddEditDialog(page, "Test 2", "/test-2");
+		await fillAddEditDialog(page.base, "Test 2", "/test-2");
 		await expect(dialog).toBeHidden();
 
-		await checkRow(page, 0, "Test", "/test", "Page");
+		await checkRow(page.base, 0, "Test", "/test", "Page");
 	});
 
 	test("deletes a page", async ({ authedPage: page }) => {
@@ -141,13 +141,13 @@ test.describe("page", () => {
 		});
 		await page.goto("/admin/dashboard/pages");
 
-		await page.locator("tbody > tr").first().locator("td").last().click();
-		await page.getByRole("menu").getByRole("menuitem", { name: "Delete" }).click();
+		await page.base.locator("tbody > tr").first().locator("td").last().click();
+		await page.base.getByRole("menu").getByRole("menuitem", { name: "Delete" }).click();
 
-		const dialog = page.getByRole("dialog");
+		const dialog = page.base.getByRole("dialog");
 		await dialog.locator("button[type='submit']").click();
 
-		await expect(page.locator("text=No results.")).toBeInViewport();
+		await expect(page.base.locator("text=No results.")).toBeInViewport();
 	});
 
 	test("edits a page, shows error when conflict", async ({ authedPage: page }) => {
@@ -168,15 +168,15 @@ test.describe("page", () => {
 		});
 
 		await page.goto("/admin/dashboard/pages");
-		await page.locator("tbody > tr").first().locator("td").last().click();
-		await page.getByRole("menu").getByRole("menuitem", { name: "Edit details" }).click();
+		await page.base.locator("tbody > tr").first().locator("td").last().click();
+		await page.base.getByRole("menu").getByRole("menuitem", { name: "Edit details" }).click();
 
-		const dialog = await fillAddEditDialog(page, "Test 2", "/test-2");
+		const dialog = await fillAddEditDialog(page.base, "Test 2", "/test-2");
 		await expect(dialog.locator("input[name='slug']")).toHaveAttribute("aria-invalid", "true");
 		await expect(dialog.locator("strong")).toHaveText("/test-2");
-		await fillAddEditDialog(page, "Test 3", "/test-3");
+		await fillAddEditDialog(page.base, "Test 3", "/test-3");
 
-		await checkRow(page, 1, "Test 3", "/test-3", "Page");
+		await checkRow(page.base, 1, "Test 3", "/test-3", "Page");
 	});
 
 	test("moves page, shows error when conflict", async ({ authedPage: page }) => {
@@ -213,10 +213,10 @@ test.describe("page", () => {
 		});
 
 		await page.goto("/admin/dashboard/pages");
-		await page.locator("tbody > tr").last().locator("td").last().click();
-		await page.getByRole("menu").getByRole("menuitem", { name: "Move" }).click();
+		await page.base.locator("tbody > tr").last().locator("td").last().click();
+		await page.base.getByRole("menu").getByRole("menuitem", { name: "Move" }).click();
 
-		const dialog = page.getByRole("dialog");
+		const dialog = page.base.getByRole("dialog");
 		await expect(dialog).toBeVisible();
 
 		const combobox = dialog.getByRole("combobox");
@@ -232,11 +232,11 @@ test.describe("page", () => {
 		await combobox.click();
 		await dialog.getByRole("option", { name: "Group 2" }).click();
 		await dialog.locator("button[type='submit']").click();
-		await expect(page.locator("tbody > tr")).toHaveCount(2);
+		await expect(page.base.locator("tbody > tr")).toHaveCount(2);
 
-		await page.getByRole("link", { name: "Group 2" }).click();
-		await page.waitForURL("/admin/dashboard/pages/**");
-		await checkRow(page, 0, "Page 1", "/group-2/page-1", "Page");
+		await page.base.getByRole("link", { name: "Group 2" }).click();
+		await page.base.waitForURL("/admin/dashboard/pages/**");
+		await checkRow(page.base, 0, "Page 1", "/group-2/page-1", "Page");
 	});
 
 	test("duplicates page, shows error when conflict", async ({ authedPage: page }) => {
@@ -250,11 +250,11 @@ test.describe("page", () => {
 		});
 
 		await page.goto("/admin/dashboard/pages");
-		const lastTableRow = page.locator("tbody > tr").last();
+		const lastTableRow = page.base.locator("tbody > tr").last();
 		await lastTableRow.locator("td").last().click();
-		await page.getByRole("menu").getByRole("menuitem", { name: "Duplicate" }).click();
+		await page.base.getByRole("menu").getByRole("menuitem", { name: "Duplicate" }).click();
 
-		const dialog = page.getByRole("dialog");
+		const dialog = page.base.getByRole("dialog");
 		await expect(dialog).toBeInViewport();
 		const nameInput = dialog.locator("input[name='name']");
 		const submitButton = dialog.locator("button[type='submit']");
@@ -267,7 +267,7 @@ test.describe("page", () => {
 		await nameInput.fill("Page 2");
 		await submitButton.click();
 
-		await checkRow(page, 1, "Page 2", "/page-2", "Page");
+		await checkRow(page.base, 1, "Page 2", "/page-2", "Page");
 	});
 });
 
@@ -284,15 +284,15 @@ test.describe("group", () => {
 		});
 
 		await page.goto("/admin/dashboard/pages");
-		await page.getByTestId("add-group").click();
+		await page.base.getByTestId("add-group").click();
 
-		const dialog = await fillAddEditDialog(page, "Test", "/test");
+		const dialog = await fillAddEditDialog(page.base, "Test", "/test");
 		await expect(dialog.locator("input[name='slug']")).toHaveAttribute("aria-invalid", "true");
 		await expect(dialog.locator("strong")).toHaveText("/test");
-		await fillAddEditDialog(page, "Test 2", "/test-2");
+		await fillAddEditDialog(page.base, "Test 2", "/test-2");
 		await expect(dialog).toBeHidden();
 
-		await checkRow(page, 0, "Test", "/test", "Group");
+		await checkRow(page.base, 0, "Test", "/test", "Group");
 	});
 
 	test("deletes a group and its children", async ({ authedPage: page }) => {
@@ -322,14 +322,14 @@ test.describe("group", () => {
 		});
 
 		await page.goto("/admin/dashboard/pages");
-		await page.locator("tbody > tr").first().locator("td").last().click();
-		await page.getByRole("menu").getByRole("menuitem", { name: "Delete" }).click();
+		await page.base.locator("tbody > tr").first().locator("td").last().click();
+		await page.base.getByRole("menu").getByRole("menuitem", { name: "Delete" }).click();
 
-		const dialog = page.getByRole("dialog");
+		const dialog = page.base.getByRole("dialog");
 		await expect(dialog).toBeInViewport();
 
 		await dialog.locator("button[type='submit']").click();
-		await page.waitForSelector("[role='dialog']", { state: "hidden" });
+		await page.base.waitForSelector("[role='dialog']", { state: "hidden" });
 
 		expect(await prisma.page.findMany()).toHaveLength(1); // Always returns the root group
 	});
@@ -363,18 +363,18 @@ test.describe("group", () => {
 		});
 
 		await page.goto("/admin/dashboard/pages");
-		await page.locator("tbody > tr").first().locator("td").last().click();
-		await page.getByRole("menu").getByRole("menuitem", { name: "Edit details" }).click();
+		await page.base.locator("tbody > tr").first().locator("td").last().click();
+		await page.base.getByRole("menu").getByRole("menuitem", { name: "Edit details" }).click();
 
-		const dialog = await fillAddEditDialog(page, "Group 2", "/group-2");
+		const dialog = await fillAddEditDialog(page.base, "Group 2", "/group-2");
 		await expect(dialog.locator("input[name='slug']")).toHaveAttribute("aria-invalid", "true");
 		await expect(dialog.locator("strong")).toHaveText("/group-2");
-		await fillAddEditDialog(page, "Group 3", "/group-3");
+		await fillAddEditDialog(page.base, "Group 3", "/group-3");
 
-		await checkRow(page, 1, "Group 3", "/group-3", "Group");
-		await page.locator("tbody > tr").nth(1).locator("td").nth(1).click();
+		await checkRow(page.base, 1, "Group 3", "/group-3", "Group");
+		await page.base.locator("tbody > tr").nth(1).locator("td").nth(1).click();
 
-		await checkRow(page, 0, "Page 1", "/group-3/page-1", "Page");
+		await checkRow(page.base, 0, "Page 1", "/group-3/page-1", "Page");
 	});
 
 	test("groups cannot have a slug containing only '/'", async ({ authedPage: page }) => {
@@ -389,10 +389,10 @@ test.describe("group", () => {
 		});
 
 		await page.goto("/admin/dashboard/pages");
-		await page.locator("tbody > tr").first().locator("td").last().click();
-		await page.getByRole("menu").getByRole("menuitem", { name: "Edit details" }).click();
+		await page.base.locator("tbody > tr").first().locator("td").last().click();
+		await page.base.getByRole("menu").getByRole("menuitem", { name: "Edit details" }).click();
 
-		const dialog = page.getByRole("dialog");
+		const dialog = page.base.getByRole("dialog");
 		await dialog.locator("input[name='slug']").fill("/");
 		await dialog.locator("button[type='submit']").click();
 
@@ -446,10 +446,10 @@ test.describe("group", () => {
 		});
 
 		await page.goto("/admin/dashboard/pages");
-		await page.locator("tbody > tr").nth(1).locator("td").last().click();
-		await page.getByRole("menu").getByRole("menuitem", { name: "Move" }).click();
+		await page.base.locator("tbody > tr").nth(1).locator("td").last().click();
+		await page.base.getByRole("menu").getByRole("menuitem", { name: "Move" }).click();
 
-		const dialog = page.getByRole("dialog");
+		const dialog = page.base.getByRole("dialog");
 		await expect(dialog).toBeInViewport();
 
 		const combobox = dialog.getByRole("combobox");
@@ -465,15 +465,15 @@ test.describe("group", () => {
 		await combobox.click();
 		await dialog.getByRole("option", { name: "Group 3" }).click();
 		await dialog.locator("button[type='submit']").click();
-		await expect(page.locator("tbody > tr")).toHaveCount(2);
+		await expect(page.base.locator("tbody > tr")).toHaveCount(2);
 
-		await page.getByRole("link", { name: "Group 3" }).click();
-		await page.waitForURL("/admin/dashboard/pages/**");
-		await checkRow(page, 0, "Group 2", "/group-3/group-2", "Group");
+		await page.base.getByRole("link", { name: "Group 3" }).click();
+		await page.base.waitForURL("/admin/dashboard/pages/**");
+		await checkRow(page.base, 0, "Group 2", "/group-3/group-2", "Group");
 
-		await page.getByRole("link", { name: "Group 2" }).click();
-		await page.waitForURL("/admin/dashboard/pages/**");
-		await checkRow(page, 0, "Page 1", "/group-3/group-2/page-1", "Page");
+		await page.base.getByRole("link", { name: "Group 2" }).click();
+		await page.base.waitForURL("/admin/dashboard/pages/**");
+		await checkRow(page.base, 0, "Page 1", "/group-3/group-2/page-1", "Page");
 	});
 });
 
@@ -506,14 +506,14 @@ test.describe("bulk", () => {
 
 		await page.goto("/admin/dashboard/pages");
 
-		const rows = page.locator("tbody > tr");
+		const rows = page.base.locator("tbody > tr");
 		await rows.first().locator("td").first().click();
 		await rows.nth(1).locator("td").first().click();
 
-		await page.locator("thead > tr > th").last().click();
-		await page.getByRole("menu").getByRole("menuitem", { name: "Delete" }).click();
-		await page.locator("button[type='submit']").click();
-		await page.waitForSelector("[role='dialog']", { state: "hidden" });
+		await page.base.locator("thead > tr > th").last().click();
+		await page.base.getByRole("menu").getByRole("menuitem", { name: "Delete" }).click();
+		await page.base.locator("button[type='submit']").click();
+		await page.base.waitForSelector("[role='dialog']", { state: "hidden" });
 
 		expect(await prisma.page.findMany()).toHaveLength(1); // Always returns the root group
 	});
@@ -578,14 +578,14 @@ test.describe("bulk", () => {
 
 		await page.goto("/admin/dashboard/pages");
 
-		const rows = page.locator("tbody > tr");
+		const rows = page.base.locator("tbody > tr");
 		await rows.first().locator("td").first().click();
 		await rows.last().locator("td").first().click();
 
-		await page.locator("thead > tr > th").last().click();
-		await page.getByRole("menu").getByRole("menuitem", { name: "Move" }).click();
+		await page.base.locator("thead > tr > th").last().click();
+		await page.base.getByRole("menu").getByRole("menuitem", { name: "Move" }).click();
 
-		const dialog = page.getByRole("dialog");
+		const dialog = page.base.getByRole("dialog");
 		await expect(dialog).toBeInViewport();
 
 		const combobox = dialog.getByRole("combobox");
@@ -599,15 +599,15 @@ test.describe("bulk", () => {
 		await combobox.click();
 		await dialog.getByRole("option", { name: "Group 3" }).click();
 		await dialog.locator("button[type='submit']").click();
-		await page.waitForSelector("[role='dialog']", { state: "hidden" });
+		await page.base.waitForSelector("[role='dialog']", { state: "hidden" });
 
-		await page.getByRole("link", { name: "Group 3" }).click();
-		await page.waitForURL("/admin/dashboard/pages/**");
-		await checkRow(page, 0, "Group 1", "/group-3/group-1", "Group");
-		await checkRow(page, 1, "Page 1", "/group-3/page-1", "Page");
+		await page.base.getByRole("link", { name: "Group 3" }).click();
+		await page.base.waitForURL("/admin/dashboard/pages/**");
+		await checkRow(page.base, 0, "Group 1", "/group-3/group-1", "Group");
+		await checkRow(page.base, 1, "Page 1", "/group-3/page-1", "Page");
 
-		await page.getByRole("link", { name: "Group 1" }).click();
-		await page.waitForURL("/admin/dashboard/pages/**");
-		await checkRow(page, 0, "Group 11", "/group-3/group-1/group-11", "Group");
+		await page.base.getByRole("link", { name: "Group 1" }).click();
+		await page.base.waitForURL("/admin/dashboard/pages/**");
+		await checkRow(page.base, 0, "Group 11", "/group-3/group-1/group-11", "Group");
 	});
 });

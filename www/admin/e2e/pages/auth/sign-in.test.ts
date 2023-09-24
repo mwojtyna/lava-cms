@@ -78,12 +78,12 @@ test("shows error when server error", async ({ page }) => {
 				url: "http://localhost:3001/admin/api/auth/error?error=UnknownError&provider=credentials",
 			}),
 			status: 500,
-		})
+		}),
 	);
 	await page.locator("button[type='submit']").click();
 
 	await expect(page.getByRole("alert").first()).toContainText(
-		"Something went wrong. Try again later."
+		"Something went wrong. Try again later.",
 	);
 	await expect(page).toHaveScreenshot();
 });
