@@ -16,12 +16,12 @@ test.describe("sign up step", () => {
 
 	test("light theme visual comparison", async ({ page }) => {
 		await page.emulateMedia({ colorScheme: "light" });
-		await page.goto("/admin/setup", { waitUntil: "networkidle" });
+		await page.goto("/admin/setup");
 		await expect(page).toHaveScreenshot();
 	});
 	test("dark theme visual comparison", async ({ page }) => {
 		await page.emulateMedia({ colorScheme: "dark" });
-		await page.goto("/admin/setup", { waitUntil: "networkidle" });
+		await page.goto("/admin/setup");
 		await expect(page).toHaveScreenshot();
 	});
 
@@ -111,12 +111,12 @@ test.describe("setup website step", () => {
 
 	test("light theme visual comparison", async ({ page }) => {
 		await page.emulateMedia({ colorScheme: "light" });
-		await page.goto("/admin/setup", { waitUntil: "networkidle" });
+		await page.goto("/admin/setup");
 		await expect(page).toHaveScreenshot();
 	});
 	test("dark theme visual comparison", async ({ page }) => {
 		await page.emulateMedia({ colorScheme: "dark" });
-		await page.goto("/admin/setup", { waitUntil: "networkidle" });
+		await page.goto("/admin/setup");
 		await expect(page).toHaveScreenshot();
 	});
 

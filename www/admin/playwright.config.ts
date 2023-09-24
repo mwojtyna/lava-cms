@@ -14,7 +14,7 @@ dotenv.config({ path: ".env.test" });
 const config: PlaywrightTestConfig = {
 	testDir: "./e2e",
 	/* Maximum time one test can run for. */
-	timeout: 60000,
+	timeout: 30000,
 	expect: {
 		/**
 		 * Maximum time expect() should wait for the condition to be met.
@@ -105,7 +105,7 @@ const config: PlaywrightTestConfig = {
 	/* Run your local dev server before starting the tests */
 	webServer: {
 		// Run only the admin server
-		command: process.env.CI ? "pnpm start" : "pnpm dev",
+		command: "pnpm start",
 		url: "http://localhost:3001/admin/api/health",
 		reuseExistingServer: false,
 	},

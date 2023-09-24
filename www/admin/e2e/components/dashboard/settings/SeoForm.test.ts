@@ -24,7 +24,7 @@ test("website config displayed", async ({ authedPage: page }) => {
 	);
 });
 test("website config updates", async ({ authedPage: page }) => {
-	await page.goto("/admin/dashboard/settings", { waitUntil: "networkidle" });
+	await page.goto("/admin/dashboard/settings");
 
 	const element = page.getByTestId(TEST_ID);
 	await element.locator("input[type='text']").first().fill("My new website");

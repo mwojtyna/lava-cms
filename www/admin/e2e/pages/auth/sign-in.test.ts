@@ -19,12 +19,12 @@ test.afterAll(async () => {
 
 test("light theme visual comparison", async ({ page }) => {
 	await page.emulateMedia({ colorScheme: "light" });
-	await page.goto("/admin/signin", { waitUntil: "networkidle" });
+	await page.goto("/admin/signin");
 	await expect(page).toHaveScreenshot();
 });
 test("dark theme visual comparison", async ({ page }) => {
 	await page.emulateMedia({ colorScheme: "dark" });
-	await page.goto("/admin/signin", { waitUntil: "networkidle" });
+	await page.goto("/admin/signin");
 	await expect(page).toHaveScreenshot();
 });
 

@@ -40,13 +40,13 @@ jobs:
         run: pnpm install
 
       - name: Setup Playwright
-        run: pnpm playwright install --with-deps
+        run: pnpm playwright install ${{ inputs.browser }} --with-deps
 
       - name: Setup postgres
         run: |
           cp .env.test .env
           docker run -p 5432:5432 -e POSTGRES_USER=admin -e POSTGRES_PASSWORD=admin -d postgres:15.3-alpine
-          sleep 5s
+          sleep 5
           pnpm db:push
 
       - name: Setup Next.js cache
