@@ -1,9 +1,9 @@
-import { test as base, type APIRequestContext, type Page } from "@playwright/test";
-import { authedPage } from "./authedPage";
+import { test as base, type APIRequestContext } from "@playwright/test";
+import { authedPage, type AuthedPage } from "./authedPage";
 import { authedRequest } from "./authedRequest";
 
 export interface Fixtures {
-	authedPage: Page;
+	authedPage: AuthedPage;
 	authedRequest: APIRequestContext;
 }
 

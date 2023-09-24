@@ -21,24 +21,26 @@ test.describe("/setup", () => {
 	test("redirects to /setup when no user is signed up", async ({ page }) => {
 		await createConfig();
 
-		await page.goto("/admin/dashboard", { waitUntil: "networkidle" });
+		await page.goto("/admin/dashboard");
 		expect(page.url()).toMatch(/\/setup$/);
 		await expect(page.getByTestId("sign-up")).toBeInViewport();
 
-		await page.goto("/admin/signin", { waitUntil: "networkidle" });
+		await page.goto("/admin/signin");
 		expect(page.url()).toMatch(/\/setup$/);
 		await expect(page.getByTestId("sign-up")).toBeInViewport();
 	});
-	test("redirects to /dashboard if signed in and accessing /setup", async ({ authedPage }) => {
-		await authedPage.goto("/admin/setup", { waitUntil: "networkidle" });
-		expect(authedPage.url()).toMatch(/\/admin\/dashboard$/);
-		await expect(authedPage.locator("#content").first()).toBeInViewport();
+	test("redirects to /dashboard if signed in and accessing /setup", async ({
+		authedPage: page,
+	}) => {
+		await page.goto("/admin/setup");
+		expect(page.base.url()).toMatch(/\/admin\/dashboard$/);
+		await expect(page.base.locator("#content").first()).toBeInViewport();
 	});
 	test("redirects to /signin if not signed in and accessing /setup", async ({ page }) => {
 		await createMockUser();
 		await createConfig();
 
-		await page.goto("/admin/setup", { waitUntil: "networkidle" });
+		await page.goto("/admin/setup");
 		expect(page.url()).toMatch(/\/signin$/);
 		await expect(page.getByTestId("sign-in")).toBeInViewport();
 	});
@@ -49,23 +51,25 @@ test.describe("/signin", () => {
 		await createMockUser();
 		await createConfig();
 
-		await page.goto("/admin/dashboard", { waitUntil: "networkidle" });
+		await page.goto("/admin/dashboard");
 		expect(page.url()).toMatch(/\/signin$/);
 		await expect(page.getByTestId("sign-in")).toBeInViewport();
 
-		await page.goto("/admin/setup", { waitUntil: "networkidle" });
+		await page.goto("/admin/setup");
 		expect(page.url()).toMatch(/\/signin$/);
 		await expect(page.getByTestId("sign-in")).toBeInViewport();
 	});
-	test("redirects to /dashboard if signed in and accessing /signin", async ({ authedPage }) => {
-		await authedPage.goto("/admin/signin", { waitUntil: "networkidle" });
-		expect(authedPage.url()).toMatch(/\/admin\/dashboard$/);
-		await expect(authedPage.locator("#content").first()).toBeInViewport();
+	test("redirects to /dashboard if signed in and accessing /signin", async ({
+		authedPage: page,
+	}) => {
+		await page.goto("/admin/signin");
+		expect(page.base.url()).toMatch(/\/admin\/dashboard$/);
+		await expect(page.base.locator("#content").first()).toBeInViewport();
 	});
 });
 
-test("redirects to dashboard when user is signed in", async ({ authedPage }) => {
-	await authedPage.goto("/admin", { waitUntil: "networkidle" });
-	expect(authedPage.url()).toMatch(/\/admin\/dashboard$/);
-	await expect(authedPage.locator("#content").first()).toBeInViewport();
+test("redirects to dashboard when user is signed in", async ({ authedPage: page }) => {
+	await page.goto("/admin");
+	expect(page.base.url()).toMatch(/\/admin\/dashboard$/);
+	await expect(page.base.locator("#content").first()).toBeInViewport();
 });

@@ -16,23 +16,23 @@ test.describe("sign up step", () => {
 
 	test("light theme visual comparison", async ({ page }) => {
 		await page.emulateMedia({ colorScheme: "light" });
-		await page.goto("/admin/setup", { waitUntil: "networkidle" });
+		await page.goto("/admin/setup");
 		await expect(page).toHaveScreenshot();
 	});
 	test("dark theme visual comparison", async ({ page }) => {
 		await page.emulateMedia({ colorScheme: "dark" });
-		await page.goto("/admin/setup", { waitUntil: "networkidle" });
+		await page.goto("/admin/setup");
 		await expect(page).toHaveScreenshot();
 	});
 
 	test("shows 'field required' errors", async ({ page }) => {
-		await page.goto("/admin/setup", { waitUntil: "networkidle" });
+		await page.goto("/admin/setup");
 		await page.click("button[type='submit']");
 		await expect(page).toHaveScreenshot();
 	});
 
 	test("shows error when email invalid", async ({ page }) => {
-		await page.goto("/admin/setup", { waitUntil: "networkidle" });
+		await page.goto("/admin/setup");
 		await page.locator("input[type='email']").type("invalid@domain");
 		await page.locator("button[type='submit']").click();
 
@@ -40,7 +40,7 @@ test.describe("sign up step", () => {
 	});
 
 	test("shows error when password invalid", async ({ page }) => {
-		await page.goto("/admin/setup", { waitUntil: "networkidle" });
+		await page.goto("/admin/setup");
 
 		await page.locator("button[type='submit']").click();
 		const passwordField = page.locator("input[type='password']").first();
@@ -73,7 +73,7 @@ test.describe("sign up step", () => {
 	});
 
 	test("shows error when passwords don't match", async ({ page }) => {
-		await page.goto("/admin/setup", { waitUntil: "networkidle" });
+		await page.goto("/admin/setup");
 
 		await page.locator("button[type='submit']").click();
 		await page.locator("input[type='password']").nth(1).type("password");
@@ -82,7 +82,7 @@ test.describe("sign up step", () => {
 	});
 
 	test("goes to the next step when info is valid", async ({ page }) => {
-		await page.goto("/admin/setup", { waitUntil: "networkidle" });
+		await page.goto("/admin/setup");
 
 		await page.locator("input[type='email']").type(userMock.email);
 		await page.locator("input[type='text']").first().type(userMock.name);
@@ -111,23 +111,23 @@ test.describe("setup website step", () => {
 
 	test("light theme visual comparison", async ({ page }) => {
 		await page.emulateMedia({ colorScheme: "light" });
-		await page.goto("/admin/setup", { waitUntil: "networkidle" });
+		await page.goto("/admin/setup");
 		await expect(page).toHaveScreenshot();
 	});
 	test("dark theme visual comparison", async ({ page }) => {
 		await page.emulateMedia({ colorScheme: "dark" });
-		await page.goto("/admin/setup", { waitUntil: "networkidle" });
+		await page.goto("/admin/setup");
 		await expect(page).toHaveScreenshot();
 	});
 
 	test("shows 'field required' errors", async ({ page }) => {
-		await page.goto("/admin/setup", { waitUntil: "networkidle" });
+		await page.goto("/admin/setup");
 		await page.click("button[type='submit']");
 		await expect(page).toHaveScreenshot();
 	});
 
 	test("shows error when language code invalid", async ({ page }) => {
-		await page.goto("/admin/setup", { waitUntil: "networkidle" });
+		await page.goto("/admin/setup");
 		await page.locator("input[type='text']").first().type(websiteSettingsMock.title);
 
 		const languageInput = page.locator("input[type='text']").nth(1);
@@ -137,21 +137,21 @@ test.describe("setup website step", () => {
 		await expect(languageInput).toHaveAttribute("aria-invalid", "true");
 	});
 
-	test("go to dashboard when info is valid", async ({ authedPage }) => {
+	test("go to dashboard when info is valid", async ({ authedPage: page }) => {
 		// authedPage fixture automatically creates a config and a Root page
 		// we don't want that for this test because if it exists
 		// then it will redirect to /dashboard
 		await prisma.config.deleteMany();
 		await prisma.page.deleteMany();
 
-		await authedPage.goto("/admin/setup", { waitUntil: "networkidle" });
-		await authedPage.locator("input[type='text']").first().type(websiteSettingsMock.title);
-		await authedPage.locator("input[type='text']").nth(1).type(websiteSettingsMock.language);
-		await authedPage.locator("button[type='submit']").click();
-		await authedPage.waitForURL(/dashboard/);
+		await page.goto("/admin/setup");
+		await page.base.locator("input[type='text']").first().type(websiteSettingsMock.title);
+		await page.base.locator("input[type='text']").nth(1).type(websiteSettingsMock.language);
+		await page.base.locator("button[type='submit']").click();
+		await page.base.waitForURL(/dashboard/);
 
-		expect(authedPage.url()).toMatch(/dashboard/);
-		await expect(authedPage.locator("#content").first()).toBeInViewport();
+		expect(page.base.url()).toMatch(/dashboard/);
+		await expect(page.base.locator("#content").first()).toBeInViewport();
 		await expect(prisma.config.findFirstOrThrow()).resolves.toMatchObject({
 			title: websiteSettingsMock.title,
 			description: "",

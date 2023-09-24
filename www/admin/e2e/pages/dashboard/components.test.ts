@@ -120,8 +120,8 @@ test.afterEach(async () => {
 });
 
 test("displays message when no pages added", async ({ authedPage: page }) => {
-	await page.goto(URL, { waitUntil: "networkidle" });
-	await expect(page.locator("text=No results.")).toBeInViewport();
+	await page.goto(URL);
+	await expect(page.base.locator("text=No results.")).toBeInViewport();
 });
 
 test("breadcrumbs", async ({ authedPage: page }) => {
@@ -145,22 +145,22 @@ test("breadcrumbs", async ({ authedPage: page }) => {
 		},
 	});
 
-	await page.goto(URL, { waitUntil: "networkidle" });
-	await expect(page.getByTestId("breadcrumbs")).toHaveCount(0);
-	await page.getByRole("link", { name: "Group 1" }).click();
-	await page.waitForURL(URL + "/" + group1.id);
-	await page.getByRole("link", { name: "Group 2" }).click();
-	await page.waitForURL(URL + "/" + group2.id);
+	await page.goto(URL);
+	await expect(page.base.getByTestId("breadcrumbs")).toHaveCount(0);
+	await page.base.getByRole("link", { name: "Group 1" }).click();
+	await page.base.waitForURL(URL + "/" + group1.id);
+	await page.base.getByRole("link", { name: "Group 2" }).click();
+	await page.base.waitForURL(URL + "/" + group2.id);
 
-	const breadcrumbs = page.getByTestId("breadcrumbs");
+	const breadcrumbs = page.base.getByTestId("breadcrumbs");
 	await expect(breadcrumbs).toContainText("Group 1 Group 2");
 
 	await breadcrumbs.getByRole("link", { name: "Group 1" }).click();
-	await expect(page).toHaveURL(URL + "/" + group1.id);
+	await expect(page.base).toHaveURL(URL + "/" + group1.id);
 	await expect(breadcrumbs).toContainText("Group 1");
 
 	await breadcrumbs.getByRole("link").first().click();
-	await expect(page).toHaveURL(URL);
+	await expect(page.base).toHaveURL(URL);
 	await expect(breadcrumbs).toHaveCount(0);
 });
 
@@ -179,12 +179,12 @@ test("searchbox filters items", async ({ authedPage: page }) => {
 		},
 	});
 
-	await page.goto(URL, { waitUntil: "networkidle" });
-	await expect(page.locator("tbody > tr")).toHaveCount(2);
+	await page.goto(URL);
+	await expect(page.base.locator("tbody > tr")).toHaveCount(2);
 
-	await page.locator("input[type='search']").type("Component");
-	await expect(page.locator("tbody > tr")).toHaveCount(1);
-	await checkRow(page, 0, "Component 1", "Component Definition");
+	await page.base.locator("input[type='search']").type("Component");
+	await expect(page.base.locator("tbody > tr")).toHaveCount(1);
+	await checkRow(page.base, 0, "Component 1", "Component Definition");
 });
 
 test.describe("component definition", () => {
@@ -199,10 +199,10 @@ test.describe("component definition", () => {
 			},
 		});
 
-		await page.goto(URL, { waitUntil: "networkidle" });
-		await page.getByTestId("add-item").click();
+		await page.goto(URL);
+		await page.base.getByTestId("add-item").click();
 
-		const dialog = await fillAddCompDefDialog(page, existingComp.name, [
+		const dialog = await fillAddCompDefDialog(page.base, existingComp.name, [
 			{ name: "Label", type: "TEXT" },
 		]);
 		await expect(dialog.locator("input[name='compName']")).toHaveAttribute(
@@ -211,16 +211,16 @@ test.describe("component definition", () => {
 		);
 		await expect(dialog.locator("strong")).toHaveText(existingComp.name);
 
-		await fillAddCompDefDialog(page, "  ");
+		await fillAddCompDefDialog(page.base, "  ");
 		await expect(dialog.locator("input[name='compName']")).toHaveAttribute(
 			"aria-invalid",
 			"true",
 		);
 
-		await fillAddCompDefDialog(page, "Test 2");
+		await fillAddCompDefDialog(page.base, "Test 2");
 		await dialog.waitFor({ state: "hidden" });
 
-		await checkRow(page, 1, "Test 2", "Component Definition");
+		await checkRow(page.base, 1, "Test 2", "Component Definition");
 		const newComp = await prisma.componentDefinition.findFirst({
 			where: { name: "Test 2" },
 			include: {
@@ -246,11 +246,11 @@ test.describe("component definition", () => {
 			},
 		});
 
-		await page.goto(URL, { waitUntil: "networkidle" });
-		await selectAction(page, 0, "Delete");
-		await page.getByRole("dialog").locator("button[type='submit']").click();
+		await page.goto(URL);
+		await selectAction(page.base, 0, "Delete");
+		await page.base.getByRole("dialog").locator("button[type='submit']").click();
 
-		await expect(page.locator("text=No results.")).toBeInViewport();
+		await expect(page.base.locator("text=No results.")).toBeInViewport();
 	});
 
 	test("edits component definition (name & fields)", async ({ authedPage: page }) => {
@@ -280,14 +280,14 @@ test.describe("component definition", () => {
 				field_definitions: true,
 			},
 		});
-		await page.goto(URL, { waitUntil: "networkidle" });
-		const dialog = page.getByRole("dialog");
+		await page.goto(URL);
+		const dialog = page.base.getByRole("dialog");
 
-		await selectAction(page, 0, "Edit");
-		await checkFieldDefs(page, originalComp.field_definitions);
+		await selectAction(page.base, 0, "Edit");
+		await checkFieldDefs(page.base, originalComp.field_definitions);
 
 		await dialog.locator("input[name='compName']").fill("Edited name");
-		const fieldDef = await editFieldDef(page, 0, "Switch", "SWITCH");
+		const fieldDef = await editFieldDef(page.base, 0, "Switch", "SWITCH");
 		await expect(fieldDef).toHaveAttribute("data-test-diff", "edited");
 		await dialog.locator("button[type='submit']").click();
 		await dialog.waitFor({ state: "hidden" });
@@ -311,9 +311,9 @@ test.describe("component definition", () => {
 			} satisfies FieldDefinition,
 		]);
 
-		await checkRow(page, 0, "Edited name", "Component Definition");
-		await selectAction(page, 0, "Edit");
-		await checkFieldDefs(page, editedCompDef!.field_definitions);
+		await checkRow(page.base, 0, "Edited name", "Component Definition");
+		await selectAction(page.base, 0, "Edit");
+		await checkFieldDefs(page.base, editedCompDef!.field_definitions);
 	});
 	test("edits component definition (name), duplicate name errors", async ({
 		authedPage: page,
@@ -332,9 +332,9 @@ test.describe("component definition", () => {
 			},
 		});
 
-		await page.goto(URL, { waitUntil: "networkidle" });
-		await selectAction(page, 1, "Edit");
-		const dialog = page.getByRole("dialog");
+		await page.goto(URL);
+		await selectAction(page.base, 1, "Edit");
+		const dialog = page.base.getByRole("dialog");
 		await dialog.locator("input[name='compName']").fill(existingComp.name);
 		await dialog.locator("button[type='submit']").click();
 
@@ -348,8 +348,8 @@ test.describe("component definition", () => {
 		await dialog.locator("button[type='submit']").click();
 		await dialog.waitFor({ state: "hidden" });
 
-		await checkRow(page, 0, existingComp.name, "Component Definition");
-		await checkRow(page, 1, comp.name, "Component Definition");
+		await checkRow(page.base, 0, existingComp.name, "Component Definition");
+		await checkRow(page.base, 1, comp.name, "Component Definition");
 	});
 
 	test("moves component definition", async ({ authedPage: page }) => {
@@ -370,10 +370,10 @@ test.describe("component definition", () => {
 			},
 		});
 
-		await page.goto(URL, { waitUntil: "networkidle" });
-		await selectAction(page, 1, "Move");
+		await page.goto(URL);
+		await selectAction(page.base, 1, "Move");
 
-		const dialog = page.getByRole("dialog");
+		const dialog = page.base.getByRole("dialog");
 		await expect(dialog.getByRole("heading")).toHaveText(
 			`Move component definition "${compDef.name}"`,
 		);
@@ -390,8 +390,8 @@ test.describe("component definition", () => {
 		await dialog.locator("button[type='submit']").click();
 		await dialog.waitFor({ state: "hidden" });
 
-		await getRow(page, 0).locator("td a").first().click();
-		await checkRow(page, 0, compDef.name, "Component Definition");
+		await getRow(page.base, 0).locator("td a").first().click();
+		await checkRow(page.base, 0, compDef.name, "Component Definition");
 	});
 
 	test("duplicates component definition, duplicate name errors", async ({ authedPage: page }) => {
@@ -408,19 +408,19 @@ test.describe("component definition", () => {
 			},
 		});
 
-		await page.goto(URL, { waitUntil: "networkidle" });
-		await selectAction(page, 1, "Duplicate");
-		const dialog = await fillAddCompDefDialog(page, existingComp.name, [
+		await page.goto(URL);
+		await selectAction(page.base, 1, "Duplicate");
+		const dialog = await fillAddCompDefDialog(page.base, existingComp.name, [
 			{ name: "Label", type: "TEXT" },
 		]);
-		await expect(getFieldDef(page, 0)).not.toHaveAttribute("data-test-diff", "added");
+		await expect(getFieldDef(page.base, 0)).not.toHaveAttribute("data-test-diff", "added");
 		await expect(dialog.locator("input[name='compName']")).toHaveAttribute(
 			"aria-invalid",
 			"true",
 		);
 		await expect(dialog.locator("strong")).toHaveText(existingComp.name);
 
-		await fillAddCompDefDialog(page, "Test 2", undefined, false);
+		await fillAddCompDefDialog(page.base, "Test 2", undefined, false);
 		await dialog.getByRole("combobox").nth(1).click();
 		await dialog.getByRole("option", { name: destination.name }).click();
 
@@ -442,8 +442,8 @@ test.describe("component definition", () => {
 			} satisfies FieldDefinition,
 		]);
 
-		await getRow(page, 0).locator("td a").first().click();
-		await checkRow(page, 0, "Test 2", "Component Definition");
+		await getRow(page.base, 0).locator("td a").first().click();
+		await checkRow(page.base, 0, "Test 2", "Component Definition");
 	});
 });
 
@@ -470,16 +470,16 @@ test.describe("field definition", () => {
 				field_definitions: true,
 			},
 		});
-		await page.goto(URL, { waitUntil: "networkidle" });
+		await page.goto(URL);
 
-		await selectAction(page, 0, "Edit");
-		const dialog = page.getByRole("dialog");
-		const fieldDef = await editFieldDef(page, 0, "Switch", "SWITCH");
+		await selectAction(page.base, 0, "Edit");
+		const dialog = page.base.getByRole("dialog");
+		const fieldDef = await editFieldDef(page.base, 0, "Switch", "SWITCH");
 
 		await expect(fieldDef).toHaveAttribute("data-test-diff", "edited");
 
 		await fieldDef.getByTestId("restore-field-btn").click();
-		await checkFieldDefs(page, originalComp.field_definitions);
+		await checkFieldDefs(page.base, originalComp.field_definitions);
 
 		await dialog.locator("button[type='submit']").click();
 		await dialog.waitFor({ state: "hidden" });
@@ -495,8 +495,8 @@ test.describe("field definition", () => {
 			originalComp.field_definitions,
 		);
 
-		await selectAction(page, 0, "Edit");
-		await checkFieldDefs(page, editedButRestoredCompDef!.field_definitions);
+		await selectAction(page.base, 0, "Edit");
+		await checkFieldDefs(page.base, editedButRestoredCompDef!.field_definitions);
 	});
 	test("edits field definition but cancels edit", async ({ authedPage: page }) => {
 		const rootGroup = await prisma.componentDefinitionGroup.findFirst();
@@ -520,14 +520,14 @@ test.describe("field definition", () => {
 				field_definitions: true,
 			},
 		});
-		await page.goto(URL, { waitUntil: "networkidle" });
+		await page.goto(URL);
 
-		await selectAction(page, 0, "Edit");
-		const dialog = page.getByRole("dialog");
+		await selectAction(page.base, 0, "Edit");
+		const dialog = page.base.getByRole("dialog");
 
-		const fieldDef = await editFieldDef(page, 0, "Switch", "SWITCH", false);
+		const fieldDef = await editFieldDef(page.base, 0, "Switch", "SWITCH", false);
 		await fieldDef.getByTestId("cancel-field-btn").click();
-		await checkFieldDefs(page, originalComp.field_definitions);
+		await checkFieldDefs(page.base, originalComp.field_definitions);
 
 		await dialog.locator("button[type='submit']").click();
 		await dialog.waitFor({ state: "hidden" });
@@ -543,8 +543,8 @@ test.describe("field definition", () => {
 			originalComp.field_definitions,
 		);
 
-		await selectAction(page, 0, "Edit");
-		await checkFieldDefs(page, editedButCancelledCompDef!.field_definitions);
+		await selectAction(page.base, 0, "Edit");
+		await checkFieldDefs(page.base, editedButCancelledCompDef!.field_definitions);
 	});
 
 	test("adds field definition", async ({ authedPage: page }) => {
@@ -554,14 +554,14 @@ test.describe("field definition", () => {
 				group_id: (await prisma.componentDefinitionGroup.findFirst())!.id,
 			},
 		});
-		await page.goto(URL, { waitUntil: "networkidle" });
-		await selectAction(page, 0, "Edit");
+		await page.goto(URL);
+		await selectAction(page.base, 0, "Edit");
 
-		const dialog = await fillEditCompDefDialog(page, undefined, [
+		const dialog = await fillEditCompDefDialog(page.base, undefined, [
 			{ name: "Label", type: "TEXT" },
 		]);
 
-		const fieldDef = getFieldDef(page, 0);
+		const fieldDef = getFieldDef(page.base, 0);
 		await expect(fieldDef).toHaveAttribute("data-test-diff", "added");
 
 		await dialog.locator("button[type='submit']").click();
@@ -581,8 +581,8 @@ test.describe("field definition", () => {
 			} satisfies FieldDefinition,
 		]);
 
-		await selectAction(page, 0, "Edit");
-		await checkFieldDefs(page, addedCompDef!.field_definitions);
+		await selectAction(page.base, 0, "Edit");
+		await checkFieldDefs(page.base, addedCompDef!.field_definitions);
 	});
 	test("added field definition doesn't implement diff history", async ({ authedPage: page }) => {
 		await prisma.componentDefinition.create({
@@ -591,14 +591,14 @@ test.describe("field definition", () => {
 				group_id: (await prisma.componentDefinitionGroup.findFirst())!.id,
 			},
 		});
-		await page.goto(URL, { waitUntil: "networkidle" });
-		await selectAction(page, 0, "Edit");
+		await page.goto(URL);
+		await selectAction(page.base, 0, "Edit");
 
-		await fillEditCompDefDialog(page, undefined, [{ name: "Label", type: "TEXT" }]);
-		const fieldDef = getFieldDef(page, 0);
+		await fillEditCompDefDialog(page.base, undefined, [{ name: "Label", type: "TEXT" }]);
+		const fieldDef = getFieldDef(page.base, 0);
 
 		// After edit its diff state doesn't change
-		await editFieldDef(page, 0, "Edited", "NUMBER");
+		await editFieldDef(page.base, 0, "Edited", "NUMBER");
 		await expect(fieldDef).toHaveAttribute("data-test-diff", "added");
 
 		// After delete it is removed instantly
@@ -632,14 +632,14 @@ test.describe("field definition", () => {
 				field_definitions: true,
 			},
 		});
-		await page.goto(URL, { waitUntil: "networkidle" });
+		await page.goto(URL);
 
-		await selectAction(page, 0, "Edit");
-		const fieldDef = getFieldDef(page, 0);
+		await selectAction(page.base, 0, "Edit");
+		const fieldDef = getFieldDef(page.base, 0);
 		await fieldDef.getByTestId("delete-field-btn").click();
 		await expect(fieldDef).toHaveAttribute("data-test-diff", "deleted");
 
-		const dialog = page.getByRole("dialog");
+		const dialog = page.base.getByRole("dialog");
 		await dialog.locator("button[type='submit']").click();
 		await dialog.waitFor({ state: "hidden" });
 
@@ -657,8 +657,8 @@ test.describe("field definition", () => {
 			} satisfies FieldDefinition,
 		]);
 
-		await selectAction(page, 0, "Edit");
-		await checkFieldDefs(page, editedCompDef!.field_definitions);
+		await selectAction(page.base, 0, "Edit");
+		await checkFieldDefs(page.base, editedCompDef!.field_definitions);
 	});
 	test("deletes field definition but restores", async ({ authedPage: page }) => {
 		const originalComp = await prisma.componentDefinition.create({
@@ -686,16 +686,16 @@ test.describe("field definition", () => {
 				field_definitions: true,
 			},
 		});
-		await page.goto(URL, { waitUntil: "networkidle" });
-		await selectAction(page, 0, "Edit");
+		await page.goto(URL);
+		await selectAction(page.base, 0, "Edit");
 
-		const fieldDef = getFieldDef(page, 0);
+		const fieldDef = getFieldDef(page.base, 0);
 		await fieldDef.getByTestId("delete-field-btn").click();
 		await expect(fieldDef).toHaveAttribute("data-test-diff", "deleted");
 		await fieldDef.getByTestId("restore-field-btn").click();
 		await expect(fieldDef).not.toHaveAttribute("data-test-diff", "deleted");
 
-		const dialog = page.getByRole("dialog");
+		const dialog = page.base.getByRole("dialog");
 		await dialog.locator("button[type='submit']").click();
 		await dialog.waitFor({ state: "hidden" });
 
@@ -708,8 +708,8 @@ test.describe("field definition", () => {
 		});
 		expect(editedCompDef!.field_definitions).toMatchObject(originalComp.field_definitions);
 
-		await selectAction(page, 0, "Edit");
-		await checkFieldDefs(page, originalComp.field_definitions);
+		await selectAction(page.base, 0, "Edit");
+		await checkFieldDefs(page.base, originalComp.field_definitions);
 	});
 
 	test("traverses field definitions diff history", async ({ authedPage: page }) => {
@@ -733,20 +733,20 @@ test.describe("field definition", () => {
 				field_definitions: true,
 			},
 		});
-		await page.goto(URL, { waitUntil: "networkidle" });
+		await page.goto(URL);
 
-		await selectAction(page, 0, "Edit");
-		const fieldDef = await editFieldDef(page, 0, "Switch", "SWITCH");
+		await selectAction(page.base, 0, "Edit");
+		const fieldDef = await editFieldDef(page.base, 0, "Switch", "SWITCH");
 		await fieldDef.getByTestId("delete-field-btn").click();
 		await expect(fieldDef).toHaveAttribute("data-test-diff", "deleted");
 
 		await fieldDef.getByTestId("restore-field-btn").click();
 		await expect(fieldDef).toHaveAttribute("data-test-diff", "edited");
-		await checkFieldDefs(page, [{ name: "Switch", type: "SWITCH" }]);
+		await checkFieldDefs(page.base, [{ name: "Switch", type: "SWITCH" }]);
 
 		await fieldDef.getByTestId("restore-field-btn").click();
 		await expect(fieldDef).not.toHaveAttribute("data-test-diff", "edited");
-		await checkFieldDefs(page, originalComp.field_definitions);
+		await checkFieldDefs(page.base, originalComp.field_definitions);
 	});
 
 	test("reorders field definitions", async ({ authedPage: page }) => {
@@ -780,22 +780,22 @@ test.describe("field definition", () => {
 				field_definitions: true,
 			},
 		});
-		await page.goto(URL, { waitUntil: "networkidle" });
+		await page.goto(URL);
 
-		await selectAction(page, 0, "Edit");
-		const handle = getFieldDef(page, 2).locator("> div").first().getByRole("button");
+		await selectAction(page.base, 0, "Edit");
+		const handle = getFieldDef(page.base, 2).locator("> div").first().getByRole("button");
 		await handle.hover();
-		await page.mouse.down();
-		await getFieldDef(page, 1).locator("> div").first().hover();
-		await page.mouse.up();
+		await page.base.mouse.down();
+		await getFieldDef(page.base, 1).locator("> div").first().hover();
+		await page.base.mouse.up();
 
-		await checkFieldDefs(page, [
+		await checkFieldDefs(page.base, [
 			compDef.field_definitions[0]!,
 			compDef.field_definitions[2]!,
 			compDef.field_definitions[1]!,
 		]);
 
-		const dialog = page.getByRole("dialog");
+		const dialog = page.base.getByRole("dialog");
 		await dialog.locator("button[type='submit']").click();
 		await dialog.waitFor({ state: "hidden" });
 
@@ -822,21 +822,21 @@ test.describe("field definition", () => {
 
 test.describe("group", () => {
 	test("adds group, invalid name errors", async ({ authedPage: page }) => {
-		await page.goto(URL, { waitUntil: "networkidle" });
-		await page.getByTestId("add-group").click();
+		await page.goto(URL);
+		await page.base.getByTestId("add-group").click();
 
-		const dialog = await fillAddEditGroupDialog(page, "  ");
+		const dialog = await fillAddEditGroupDialog(page.base, "  ");
 		await expect(dialog.locator("input[name='name']")).toHaveAttribute("aria-invalid", "true");
 
-		await fillAddEditGroupDialog(page, "Group 1");
+		await fillAddEditGroupDialog(page.base, "Group 1");
 		await dialog.waitFor({ state: "hidden" });
 
 		const addedGroup = await prisma.componentDefinitionGroup.findFirst({
 			where: { name: "Group 1" },
 		});
-		await getRow(page, 0).getByRole("link").click();
-		await page.waitForURL(URL + `/${addedGroup!.id}`);
-		const breadcrumbs = page.getByTestId("breadcrumbs");
+		await getRow(page.base, 0).getByRole("link").click();
+		await page.base.waitForURL(URL + `/${addedGroup!.id}`);
+		const breadcrumbs = page.base.getByTestId("breadcrumbs");
 		await expect(breadcrumbs).toContainText("Group 1");
 	});
 
@@ -847,13 +847,13 @@ test.describe("group", () => {
 				parent_group_id: (await prisma.componentDefinitionGroup.findFirst())!.id,
 			},
 		});
-		await page.goto(URL, { waitUntil: "networkidle" });
+		await page.goto(URL);
 
-		await selectAction(page, 0, "Edit");
-		const dialog = await fillAddEditGroupDialog(page, "Group 2");
+		await selectAction(page.base, 0, "Edit");
+		const dialog = await fillAddEditGroupDialog(page.base, "Group 2");
 		await dialog.waitFor({ state: "hidden" });
 
-		await checkRow(page, 0, "Group 2", "Group");
+		await checkRow(page.base, 0, "Group 2", "Group");
 	});
 
 	test("moves group", async ({ authedPage: page }) => {
@@ -874,10 +874,10 @@ test.describe("group", () => {
 			},
 		});
 
-		await page.goto(URL, { waitUntil: "networkidle" });
-		await selectAction(page, 0, "Move");
+		await page.goto(URL);
+		await selectAction(page.base, 0, "Move");
 
-		const dialog = page.getByRole("dialog");
+		const dialog = page.base.getByRole("dialog");
 		await expect(dialog.getByRole("heading")).toHaveText(`Move group "${group.name}"`);
 
 		const combobox = dialog.getByRole("combobox");
@@ -892,8 +892,8 @@ test.describe("group", () => {
 		await dialog.locator("button[type='submit']").click();
 		await dialog.waitFor({ state: "hidden" });
 
-		await getRow(page, 0).locator("td a").first().click();
-		await checkRow(page, 0, group.name, "Group");
+		await getRow(page.base, 0).locator("td a").first().click();
+		await checkRow(page.base, 0, group.name, "Group");
 	});
 
 	test("deletes group", async ({ authedPage: page }) => {
@@ -903,12 +903,12 @@ test.describe("group", () => {
 				parent_group_id: (await prisma.componentDefinitionGroup.findFirst())!.id,
 			},
 		});
-		await page.goto(URL, { waitUntil: "networkidle" });
+		await page.goto(URL);
 
-		await selectAction(page, 0, "Delete");
-		await page.getByRole("dialog").locator("button[type='submit']").click();
+		await selectAction(page.base, 0, "Delete");
+		await page.base.getByRole("dialog").locator("button[type='submit']").click();
 
-		await expect(page.locator("text=No results.")).toBeInViewport();
+		await expect(page.base.locator("text=No results.")).toBeInViewport();
 	});
 });
 
@@ -928,15 +928,15 @@ test.describe("bulk", () => {
 			},
 		});
 
-		await page.goto(URL, { waitUntil: "networkidle" });
-		await getRow(page, 0).locator("td").first().click();
-		await getRow(page, 1).locator("td").first().click();
+		await page.goto(URL);
+		await getRow(page.base, 0).locator("td").first().click();
+		await getRow(page.base, 1).locator("td").first().click();
 
-		await page.locator("thead > tr > th").last().click();
-		await page.getByRole("menu").getByRole("menuitem", { name: "Delete" }).click();
-		await page.getByRole("dialog").locator("button[type='submit']").click();
+		await page.base.locator("thead > tr > th").last().click();
+		await page.base.getByRole("menu").getByRole("menuitem", { name: "Delete" }).click();
+		await page.base.getByRole("dialog").locator("button[type='submit']").click();
 
-		await expect(page.locator("text=No results.")).toBeInViewport();
+		await expect(page.base.locator("text=No results.")).toBeInViewport();
 	});
 
 	test("moves items and their children", async ({ authedPage: page }) => {
@@ -960,21 +960,21 @@ test.describe("bulk", () => {
 			},
 		});
 
-		await page.goto(URL, { waitUntil: "networkidle" });
-		await getRow(page, 0).locator("td").first().click();
-		await getRow(page, 1).locator("td").first().click();
+		await page.goto(URL);
+		await getRow(page.base, 0).locator("td").first().click();
+		await getRow(page.base, 1).locator("td").first().click();
 
-		await page.locator("thead > tr > th").last().click();
-		await page.getByRole("menu").getByRole("menuitem", { name: "Move" }).click();
+		await page.base.locator("thead > tr > th").last().click();
+		await page.base.getByRole("menu").getByRole("menuitem", { name: "Move" }).click();
 
-		const dialog = page.getByRole("dialog");
+		const dialog = page.base.getByRole("dialog");
 		await dialog.getByRole("combobox").click();
 		await dialog.getByRole("option", { name: destination.name }).click();
 		await dialog.locator("button[type='submit']").click();
 		await dialog.waitFor({ state: "hidden" });
 
-		await getRow(page, 0).locator("td a").first().click();
-		await checkRow(page, 0, compDef.name, "Component Definition");
-		await checkRow(page, 1, group.name, "Group");
+		await getRow(page.base, 0).locator("td a").first().click();
+		await checkRow(page.base, 0, compDef.name, "Component Definition");
+		await checkRow(page.base, 1, group.name, "Group");
 	});
 });
