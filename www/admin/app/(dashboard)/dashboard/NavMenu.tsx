@@ -13,7 +13,7 @@ import {
 import { Bars3Icon } from "@heroicons/react/24/outline";
 import { navMenuRoutes } from "@admin/src/data/routes/navMenu";
 import { cn } from "@admin/src/utils/styling";
-import { UserMenu } from "./UserMenu";
+import { UserMenu } from "@admin/src/components/UserMenu";
 import { NavMenuItem } from "./NavMenuItem";
 import { NavMenuWrapper } from "./NavMenuWrapper";
 
@@ -29,7 +29,7 @@ async function Menu({ className }: { className?: string }) {
 		<nav
 			className={cn(
 				"flex flex-col overflow-auto border-r border-r-border p-6 py-8",
-				className
+				className,
 			)}
 		>
 			<NavMenuLogo version={version} font={logoFont} />
@@ -58,7 +58,7 @@ function MenuMobile({ className }: { className?: string }) {
 		<nav
 			className={cn(
 				"flex flex-grow items-center justify-between overflow-auto border-b border-b-border p-3",
-				className
+				className,
 			)}
 		>
 			<Tooltip>

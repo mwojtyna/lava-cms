@@ -38,11 +38,11 @@ export const auth = lucia({
 	allowedRequestOrigins: [url()],
 });
 
-export const getCurrentUser = async (): Promise<User | undefined> => {
+export async function getCurrentUser(): Promise<User | undefined> {
 	const authReq = auth.handleRequest({ request: null, cookies });
 	const session = await authReq.validate();
 
 	return session?.user;
-};
+}
 
 export type Auth = typeof auth;
