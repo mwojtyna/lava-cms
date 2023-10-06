@@ -3,7 +3,7 @@
 import * as React from "react";
 import { Card } from "@admin/src/components/ui/server";
 import { ActionIcon } from "@admin/src/components/ui/client";
-import { ArrowPathIcon } from "@heroicons/react/24/outline";
+import { ArrowPathIcon, ArrowTopRightOnSquareIcon } from "@heroicons/react/24/outline";
 import { IconMinusVertical } from "@tabler/icons-react";
 import { useMouse } from "@mantine/hooks";
 import { cn } from "@admin/src/utils/styling";
@@ -57,6 +57,9 @@ export function PagePreview(props: { url: string }) {
 						<ArrowPathIcon className="w-5" />
 					</ActionIcon>
 					<URL url={url} setUrl={setUrl} />
+					<ActionIcon className="ml-auto" onClick={() => window.open(url)}>
+						<ArrowTopRightOnSquareIcon className="w-5" />
+					</ActionIcon>
 				</div>
 
 				<iframe

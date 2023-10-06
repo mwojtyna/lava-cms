@@ -6,7 +6,7 @@ import { UserMenu } from "@admin/src/components/UserMenu";
 export function TopBar() {
 	return (
 		<nav className="flex w-full items-center justify-between border-b border-border p-5 py-3">
-			<Link href={"/dashboard"}>
+			<Link href={"/dashboard/pages"}>
 				<ActionIcon variant={"outline"} aria-label="Go back to dashboard">
 					<ArrowUturnLeftIcon className="w-5" />
 				</ActionIcon>
