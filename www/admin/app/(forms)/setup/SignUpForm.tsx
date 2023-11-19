@@ -20,11 +20,11 @@ import { trpc } from "@admin/src/utils/trpc";
 
 const inputSchema = z
 	.object({
-		name: z.string().nonempty(),
-		lastName: z.string().nonempty(),
+		name: z.string().min(1),
+		lastName: z.string().min(1),
 		email: z
 			.string()
-			.nonempty({ message: " " })
+			.min(1, { message: " " })
 			.email({ message: "The e-mail you provided is invalid." }),
 		password: z
 			.string({ required_error: " " })

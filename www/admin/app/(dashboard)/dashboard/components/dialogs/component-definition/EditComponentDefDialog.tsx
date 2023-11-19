@@ -29,7 +29,7 @@ import {
 import { TypographyMuted } from "@admin/src/components/ui/server";
 
 const editComponentDefDialogInputsSchema = z.object({
-	compName: z.string().nonempty({ message: " " }),
+	compName: z.string().min(1, { message: " " }),
 	fields: z.array(fieldDefinitionUISchema),
 });
 type EditComponentDefDialogInputs = z.infer<typeof editComponentDefDialogInputsSchema>;

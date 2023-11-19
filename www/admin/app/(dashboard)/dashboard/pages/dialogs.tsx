@@ -356,10 +356,10 @@ export function BulkMoveDialog(props: BulkEditDialogProps) {
 }
 
 const editDialogSchema = z.object({
-	name: z.string().nonempty(),
+	name: z.string().min(1),
 	slug: z
 		.string({ required_error: " " })
-		.nonempty({ message: " " })
+		.min(1, { message: " " })
 		.refine((slug) => "/" + slugify(slug, slugifyOptions) === slug, {
 			message: "Invalid slug.",
 		}),
@@ -614,7 +614,7 @@ export function AddDialog(props: AddDialogProps) {
 }
 
 const duplicateDialogSchema = editDialogSchema.extend({
-	newParentId: z.string().nonempty().cuid(),
+	newParentId: z.string().min(1).cuid(),
 });
 type DuplicateDialogInputs = z.infer<typeof duplicateDialogSchema>;
 
