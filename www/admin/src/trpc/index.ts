@@ -1,4 +1,4 @@
-import { cookies, headers } from "next/headers";
+import * as context from "next/headers";
 import { TRPCError, initTRPC } from "@trpc/server";
 import SuperJSON from "superjson";
 import { auth } from "@admin/src/auth";
@@ -13,10 +13,7 @@ const t = initTRPC.meta<Meta>().create({ transformer: SuperJSON });
 export const router = t.router;
 
 export const privateAuth = t.middleware(async (opts) => {
-	const authReq = auth.handleRequest({
-		request: null,
-		cookies,
-	});
+	const authReq = auth.handleRequest(opts.type == "query" ? "GET" : "POST", context);
 	const session = await authReq.validate();
 	const ctx = {
 		setSession: authReq.setSession,
@@ -36,7 +33,7 @@ export const privateAuth = t.middleware(async (opts) => {
 	});
 });
 export const publicAuth = t.middleware(async (opts) => {
-	const token = auth.readBearerToken(headers().get("Authorization"));
+	const token = auth.readBearerToken(context.headers().get("Authorization"));
 	if (!token) {
 		throw new TRPCError({ code: "UNAUTHORIZED" });
 	}

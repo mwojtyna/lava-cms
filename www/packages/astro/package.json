@@ -38,10 +38,10 @@
 		"camelcase": "^8.0.0"
 	},
 	"devDependencies": {
-		"astro": "^3.1.2",
+		"astro": "^3.5.5",
 		"eslint-config-package": "workspace:*",
 		"typescript": "^5.2.2",
-		"vite": "^4.4.9"
+		"vite": "^5.0.0"
 	},
 	"peerDependencies": {
 		"astro": ">=2"
