@@ -27,7 +27,7 @@
 		"prepublishOnly": "pnpm run lint && pnpm run build --minify"
 	},
 	"dependencies": {
-		"@trpc/client": "^10.43.7",
+		"@trpc/client": "^10.44.0",
 		"superjson": "^2.2.1"
 	},
 	"devDependencies": {
