@@ -5,7 +5,7 @@ import {
 	CircleStackIcon,
 	CubeIcon,
 } from "@heroicons/react/24/outline";
-import type { Route } from "./common";
+import type { Route } from "./shared";
 import "server-only";
 
 export interface NavMenuRoute extends Route {

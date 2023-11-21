@@ -1,67 +1,83 @@
 import * as React from "react";
 import { trpc } from "@admin/src/utils/trpc";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm, type SubmitHandler, FormProvider } from "react-hook-form";
-import { DocumentDuplicateIcon } from "@heroicons/react/24/outline";
 import {
-	DialogHeader,
-	FormField,
-	FormItem,
-	FormLabel,
-	FormControl,
-	Input,
-	FormError,
-	DialogFooter,
 	Button,
 	Dialog,
 	DialogContent,
+	DialogFooter,
+	DialogHeader,
 	DialogTitle,
+	FormControl,
+	FormError,
+	FormField,
+	FormItem,
+	FormLabel,
+	FormProvider,
+	Input,
 } from "@admin/src/components/ui/client";
+import { useForm, type SubmitHandler } from "react-hook-form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { PencilSquareIcon } from "@heroicons/react/24/outline";
 import { AddFieldDefs, FieldDefs } from "./FieldDefinitions";
 import type { ComponentsTableItem } from "../../ComponentsTable";
-import { TypographyMuted } from "@admin/src/components/ui/server";
 import {
-	ComponentDefinitionNameError,
 	fieldDefinitionUISchema,
-	groupsToComboboxEntries,
+	type FieldDefinitionUI,
+	ComponentDefinitionNameError,
 } from "./shared";
-import { z } from "zod";
-import { NewParentSelect } from "@admin/src/components";
+import { TypographyMuted } from "@admin/src/components/ui/server";
 
-const duplicateComponentDefDialogInputsSchema = z.object({
-	// This is named `compName` instead of `name` because `name` is already used
-	// in the `FieldDefinitionUI` type and errors are duplicated.
-	// Also it's easier to change this name than the other one
-	compName: z.string().nonempty({ message: " " }),
-	// Omitting id because it's not available when adding a new component definition
-	fields: z.array(fieldDefinitionUISchema.omit({ id: true })),
-	newParentId: z.string().cuid(),
+const editComponentDefDialogInputsSchema = z.object({
+	compName: z.string().min(1, { message: " " }),
+	fields: z.array(fieldDefinitionUISchema),
 });
-type DuplicateComponentDefDialogInputs = z.infer<typeof duplicateComponentDefDialogInputsSchema>;
+type EditComponentDefDialogInputs = z.infer<typeof editComponentDefDialogInputsSchema>;
 
 interface Props {
 	open: boolean;
 	setOpen: (value: boolean) => void;
-	item: Omit<Extract<ComponentsTableItem, { isGroup: false }>, "isGroup">;
+	componentDef: Omit<Extract<ComponentsTableItem, { isGroup: false }>, "isGroup">;
 }
-export function DuplicateComponentDefDialog(props: Props) {
-	const mutation = trpc.components.addComponentDefinition.useMutation();
+export function EditComponentDefDialog(props: Props) {
+	const mutation = trpc.components.editComponentDefinition.useMutation();
+	const originalFields = props.componentDef.fieldDefinitions;
 	const [anyEditing, setAnyEditing] = React.useState(false);
 
-	const allGroups = trpc.components.getAllGroups.useQuery(undefined, {
-		enabled: props.open,
-	}).data;
-	const groups = React.useMemo(() => groupsToComboboxEntries(allGroups ?? []), [allGroups]);
-
-	const form = useForm<DuplicateComponentDefDialogInputs>({
-		resolver: zodResolver(duplicateComponentDefDialogInputsSchema),
+	const form = useForm<EditComponentDefDialogInputs>({
+		resolver: zodResolver(editComponentDefDialogInputsSchema),
 	});
-	const onSubmit: SubmitHandler<DuplicateComponentDefDialogInputs> = (data) => {
+	const onSubmit: SubmitHandler<EditComponentDefDialogInputs> = (data) => {
+		const addedFields = data.fields
+			.map((f, i) => ({ ...f, order: i }))
+			.filter((f) => f.diffs.at(-1) === "added");
+
+		const deletedFieldIds = originalFields
+			.filter((of) => data.fields.find((f) => f.id === of.id && f.diffs.at(-1) === "deleted"))
+			.map((of) => of.id);
+
+		const editedFields = data.fields
+			.map((ef, i) => ({
+				...ef,
+				// We know for a fact that `editedFields` contains fields that are
+				// already in the db, so they have the `id` property for sure
+				id: ef.id!,
+				order: i,
+			}))
+			.filter((f, fOrder) =>
+				originalFields.find(
+					(of) => f.id === of.id && (f.diffs.at(-1) === "edited" || fOrder !== of.order),
+				),
+			);
+
 		mutation.mutate(
 			{
-				name: data.compName,
-				fields: data.fields,
-				groupId: data.newParentId,
+				id: props.componentDef.id,
+				newName: data.compName,
+				newGroupId: props.componentDef.parentGroupId!,
+				addedFields,
+				deletedFieldIds,
+				editedFields,
 			},
 			{
 				onSuccess: () => props.setOpen(false),
@@ -87,16 +103,20 @@ export function DuplicateComponentDefDialog(props: Props) {
 	};
 
 	React.useEffect(() => {
-		form.reset({
-			compName: props.item.name,
-			fields: props.item.fieldDefinitions.map((field) => ({
-				name: field.name,
-				type: field.type,
-				diffs: [],
-			})),
-			// null -> undefined
-			newParentId: props.item.parentGroupId ?? undefined,
-		});
+		if (props.open) {
+			form.reset({
+				compName: props.componentDef.name,
+				fields: originalFields.map(
+					(of) =>
+						({
+							id: of.id,
+							name: of.name,
+							type: of.type,
+							diffs: [],
+						}) satisfies FieldDefinitionUI,
+				),
+			});
+		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [props.open]);
 
@@ -104,7 +124,7 @@ export function DuplicateComponentDefDialog(props: Props) {
 		<Dialog open={props.open} onOpenChange={props.setOpen}>
 			<DialogContent className="max-w-md">
 				<DialogHeader>
-					<DialogTitle>Duplicate component definition</DialogTitle>
+					<DialogTitle>Edit component definition</DialogTitle>
 				</DialogHeader>
 
 				<FormProvider {...form}>
@@ -145,24 +165,12 @@ export function DuplicateComponentDefDialog(props: Props) {
 								<FormItem className="max-h-[50vh] overflow-auto">
 									<FormControl>
 										<FieldDefs
-											dialogType="add"
+											dialogType="edit"
 											anyEditing={anyEditing}
 											setAnyEditing={setAnyEditing}
+											originalFields={originalFields}
 											{...field}
 										/>
-									</FormControl>
-								</FormItem>
-							)}
-						/>
-
-						<FormField
-							control={form.control}
-							name="newParentId"
-							render={({ field }) => (
-								<FormItem>
-									<FormLabel>Group</FormLabel>
-									<FormControl>
-										<NewParentSelect parents={groups ?? []} {...field} />
 									</FormControl>
 								</FormItem>
 							)}
@@ -171,10 +179,11 @@ export function DuplicateComponentDefDialog(props: Props) {
 						<DialogFooter>
 							<Button
 								type="submit"
+								disabled={anyEditing}
 								loading={mutation.isLoading}
-								icon={<DocumentDuplicateIcon className="w-5" />}
+								icon={<PencilSquareIcon className="w-5" />}
 							>
-								Duplicate
+								Edit
 							</Button>
 						</DialogFooter>
 					</form>

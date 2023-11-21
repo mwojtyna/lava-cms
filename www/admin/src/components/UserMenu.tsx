@@ -18,7 +18,7 @@ export async function UserMenu({ small }: { small?: boolean }) {
 	return (
 		<DropdownMenu>
 			<DropdownMenuTrigger
-				className="flex h-fit w-fit items-center gap-4 rounded-sm outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-8 focus-visible:ring-offset-background"
+				className="inline-flex h-fit w-fit items-center gap-4 rounded-sm outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-8 focus-visible:ring-offset-background"
 				data-testid="user-menu"
 			>
 				<Avatar>

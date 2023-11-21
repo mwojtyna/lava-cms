@@ -1,4 +1,5 @@
 import * as React from "react";
+import type { ComponentDefinitionGroup } from "@prisma/client";
 import { trpc } from "@admin/src/utils/trpc";
 import {
 	Button,
@@ -18,66 +19,40 @@ import {
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { PencilSquareIcon } from "@heroicons/react/24/outline";
+import { CubeIcon } from "@heroicons/react/24/outline";
 import { AddFieldDefs, FieldDefs } from "./FieldDefinitions";
-import type { ComponentsTableItem } from "../../ComponentsTable";
-import {
-	fieldDefinitionUISchema,
-	type FieldDefinitionUI,
-	ComponentDefinitionNameError,
-} from "./shared";
+import { ComponentDefinitionNameError, fieldDefinitionUISchema } from "./shared";
 import { TypographyMuted } from "@admin/src/components/ui/server";
 
-const editComponentDefDialogInputsSchema = z.object({
-	compName: z.string().nonempty({ message: " " }),
-	fields: z.array(fieldDefinitionUISchema),
+const addComponentDefDialogInputsSchema = z.object({
+	// This is named `compName` instead of `name` because `name` is already used
+	// in the `FieldDefinitionUI` type and errors are duplicated.
+	// Also it's easier to change this name than the other one
+	compName: z.string().trim().min(1, { message: "Name cannot be empty" }),
+	// Omitting id because it's not available when adding a new component definition
+	fields: z.array(fieldDefinitionUISchema.omit({ id: true })),
 });
-type EditComponentDefDialogInputs = z.infer<typeof editComponentDefDialogInputsSchema>;
+type AddComponentDefDialogInputs = z.infer<typeof addComponentDefDialogInputsSchema>;
 
 interface Props {
 	open: boolean;
 	setOpen: (value: boolean) => void;
-	componentDef: Omit<Extract<ComponentsTableItem, { isGroup: false }>, "isGroup">;
+	group: ComponentDefinitionGroup;
 }
-export function EditComponentDefDialog(props: Props) {
-	const mutation = trpc.components.editComponentDefinition.useMutation();
-	const originalFields = props.componentDef.fieldDefinitions;
+export function AddComponentDefDialog(props: Props) {
+	const mutation = trpc.components.addComponentDefinition.useMutation();
 	const [anyEditing, setAnyEditing] = React.useState(false);
 
-	const form = useForm<EditComponentDefDialogInputs>({
-		resolver: zodResolver(editComponentDefDialogInputsSchema),
+	const form = useForm<AddComponentDefDialogInputs>({
+		resolver: zodResolver(addComponentDefDialogInputsSchema),
+		defaultValues: { fields: [] },
 	});
-	const onSubmit: SubmitHandler<EditComponentDefDialogInputs> = (data) => {
-		const addedFields = data.fields
-			.map((f, i) => ({ ...f, order: i }))
-			.filter((f) => f.diffs.at(-1) === "added");
-
-		const deletedFieldIds = originalFields
-			.filter((of) => data.fields.find((f) => f.id === of.id && f.diffs.at(-1) === "deleted"))
-			.map((of) => of.id);
-
-		const editedFields = data.fields
-			.map((ef, i) => ({
-				...ef,
-				// We know for a fact that `editedFields` contains fields that are
-				// already in the db, so they have the `id` property for sure
-				id: ef.id!,
-				order: i,
-			}))
-			.filter((f, fOrder) =>
-				originalFields.find(
-					(of) => f.id === of.id && (f.diffs.at(-1) === "edited" || fOrder !== of.order),
-				),
-			);
-
+	const onSubmit: SubmitHandler<AddComponentDefDialogInputs> = (data) => {
 		mutation.mutate(
 			{
-				id: props.componentDef.id,
-				newName: data.compName,
-				newGroupId: props.componentDef.parentGroupId!,
-				addedFields,
-				deletedFieldIds,
-				editedFields,
+				name: data.compName,
+				fields: data.fields,
+				groupId: props.group.id,
 			},
 			{
 				onSuccess: () => props.setOpen(false),
@@ -102,29 +77,11 @@ export function EditComponentDefDialog(props: Props) {
 		);
 	};
 
-	React.useEffect(() => {
-		if (props.open) {
-			form.reset({
-				compName: props.componentDef.name,
-				fields: originalFields.map(
-					(of) =>
-						({
-							id: of.id,
-							name: of.name,
-							type: of.type,
-							diffs: [],
-						}) satisfies FieldDefinitionUI,
-				),
-			});
-		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [props.open]);
-
 	return (
 		<Dialog open={props.open} onOpenChange={props.setOpen}>
 			<DialogContent className="max-w-md">
 				<DialogHeader>
-					<DialogTitle>Edit component definition</DialogTitle>
+					<DialogTitle>Add component definition</DialogTitle>
 				</DialogHeader>
 
 				<FormProvider {...form}>
@@ -165,10 +122,9 @@ export function EditComponentDefDialog(props: Props) {
 								<FormItem className="max-h-[50vh] overflow-auto">
 									<FormControl>
 										<FieldDefs
-											dialogType="edit"
+											dialogType="add"
 											anyEditing={anyEditing}
 											setAnyEditing={setAnyEditing}
-											originalFields={originalFields}
 											{...field}
 										/>
 									</FormControl>
@@ -181,9 +137,9 @@ export function EditComponentDefDialog(props: Props) {
 								type="submit"
 								disabled={anyEditing}
 								loading={mutation.isLoading}
-								icon={<PencilSquareIcon className="w-5" />}
+								icon={<CubeIcon className="w-5" />}
 							>
-								Edit
+								Add
 							</Button>
 						</DialogFooter>
 					</form>

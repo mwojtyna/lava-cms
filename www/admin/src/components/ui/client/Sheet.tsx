@@ -10,10 +10,7 @@ const Sheet = SheetPrimitive.Root;
 const SheetTrigger = SheetPrimitive.Trigger;
 const SheetClose = SheetPrimitive.Close;
 
-const SheetPortal = ({ className, ...props }: SheetPrimitive.DialogPortalProps) => (
-	<SheetPrimitive.Portal className={cn(className)} {...props} />
-);
-SheetPortal.displayName = SheetPrimitive.Portal.displayName;
+const SheetPortal = SheetPrimitive.Portal;
 
 const SheetOverlay = React.forwardRef<
 	React.ElementRef<typeof SheetPrimitive.Overlay>,
@@ -22,7 +19,7 @@ const SheetOverlay = React.forwardRef<
 	<SheetPrimitive.Overlay
 		className={cn(
 			"fixed inset-0 z-50 bg-background/80 backdrop-blur-sm data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
-			className
+			className,
 		)}
 		{...props}
 		ref={ref}
@@ -44,7 +41,7 @@ const sheetVariants = cva(
 		defaultVariants: {
 			side: "right",
 		},
-	}
+	},
 );
 
 interface SheetContentProps
@@ -68,7 +65,7 @@ const SheetContent = React.forwardRef<
 			children,
 			...props
 		},
-		ref
+		ref,
 	) => (
 		<SheetPortal>
 			<SheetOverlay className={breakpoint} />
@@ -91,7 +88,7 @@ const SheetContent = React.forwardRef<
 				</SheetPrimitive.Close>
 			</SheetPrimitive.Content>
 		</SheetPortal>
-	)
+	),
 );
 SheetContent.displayName = SheetPrimitive.Content.displayName;
 

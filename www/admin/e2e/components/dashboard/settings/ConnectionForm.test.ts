@@ -20,8 +20,9 @@ test("copies token into clipboard and changes into check mark", async ({
 	const icon = await copyButton.locator("svg").innerHTML();
 	await copyButton.click();
 
-	// Firefox doesn't implement clipboard.readText() API, Webkit throws error when headless
-	if (browserName === "chromium" || (browserName !== "firefox" && !headless)) {
+	// Firefox doesn't implement clipboard.readText() API (which we use for checking if token was copied),
+	// Webkit throws permission error when headless
+	if (browserName === "chromium" || (browserName === "webkit" && !headless)) {
 		expect(await page.base.evaluate(async () => await navigator.clipboard.readText())).toBe(
 			tokenMock,
 		);

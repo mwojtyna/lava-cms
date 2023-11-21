@@ -1,11 +1,14 @@
 import { expect, type Locator, type Page } from "@playwright/test";
 import { test } from "@admin/e2e/fixtures";
 import { prisma } from "@admin/prisma/client";
-import type { FieldDefinitionUI } from "@admin/app/dashboard/components/dialogs/component-definition/shared";
+import type { ComponentFieldTypeType } from "@admin/prisma/generated/zod";
 
 const URL = "/admin/dashboard/components";
 
-type FieldDefinition = Pick<FieldDefinitionUI, "name" | "type">;
+interface FieldDefinition {
+	name: string;
+	type: ComponentFieldTypeType;
+}
 async function fillAddCompDefDialog(
 	page: Page,
 	name: string,

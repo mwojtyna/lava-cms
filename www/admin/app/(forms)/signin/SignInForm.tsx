@@ -24,8 +24,8 @@ import { SinglePageForm } from "../SinglePageForm";
 import { trpc } from "@admin/src/utils/trpc";
 
 const schema = z.object({
-	email: z.string().nonempty(" ").email("The e-mail you provided is invalid."),
-	password: z.string().nonempty(),
+	email: z.string().min(1, " ").email("The e-mail you provided is invalid."),
+	password: z.string().min(1),
 });
 type Inputs = z.infer<typeof schema>;
 

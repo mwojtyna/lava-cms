@@ -20,9 +20,9 @@ import { SinglePageForm } from "../SinglePageForm";
 import { trpc } from "@admin/src/utils/trpc";
 
 const schema = z.object({
-	title: z.string().nonempty(),
+	title: z.string().min(1),
 	description: z.string(),
-	language: z.string().nonempty(),
+	language: z.string().min(1),
 });
 
 type Inputs = z.infer<typeof schema>;
