@@ -28,9 +28,9 @@ import {
 import { useToast } from "@admin/src/hooks";
 
 const schema = z.object({
-	title: z.string().nonempty(),
+	title: z.string().min(1),
 	description: z.string(),
-	language: z.string().nonempty(),
+	language: z.string().min(1),
 });
 type Inputs = z.infer<typeof schema>;
 

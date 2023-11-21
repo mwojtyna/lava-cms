@@ -7,7 +7,7 @@ import { cn } from "@admin/src/utils/styling";
 import type { NavMenuRoute } from "@admin/src/data/routes/navMenu";
 import { usePathname } from "next/navigation";
 import { useMenuStore } from "@admin/src/data/stores/dashboard";
-import { getRoute } from "@admin/src/data/routes/common";
+import { getRoute } from "@admin/src/data/routes/shared";
 
 interface Props {
 	routes: NavMenuRoute[];

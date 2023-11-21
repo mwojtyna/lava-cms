@@ -1,12 +1,10 @@
-import { cookies } from "next/headers";
+import * as context from "next/headers";
 import { lucia, type User } from "lucia";
-import { nextjs } from "lucia/middleware";
+import { nextjs_future } from "lucia/middleware";
 import { prisma } from "@lucia-auth/adapter-prisma";
-import "lucia/polyfill/node";
 import bcrypt from "bcrypt";
 import { prisma as prismaClient } from "@admin/prisma/client";
 import { env } from "@admin/src/env/server.mjs";
-import { url } from "./utils/server";
 
 export const auth = lucia({
 	adapter: prisma(prismaClient, {
@@ -15,7 +13,7 @@ export const auth = lucia({
 		key: "key",
 	}),
 	env: env.NODE_ENV !== "production" ? "DEV" : "PROD", // DEV means http, PROD means https
-	middleware: nextjs(),
+	middleware: nextjs_future(),
 	getUserAttributes: (user) => ({
 		name: user.name,
 		lastName: user.last_name,
@@ -35,14 +33,16 @@ export const auth = lucia({
 		expires: false,
 		attributes: { sameSite: "strict", path: "/admin" },
 	},
-	allowedRequestOrigins: [url()],
+	csrfProtection: {
+		host: env.VERCEL_URL,
+	},
 });
 
-export const getCurrentUser = async (): Promise<User | undefined> => {
-	const authReq = auth.handleRequest({ request: null, cookies });
+export async function getCurrentUser(): Promise<User | undefined> {
+	const authReq = auth.handleRequest("GET", context);
 	const session = await authReq.validate();
 
 	return session?.user;
-};
+}
 
 export type Auth = typeof auth;

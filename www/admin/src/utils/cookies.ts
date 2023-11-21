@@ -10,7 +10,9 @@ export type CookieName = "color-theme" | "pages-table" | "components-table";
  **/
 export function getJsonCookie<T>(name: CookieName, fallback: T) {
 	const cookie = getCookie(name)?.toString();
-	if (!cookie) return fallback;
+	if (!cookie) {
+		return fallback;
+	}
 
 	return JSON.parse(cookie) as T;
 }

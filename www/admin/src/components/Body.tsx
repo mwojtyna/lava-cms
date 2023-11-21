@@ -34,8 +34,7 @@ export function Body({ children, fonts, ...props }: Props) {
 			className={cn(
 				store.colorTheme,
 				fonts.map((font) => font.variable),
-				"antialiased",
-				"selection:bg-orange-500 selection:text-background dark:selection:bg-orange-600",
+				"antialiased selection:bg-orange-500 selection:text-background dark:selection:bg-orange-600",
 			)}
 			{...props}
 		>
