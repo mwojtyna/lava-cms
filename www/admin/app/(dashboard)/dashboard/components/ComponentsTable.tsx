@@ -38,6 +38,11 @@ export type ComponentsTableItem = {
 			isGroup: true;
 	  }
 );
+export type ComponentsTableComponentDef = Omit<
+	Extract<ComponentsTableItem, { isGroup: false }>,
+	"isGroup"
+>;
+export type ComponentsTableGroup = Omit<Extract<ComponentsTableItem, { isGroup: true }>, "isGroup">;
 
 export function ComponentsTable(props: Props) {
 	const data = trpc.components.getGroup.useQuery(

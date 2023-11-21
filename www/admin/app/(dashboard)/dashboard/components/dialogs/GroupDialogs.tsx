@@ -17,7 +17,7 @@ import {
 	Input,
 } from "@admin/src/components/ui/client";
 import { trpc } from "@admin/src/utils/trpc";
-import type { ComponentsTableItem } from "../ComponentsTable";
+import type { ComponentsTableGroup } from "../ComponentsTable";
 
 interface Props {
 	open: boolean;
@@ -93,7 +93,7 @@ export function AddGroupDialog(props: AddGroupDialogProps) {
 }
 
 interface EditGroupDialogProps extends Props {
-	group: Omit<Extract<ComponentsTableItem, { isGroup: true }>, "isGroup">;
+	group: ComponentsTableGroup;
 }
 interface EditGroupDialogInputs {
 	name: string;

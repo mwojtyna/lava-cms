@@ -20,7 +20,7 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { PencilSquareIcon } from "@heroicons/react/24/outline";
 import { AddFieldDefs, FieldDefs } from "./FieldDefinitions";
-import type { ComponentsTableItem } from "../../ComponentsTable";
+import type { ComponentsTableComponentDef } from "../../ComponentsTable";
 import {
 	fieldDefinitionUISchema,
 	type FieldDefinitionUI,
@@ -37,7 +37,7 @@ type EditComponentDefDialogInputs = z.infer<typeof editComponentDefDialogInputsS
 interface Props {
 	open: boolean;
 	setOpen: (value: boolean) => void;
-	componentDef: Omit<Extract<ComponentsTableItem, { isGroup: false }>, "isGroup">;
+	componentDef: ComponentsTableComponentDef;
 }
 export function EditComponentDefDialog(props: Props) {
 	const mutation = trpc.components.editComponentDefinition.useMutation();

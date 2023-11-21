@@ -18,7 +18,7 @@ import {
 	DialogTitle,
 } from "@admin/src/components/ui/client";
 import { AddFieldDefs, FieldDefs } from "./FieldDefinitions";
-import type { ComponentsTableItem } from "../../ComponentsTable";
+import type { ComponentsTableComponentDef } from "../../ComponentsTable";
 import { TypographyMuted } from "@admin/src/components/ui/server";
 import {
 	ComponentDefinitionNameError,
@@ -42,7 +42,7 @@ type DuplicateComponentDefDialogInputs = z.infer<typeof duplicateComponentDefDia
 interface Props {
 	open: boolean;
 	setOpen: (value: boolean) => void;
-	item: Omit<Extract<ComponentsTableItem, { isGroup: false }>, "isGroup">;
+	componentDef: ComponentsTableComponentDef;
 }
 export function DuplicateComponentDefDialog(props: Props) {
 	const mutation = trpc.components.addComponentDefinition.useMutation();
@@ -88,14 +88,14 @@ export function DuplicateComponentDefDialog(props: Props) {
 
 	React.useEffect(() => {
 		form.reset({
-			compName: props.item.name,
-			fields: props.item.fieldDefinitions.map((field) => ({
+			compName: props.componentDef.name,
+			fields: props.componentDef.fieldDefinitions.map((field) => ({
 				name: field.name,
 				type: field.type,
 				diffs: [],
 			})),
 			// null -> undefined
-			newParentId: props.item.parentGroupId ?? undefined,
+			newParentId: props.componentDef.parentGroupId ?? undefined,
 		});
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [props.open]);

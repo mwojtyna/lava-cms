@@ -197,7 +197,7 @@ function ComponentsTableActions({ item }: { item: ComponentsTableItem }) {
 			<MoveDialog item={item} open={openMove} setOpen={setOpenMove} />
 			{!item.isGroup && (
 				<DuplicateComponentDefDialog
-					item={item}
+					componentDef={item}
 					open={openDuplicate}
 					setOpen={setOpenDuplicate}
 				/>
