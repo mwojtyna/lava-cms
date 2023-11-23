@@ -2,7 +2,12 @@
 
 import * as React from "react";
 import { Card } from "@admin/src/components/ui/server";
-import { ActionIcon } from "@admin/src/components/ui/client";
+import {
+	ActionIcon,
+	Tooltip,
+	TooltipTrigger,
+	TooltipContent,
+} from "@admin/src/components/ui/client";
 import { ArrowPathIcon, ArrowTopRightOnSquareIcon } from "@heroicons/react/24/outline";
 import { IconMinusVertical } from "@tabler/icons-react";
 import { useMouse } from "@mantine/hooks";
@@ -53,13 +58,33 @@ export function PagePreview(props: { url: string }) {
 
 			<Card className="m-4 mx-0 h-auto flex-1 gap-0 overflow-hidden p-0 md:m-4 md:mx-0 md:p-0">
 				<div className="flex items-center gap-2 p-2 md:p-2">
-					<ActionIcon onClick={() => iframeRef.current?.contentWindow?.location.reload()}>
-						<ArrowPathIcon className="w-5" />
-					</ActionIcon>
+					<Tooltip>
+						<TooltipTrigger asChild>
+							<ActionIcon
+								onClick={() => iframeRef.current?.contentWindow?.location.reload()}
+								aria-label="Refresh"
+							>
+								<ArrowPathIcon className="w-5" />
+							</ActionIcon>
+						</TooltipTrigger>
+						<TooltipContent>Refresh</TooltipContent>
+					</Tooltip>
+
 					<URL url={url} setUrl={setUrl} />
-					<ActionIcon className="ml-auto" onClick={() => window.open(url)}>
-						<ArrowTopRightOnSquareIcon className="w-5" />
-					</ActionIcon>
+
+					<Tooltip>
+						<TooltipTrigger asChild>
+							<ActionIcon
+								className="ml-auto"
+								onClick={() => window.open(url)}
+								aria-label="Open in new tab"
+							>
+								<ArrowTopRightOnSquareIcon className="w-5" />
+							</ActionIcon>
+						</TooltipTrigger>
+
+						<TooltipContent>Open in new tab</TooltipContent>
+					</Tooltip>
 				</div>
 
 				<iframe
