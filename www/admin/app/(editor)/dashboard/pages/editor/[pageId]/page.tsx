@@ -35,6 +35,7 @@ export default async function Editor({ params }: { params: { pageId: string } })
 			</nav>
 
 			<main className="grid h-full w-full flex-1 grid-cols-1 lg:grid-cols-[3fr_22.5rem]">
+				{/* TODO: Get url beginning from Settings/Connection */}
 				<PagePreview url={"http://localhost:8080" + page.url} />
 				<Inspector />
 			</main>

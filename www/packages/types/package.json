@@ -21,7 +21,7 @@
 	},
 	"devDependencies": {
 		"@prisma/client": "^5.6.0",
-		"@trpc/server": "^10.44.0",
+		"@trpc/server": "^10.44.1",
 		"superjson": "^2.2.1"
 	}
 }
