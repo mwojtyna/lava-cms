@@ -33,8 +33,9 @@ export function PagePreview(props: { url: string }) {
 				ref={resizableRef}
 				className="mx-auto flex"
 				minWidth={MIN_WIDTH}
-				maxWidth={maxWidth - 45} // Account for handles
+				maxWidth={maxWidth - 45} // Account for the handles
 				size={{ width, height: "100%" }}
+				enable={{ left: true, right: true }}
 				handleComponent={{
 					left: (
 						<IconMinusVertical
