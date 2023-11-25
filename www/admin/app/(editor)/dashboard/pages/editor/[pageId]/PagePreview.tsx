@@ -19,14 +19,13 @@ const MIN_WIDTH = 250;
 export function PagePreview(props: { url: string }) {
 	const resizableRef = React.useRef<Resizable>(null);
 	const iframeRef = React.useRef<HTMLIFrameElement>(null);
+	const [url, setUrl] = React.useState(props.url);
 
 	const [width, setWidth] = useLocalStorage({
 		key: "page-preview-width",
 		defaultValue: MIN_WIDTH * 2,
 	});
 	const { ref: wrapperRef, width: maxWidth } = useElementSize();
-
-	const [url, setUrl] = React.useState(props.url);
 
 	return (
 		<div ref={wrapperRef} className="h-full">

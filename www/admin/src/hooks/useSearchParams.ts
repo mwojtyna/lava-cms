@@ -1,7 +1,5 @@
 import * as React from "react";
-import { useRouter } from "next/navigation";
-import { useSearchParams as useNextSearchParams } from "next/navigation";
-import { usePathname } from "next/navigation";
+import { useRouter, useSearchParams as useNextSearchParams, usePathname } from "next/navigation";
 
 interface Callbacks {
 	onChanged?: (value: URLSearchParams) => void;

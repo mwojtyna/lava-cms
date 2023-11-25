@@ -14,7 +14,7 @@ export async function generateMetadata({
 }): Promise<Metadata> {
 	const page = await prisma.page.findUniqueOrThrow({ where: { id: params.pageId } });
 	return {
-		title: `"${page.name}" - Page editor - Lava CMS`,
+		title: `Editing "${page.name}" - Lava CMS`,
 	};
 }
 
@@ -24,7 +24,7 @@ export default async function Editor({ params }: { params: { pageId: string } })
 	return (
 		<div className="flex h-full flex-col">
 			<nav className="flex w-full items-center justify-between border-b border-border p-5 py-3">
-				<Link href={"/dashboard/pages"}>
+				<Link href={headers().get("Referer") ?? "/dashboard/pages"}>
 					<ActionIcon variant={"outline"} aria-label="Go back to dashboard">
 						<ArrowUturnLeftIcon className="w-5" />
 						Pages
