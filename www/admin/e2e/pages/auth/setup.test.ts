@@ -103,10 +103,10 @@ test.describe("setup website step", () => {
 	});
 	test.afterAll(async () => {
 		await deleteMockUser();
-		await prisma.config.deleteMany();
+		await prisma.settingsSeo.deleteMany();
 		await prisma.page.deleteMany();
 		await prisma.componentDefinitionGroup.deleteMany();
-		await prisma.token.deleteMany();
+		await prisma.settingsConnection.deleteMany();
 	});
 
 	test("light theme visual comparison", async ({ page }) => {
@@ -141,7 +141,7 @@ test.describe("setup website step", () => {
 		// authedPage fixture automatically creates a config and a Root page
 		// we don't want that for this test because if it exists
 		// then it will redirect to /dashboard
-		await prisma.config.deleteMany();
+		await prisma.settingsSeo.deleteMany();
 		await prisma.page.deleteMany();
 
 		await page.goto("/admin/setup");
@@ -152,7 +152,7 @@ test.describe("setup website step", () => {
 
 		expect(page.base.url()).toMatch(/dashboard/);
 		await expect(page.base.locator("#content").first()).toBeInViewport();
-		await expect(prisma.config.findFirstOrThrow()).resolves.toMatchObject({
+		await expect(prisma.settingsSeo.findFirstOrThrow()).resolves.toMatchObject({
 			title: websiteSettingsMock.title,
 			description: "",
 			language: websiteSettingsMock.language,

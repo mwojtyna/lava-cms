@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { privateProcedure } from "@admin/src/trpc";
-import { ComponentFieldDefinitionSchema } from "@admin/prisma/generated/zod";
+import { ComponentDefinitionFieldSchema } from "@admin/prisma/generated/zod";
 import { prisma } from "@admin/prisma/client";
 import { TRPCError } from "@trpc/server";
 
@@ -9,7 +9,7 @@ export const addComponentDefinition = privateProcedure
 		z.object({
 			name: z.string(),
 			groupId: z.string().cuid(),
-			fields: z.array(ComponentFieldDefinitionSchema.pick({ name: true, type: true })),
+			fields: z.array(ComponentDefinitionFieldSchema.pick({ name: true, type: true })),
 		}),
 	)
 	.mutation(async ({ input }) => {
@@ -37,7 +37,7 @@ export const addComponentDefinition = privateProcedure
 				group_id: input.groupId,
 			},
 		});
-		await prisma.componentFieldDefinition.createMany({
+		await prisma.componentDefinitionField.createMany({
 			data: input.fields.map((field, i) => ({
 				name: field.name,
 				type: field.type,

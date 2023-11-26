@@ -4,7 +4,7 @@ import { createMockUser, deleteMockUser, userMock, userPasswordDecrypted } from 
 
 test.beforeAll(async () => {
 	await createMockUser();
-	await prisma.config.create({
+	await prisma.settingsSeo.create({
 		data: {
 			title: "My website",
 			description: "My website description",
@@ -14,7 +14,7 @@ test.beforeAll(async () => {
 });
 test.afterAll(async () => {
 	await deleteMockUser();
-	await prisma.config.deleteMany();
+	await prisma.settingsSeo.deleteMany();
 });
 
 test("light theme visual comparison", async ({ page }) => {

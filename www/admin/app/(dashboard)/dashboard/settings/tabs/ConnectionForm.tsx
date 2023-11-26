@@ -1,9 +1,17 @@
 "use client";
 
 import * as React from "react";
+import { FormProvider, useForm, type SubmitHandler } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import { ArrowPathIcon, CheckIcon, ClipboardIcon } from "@heroicons/react/24/outline";
 import {
 	ActionIcon,
+	Button,
+	FormControl,
 	FormDescription,
+	FormError,
+	FormField,
 	FormItem,
 	FormLabel,
 	Input,
@@ -21,16 +29,44 @@ import {
 	Loader,
 } from "@admin/src/components/ui/server";
 import { trpc } from "@admin/src/utils/trpc";
-import { ArrowPathIcon, CheckIcon, ClipboardIcon } from "@heroicons/react/24/outline";
-import { FormProvider, useForm } from "react-hook-form";
 import { useToast } from "@admin/src/hooks";
 
-export function ConnectionForm(props: { token: string | undefined }) {
+const schema = z.object({
+	developmentUrl: z
+		.string()
+		.min(1, " ")
+		.regex(/^https?:\/\/.*/, "Must include protocol")
+		.url(),
+});
+type Inputs = z.infer<typeof schema>;
+
+export function ConnectionForm(props: { token: string; connectionSettings: Inputs }) {
 	const token =
 		trpc.auth.getToken.useQuery(undefined, {
 			initialData: props.token,
 		}).data ?? "";
-	const form = useForm();
+	const settings = trpc.settings.getConnectionSettings.useQuery(undefined, {
+		initialData: props.connectionSettings,
+	}).data;
+	const mutation = trpc.settings.setConnectionSettings.useMutation();
+
+	const { toast, toastError } = useToast();
+
+	const form = useForm<Inputs>({
+		resolver: zodResolver(schema),
+		defaultValues: settings,
+	});
+	const onSubmit: SubmitHandler<Inputs> = (data) => {
+		mutation.mutate(data, {
+			onSuccess: () => toast({ title: "Success", description: "Connection settings saved." }),
+			onError: (err) => {
+				toastError({
+					title: "Error",
+					description: err.message.trim(),
+				});
+			},
+		});
+	};
 
 	return (
 		<Card
@@ -45,7 +81,7 @@ export function ConnectionForm(props: { token: string | undefined }) {
 
 			<CardContent>
 				<FormProvider {...form}>
-					<form className="flex flex-col gap-6">
+					<form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-6">
 						<FormItem className="grid grid-cols-[40%_auto]">
 							<div className="space-y-1">
 								<FormLabel>Token</FormLabel>
@@ -56,6 +92,33 @@ export function ConnectionForm(props: { token: string | undefined }) {
 
 							<TokenInput token={token} />
 						</FormItem>
+
+						<FormField
+							control={form.control}
+							name="developmentUrl"
+							render={({ field }) => (
+								<FormItem className="grid grid-cols-[40%_auto]">
+									<div className="space-y-1">
+										<FormLabel>Development URL</FormLabel>
+										<FormDescription>
+											URL of your website&apos;s development server, including
+											the protocol
+										</FormDescription>
+									</div>
+
+									<div>
+										<FormControl>
+											<Input {...field} />
+										</FormControl>
+										<FormError />
+									</div>
+								</FormItem>
+							)}
+						/>
+
+						<Button type="submit" className="ml-auto" loading={mutation.isLoading}>
+							Save
+						</Button>
 					</form>
 				</FormProvider>
 			</CardContent>
@@ -63,7 +126,7 @@ export function ConnectionForm(props: { token: string | undefined }) {
 	);
 }
 
-const TokenInput = ({ token }: { token: string }) => {
+function TokenInput(props: { token: string }) {
 	const [copied, setCopied] = React.useState(false);
 	const mutation = trpc.auth.generateToken.useMutation();
 	const { toast, toastError } = useToast();
@@ -72,7 +135,7 @@ const TokenInput = ({ token }: { token: string }) => {
 		<div className="flex items-center gap-2">
 			<Input
 				className="font-mono"
-				value={token}
+				value={props.token}
 				rightButton={
 					// Only show copy button if clipboard API is available,
 					// but display on server because of hydration issues
@@ -82,7 +145,7 @@ const TokenInput = ({ token }: { token: string }) => {
 								state: copied,
 								setState: null,
 								onClick: async () => {
-									await navigator.clipboard.writeText(token);
+									await navigator.clipboard.writeText(props.token);
 									setCopied(true);
 								},
 								iconOn: <CheckIcon className="w-5 text-green-600" />,
@@ -125,4 +188,4 @@ const TokenInput = ({ token }: { token: string }) => {
 			</Tooltip>
 		</div>
 	);
-};
+}

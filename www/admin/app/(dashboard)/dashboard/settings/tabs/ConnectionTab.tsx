@@ -3,5 +3,7 @@ import { ConnectionForm } from "./ConnectionForm";
 
 export async function ConnectionTab() {
 	const token = await caller.auth.getToken();
-	return <ConnectionForm token={token} />;
+	const connectionSettings = await caller.settings.getConnectionSettings();
+
+	return <ConnectionForm token={token ?? ""} connectionSettings={connectionSettings} />;
 }

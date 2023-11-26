@@ -1,6 +1,5 @@
 generator client {
-    provider        = "prisma-client-js"
-    previewFeatures = ["multiSchema"]
+    provider = "prisma-client-js"
 }
 
 generator zod {
@@ -12,65 +11,58 @@ generator zod {
 datasource db {
     provider = "postgresql"
     url      = env("DATABASE_URL")
-    schemas  = ["admin", "frontend"]
 }
 
-// Admin schema
-model User {
+model AdminUser {
     id        String @id @unique
     name      String
     last_name String
     email     String @unique
 
-    auth_session Session[]
-    auth_key     Key[]
+    auth_session AdminSession[]
+    auth_key     AdminKey[]
 
-    @@map("user")
-    @@schema("admin")
+    @@map("admin_user")
 }
 
-model Session {
+model AdminSession {
     id             String @id @unique
     user_id        String
     active_expires BigInt
     idle_expires   BigInt
 
-    user User @relation(references: [id], fields: [user_id], onDelete: Cascade)
+    user AdminUser @relation(references: [id], fields: [user_id], onDelete: Cascade)
 
     @@index([user_id])
-    @@map("session")
-    @@schema("admin")
+    @@map("admin_session")
 }
 
-model Key {
+model AdminKey {
     id              String  @id @unique
     hashed_password String?
     user_id         String
 
-    user User @relation(references: [id], fields: [user_id], onDelete: Cascade)
+    user AdminUser @relation(references: [id], fields: [user_id], onDelete: Cascade)
 
     @@index([user_id])
-    @@map("key")
-    @@schema("admin")
+    @@map("admin_key")
 }
 
-// Frontend schema
-model Config {
+model SettingsSeo {
     id          String @id @default(cuid())
     title       String
     description String
     language    String
 
-    @@map("config")
-    @@schema("frontend")
+    @@map("settings_seo")
 }
 
-model Token {
-    id    String @id @default(cuid())
-    token String
+model SettingsConnection {
+    id             String @id @default(cuid())
+    token          String
+    developmentUrl String
 
-    @@map("token")
-    @@schema("frontend")
+    @@map("settings_connection")
 }
 
 model Page {
@@ -87,7 +79,6 @@ model Page {
 
     @@index([parent_id])
     @@map("page")
-    @@schema("frontend")
 }
 
 model ComponentDefinitionGroup {
@@ -101,7 +92,6 @@ model ComponentDefinitionGroup {
     component_definitions ComponentDefinition[]
 
     @@map("component_definition_group")
-    @@schema("frontend")
 }
 
 model ComponentDefinition {
@@ -111,15 +101,14 @@ model ComponentDefinition {
     last_update DateTime @default(now())
 
     group             ComponentDefinitionGroup   @relation(fields: [group_id], references: [id], onDelete: Cascade)
-    field_definitions ComponentFieldDefinition[]
+    field_definitions ComponentDefinitionField[]
     components        ComponentInstance[]
 
     @@index([group_id])
     @@map("component_definition")
-    @@schema("frontend")
 }
 
-model ComponentFieldDefinition {
+model ComponentDefinitionField {
     id                      String             @id @default(cuid())
     name                    String
     type                    ComponentFieldType
@@ -129,23 +118,7 @@ model ComponentFieldDefinition {
     component_definition ComponentDefinition @relation(fields: [component_definition_id], references: [id], onDelete: Cascade)
 
     @@index([component_definition_id])
-    @@map("component_field_definition")
-    @@schema("frontend")
-}
-
-model ComponentInstanceField {
-    id           String @id @default(cuid())
-    component_id String
-    /// If type is a primitive type, then data is a string
-    /// If type is a complex type, then data is a JSON object
-    /// If type is a component, then data is that component's id
-    data         String
-
-    component ComponentInstance @relation(fields: [component_id], references: [id])
-
-    @@index([component_id])
-    @@map("component_instance_field")
-    @@schema("frontend")
+    @@map("component_definition_field")
 }
 
 model ComponentInstance {
@@ -160,7 +133,20 @@ model ComponentInstance {
 
     @@index([page_id])
     @@map("component_instance")
-    @@schema("frontend")
+}
+
+model ComponentInstanceField {
+    id           String @id @default(cuid())
+    component_id String
+    /// If type is a primitive type, then data is a string
+    /// If type is a complex type, then data is a JSON object
+    /// If type is a component, then data is that component's id
+    data         String
+
+    component ComponentInstance @relation(fields: [component_id], references: [id])
+
+    @@index([component_id])
+    @@map("component_instance_field")
 }
 
 enum ComponentFieldType {
@@ -170,5 +156,4 @@ enum ComponentFieldType {
     COMPONENT
 
     @@map("component_field_type")
-    @@schema("frontend")
 }

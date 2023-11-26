@@ -27,7 +27,7 @@ import {
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { restrictToParentElement } from "@dnd-kit/modifiers";
-import type { ComponentFieldDefinition } from "@prisma/client";
+import type { ComponentDefinitionField } from "@prisma/client";
 import {
 	FormField,
 	FormItem,
@@ -122,7 +122,7 @@ type FieldDefsProps = FormFieldProps<FieldDefinitionUI[]> & {
 		  }
 		| {
 				dialogType: "edit";
-				originalFields: ComponentFieldDefinition[];
+				originalFields: ComponentDefinitionField[];
 		  }
 	);
 export const FieldDefs = React.forwardRef<React.ComponentRef<"div">, FieldDefsProps>((props, _) => {
@@ -254,7 +254,7 @@ type FieldDefProps = {
 	  }
 	| {
 			dialogType: "edit";
-			original: ComponentFieldDefinition;
+			original: ComponentDefinitionField;
 			onUnDelete: (toUnDelete: FieldDefinitionUI) => void;
 	  }
 );

@@ -35,13 +35,17 @@ const schema = z.object({
 type Inputs = z.infer<typeof schema>;
 
 export function SeoForm({ serverData }: { serverData: Inputs }) {
-	const data = trpc.config.getConfig.useQuery(undefined, {
+	const data = trpc.settings.getSeoSettings.useQuery(undefined, {
 		initialData: serverData,
 	}).data;
-	const mutation = trpc.config.setConfig.useMutation();
+	const mutation = trpc.settings.setSeoSettings.useMutation();
+
 	const { toast, toastError } = useToast();
 
-	const form = useForm<Inputs>({ resolver: zodResolver(schema), defaultValues: data });
+	const form = useForm<Inputs>({
+		resolver: zodResolver(schema),
+		defaultValues: data,
+	});
 	const onSubmit: SubmitHandler<Inputs> = (data) => {
 		mutation.mutate(data, {
 			onSuccess: () => toast({ title: "Success", description: "SEO settings saved." }),

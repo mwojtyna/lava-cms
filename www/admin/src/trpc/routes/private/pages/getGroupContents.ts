@@ -40,33 +40,33 @@ export const getGroupContents = privateProcedure
 
 async function getBreadcrumbs(page: Page): Promise<Breadcrumb[]> {
 	const breadcrumbs = await prisma.$queryRaw<Breadcrumb[]>`
-		WITH RECURSIVE breadcrumbs AS (
-  	  	  SELECT
-    		id,
-    		name,
-    		parent_id
-  	  	  FROM
-    		frontend.page
-  	  	  WHERE
-    		id = ${page.id}
-  	  	  UNION
-  	  	  SELECT
-    		p.id,
-    		p.name,
-    		p.parent_id
-  	  	  FROM
-    		frontend.page p
-  	  	  INNER JOIN
-    		breadcrumbs bc
-  	  	  ON
-    		p.id = bc.parent_id
-  	  	  WHERE p.parent_id IS NOT NULL
-		)
-		SELECT
-  	  	  id,
-  	  	  name
-		FROM
-  	  	  breadcrumbs;
+	WITH RECURSIVE breadcrumbs AS (
+  	  SELECT
+    	id,
+    	name,
+    	parent_id
+  	  FROM
+    	page
+  	  WHERE
+    	id = ${page.id}
+  	  UNION
+  	  SELECT
+    	p.id,
+    	p.name,
+    	p.parent_id
+  	  FROM
+    	page p
+  	  INNER JOIN
+    	breadcrumbs bc
+  	  ON
+    	p.id = bc.parent_id
+  	  WHERE p.parent_id IS NOT NULL
+	)
+	SELECT
+  	  id,
+  	  name
+	FROM
+  	  breadcrumbs;
 `;
 
 	return breadcrumbs.reverse();

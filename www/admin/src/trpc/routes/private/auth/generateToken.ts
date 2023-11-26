@@ -7,9 +7,9 @@ export const generateToken = privateProcedure.mutation(async () => {
 		32,
 		"0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz",
 	);
-	const storedToken = await prisma.token.findFirst();
+	const storedToken = await prisma.settingsConnection.findFirst();
 
-	await prisma.token.upsert({
+	await prisma.settingsConnection.upsert({
 		where: {
 			id: storedToken?.id ?? "",
 		},

@@ -4,23 +4,23 @@ import { prisma } from "@admin/prisma/client";
 import tags from "language-tags";
 import { TRPCError } from "@trpc/server";
 
-export const setConfig = privateProcedure
+export const setSeoSettings = privateProcedure
 	.input(
 		z.object({
 			title: z.string(),
 			description: z.string(),
 			language: z.string(),
-		})
+		}),
 	)
 	.mutation(async ({ input }) => {
 		if (!tags.check(input.language)) {
 			throw new TRPCError({ code: "BAD_REQUEST" });
 		}
 
-		const config = await prisma.config.findFirst();
-		await prisma.config.upsert({
+		const settings = await prisma.settingsSeo.findFirst();
+		await prisma.settingsSeo.upsert({
 			where: {
-				id: config?.id ?? "",
+				id: settings?.id ?? "",
 			},
 			create: {
 				title: input.title,

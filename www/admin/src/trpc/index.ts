@@ -20,7 +20,7 @@ export const privateAuth = t.middleware(async (opts) => {
 		session,
 	};
 
-	if (opts.meta?.noAuth || (await prisma.config.count()) === 0) {
+	if (opts.meta?.noAuth || (await prisma.settingsSeo.count()) === 0) {
 		return opts.next({ ctx });
 	}
 
@@ -38,7 +38,7 @@ export const publicAuth = t.middleware(async (opts) => {
 		throw new TRPCError({ code: "UNAUTHORIZED" });
 	}
 
-	if (token !== (await prisma.token.findFirst())?.token) {
+	if (token !== (await prisma.settingsConnection.findFirst())?.token) {
 		throw new TRPCError({ code: "UNAUTHORIZED" });
 	}
 

@@ -5,14 +5,14 @@ import { prisma } from "@admin/prisma/client";
 import { DEFAULT_SESSION_COOKIE_NAME } from "lucia";
 
 test.beforeAll(async () => {
-	await prisma.config.create({
+	await prisma.settingsSeo.create({
 		data: {
 			...websiteSettingsMock,
 		},
 	});
 });
 test.afterAll(async () => {
-	await prisma.config.deleteMany();
+	await prisma.settingsSeo.deleteMany();
 });
 
 test.describe("private API", () => {

@@ -16,11 +16,11 @@ test("website config displayed", async ({ authedPage: page }) => {
 	const element = page.base.getByTestId(TEST_ID);
 	await expect(element).toBeInViewport();
 	await expect(element.locator("input[type='text']").first()).toHaveValue(
-		websiteSettingsMock.title
+		websiteSettingsMock.title,
 	);
 	await expect(element.locator("textarea")).toHaveValue(websiteSettingsMock.description);
 	await expect(element.locator("input[type='text']").last()).toHaveValue(
-		websiteSettingsMock.language
+		websiteSettingsMock.language,
 	);
 });
 test("website config updates", async ({ authedPage: page }) => {
@@ -34,10 +34,10 @@ test("website config updates", async ({ authedPage: page }) => {
 
 	await page.base.waitForResponse("**/api/private/config.getConfig**");
 
-	const config = await prisma.config.findFirstOrThrow();
-	expect(config.title).toBe("My new website");
-	expect(config.description).toBe("My new website description");
-	expect(config.language).toBe("pl");
+	const seoSettings = await prisma.settingsSeo.findFirstOrThrow();
+	expect(seoSettings.title).toBe("My new website");
+	expect(seoSettings.description).toBe("My new website description");
+	expect(seoSettings.language).toBe("pl");
 
 	await expect(page.base.locator("li[role=status]")).toContainText("Success");
 });
@@ -46,7 +46,7 @@ test("notification shows error when error occurs", async ({ authedPage: page }) 
 	await page.goto("/admin/dashboard/settings");
 
 	await page.base.route("**/api/private/config.setConfig**", (route) =>
-		route.fulfill({ status: 500 })
+		route.fulfill({ status: 500 }),
 	);
 	const element = page.base.getByTestId(TEST_ID);
 	await element.locator("input[type='text']").first().fill("My new website");
@@ -67,11 +67,11 @@ test("shows 'field required' errors", async ({ authedPage: page }) => {
 
 	await expect(element.locator("input[type='text']").first()).toHaveAttribute(
 		"aria-invalid",
-		"true"
+		"true",
 	);
 	await expect(element.locator("input[type='text']").last()).toHaveAttribute(
 		"aria-invalid",
-		"true"
+		"true",
 	);
 
 	await expect(element).toHaveScreenshot();

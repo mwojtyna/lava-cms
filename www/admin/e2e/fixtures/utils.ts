@@ -42,7 +42,7 @@ export async function saveAuthedContext(browser: Browser) {
 	// Delete session that was created when signed in
 	// to prevent prisma error when creating session
 	// during fixture execution
-	await prisma.session.deleteMany();
+	await prisma.adminSession.deleteMany();
 }
 
 export async function getAuthedContext(browser: Browser): Promise<BrowserContext> {
@@ -51,13 +51,18 @@ export async function getAuthedContext(browser: Browser): Promise<BrowserContext
 	await deleteMockUser();
 	await createMockUser();
 
-	if (!(await prisma.config.findFirst())) {
-		await prisma.config.create({
+	if (!(await prisma.settingsSeo.findFirst())) {
+		await prisma.settingsSeo.create({
 			data: {
 				...websiteSettingsMock,
 			},
 		});
 	}
+	await prisma.settingsConnection.create({
+		data: {
+			token: tokenMock,
+		},
+	});
 
 	await prisma.page.deleteMany();
 	await prisma.page.create({
@@ -74,12 +79,6 @@ export async function getAuthedContext(browser: Browser): Promise<BrowserContext
 		data: {
 			name: "Root",
 			parent_group_id: null,
-		},
-	});
-
-	await prisma.token.create({
-		data: {
-			token: tokenMock,
 		},
 	});
 
@@ -100,7 +99,7 @@ export async function getAuthedContext(browser: Browser): Promise<BrowserContext
 			(cookie) => cookie.expires !== -1 && cookie.expires * 1000 < Date.now(),
 		);
 
-		await prisma.session.create({
+		await prisma.adminSession.create({
 			data: {
 				id: cookies.find((cookie) => cookie.name === DEFAULT_SESSION_COOKIE_NAME)!.value,
 				user_id: userMock.id,
@@ -124,12 +123,12 @@ export async function getAuthedContext(browser: Browser): Promise<BrowserContext
 
 export async function cleanUpAuthedContext(context: BrowserContext) {
 	await deleteMockUser();
-	if (await prisma.config.findFirst()) {
-		await prisma.config.deleteMany();
+	if (await prisma.settingsSeo.findFirst()) {
+		await prisma.settingsSeo.deleteMany();
 	}
 	await prisma.page.deleteMany();
 	await prisma.componentDefinitionGroup.deleteMany();
-	await prisma.token.deleteMany();
+	await prisma.settingsConnection.deleteMany();
 
 	await context.close();
 }

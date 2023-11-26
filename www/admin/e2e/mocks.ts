@@ -1,7 +1,7 @@
 import { prisma } from "@admin/prisma/client";
-import type { User, Config } from "@prisma/client";
+import type { AdminUser, SettingsSeo } from "@prisma/client";
 
-export const userMock: User = {
+export const userMock: AdminUser = {
 	id: "pvelcizx9an5cufryuh85wd0",
 	name: "John",
 	last_name: "Doe",
@@ -9,7 +9,7 @@ export const userMock: User = {
 };
 export const userPasswordDecrypted = "Zaq1@wsx";
 
-export const websiteSettingsMock: Omit<Config, "id"> = {
+export const websiteSettingsMock: Omit<SettingsSeo, "id"> = {
 	title: "My website",
 	description: "My website description",
 	language: "en",
@@ -19,10 +19,10 @@ export const tokenMock = "Rdt9DZz45guRCk6d9S8dASl9pSIXeqyh";
 
 export async function createMockUser() {
 	await prisma.$transaction([
-		prisma.user.create({
+		prisma.adminUser.create({
 			data: userMock,
 		}),
-		prisma.key.create({
+		prisma.adminKey.create({
 			data: {
 				id: `email:${userMock.email}`,
 				hashed_password: "$2b$10$ZVGT1G/c.WqZHa9UpSBTEeDRuL6sd/.k.RgPGE0YaZuPDdaV3Oe1G",
@@ -35,8 +35,8 @@ export async function createMockUser() {
 }
 export async function deleteMockUser() {
 	await prisma.$transaction([
-		prisma.user.deleteMany(),
-		prisma.session.deleteMany(),
-		prisma.key.deleteMany(),
+		prisma.adminUser.deleteMany(),
+		prisma.adminSession.deleteMany(),
+		prisma.adminKey.deleteMany(),
 	]);
 }

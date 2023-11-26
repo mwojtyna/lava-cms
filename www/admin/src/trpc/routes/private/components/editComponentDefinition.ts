@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { privateProcedure } from "@admin/src/trpc";
-import { ComponentFieldDefinitionSchema } from "@admin/prisma/generated/zod";
+import { ComponentDefinitionFieldSchema } from "@admin/prisma/generated/zod";
 import { prisma } from "@admin/prisma/client";
 import { TRPCError } from "@trpc/server";
 
@@ -11,10 +11,10 @@ export const editComponentDefinition = privateProcedure
 			newName: z.string().optional(),
 			newGroupId: z.string().cuid().optional(),
 			addedFields: z
-				.array(ComponentFieldDefinitionSchema.pick({ name: true, type: true, order: true }))
+				.array(ComponentDefinitionFieldSchema.pick({ name: true, type: true, order: true }))
 				.optional(),
 			editedFields: z
-				.array(ComponentFieldDefinitionSchema.omit({ component_definition_id: true }))
+				.array(ComponentDefinitionFieldSchema.omit({ component_definition_id: true }))
 				.optional(),
 			deletedFieldIds: z.array(z.string().cuid()).optional(),
 		}),

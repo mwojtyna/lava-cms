@@ -30,12 +30,12 @@ type Inputs = z.infer<typeof schema>;
 export function SetupForm() {
 	const router = useRouter();
 
-	const setConfigMutation = trpc.config.setConfig.useMutation();
-	const setupMutation = trpc.config.setup.useMutation();
+	const setSeoSettingsMutation = trpc.settings.setSeoSettings.useMutation();
+	const setupMutation = trpc.settings.setup.useMutation();
 
 	const form = useForm<Inputs>({ resolver: zodResolver(schema) });
 	const onSubmit: SubmitHandler<Inputs> = (data) => {
-		setConfigMutation.mutate(data, {
+		setSeoSettingsMutation.mutate(data, {
 			onSuccess: async () => {
 				await setupMutation.mutateAsync();
 				router.replace("/dashboard");
@@ -63,7 +63,7 @@ export function SetupForm() {
 					size="lg"
 					icon={<ArrowRightIcon className="w-5" />}
 					className="ml-auto shadow-lg shadow-primary/25"
-					loading={setConfigMutation.isLoading || setupMutation.isLoading}
+					loading={setSeoSettingsMutation.isLoading || setupMutation.isLoading}
 				>
 					Finish
 				</Button>

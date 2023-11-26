@@ -1,5 +1,7 @@
 "use client";
 
+// TODO: Refactor into multiple files like with component definitions
+
 import * as React from "react";
 import {
 	type SubmitHandler,
@@ -284,7 +286,7 @@ export function BulkMoveDialog(props: BulkEditDialogProps) {
 					message: (
 						<>
 							The following items already exist in the destination group:
-							<TypographyList items={query.urls!} />
+							<TypographyList items={query.urls} />
 						</>
 					) as unknown as string,
 				});

@@ -8,9 +8,9 @@ import { env } from "@admin/src/env/server.mjs";
 
 export const auth = lucia({
 	adapter: prisma(prismaClient, {
-		user: "user",
-		session: "session",
-		key: "key",
+		user: "adminUser",
+		session: "adminSession",
+		key: "adminKey",
 	}),
 	env: env.NODE_ENV !== "production" ? "DEV" : "PROD", // DEV means http, PROD means https
 	middleware: nextjs_future(),

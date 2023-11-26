@@ -33,6 +33,8 @@ export function PagePreview(props: { url: string }) {
 	});
 	const { ref: wrapperRef, width: maxWidth } = useElementSize();
 
+	// TODO: Figure out a way to communicate with cross-origin iframe
+	// https://stackoverflow.com/questions/25098021/securityerror-blocked-a-frame-with-origin-from-accessing-a-cross-origin-frame
 	function onIframeLoad(e: React.SyntheticEvent<HTMLIFrameElement>) {
 		const url = e.currentTarget.contentWindow?.location.href;
 		setUrl(url ?? "");
@@ -132,7 +134,7 @@ export function PagePreview(props: { url: string }) {
 						src={props.url}
 						onLoad={onIframeLoad}
 						// Allow all
-						sandbox="allow-downloads allow-downloads-without-user-activation allow-forms allow-modals allow-orientation-lock allow-pointer-lock allow-popups allow-popups-to-escape-sandbox allow-presentation allow-same-origin allow-scripts allow-storage-access-by-user-activation allow-top-navigation allow-top-navigation-by-user-activation allow-top-navigation-to-custom-protocols"
+						sandbox="allow-downloads allow-forms allow-modals allow-orientation-lock allow-pointer-lock allow-popups allow-popups-to-escape-sandbox allow-presentation allow-same-origin allow-scripts allow-storage-access-by-user-activation allow-top-navigation allow-top-navigation-by-user-activation allow-top-navigation-to-custom-protocols"
 					/>
 				</Card>
 			</Resizable>

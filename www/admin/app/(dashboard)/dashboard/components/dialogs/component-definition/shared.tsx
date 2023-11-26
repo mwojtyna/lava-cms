@@ -5,7 +5,7 @@ import { ComponentFieldType } from "@prisma/client";
 import { z } from "zod";
 import { ArrowTopRightOnSquareIcon } from "@heroicons/react/20/solid";
 import {
-	ComponentFieldDefinitionSchema,
+	ComponentDefinitionFieldSchema,
 	type ComponentFieldTypeType,
 } from "@admin/prisma/generated/zod";
 import { cn } from "@admin/src/utils/styling";
@@ -67,7 +67,7 @@ FieldTypePicker.displayName = "FieldTypePicker";
 export const fieldDefinitionUISchema = z.object({
 	id: z.string().cuid().optional(),
 	name: z.string().min(1),
-	type: ComponentFieldDefinitionSchema.shape.type,
+	type: ComponentDefinitionFieldSchema.shape.type,
 	diffs: z.array(z.union([z.literal("added"), z.literal("deleted"), z.literal("edited")])),
 });
 export type FieldDefinitionUI = z.infer<typeof fieldDefinitionUISchema>;

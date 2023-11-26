@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { headers } from "next/headers";
 import Link from "next/link";
 import { PagePreview } from "./PagePreview";
 import { prisma } from "@admin/prisma/client";
@@ -6,6 +7,9 @@ import { Inspector } from "./Inspector";
 import { UserMenu } from "@admin/src/components/UserMenu";
 import { ActionIcon } from "@admin/src/components/ui/client";
 import { ArrowUturnLeftIcon } from "@heroicons/react/24/outline";
+import { caller } from "@admin/src/trpc/routes/private/_private";
+
+export const dynamic = "force-dynamic";
 
 export async function generateMetadata({
 	params,
@@ -20,6 +24,7 @@ export async function generateMetadata({
 
 export default async function Editor({ params }: { params: { pageId: string } }) {
 	const page = await prisma.page.findUniqueOrThrow({ where: { id: params.pageId } });
+	const { developmentUrl } = await caller.settings.getConnectionSettings();
 
 	return (
 		<div className="flex h-full flex-col">
@@ -27,7 +32,7 @@ export default async function Editor({ params }: { params: { pageId: string } })
 				<Link href={headers().get("Referer") ?? "/dashboard/pages"}>
 					<ActionIcon variant={"outline"} aria-label="Go back to dashboard">
 						<ArrowUturnLeftIcon className="w-5" />
-						Pages
+						Return
 					</ActionIcon>
 				</Link>
 
@@ -35,9 +40,8 @@ export default async function Editor({ params }: { params: { pageId: string } })
 			</nav>
 
 			<main className="grid h-full w-full flex-1 grid-cols-1 lg:grid-cols-[3fr_22.5rem]">
-				{/* TODO: Get url beginning from Settings/Connection */}
-				<PagePreview url={"http://localhost:8080" + page.url} />
-				<Inspector />
+				<PagePreview url={developmentUrl + page.url} />
+				<Inspector page={page} />
 			</main>
 		</div>
 	);

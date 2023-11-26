@@ -12,5 +12,9 @@ export const setup = privateProcedure.mutation(async () => {
 		name: "Root",
 		parentId: null,
 	});
+
 	await caller.auth.generateToken();
+	await caller.settings.setConnectionSettings({
+		developmentUrl: "http://localhost:3000",
+	});
 });
