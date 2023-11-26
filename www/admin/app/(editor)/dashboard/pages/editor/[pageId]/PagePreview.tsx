@@ -3,7 +3,11 @@
 import * as React from "react";
 import { Resizable } from "re-resizable";
 import { useElementSize, useLocalStorage } from "@mantine/hooks";
-import { ArrowPathIcon, ArrowTopRightOnSquareIcon } from "@heroicons/react/24/outline";
+import {
+	ArrowPathIcon,
+	ArrowTopRightOnSquareIcon,
+	PencilSquareIcon,
+} from "@heroicons/react/24/outline";
 import { IconMinusVertical } from "@tabler/icons-react";
 import { Card } from "@admin/src/components/ui/server";
 import {
@@ -13,6 +17,7 @@ import {
 	TooltipTrigger,
 } from "@admin/src/components/ui/client";
 import { cn } from "@admin/src/utils/styling";
+import { EditableText } from "@admin/src/components/EditableText";
 
 const MIN_WIDTH = 250;
 
@@ -41,12 +46,14 @@ export function PagePreview(props: { url: string }) {
 						<IconMinusVertical
 							size={64}
 							className="relative right-[38px] h-full text-muted-foreground transition-colors hover:cursor-col-resize hover:text-foreground"
+							aria-label="Left resize handle"
 						/>
 					),
 					right: (
 						<IconMinusVertical
 							size={64}
 							className="relative right-[16px] h-full text-muted-foreground transition-colors hover:cursor-col-resize hover:text-foreground"
+							aria-label="Right resize handle"
 						/>
 					),
 				}}
@@ -68,7 +75,13 @@ export function PagePreview(props: { url: string }) {
 							<TooltipContent>Refresh</TooltipContent>
 						</Tooltip>
 
-						<URL url={url} />
+						<URL
+							url={url}
+							onUrlChanged={(url) => {
+								setUrl(url);
+								iframeRef.current?.contentWindow?.location.assign(url);
+							}}
+						/>
 
 						<Tooltip>
 							<TooltipTrigger asChild>
@@ -80,7 +93,6 @@ export function PagePreview(props: { url: string }) {
 									<ArrowTopRightOnSquareIcon className="w-5" />
 								</ActionIcon>
 							</TooltipTrigger>
-
 							<TooltipContent>Open in new tab</TooltipContent>
 						</Tooltip>
 					</div>
@@ -100,17 +112,47 @@ export function PagePreview(props: { url: string }) {
 	);
 }
 
-function URL(props: { url: string }) {
+interface UrlProps {
+	url: string;
+	onUrlChanged: (url: string) => void;
+}
+function URL(props: UrlProps) {
 	const split = props.url.split("://");
 	const protocol = split[0];
 	const domain = split[1]!.split("/")[0];
-	const rest = split[1]!.slice(domain!.length);
+	const rest = split[1]!.slice(domain!.length + 1);
+
+	const [editing, setEditing] = React.useState(false);
 
 	return (
-		<p className="flex items-center truncate">
-			<span className="text-muted-foreground">{protocol}://</span>
-			{domain}
-			<span className="text-muted-foreground">{rest}</span>
-		</p>
+		<div className="flex w-full gap-2 overflow-hidden">
+			<div className={cn("flex items-center overflow-auto", editing && "w-full")}>
+				<p className="text-muted-foreground">
+					{protocol}://
+					<span className="text-foreground">{domain}</span>/
+				</p>
+				<EditableText
+					inputProps={{ className: "ml-px", "aria-label": "URL input" }}
+					value={rest}
+					editing={editing}
+					setEditing={setEditing}
+					onSubmit={(rest) => props.onUrlChanged(`${protocol}://${domain}/${rest}`)}
+					hasCustomEditButton
+				>
+					<span className="whitespace-nowrap text-muted-foreground">{rest}</span>
+				</EditableText>
+			</div>
+
+			{!editing && (
+				<Tooltip>
+					<TooltipTrigger asChild>
+						<ActionIcon variant={"simple"} aria-label="Edit">
+							<PencilSquareIcon className="w-5" onClick={() => setEditing(true)} />
+						</ActionIcon>
+					</TooltipTrigger>
+					<TooltipContent>Edit</TooltipContent>
+				</Tooltip>
+			)}
+		</div>
 	);
 }
