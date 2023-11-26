@@ -288,7 +288,7 @@ function FieldDef(props: FieldDefProps) {
 		zIndex: isDragging ? 1 : undefined,
 	};
 
-	type DiffType = NonNullable<FieldDefinitionUI["diffs"]>[number];
+	type DiffType = FieldDefinitionUI["diffs"][number];
 	const diffStyle: Record<DiffType, string> = {
 		added: "border-l-green-500",
 		edited: "border-l-yellow-500",

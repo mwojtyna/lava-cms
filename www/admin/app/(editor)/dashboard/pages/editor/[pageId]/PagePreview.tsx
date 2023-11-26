@@ -33,6 +33,22 @@ export function PagePreview(props: { url: string }) {
 	});
 	const { ref: wrapperRef, width: maxWidth } = useElementSize();
 
+	function onIframeLoad(e: React.SyntheticEvent<HTMLIFrameElement>) {
+		const url = e.currentTarget.contentWindow?.location.href;
+		setUrl(url ?? "");
+
+		const iframeDocument = e.currentTarget.contentDocument;
+		// Only open link when shift+click
+		iframeDocument?.querySelectorAll("a").forEach((a) => {
+			a.addEventListener("click", (e) => {
+				e.preventDefault();
+				if (e.shiftKey) {
+					iframeDocument.location.assign(a.href);
+				}
+			});
+		});
+	}
+
 	return (
 		<div ref={wrapperRef} className="h-full">
 			<Resizable
@@ -46,14 +62,14 @@ export function PagePreview(props: { url: string }) {
 					left: (
 						<IconMinusVertical
 							size={64}
-							className="relative right-[38px] h-full text-muted-foreground transition-colors hover:cursor-col-resize hover:text-foreground"
+							className="relative right-[38px] h-full text-muted-foreground transition-colors hover:text-foreground"
 							aria-label="Left resize handle"
 						/>
 					),
 					right: (
 						<IconMinusVertical
 							size={64}
-							className="relative right-[16px] h-full text-muted-foreground transition-colors hover:cursor-col-resize hover:text-foreground"
+							className="relative right-[16px] h-full text-muted-foreground transition-colors hover:text-foreground"
 							aria-label="Right resize handle"
 						/>
 					),
@@ -114,7 +130,7 @@ export function PagePreview(props: { url: string }) {
 						className={cn("h-full")}
 						title="Page preview"
 						src={props.url}
-						onLoad={(e) => setUrl(e.currentTarget.contentWindow?.location.href ?? "")}
+						onLoad={onIframeLoad}
 						// Allow all
 						sandbox="allow-downloads allow-downloads-without-user-activation allow-forms allow-modals allow-orientation-lock allow-pointer-lock allow-popups allow-popups-to-escape-sandbox allow-presentation allow-same-origin allow-scripts allow-storage-access-by-user-activation allow-top-navigation allow-top-navigation-by-user-activation allow-top-navigation-to-custom-protocols"
 					/>
