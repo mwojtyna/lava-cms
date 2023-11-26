@@ -18,6 +18,7 @@ import {
 } from "@admin/src/components/ui/client";
 import { cn } from "@admin/src/utils/styling";
 import { EditableText } from "@admin/src/components/EditableText";
+import { ExclamationTriangleIcon } from "@heroicons/react/20/solid";
 
 const MIN_WIDTH = 250;
 
@@ -83,6 +84,17 @@ export function PagePreview(props: { url: string }) {
 							}}
 						/>
 
+						{url !== props.url && (
+							<Tooltip>
+								<TooltipTrigger>
+									<ExclamationTriangleIcon className="mt-1 w-6 cursor-help text-yellow-500" />
+								</TooltipTrigger>
+								<TooltipContent>
+									The previewed page&apos;s URL differs from the URL of the page
+									that you&apos;re editing.
+								</TooltipContent>
+							</Tooltip>
+						)}
 						<Tooltip>
 							<TooltipTrigger asChild>
 								<ActionIcon
@@ -126,7 +138,7 @@ function URL(props: UrlProps) {
 
 	return (
 		<div className="flex w-full gap-2 overflow-hidden">
-			<div className={cn("flex items-center overflow-auto", editing && "w-full")}>
+			<div className={cn("flex items-center overflow-hidden", editing && "w-full")}>
 				<p className="text-muted-foreground">
 					{protocol}://
 					<span className="text-foreground">{domain}</span>/
