@@ -11,7 +11,7 @@ export default defineConfig({
 	},
 	integrations: [
 		lavaCmsAstro({
-			url: "http://localhost:3001/admin",
+			url: "http://localhost:8080/admin",
 			token: CMS_TOKEN,
 			log: import.meta.env.DEV,
 			components: {

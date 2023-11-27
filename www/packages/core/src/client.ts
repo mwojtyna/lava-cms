@@ -26,7 +26,7 @@ export class ApiClient {
 	 * @returns Selected HTML `<head>` tag properties
 	 */
 	public async getHead() {
-		return await this.connection.getConfig.query();
+		return await this.connection.getHead.query();
 	}
 
 	/**
@@ -142,7 +142,7 @@ export class ApiClient {
 export function useLavaCms(): ApiClient {
 	if (!globalThis.client) {
 		throw new Error(
-			"Lava CMS client not initialized! Are you using the correct adapter for your framework?"
+			"Lava CMS client not initialized! Are you using the correct adapter for your framework?",
 		);
 	} else {
 		return globalThis.client;
