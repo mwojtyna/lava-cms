@@ -1,6 +1,6 @@
 import { expect } from "@playwright/test";
 import { test } from "@admin/e2e/fixtures";
-import { websiteSettingsMock } from "@admin/e2e/mocks";
+import { seoSettingsMock } from "@admin/e2e/mocks";
 import { prisma } from "@admin/prisma/client";
 
 const TEST_ID = "seo-form";
@@ -10,20 +10,18 @@ test("visual comparison", async ({ authedPage: page }) => {
 	await expect(page.base.getByTestId(TEST_ID)).toHaveScreenshot();
 });
 
-test("website config displayed", async ({ authedPage: page }) => {
+test("seo settings displayed", async ({ authedPage: page }) => {
 	await page.goto("/admin/dashboard/settings");
 
 	const element = page.base.getByTestId(TEST_ID);
 	await expect(element).toBeInViewport();
-	await expect(element.locator("input[type='text']").first()).toHaveValue(
-		websiteSettingsMock.title,
-	);
-	await expect(element.locator("textarea")).toHaveValue(websiteSettingsMock.description);
+	await expect(element.locator("input[type='text']").first()).toHaveValue(seoSettingsMock.title);
+	await expect(element.locator("textarea")).toHaveValue(seoSettingsMock.description);
 	await expect(element.locator("input[type='text']").last()).toHaveValue(
-		websiteSettingsMock.language,
+		seoSettingsMock.language,
 	);
 });
-test("website config updates", async ({ authedPage: page }) => {
+test("seo settings updates", async ({ authedPage: page }) => {
 	await page.goto("/admin/dashboard/settings");
 
 	const element = page.base.getByTestId(TEST_ID);
@@ -32,7 +30,7 @@ test("website config updates", async ({ authedPage: page }) => {
 	await element.locator("input[type='text']").last().fill("pl");
 	await element.locator("button[type='submit']").click();
 
-	await page.base.waitForResponse("**/api/private/config.getConfig**");
+	await page.base.waitForResponse("**/api/private/settings.getSeoSettings**");
 
 	const seoSettings = await prisma.settingsSeo.findFirstOrThrow();
 	expect(seoSettings.title).toBe("My new website");
@@ -45,7 +43,7 @@ test("website config updates", async ({ authedPage: page }) => {
 test("notification shows error when error occurs", async ({ authedPage: page }) => {
 	await page.goto("/admin/dashboard/settings");
 
-	await page.base.route("**/api/private/config.setConfig**", (route) =>
+	await page.base.route("**/api/private/settings.getSeoSettings**", (route) =>
 		route.fulfill({ status: 500 }),
 	);
 	const element = page.base.getByTestId(TEST_ID);

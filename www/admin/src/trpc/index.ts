@@ -34,11 +34,7 @@ export const privateAuth = t.middleware(async (opts) => {
 });
 export const publicAuth = t.middleware(async (opts) => {
 	const token = auth.readBearerToken(context.headers().get("Authorization"));
-	if (!token) {
-		throw new TRPCError({ code: "UNAUTHORIZED" });
-	}
-
-	if (token !== (await prisma.settingsConnection.findFirst())?.token) {
+	if (!token || token !== (await prisma.settingsConnection.findFirst())?.token) {
 		throw new TRPCError({ code: "UNAUTHORIZED" });
 	}
 

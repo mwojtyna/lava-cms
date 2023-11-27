@@ -4,10 +4,10 @@ import { prisma } from "@admin/prisma/client";
 import {
 	createMockUser,
 	deleteMockUser,
-	tokenMock,
+	connectionSettingsMock,
 	userMock,
 	userPasswordDecrypted,
-	websiteSettingsMock,
+	seoSettingsMock,
 } from "@admin/e2e/mocks";
 import { DEFAULT_SESSION_COOKIE_NAME } from "lucia";
 
@@ -53,15 +53,11 @@ export async function getAuthedContext(browser: Browser): Promise<BrowserContext
 
 	if (!(await prisma.settingsSeo.findFirst())) {
 		await prisma.settingsSeo.create({
-			data: {
-				...websiteSettingsMock,
-			},
+			data: seoSettingsMock,
 		});
 	}
 	await prisma.settingsConnection.create({
-		data: {
-			token: tokenMock,
-		},
+		data: connectionSettingsMock,
 	});
 
 	await prisma.page.deleteMany();

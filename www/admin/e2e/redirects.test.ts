@@ -1,13 +1,11 @@
 import { expect } from "@playwright/test";
 import { test } from "./fixtures";
 import { prisma } from "@admin/prisma/client";
-import { createMockUser, deleteMockUser, websiteSettingsMock } from "./mocks";
+import { createMockUser, deleteMockUser, seoSettingsMock } from "./mocks";
 
 async function createSettings() {
 	await prisma.settingsSeo.create({
-		data: {
-			...websiteSettingsMock,
-		},
+		data: seoSettingsMock,
 	});
 }
 

@@ -6,7 +6,7 @@ import {
 	deleteMockUser,
 	userMock,
 	userPasswordDecrypted,
-	websiteSettingsMock,
+	seoSettingsMock,
 } from "@admin/e2e/mocks";
 
 test.describe("sign up step", () => {
@@ -128,7 +128,7 @@ test.describe("setup website step", () => {
 
 	test("shows error when language code invalid", async ({ page }) => {
 		await page.goto("/admin/setup");
-		await page.locator("input[type='text']").first().type(websiteSettingsMock.title);
+		await page.locator("input[type='text']").first().type(seoSettingsMock.title);
 
 		const languageInput = page.locator("input[type='text']").nth(1);
 		await languageInput.type("invalid");
@@ -145,17 +145,17 @@ test.describe("setup website step", () => {
 		await prisma.page.deleteMany();
 
 		await page.goto("/admin/setup");
-		await page.base.locator("input[type='text']").first().type(websiteSettingsMock.title);
-		await page.base.locator("input[type='text']").nth(1).type(websiteSettingsMock.language);
+		await page.base.locator("input[type='text']").first().type(seoSettingsMock.title);
+		await page.base.locator("input[type='text']").nth(1).type(seoSettingsMock.language);
 		await page.base.locator("button[type='submit']").click();
 		await page.base.waitForURL(/dashboard/);
 
 		expect(page.base.url()).toMatch(/dashboard/);
 		await expect(page.base.locator("#content").first()).toBeInViewport();
 		await expect(prisma.settingsSeo.findFirstOrThrow()).resolves.toMatchObject({
-			title: websiteSettingsMock.title,
+			title: seoSettingsMock.title,
 			description: "",
-			language: websiteSettingsMock.language,
-		} satisfies typeof websiteSettingsMock);
+			language: seoSettingsMock.language,
+		} satisfies typeof seoSettingsMock);
 	});
 });

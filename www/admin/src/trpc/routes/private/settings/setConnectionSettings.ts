@@ -15,7 +15,7 @@ export const setConnectionSettings = privateProcedure
 				id: settings?.id ?? "",
 			},
 			data: {
-				developmentUrl: input.developmentUrl,
+				development_url: input.developmentUrl,
 			},
 		});
 	});

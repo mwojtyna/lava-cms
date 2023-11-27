@@ -58,9 +58,9 @@ model SettingsSeo {
 }
 
 model SettingsConnection {
-    id             String @id @default(cuid())
-    token          String
-    developmentUrl String
+    id              String @id @default(cuid())
+    token           String
+    development_url String
 
     @@map("settings_connection")
 }

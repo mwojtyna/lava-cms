@@ -1,6 +1,6 @@
 import { expect } from "@playwright/test";
 import { test } from "@admin/e2e/fixtures";
-import { tokenMock } from "@admin/e2e/mocks";
+import { connectionSettingsMock } from "@admin/e2e/mocks";
 
 const TEST_ID = "connection-form";
 
@@ -24,7 +24,7 @@ test("copies token into clipboard and changes into check mark", async ({
 	// Webkit throws permission error when headless
 	if (browserName === "chromium" || (browserName === "webkit" && !headless)) {
 		expect(await page.base.evaluate(async () => await navigator.clipboard.readText())).toBe(
-			tokenMock,
+			connectionSettingsMock.token,
 		);
 	}
 	expect(icon).not.toBe(await copyButton.locator("svg").innerHTML());

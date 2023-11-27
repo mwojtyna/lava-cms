@@ -1,5 +1,5 @@
 import { prisma } from "@admin/prisma/client";
-import type { AdminUser, SettingsSeo } from "@prisma/client";
+import type { AdminUser, SettingsConnection, SettingsSeo } from "@prisma/client";
 
 export const userMock: AdminUser = {
 	id: "pvelcizx9an5cufryuh85wd0",
@@ -9,13 +9,15 @@ export const userMock: AdminUser = {
 };
 export const userPasswordDecrypted = "Zaq1@wsx";
 
-export const websiteSettingsMock: Omit<SettingsSeo, "id"> = {
+export const seoSettingsMock: Omit<SettingsSeo, "id"> = {
 	title: "My website",
 	description: "My website description",
 	language: "en",
 };
-
-export const tokenMock = "Rdt9DZz45guRCk6d9S8dASl9pSIXeqyh";
+export const connectionSettingsMock: Omit<SettingsConnection, "id"> = {
+	token: "Rdt9DZz45guRCk6d9S8dASl9pSIXeqyh",
+	development_url: "http://localhost:3000",
+};
 
 export async function createMockUser() {
 	await prisma.$transaction([
