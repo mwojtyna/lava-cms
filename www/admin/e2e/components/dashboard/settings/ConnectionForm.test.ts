@@ -33,7 +33,7 @@ test("copies token into clipboard and changes into check mark", async ({
 test("regenerates token", async ({ authedPage: page }) => {
 	await page.goto("/admin/dashboard/settings/connection");
 
-	const tokenInput = page.base.getByTestId(TEST_ID).locator("input[type='text']");
+	const tokenInput = page.base.getByTestId(TEST_ID).locator("input[type='text']").first();
 	const token = await tokenInput.inputValue();
 
 	const regenerateButton = page.base.getByTestId(TEST_ID).getByRole("button").nth(1);

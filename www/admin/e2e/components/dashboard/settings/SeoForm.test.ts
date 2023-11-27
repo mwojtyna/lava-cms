@@ -43,7 +43,7 @@ test("seo settings updates", async ({ authedPage: page }) => {
 test("notification shows error when error occurs", async ({ authedPage: page }) => {
 	await page.goto("/admin/dashboard/settings");
 
-	await page.base.route("**/api/private/settings.getSeoSettings**", (route) =>
+	await page.base.route("**/api/private/settings.setSeoSettings**", (route) =>
 		route.fulfill({ status: 500 }),
 	);
 	const element = page.base.getByTestId(TEST_ID);
