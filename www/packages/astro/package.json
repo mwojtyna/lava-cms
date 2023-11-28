@@ -6,7 +6,10 @@
 	"main": "./dist/index.min.js",
 	"types": "./dist/index.d.ts",
 	"exports": {
-		".": "./dist/index.min.js",
+		".": {
+			"import": "./dist/index.min.js",
+			"types": "./dist/index.d.ts"
+		},
 		"./LavaCmsComponent.astro": "./LavaCmsComponent.astro",
 		"./LavaCmsComponents.astro": "./LavaCmsComponents.astro"
 	},
@@ -38,13 +41,13 @@
 		"camelcase": "^8.0.0"
 	},
 	"devDependencies": {
+		"@lavacms/types": "workspace:*",
 		"@rollup/plugin-terser": "^0.4.4",
 		"@rollup/plugin-typescript": "^11.1.5",
 		"astro": "^3.6.0",
 		"eslint-config-package": "workspace:*",
 		"rollup": "^4.6.0",
 		"rollup-plugin-string": "^3.0.0",
-		"typescript": "^5.3.2",
 		"vite": "^5.0.2"
 	},
 	"peerDependencies": {

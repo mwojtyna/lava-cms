@@ -1,10 +1,10 @@
-import config from "virtual:lavacms-config";
-
-window.addEventListener("message", (e) => {
-	const origin = new URL(config.url).origin;
-	if (e.origin == origin) {
-		console.log(config);
-	}
+window.addEventListener("load", () => {
+	const all = document.querySelectorAll("*, *::before, *::after");
+	all.forEach((el) => {
+		el.addEventListener("click", (e) => {
+			e.preventDefault();
+		});
+	});
 });
 
 // This is only for proper types when importing, this file gets converted to a string during build

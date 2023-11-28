@@ -6,7 +6,7 @@ module.exports = {
 		"plugin:@typescript-eslint/stylistic-type-checked",
 		"plugin:astro/recommended",
 	],
-	ignorePatterns: [".eslintrc*"],
+	ignorePatterns: [".eslintrc*", "dist"],
 	parserOptions: {
 		project: true,
 		tsConfigRootDir: __dirname,

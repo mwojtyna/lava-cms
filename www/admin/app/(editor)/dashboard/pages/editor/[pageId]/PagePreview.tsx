@@ -26,19 +26,13 @@ export function PagePreview(props: { url: string; iframeOrigin: string }) {
 	const resizableRef = React.useRef<Resizable>(null);
 	const iframeRef = React.useRef<HTMLIFrameElement>(null);
 	const [url, setUrl] = React.useState(props.url);
+	const [remountIframe, setRemountIframe] = React.useState(false);
 
 	const [width, setWidth] = useLocalStorage({
 		key: "page-preview-width",
 		defaultValue: MIN_WIDTH * 2,
 	});
 	const { ref: wrapperRef, width: maxWidth } = useElementSize();
-
-	// TODO: Figure out a way to communicate with cross-origin iframe
-	// https://stackoverflow.com/questions/25098021/securityerror-blocked-a-frame-with-origin-from-accessing-a-cross-origin-frame
-	function onIframeLoad(e: React.SyntheticEvent<HTMLIFrameElement>) {
-		e.currentTarget.contentWindow?.postMessage("hello", props.iframeOrigin);
-		console.log("sent message");
-	}
 
 	return (
 		<div ref={wrapperRef} className="h-full">
@@ -72,9 +66,11 @@ export function PagePreview(props: { url: string; iframeOrigin: string }) {
 						<Tooltip>
 							<TooltipTrigger asChild>
 								<ActionIcon
-									onClick={() =>
-										iframeRef.current?.contentWindow?.location.reload()
-									}
+									onClick={() => {
+										if (iframeRef.current) {
+											iframeRef.current.src = url;
+										}
+									}}
 									aria-label="Refresh"
 								>
 									<ArrowPathIcon className="w-5" />
@@ -87,18 +83,18 @@ export function PagePreview(props: { url: string; iframeOrigin: string }) {
 							url={url}
 							onUrlChanged={(url) => {
 								setUrl(url);
-								iframeRef.current?.contentWindow?.location.assign(url);
+								setRemountIframe(!remountIframe);
 							}}
 						/>
 
 						{url !== props.url && (
 							<Tooltip>
-								<TooltipTrigger>
+								<TooltipTrigger onClick={() => setUrl(props.url)}>
 									<ExclamationTriangleIcon className="mt-1 w-6 cursor-help text-yellow-500" />
 								</TooltipTrigger>
 								<TooltipContent>
 									The previewed page&apos;s URL differs from the URL of the page
-									that you&apos;re editing.
+									that you&apos;re editing. Click to reset.
 								</TooltipContent>
 							</Tooltip>
 						)}
@@ -117,11 +113,11 @@ export function PagePreview(props: { url: string; iframeOrigin: string }) {
 					</div>
 
 					<iframe
+						key={+remountIframe}
 						ref={iframeRef}
 						className={cn("h-full")}
 						title="Page preview"
-						src={props.url}
-						onLoad={onIframeLoad}
+						src={url}
 						// Allow all
 						sandbox="allow-downloads allow-forms allow-modals allow-orientation-lock allow-pointer-lock allow-popups allow-popups-to-escape-sandbox allow-presentation allow-same-origin allow-scripts allow-storage-access-by-user-activation allow-top-navigation allow-top-navigation-by-user-activation allow-top-navigation-to-custom-protocols"
 					/>
