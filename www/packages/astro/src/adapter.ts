@@ -2,6 +2,7 @@ import type { AstroIntegration } from "astro";
 import type { LavaCms } from "@lavacms/core";
 import { vitePluginLavaCmsComponents } from "./vite-plugin-lavacms-components";
 import { vitePluginLavaCmsConfig } from "./vite-plugin-lavacms-config";
+import script from "./script";
 
 export interface ClientConfigAstro extends LavaCms.ClientConfigBase {
 	/**
@@ -51,16 +52,10 @@ export function lavaCmsAstro(config: ClientConfigAstro): AstroIntegration {
 					`,
 				);
 
-				// TODO: Use rollup to import a js file as a string
-				const origin = new URL(config.url).origin;
-				injectScript(
-					"page",
-					`
-					window.addEventListener("message", (e) => {
-						if (e.origin == "${origin}") console.log(e);
-					});
-					`,
-				);
+				// Remove source map (last comment)
+				const sourceMapIndex = script.lastIndexOf("//");
+				const pageEditorScript = script.slice(0, sourceMapIndex);
+				injectScript("page", pageEditorScript);
 
 				updateConfig({
 					vite: {

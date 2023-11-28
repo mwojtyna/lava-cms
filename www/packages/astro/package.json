@@ -1,12 +1,12 @@
 {
 	"name": "@lavacms/astro",
-	"version": "0.1.0",
+	"version": "0.2.0",
 	"type": "module",
 	"description": "Astro adapter for Lava CMS API",
-	"main": "./dist/index.js",
+	"main": "./dist/index.min.js",
 	"types": "./dist/index.d.ts",
 	"exports": {
-		".": "./dist/index.js",
+		".": "./dist/index.min.js",
 		"./LavaCmsComponent.astro": "./LavaCmsComponent.astro",
 		"./LavaCmsComponents.astro": "./LavaCmsComponents.astro"
 	},
@@ -29,17 +29,21 @@
 	],
 	"scripts": {
 		"dev": "pnpm run build --watch",
-		"build": "tsup index.ts --format esm --dts",
+		"build": "rollup -c",
 		"lint": "tsc && eslint .",
-		"prepublishOnly": "pnpm run lint && pnpm run build --minify"
+		"prepublishOnly": "pnpm lint && pnpm build && rm -rf dist/src && rm dist/index.js"
 	},
 	"dependencies": {
 		"@lavacms/core": "workspace:*",
 		"camelcase": "^8.0.0"
 	},
 	"devDependencies": {
+		"@rollup/plugin-terser": "^0.4.4",
+		"@rollup/plugin-typescript": "^11.1.5",
 		"astro": "^3.6.0",
 		"eslint-config-package": "workspace:*",
+		"rollup": "^4.6.0",
+		"rollup-plugin-string": "^3.0.0",
 		"typescript": "^5.3.2",
 		"vite": "^5.0.2"
 	},

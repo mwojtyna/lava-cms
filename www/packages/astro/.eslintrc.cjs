@@ -4,8 +4,8 @@ module.exports = {
 		project: true,
 		tsconfigRootDir: __dirname,
 	},
-	extends: ["package",  "plugin:astro/recommended"],
-	ignorePatterns: [".eslintrc*"],
+	extends: ["package", "plugin:astro/recommended"],
+	ignorePatterns: [".eslintrc*", "rollup.config.js"],
 	overrides: [
 		{
 			// Define the configuration for `.astro` file.

@@ -36,7 +36,7 @@ export function PagePreview(props: { url: string; iframeOrigin: string }) {
 	// TODO: Figure out a way to communicate with cross-origin iframe
 	// https://stackoverflow.com/questions/25098021/securityerror-blocked-a-frame-with-origin-from-accessing-a-cross-origin-frame
 	function onIframeLoad(e: React.SyntheticEvent<HTMLIFrameElement>) {
-		e.currentTarget.contentWindow?.postMessage("hello", "http://localhost:3000");
+		e.currentTarget.contentWindow?.postMessage("hello", props.iframeOrigin);
 		console.log("sent message");
 	}
 

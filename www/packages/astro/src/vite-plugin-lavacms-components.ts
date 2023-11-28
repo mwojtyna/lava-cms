@@ -22,7 +22,7 @@ export function vitePluginLavaCmsComponents(components: ClientConfigAstro["compo
 
 					if (!resolvedId) {
 						throw new Error(
-							`Astro component could not be found for CMS component "${name}"! Does "${path}" exist?`
+							`Astro component could not be found for CMS component "${name}"! Does "${path}" exist?`,
 						);
 					} else {
 						imports.push(`import ${camelcase(name)} from "${resolvedId.id}"`);
