@@ -25,6 +25,7 @@ export async function generateMetadata({
 export default async function Editor({ params }: { params: { pageId: string } }) {
 	const page = await prisma.page.findUniqueOrThrow({ where: { id: params.pageId } });
 	const { developmentUrl } = await caller.settings.getConnectionSettings();
+	const iframeOrigin = new URL(developmentUrl).origin;
 
 	return (
 		<div className="flex h-full flex-col">
@@ -40,7 +41,7 @@ export default async function Editor({ params }: { params: { pageId: string } })
 			</nav>
 
 			<main className="grid h-full w-full flex-1 grid-cols-1 lg:grid-cols-[3fr_22.5rem]">
-				<PagePreview url={developmentUrl + page.url} />
+				<PagePreview url={developmentUrl + page.url} iframeOrigin={iframeOrigin} />
 				<Inspector page={page} />
 			</main>
 		</div>

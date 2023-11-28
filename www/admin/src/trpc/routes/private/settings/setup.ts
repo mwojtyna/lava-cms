@@ -1,5 +1,7 @@
 import { privateProcedure } from "@admin/src/trpc";
 import { caller } from "../_private";
+import { prisma } from "@admin/prisma/client";
+import { randomString } from "../auth/generateToken";
 
 export const setup = privateProcedure.mutation(async () => {
 	await caller.pages.addPage({
@@ -13,8 +15,10 @@ export const setup = privateProcedure.mutation(async () => {
 		parentId: null,
 	});
 
-	await caller.auth.generateToken();
-	await caller.settings.setConnectionSettings({
-		developmentUrl: "http://localhost:3000",
+	await prisma.settingsConnection.create({
+		data: {
+			development_url: "http://localhost:3000",
+			token: randomString(),
+		},
 	});
 });

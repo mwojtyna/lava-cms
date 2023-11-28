@@ -22,7 +22,7 @@ import { ExclamationTriangleIcon } from "@heroicons/react/20/solid";
 
 const MIN_WIDTH = 250;
 
-export function PagePreview(props: { url: string }) {
+export function PagePreview(props: { url: string; iframeOrigin: string }) {
 	const resizableRef = React.useRef<Resizable>(null);
 	const iframeRef = React.useRef<HTMLIFrameElement>(null);
 	const [url, setUrl] = React.useState(props.url);
@@ -36,19 +36,8 @@ export function PagePreview(props: { url: string }) {
 	// TODO: Figure out a way to communicate with cross-origin iframe
 	// https://stackoverflow.com/questions/25098021/securityerror-blocked-a-frame-with-origin-from-accessing-a-cross-origin-frame
 	function onIframeLoad(e: React.SyntheticEvent<HTMLIFrameElement>) {
-		const url = e.currentTarget.contentWindow?.location.href;
-		setUrl(url ?? "");
-
-		const iframeDocument = e.currentTarget.contentDocument;
-		// Only open link when shift+click
-		iframeDocument?.querySelectorAll("a").forEach((a) => {
-			a.addEventListener("click", (e) => {
-				e.preventDefault();
-				if (e.shiftKey) {
-					iframeDocument.location.assign(a.href);
-				}
-			});
-		});
+		e.currentTarget.contentWindow?.postMessage("hello", "http://localhost:3000");
+		console.log("sent message");
 	}
 
 	return (

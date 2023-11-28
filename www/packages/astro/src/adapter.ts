@@ -33,7 +33,7 @@ export function lavaCmsAstro(config: ClientConfigAstro): AstroIntegration {
 				if (astroConfig.output !== "static") {
 					injectScript(
 						"page-ssr",
-						`throw new Error("Lava CMS Astro adapter doesn't support SSR");`
+						`throw new Error("Lava CMS Astro adapter doesn't support SSR");`,
 					);
 					return;
 				}
@@ -48,7 +48,18 @@ export function lavaCmsAstro(config: ClientConfigAstro): AstroIntegration {
 						log: ${config.log ? "true" : "false"},
 					});
 					globalThis.client = client;
+					`,
+				);
+
+				// TODO: Use rollup to import a js file as a string
+				const origin = new URL(config.url).origin;
+				injectScript(
+					"page",
 					`
+					window.addEventListener("message", (e) => {
+						if (e.origin == "${origin}") console.log(e);
+					});
+					`,
 				);
 
 				updateConfig({
