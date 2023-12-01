@@ -44,7 +44,6 @@ export function useSearchParams(options?: Options): {
 				const params = new URLSearchParams(searchParams.toString());
 
 				for (const [key, value] of Object.entries(values)) {
-					console.log(key, value);
 					if (value !== undefined) {
 						if (options?.removeWhenValueIsEmptyString && value === "") {
 							params.delete(key);

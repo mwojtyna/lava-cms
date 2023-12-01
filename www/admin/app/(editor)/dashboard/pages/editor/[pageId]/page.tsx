@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { headers } from "next/headers";
 import Link from "next/link";
 import { PagePreview } from "./PagePreview";
 import { prisma } from "@admin/prisma/client";
@@ -25,12 +24,11 @@ export async function generateMetadata({
 export default async function Editor({ params }: { params: { pageId: string } }) {
 	const page = await prisma.page.findUniqueOrThrow({ where: { id: params.pageId } });
 	const { developmentUrl } = await caller.settings.getConnectionSettings();
-	const iframeOrigin = new URL(developmentUrl).origin;
 
 	return (
 		<div className="flex h-full flex-col">
 			<nav className="flex w-full items-center justify-between border-b border-border p-5 py-3">
-				<Link href={headers().get("Referer") ?? "/dashboard/pages"}>
+				<Link href={"/dashboard/pages"}>
 					<ActionIcon variant={"outline"} aria-label="Go back to dashboard">
 						<ArrowUturnLeftIcon className="w-5" />
 						Return
@@ -41,7 +39,7 @@ export default async function Editor({ params }: { params: { pageId: string } })
 			</nav>
 
 			<main className="grid h-full w-full flex-1 grid-cols-1 lg:grid-cols-[3fr_22.5rem]">
-				<PagePreview url={developmentUrl + page.url} iframeOrigin={iframeOrigin} />
+				<PagePreview baseUrl={developmentUrl} pageUrl={page.url.slice(1)} />
 				<Inspector page={page} />
 			</main>
 		</div>

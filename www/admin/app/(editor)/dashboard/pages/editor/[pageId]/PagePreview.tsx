@@ -23,7 +23,7 @@ import { useSearchParams } from "@admin/src/hooks";
 
 const MIN_WIDTH = 250;
 
-export function PagePreview(props: { url: string; iframeOrigin: string }) {
+export function PagePreview(props: { baseUrl: string; pageUrl: string }) {
 	const resizableRef = React.useRef<Resizable>(null);
 	const iframeRef = React.useRef<HTMLIFrameElement>(null);
 	const [remountIframe, setRemountIframe] = React.useState(false);
@@ -34,10 +34,10 @@ export function PagePreview(props: { url: string; iframeOrigin: string }) {
 	});
 	const { ref: wrapperRef, width: maxWidth } = useElementSize();
 
-	const [url, setUrl] = React.useState(props.url);
+	const [url, setUrl] = React.useState(props.baseUrl + props.pageUrl);
 	const { setSearchParams } = useSearchParams({
 		onChanged: (searchParams) => {
-			setUrl(props.iframeOrigin + "/" + (searchParams.get("path") ?? ""));
+			setUrl(props.baseUrl + props.pageUrl + (searchParams.get("path") ?? ""));
 			setRemountIframe((prev) => !prev);
 		},
 		removeWhenValueIsEmptyString: true,
@@ -45,9 +45,9 @@ export function PagePreview(props: { url: string; iframeOrigin: string }) {
 
 	function navigate(url: string) {
 		// Only store pathname to prevent overriding the iframe origin set in Connection Settings
-		const path = new URL(url).pathname.slice(1);
+		const path = url.slice(props.baseUrl.length);
 		setSearchParams({ path });
-		setUrl(props.iframeOrigin + "/" + path); // Set the URL right away to prevent url lag
+		setUrl(url); // Set the URL right away to prevent url lag
 		setRemountIframe((prev) => !prev);
 	}
 
@@ -98,11 +98,11 @@ export function PagePreview(props: { url: string; iframeOrigin: string }) {
 							</Tooltip>
 						</div>
 
-						<Url url={url} onUrlChanged={navigate} />
+						<Url baseUrl={props.baseUrl} url={url} onUrlChanged={navigate} />
 
-						{url !== props.url && (
+						{url !== props.baseUrl + props.pageUrl && (
 							<Tooltip>
-								<TooltipTrigger onClick={() => navigate(props.url)}>
+								<TooltipTrigger onClick={() => navigate(props.baseUrl)}>
 									<ExclamationTriangleIcon className="mt-1 w-6 cursor-help text-yellow-500" />
 								</TooltipTrigger>
 								<TooltipContent>
@@ -141,33 +141,35 @@ export function PagePreview(props: { url: string; iframeOrigin: string }) {
 }
 
 interface UrlProps {
+	baseUrl: string;
 	url: string;
 	onUrlChanged: (url: string) => void;
 }
 function Url(props: UrlProps) {
-	const split = props.url.split("://");
-	const protocol = split[0];
-	const domain = split[1]!.split("/")[0];
-	const rest = split[1]!.slice(domain!.length + 1);
+	const url = new URL(props.url);
+	const baseUrl = new URL(props.baseUrl);
+	const editableUrl = props.url.slice(props.baseUrl.length, props.url.length);
 
 	const [editing, setEditing] = React.useState(false);
 
 	return (
 		<div className="flex w-full gap-2 overflow-hidden">
 			<div className={cn("flex items-center overflow-hidden", editing && "w-full")}>
-				<p className="text-muted-foreground">
-					{protocol}://
-					<span className="text-foreground">{domain}</span>/
+				<p className="whitespace-nowrap text-muted-foreground">
+					{url.protocol}
+					{"//"}
+					<span className="text-foreground">{url.host}</span>
+					{baseUrl.pathname}
 				</p>
 				<EditableText
 					inputProps={{ className: "ml-px", "aria-label": "URL input" }}
-					value={rest}
+					value={editableUrl}
 					editing={editing}
 					setEditing={setEditing}
-					onSubmit={(rest) => props.onUrlChanged(`${protocol}://${domain}/${rest}`)}
+					onSubmit={(changed) => props.onUrlChanged(`${props.baseUrl}${changed}`)}
 					hasCustomEditButton
 				>
-					<span className="whitespace-nowrap text-muted-foreground">{rest}</span>
+					<span className="whitespace-nowrap text-muted-foreground">{editableUrl}</span>
 				</EditableText>
 			</div>
 

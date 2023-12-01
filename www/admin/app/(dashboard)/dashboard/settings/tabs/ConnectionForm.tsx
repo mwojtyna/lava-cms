@@ -36,7 +36,8 @@ const schema = z.object({
 		.string()
 		.min(1, " ")
 		.regex(/^https?:\/\/.*/, "Must include protocol")
-		.url(),
+		.url()
+		.endsWith("/", "Must end with a slash"),
 });
 type Inputs = z.infer<typeof schema>;
 

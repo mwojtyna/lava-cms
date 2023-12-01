@@ -5,7 +5,7 @@ import { prisma } from "@admin/prisma/client";
 export const setConnectionSettings = privateProcedure
 	.input(
 		z.object({
-			developmentUrl: z.string(),
+			developmentUrl: z.string().endsWith("/"),
 		}),
 	)
 	.mutation(async ({ input }) => {
