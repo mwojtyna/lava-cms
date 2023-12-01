@@ -1,18 +1,27 @@
 import * as React from "react";
-import { useRouter, useSearchParams as useNextSearchParams, usePathname } from "next/navigation";
+import {
+	useRouter,
+	useSearchParams as useNextSearchParams,
+	usePathname,
+	type ReadonlyURLSearchParams,
+} from "next/navigation";
 
-interface Callbacks {
+interface Options {
 	onChanged?: (value: URLSearchParams) => void;
+	removeWhenValueIsEmptyString?: boolean;
 }
 
-export const useSearchParams = (callbacks?: Callbacks) => {
+export function useSearchParams(options?: Options): {
+	searchParams: ReadonlyURLSearchParams;
+	setSearchParams: (values: Record<string, unknown>) => void;
+} {
 	const router = useRouter();
 	const pathname = usePathname();
 	const searchParams = useNextSearchParams()!;
 
 	React.useEffect(
 		() => {
-			callbacks?.onChanged?.(new URLSearchParams(searchParams.toString()));
+			options?.onChanged?.(new URLSearchParams(searchParams.toString()));
 		},
 		// If we include callbacks in the dependency array, it will call it infinitely
 		// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -35,15 +44,23 @@ export const useSearchParams = (callbacks?: Callbacks) => {
 				const params = new URLSearchParams(searchParams.toString());
 
 				for (const [key, value] of Object.entries(values)) {
-					if (value !== undefined) params.set(key, value as string);
-					else params.delete(key);
+					console.log(key, value);
+					if (value !== undefined) {
+						if (options?.removeWhenValueIsEmptyString && value === "") {
+							params.delete(key);
+						} else {
+							params.set(key, value as string);
+						}
+					} else {
+						params.delete(key);
+					}
 				}
 
 				return params.toString();
 			}
 		},
-		[pathname, router, searchParams],
+		[pathname, router, searchParams, options],
 	);
 
 	return { searchParams, setSearchParams };
-};
+}

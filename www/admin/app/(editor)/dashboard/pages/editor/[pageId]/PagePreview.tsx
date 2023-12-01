@@ -9,6 +9,7 @@ import {
 	PencilSquareIcon,
 } from "@heroicons/react/24/outline";
 import { IconMinusVertical } from "@tabler/icons-react";
+import { ExclamationTriangleIcon } from "@heroicons/react/20/solid";
 import { Card } from "@admin/src/components/ui/server";
 import {
 	ActionIcon,
@@ -18,14 +19,13 @@ import {
 } from "@admin/src/components/ui/client";
 import { cn } from "@admin/src/utils/styling";
 import { EditableText } from "@admin/src/components/EditableText";
-import { ExclamationTriangleIcon } from "@heroicons/react/20/solid";
+import { useSearchParams } from "@admin/src/hooks";
 
 const MIN_WIDTH = 250;
 
 export function PagePreview(props: { url: string; iframeOrigin: string }) {
 	const resizableRef = React.useRef<Resizable>(null);
 	const iframeRef = React.useRef<HTMLIFrameElement>(null);
-	const [url, setUrl] = React.useState(props.url);
 	const [remountIframe, setRemountIframe] = React.useState(false);
 
 	const [width, setWidth] = useLocalStorage({
@@ -33,6 +33,23 @@ export function PagePreview(props: { url: string; iframeOrigin: string }) {
 		defaultValue: MIN_WIDTH * 2,
 	});
 	const { ref: wrapperRef, width: maxWidth } = useElementSize();
+
+	const [url, setUrl] = React.useState(props.url);
+	const { setSearchParams } = useSearchParams({
+		onChanged: (searchParams) => {
+			setUrl(props.iframeOrigin + "/" + (searchParams.get("path") ?? ""));
+			setRemountIframe((prev) => !prev);
+		},
+		removeWhenValueIsEmptyString: true,
+	});
+
+	function navigate(url: string) {
+		// Only store pathname to prevent overriding the iframe origin set in Connection Settings
+		const path = new URL(url).pathname.slice(1);
+		setSearchParams({ path });
+		setUrl(props.iframeOrigin + "/" + path); // Set the URL right away to prevent url lag
+		setRemountIframe((prev) => !prev);
+	}
 
 	return (
 		<div ref={wrapperRef} className="h-full">
@@ -63,33 +80,29 @@ export function PagePreview(props: { url: string; iframeOrigin: string }) {
 			>
 				<Card className="m-4 mx-0 h-auto flex-1 gap-0 overflow-hidden p-0 md:m-4 md:mx-0 md:p-0">
 					<div className="flex items-center gap-2 p-2 md:p-2">
-						<Tooltip>
-							<TooltipTrigger asChild>
-								<ActionIcon
-									onClick={() => {
-										if (iframeRef.current) {
-											iframeRef.current.src = url;
-										}
-									}}
-									aria-label="Refresh"
-								>
-									<ArrowPathIcon className="w-5" />
-								</ActionIcon>
-							</TooltipTrigger>
-							<TooltipContent>Refresh</TooltipContent>
-						</Tooltip>
+						<div className="flex">
+							<Tooltip>
+								<TooltipTrigger asChild>
+									<ActionIcon
+										onClick={() => {
+											if (iframeRef.current) {
+												iframeRef.current.src = url;
+											}
+										}}
+										aria-label="Refresh"
+									>
+										<ArrowPathIcon className="w-5" />
+									</ActionIcon>
+								</TooltipTrigger>
+								<TooltipContent>Refresh</TooltipContent>
+							</Tooltip>
+						</div>
 
-						<URL
-							url={url}
-							onUrlChanged={(url) => {
-								setUrl(url);
-								setRemountIframe(!remountIframe);
-							}}
-						/>
+						<Url url={url} onUrlChanged={navigate} />
 
 						{url !== props.url && (
 							<Tooltip>
-								<TooltipTrigger onClick={() => setUrl(props.url)}>
+								<TooltipTrigger onClick={() => navigate(props.url)}>
 									<ExclamationTriangleIcon className="mt-1 w-6 cursor-help text-yellow-500" />
 								</TooltipTrigger>
 								<TooltipContent>
@@ -131,7 +144,7 @@ interface UrlProps {
 	url: string;
 	onUrlChanged: (url: string) => void;
 }
-function URL(props: UrlProps) {
+function Url(props: UrlProps) {
 	const split = props.url.split("://");
 	const protocol = split[0];
 	const domain = split[1]!.split("/")[0];
