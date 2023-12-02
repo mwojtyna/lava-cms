@@ -11,7 +11,6 @@ export const GET = async () => {
 				transformer: "superjson",
 			}),
 			{
-				status: 200,
 				headers: {
 					"Content-Type": "text/html",
 					"Cache-Control": "no-store",
@@ -19,6 +18,6 @@ export const GET = async () => {
 			},
 		);
 	} else {
-		redirect("/signin");
+		redirect("/admin/signin");
 	}
 };
