@@ -1,6 +1,8 @@
 "use client";
 
 import * as React from "react";
+import type { inferRouterOutputs } from "@trpc/server";
+import { CubeIcon } from "@heroicons/react/24/outline";
 import { useDataTable, type TableSearchParams } from "@admin/src/hooks";
 import { trpc } from "@admin/src/utils/trpc";
 import type { PrivateRouter } from "@admin/src/trpc/routes/private/_private";
@@ -12,67 +14,29 @@ import {
 	DataTableBreadcrumbs,
 	DataTablePagination,
 } from "@admin/src/components";
-import { CubeIcon } from "@heroicons/react/24/outline";
 import { AddGroupDialog } from "./dialogs/GroupDialogs";
 import { AddComponentDefDialog } from "./dialogs/component-definition";
-import type { inferRouterOutputs } from "@trpc/server";
+import type { Item } from "@admin/src/trpc/routes/private/components/getGroup";
 
-interface Props {
-	data: inferRouterOutputs<PrivateRouter>["components"]["getGroup"];
-	pagination: TableSearchParams;
-	cookie: TableCookie | null;
-}
-
-export type ComponentsTableItem = {
-	id: string;
-	name: string;
-	parentGroupId: string | null;
-	lastUpdate: Date;
-} & (
-	| {
-			isGroup: false;
-			instances: Props["data"]["group"]["component_definitions"][number]["components"];
-			fieldDefinitions: Props["data"]["group"]["component_definitions"][number]["field_definitions"];
-	  }
-	| {
-			isGroup: true;
-	  }
-);
+export type ComponentsTableItem = Item;
 export type ComponentsTableComponentDef = Omit<
 	Extract<ComponentsTableItem, { isGroup: false }>,
 	"isGroup"
 >;
 export type ComponentsTableGroup = Omit<Extract<ComponentsTableItem, { isGroup: true }>, "isGroup">;
 
+interface Props {
+	data: inferRouterOutputs<PrivateRouter>["components"]["getGroup"];
+	pagination: TableSearchParams;
+	cookie: TableCookie | null;
+}
 export function ComponentsTable(props: Props) {
 	const data = trpc.components.getGroup.useQuery(
 		props.data.breadcrumbs.length > 0 ? { id: props.data.group.id } : null,
 		{ initialData: props.data },
 	).data;
 
-	const tableData: ComponentsTableItem[] = React.useMemo(() => {
-		const groups: ComponentsTableItem[] = data.group.groups.map((group) => ({
-			id: group.id,
-			name: group.name,
-			parentGroupId: group.parent_group_id,
-			lastUpdate: group.last_update,
-			isGroup: true,
-		}));
-		const componentDefinitions: ComponentsTableItem[] = data.group.component_definitions.map(
-			(component, i) => ({
-				id: component.id,
-				name: component.name,
-				parentGroupId: component.group_id,
-				lastUpdate: component.last_update,
-				isGroup: false,
-				instances: data.group.component_definitions[i]!.components,
-				fieldDefinitions: data.group.component_definitions[i]!.field_definitions,
-			}),
-		);
-
-		return [...groups, ...componentDefinitions];
-	}, [data]);
-
+	const tableData = data.items;
 	const { table, searchElement } = useDataTable({
 		data: tableData,
 		columns,

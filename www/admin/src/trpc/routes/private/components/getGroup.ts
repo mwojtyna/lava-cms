@@ -1,10 +1,56 @@
 import { z } from "zod";
-import type { ComponentDefinitionGroup, Prisma } from "@prisma/client";
+import type {
+	ComponentDefinitionField,
+	ComponentDefinitionGroup,
+	ComponentInstance,
+} from "@prisma/client";
+import { Prisma } from "@prisma/client";
 import { prisma } from "@admin/prisma/client";
 import { privateProcedure } from "@admin/src/trpc";
 import { TRPCError } from "@trpc/server";
 import type { Breadcrumb } from "@admin/src/components/DataTable";
 import type { DefaultArgs } from "@prisma/client/runtime/library";
+
+export type Item = {
+	id: string;
+	name: string;
+	parentGroupId: string | null;
+	lastUpdate: Date;
+} & (
+	| {
+			isGroup: false;
+			instances: ComponentInstance[];
+			fieldDefinitions: ComponentDefinitionField[];
+	  }
+	| {
+			isGroup: true;
+	  }
+);
+
+const include = {
+	groups: {
+		orderBy: {
+			name: "asc",
+		},
+	},
+	component_definitions: {
+		orderBy: {
+			name: "asc",
+		},
+		include: {
+			components: true,
+			field_definitions: {
+				orderBy: {
+					order: "asc",
+				},
+			},
+		},
+	},
+} satisfies Prisma.ComponentDefinitionGroupInclude<DefaultArgs>;
+const groupWithIncludes = Prisma.validator<Prisma.ComponentDefinitionGroupDefaultArgs>()({
+	include,
+});
+type GroupWithIncludes = Prisma.ComponentDefinitionGroupGetPayload<typeof groupWithIncludes>;
 
 export const getGroup = privateProcedure
 	.input(
@@ -14,52 +60,86 @@ export const getGroup = privateProcedure
 			})
 			.nullish(),
 	)
-	.query(async ({ input }) => {
-		const include = {
-			groups: true,
-			component_definitions: {
-				include: {
-					components: true,
-					field_definitions: {
-						orderBy: {
-							order: "asc",
-						},
+	.query(
+		async ({
+			input,
+		}): Promise<{
+			group: ComponentDefinitionGroup;
+			items: Item[];
+			breadcrumbs: Breadcrumb[];
+		}> => {
+			// Get root group if no input is provided
+			if (!input) {
+				const group = await prisma.componentDefinitionGroup.findFirstOrThrow({
+					where: {
+						parent_group_id: null,
 					},
-				},
-			},
-		} satisfies Prisma.ComponentDefinitionGroupInclude<DefaultArgs>;
+					include,
+				});
+				const items = groupItems(group);
 
-		// Get root group if no input is provided
-		if (!input) {
-			const group = await prisma.componentDefinitionGroup.findFirstOrThrow({
+				return {
+					// `group` has more fields, but we only need these
+					// typescript doesn't catch this when putting `group` in the return value
+					group: {
+						id: group.id,
+						name: group.name,
+						parent_group_id: null,
+						last_update: group.last_update,
+					},
+					items,
+					breadcrumbs: [],
+				};
+			}
+
+			const group = await prisma.componentDefinitionGroup.findUnique({
 				where: {
-					parent_group_id: null,
+					id: input.id,
 				},
 				include,
 			});
+			if (!group) {
+				throw new TRPCError({ code: "NOT_FOUND" });
+			}
+
+			const items = groupItems(group);
+			const breadcrumbs = await getBreadcrumbs(group);
 
 			return {
-				group,
-				breadcrumbs: [],
+				// `group` has more fields, but we only need these
+				// typescript doesn't catch this when putting `group` in the return value
+				group: {
+					id: group.id,
+					name: group.name,
+					parent_group_id: null,
+					last_update: group.last_update,
+				},
+				items,
+				breadcrumbs,
 			};
-		}
+		},
+	);
 
-		const group = await prisma.componentDefinitionGroup.findUnique({
-			where: {
-				id: input.id,
-			},
-			include,
-		});
-		if (!group) {
-			throw new TRPCError({ code: "NOT_FOUND" });
-		}
+function groupItems(group: GroupWithIncludes): Item[] {
+	const groups: Item[] = group.groups.map((group) => ({
+		id: group.id,
+		name: group.name,
+		parentGroupId: group.parent_group_id,
+		lastUpdate: group.last_update,
+		isGroup: true,
+	}));
+	const componentDefinitions: Item[] = group.component_definitions.map((component, i) => ({
+		id: component.id,
+		name: component.name,
+		parentGroupId: component.group_id,
+		lastUpdate: component.last_update,
+		isGroup: false,
+		instances: group.component_definitions[i]!.components,
+		fieldDefinitions: group.component_definitions[i]!.field_definitions,
+	}));
 
-		const breadcrumbs = await getBreadcrumbs(group);
-		return {
-			group,
-			breadcrumbs,
-		};
-	});
+	return [...groups, ...componentDefinitions];
+}
 
 async function getBreadcrumbs(group: ComponentDefinitionGroup): Promise<Breadcrumb[]> {
 	const breadcrumbs = await prisma.$queryRaw<Breadcrumb[]>`

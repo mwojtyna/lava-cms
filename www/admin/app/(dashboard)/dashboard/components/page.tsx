@@ -7,8 +7,8 @@ export const dynamic = "force-dynamic";
 
 export type ComponentsTableSearchParams =
 	| {
-		pageIndex?: number;
-	}
+			pageIndex?: number;
+	  }
 	| undefined;
 
 export default async function Components({
@@ -16,16 +16,9 @@ export default async function Components({
 }: {
 	searchParams: ComponentsTableSearchParams;
 }) {
-	const { group: rootGroup } = await caller.components.getGroup();
-
+	const data = await caller.components.getGroup();
 	const rawCookie = cookies().get("components-table" satisfies CookieName)?.value;
 	const cookie = rawCookie ? await tableCookieSchema.parseAsync(JSON.parse(rawCookie)) : null;
 
-	return (
-		<ComponentsTable
-			data={{ group: rootGroup, breadcrumbs: [] }}
-			pagination={searchParams}
-			cookie={cookie}
-		/>
-	);
+	return <ComponentsTable data={data} pagination={searchParams} cookie={cookie} />;
 }

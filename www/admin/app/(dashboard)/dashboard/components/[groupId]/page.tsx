@@ -15,18 +15,11 @@ export default async function Group({
 	searchParams: TableSearchParams;
 }) {
 	try {
-		const { group, breadcrumbs } = await caller.components.getGroup({ id: params.groupId });
-
+		const data = await caller.components.getGroup({ id: params.groupId });
 		const rawCookie = cookies().get("components-table" satisfies CookieName)?.value;
 		const cookie = rawCookie ? await tableCookieSchema.parseAsync(JSON.parse(rawCookie)) : null;
 
-		return (
-			<ComponentsTable
-				data={{ group, breadcrumbs }}
-				pagination={searchParams}
-				cookie={cookie}
-			/>
-		);
+		return <ComponentsTable data={data} pagination={searchParams} cookie={cookie} />;
 	} catch (e) {
 		notFound();
 	}

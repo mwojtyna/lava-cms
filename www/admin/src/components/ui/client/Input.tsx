@@ -49,7 +49,9 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
 		const [passwordVisible, setPasswordVisible] = React.useState(false);
 
 		return (
-			<div className={cn("relative flex w-full items-center justify-center", className)}>
+			<div
+				className={cn("relative flex h-fit w-full items-center justify-center", className)}
+			>
 				{icon && <div className="absolute left-3 w-5">{icon}</div>}
 
 				<input

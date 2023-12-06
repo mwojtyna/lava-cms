@@ -122,7 +122,8 @@ export function DataTableBreadcrumbs<T extends Breadcrumb>({
 		<>
 			{breadcrumbs.length > 0 && (
 				<Stepper
-					className="-mb-2"
+					className="-mb-2 overflow-x-auto"
+					firstIsIcon
 					steps={[
 						<Link key={0} href={rootUrl}>
 							<ActionIcon className="-mr-2">

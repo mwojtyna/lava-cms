@@ -4,7 +4,7 @@ import * as React from "react";
 import { cn } from "@admin/src/utils/styling";
 import { Button } from "./Button";
 
-type ActionIconProps = React.ComponentPropsWithoutRef<typeof Button>;
+type ActionIconProps = Omit<React.ComponentPropsWithoutRef<typeof Button>, "icon">;
 
 const ActionIcon = React.forwardRef<HTMLButtonElement, ActionIconProps>(
 	({ className, children, variant = "ghost", ...props }, ref) => {
