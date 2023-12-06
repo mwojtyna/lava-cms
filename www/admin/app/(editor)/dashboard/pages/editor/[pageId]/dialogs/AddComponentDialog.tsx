@@ -23,7 +23,9 @@ export function AddComponentDialog(props: Props) {
 	const [groupId, setGroupId] = useState<string | null>(null);
 	const [search, setSearch] = useState("");
 
-	const { data, refetch } = trpc.components.getGroup.useQuery(groupId ? { id: groupId } : null);
+	const { data, refetch } = trpc.components.getGroup.useQuery(groupId ? { id: groupId } : null, {
+		enabled: props.open,
+	});
 	const list = data?.items;
 
 	function openGroup(id: string | null) {
