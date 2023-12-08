@@ -37,10 +37,9 @@ export function PagePreview(props: { baseUrl: string; pageUrl: string }) {
 	const [url, setUrl] = React.useState(props.baseUrl + props.pageUrl);
 	const { setSearchParams } = useSearchParams({
 		onChanged: (searchParams) => {
-			setUrl(props.baseUrl + props.pageUrl + (searchParams.get("path") ?? ""));
+			setUrl(props.baseUrl + (searchParams.get("path") ?? ""));
 			setRemountIframe((prev) => !prev);
 		},
-		removeWhenValueIsEmptyString: true,
 	});
 
 	function navigate(url: string) {
@@ -102,7 +101,9 @@ export function PagePreview(props: { baseUrl: string; pageUrl: string }) {
 
 						{url !== props.baseUrl + props.pageUrl && (
 							<Tooltip>
-								<TooltipTrigger onClick={() => navigate(props.baseUrl)}>
+								<TooltipTrigger
+									onClick={() => navigate(props.baseUrl + props.pageUrl)}
+								>
 									<ExclamationTriangleIcon className="mt-1 w-6 cursor-help text-yellow-500" />
 								</TooltipTrigger>
 								<TooltipContent>
@@ -133,6 +134,7 @@ export function PagePreview(props: { baseUrl: string; pageUrl: string }) {
 						src={url}
 						// Allow all
 						sandbox="allow-downloads allow-forms allow-modals allow-orientation-lock allow-pointer-lock allow-popups allow-popups-to-escape-sandbox allow-presentation allow-same-origin allow-scripts allow-storage-access-by-user-activation allow-top-navigation allow-top-navigation-by-user-activation allow-top-navigation-to-custom-protocols"
+						loading="lazy"
 					/>
 				</Card>
 			</Resizable>
