@@ -8,7 +8,7 @@ import { caller } from "@admin/src/trpc/routes/private/_private";
 import { redirect } from "next/navigation";
 
 export const metadata: Metadata = {
-	title: "Lava CMS - Setup",
+	title: "Setup - Lava CMS",
 };
 export const dynamic = "force-dynamic";
 

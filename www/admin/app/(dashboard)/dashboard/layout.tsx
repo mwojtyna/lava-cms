@@ -6,7 +6,7 @@ import { navMenuRoutes } from "@admin/src/data/routes/navMenu";
 import { NavMenu } from "./NavMenu";
 
 export const metadata: Metadata = {
-	title: "Lava CMS - Admin panel",
+	title: "Admin panel - Lava CMS",
 };
 
 export const dynamic = "force-dynamic";

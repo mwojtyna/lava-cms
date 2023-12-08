@@ -5,7 +5,7 @@ import { caller } from "@admin/src/trpc/routes/private/_private";
 import { getCurrentUser } from "@admin/src/auth";
 
 export const metadata: Metadata = {
-	title: "Lava CMS - Sign in",
+	title: "Sign in - Lava CMS",
 };
 
 export default async function SignIn() {
