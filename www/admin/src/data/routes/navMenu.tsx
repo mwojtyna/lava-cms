@@ -43,7 +43,7 @@ export const navMenuRoutes: NavMenuRoute[] = [
 	{
 		label: "Settings",
 		path: "/dashboard/settings",
-		description: "Manage your website settings.",
+		description: "Manage your website and CMS settings.",
 		icon: <Cog6ToothIcon className="w-5" />,
 		hasChildren: true,
 	},

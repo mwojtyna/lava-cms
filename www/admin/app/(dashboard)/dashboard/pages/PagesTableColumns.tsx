@@ -11,7 +11,7 @@ import {
 	PencilSquareIcon,
 	DocumentDuplicateIcon,
 } from "@heroicons/react/24/outline";
-import { type ColumnDef } from "@tanstack/react-table";
+import { sortingFns, type ColumnDef } from "@tanstack/react-table";
 import {
 	ActionIcon,
 	Button,
@@ -58,29 +58,28 @@ export const columns: ColumnDef<Page>[] = [
 	},
 	{
 		accessorKey: "name",
+		sortingFn: sortingFns.alphanumeric,
 		header: ({ column }) => <DataTableSortableHeader column={column} name="Name" />,
-		cell: ({ row }) => {
-			return (
-				<div className="flex items-center gap-3">
-					{row.original.is_group ? (
-						<FolderIcon className="w-5 text-muted-foreground" />
-					) : (
-						<DocumentIcon className="w-5 text-muted-foreground" />
-					)}
-					<Button variant={"link"} className="font-normal" asChild>
-						<Link
-							href={
-								row.original.is_group
-									? `/dashboard/pages/${row.original.id}`
-									: `/dashboard/pages/editor/${row.original.id}`
-							}
-						>
-							{row.original.name}
-						</Link>
-					</Button>
-				</div>
-			);
-		},
+		cell: ({ row }) => (
+			<div className="flex items-center gap-3">
+				{row.original.is_group ? (
+					<FolderIcon className="w-5 text-muted-foreground" />
+				) : (
+					<DocumentIcon className="w-5 text-muted-foreground" />
+				)}
+				<Button variant={"link"} className="font-normal" asChild>
+					<Link
+						href={
+							row.original.is_group
+								? `/dashboard/pages/${row.original.id}`
+								: `/dashboard/pages/editor/${row.original.id}`
+						}
+					>
+						{row.original.name}
+					</Link>
+				</Button>
+			</div>
+		),
 	},
 	{
 		accessorKey: "url",
@@ -97,7 +96,7 @@ export const columns: ColumnDef<Page>[] = [
 	{
 		accessorKey: "last_updated",
 		header: ({ column }) => <DataTableSortableHeader column={column} name="Last Updated" />,
-		sortingFn: (a, b) => b.original.last_update.getTime() - a.original.last_update.getTime(),
+		sortingFn: sortingFns.datetime,
 		accessorFn: (page) =>
 			new Intl.DateTimeFormat("en-GB", dateFormatOptions).format(page.last_update),
 	},

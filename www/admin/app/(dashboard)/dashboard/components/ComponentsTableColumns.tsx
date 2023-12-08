@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import Link from "next/link";
-import { type ColumnDef } from "@tanstack/react-table";
+import { sortingFns, type ColumnDef } from "@tanstack/react-table";
 import { EllipsisHorizontalIcon } from "@heroicons/react/20/solid";
 import {
 	CubeIcon,
@@ -55,9 +55,10 @@ export const columns: ColumnDef<ComponentsTableItem>[] = [
 		size: 0,
 	},
 	{
-		header: ({ column }) => <DataTableSortableHeader column={column} name="Name" />,
 		accessorKey: "name",
+		sortingFn: sortingFns.alphanumeric,
 		size: 500,
+		header: ({ column }) => <DataTableSortableHeader column={column} name="Name" />,
 		cell: ({ row }) => (
 			<div className="flex items-center gap-3">
 				{row.original.isGroup ? (
@@ -104,7 +105,7 @@ export const columns: ColumnDef<ComponentsTableItem>[] = [
 	{
 		accessorKey: "last_updated",
 		header: ({ column }) => <DataTableSortableHeader column={column} name="Last Updated" />,
-		sortingFn: (a, b) => b.original.lastUpdate.getTime() - a.original.lastUpdate.getTime(),
+		sortingFn: sortingFns.datetime,
 		accessorFn: (item) =>
 			new Intl.DateTimeFormat("en-GB", dateFormatOptions).format(item.lastUpdate),
 	},
