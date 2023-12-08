@@ -1,3 +1,5 @@
+"use client";
+
 import { useState } from "react";
 import { ChevronRightIcon, CubeIcon, FolderIcon, HomeIcon } from "@heroicons/react/24/outline";
 import {
@@ -11,13 +13,14 @@ import {
 	Separator,
 } from "@admin/src/components/ui/client";
 import { trpc } from "@admin/src/utils/trpc";
-import { Loader, Stepper, TypographyMuted } from "@admin/src/components/ui/server";
+import { Skeleton, Stepper, TypographyMuted } from "@admin/src/components/ui/server";
 import type { ComponentsTableItem } from "@admin/app/(dashboard)/dashboard/components/ComponentsTable";
 import { cn } from "@admin/src/utils/styling";
 
 interface Props {
 	open: boolean;
 	setOpen: (value: boolean) => void;
+	onSubmit: (id: string) => void;
 }
 export function AddComponentDialog(props: Props) {
 	const [groupId, setGroupId] = useState<string | null>(null);
@@ -42,7 +45,7 @@ export function AddComponentDialog(props: Props) {
 
 				<Input
 					type="search"
-					placeholder="Search..."
+					placeholder="Search this group..."
 					value={search}
 					onChange={(e) => setSearch(e.currentTarget.value)}
 				/>
@@ -93,9 +96,7 @@ export function AddComponentDialog(props: Props) {
 										key={i}
 										item={item}
 										groupClick={() => openGroup(item.id)}
-										componentClick={() => {
-											console.log("Add component", item.name);
-										}}
+										componentClick={() => props.onSubmit(item.id)}
 										isLast={i === list.length - 1}
 									/>
 								);
@@ -105,10 +106,11 @@ export function AddComponentDialog(props: Props) {
 						<TypographyMuted>No results.</TypographyMuted>
 					)
 				) : (
-					<p>
-						<Loader className="mr-2" />
-						Loading...
-					</p>
+					<div className="space-y-2">
+						<Skeleton className="h-[48.25px] w-full" />
+						<Skeleton className="h-[48.25px] w-full" />
+						<Skeleton className="h-[48.25px] w-full" />
+					</div>
 				)}
 			</DialogContent>
 		</Dialog>
