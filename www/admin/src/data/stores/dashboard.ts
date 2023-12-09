@@ -5,30 +5,21 @@ import "client-only";
 
 interface MenuState {
 	isOpen: boolean;
-	set: (value: boolean) => void;
+	setOpen: (value: boolean) => void;
 }
-export const useMenuStore = create<MenuState>((set) => ({
+export const useNavMenu = create<MenuState>((set) => ({
 	isOpen: false,
-	set: (value) => set(() => ({ isOpen: value })),
+	setOpen: (value) => set(() => ({ isOpen: value })),
 }));
 
 interface ColorThemeState {
 	colorTheme?: ColorTheme;
-	set: (theme: ColorTheme) => void;
+	setColorTheme: (theme: ColorTheme) => void;
 }
-export const useColorThemeStore = create<ColorThemeState>((set) => ({
+export const useColorTheme = create<ColorThemeState>((set) => ({
 	colorTheme: undefined,
-	set: (theme) => {
+	setColorTheme: (theme) => {
 		set({ colorTheme: theme });
 		setCookie("color-theme" satisfies CookieName, theme, permanentCookieOptions);
 	},
-}));
-
-interface ComponentDefEditDialogStore {
-	open: boolean;
-	id: string;
-}
-export const useComponentDefEditDialogStore = create<ComponentDefEditDialogStore>(() => ({
-	open: false,
-	id: "",
 }));

@@ -28,7 +28,7 @@ import { EditGroupDialog } from "./dialogs/GroupDialogs";
 import { EditComponentDefDialog } from "./dialogs/component-definition";
 import { BulkDeleteDialog, BulkMoveDialog } from "./dialogs/BulkDialogs";
 import { DuplicateComponentDefDialog } from "./dialogs/component-definition";
-import { useComponentDefEditDialogStore } from "@admin/src/data/stores/dashboard";
+import { useComponentDefEditDialog } from "@admin/src/data/stores/componentDefinitions";
 
 export const columns: ColumnDef<ComponentsTableItem>[] = [
 	{
@@ -78,7 +78,7 @@ export const columns: ColumnDef<ComponentsTableItem>[] = [
 						variant={"link"}
 						className="font-normal"
 						onClick={() =>
-							useComponentDefEditDialogStore.setState({
+							useComponentDefEditDialog.setState({
 								id: row.original.id,
 								open: true,
 							})
@@ -131,14 +131,13 @@ function ComponentsTableActions({ item }: { item: ComponentsTableItem }) {
 	const [openDelete, setOpenDelete] = React.useState(false);
 
 	React.useEffect(() => {
-		const unsub = useComponentDefEditDialogStore.subscribe((state) => {
+		const unsub = useComponentDefEditDialog.subscribe((state) => {
 			if (state.id === item.id) {
 				setOpenEditDef(state.open);
 			}
 		});
 		return unsub;
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
+	}, [item.id]);
 
 	return (
 		<>

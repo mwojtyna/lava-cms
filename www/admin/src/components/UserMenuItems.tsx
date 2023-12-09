@@ -2,23 +2,17 @@
 
 import { ArrowLeftOnRectangleIcon, MoonIcon, SunIcon } from "@heroicons/react/24/outline";
 import { DropdownMenuItem } from "@admin/src/components/ui/client";
-import { useColorThemeStore } from "@admin/src/data/stores/dashboard";
+import { useColorTheme } from "@admin/src/data/stores/dashboard";
 import { trpc } from "@admin/src/utils/trpc";
 import { useRouter } from "next/navigation";
 import { Loader } from "@admin/src/components/ui/server";
 
 export const ThemeSwitchItem = () => {
-	const store = useColorThemeStore();
+	const { colorTheme, setColorTheme } = useColorTheme();
 
 	return (
-		<DropdownMenuItem
-			onSelect={() => store.set(store.colorTheme === "dark" ? "light" : "dark")}
-		>
-			{store.colorTheme === "dark" ? (
-				<MoonIcon className="w-4" />
-			) : (
-				<SunIcon className="w-4" />
-			)}
+		<DropdownMenuItem onSelect={() => setColorTheme(colorTheme === "dark" ? "light" : "dark")}>
+			{colorTheme === "dark" ? <MoonIcon className="w-4" /> : <SunIcon className="w-4" />}
 			<span>Switch theme</span>
 		</DropdownMenuItem>
 	);

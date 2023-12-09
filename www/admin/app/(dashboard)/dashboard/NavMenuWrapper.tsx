@@ -1,13 +1,13 @@
 "use client";
 
 import { Sheet } from "@admin/src/components/ui/client";
-import { useMenuStore } from "@admin/src/data/stores/dashboard";
+import { useNavMenu } from "@admin/src/data/stores/dashboard";
 
 export function NavMenuWrapper({ children }: { children: React.ReactNode }) {
-	const menu = useMenuStore();
+	const { isOpen, setOpen } = useNavMenu();
 
 	return (
-		<Sheet open={menu.isOpen} onOpenChange={menu.set}>
+		<Sheet open={isOpen} onOpenChange={setOpen}>
 			{children}
 		</Sheet>
 	);

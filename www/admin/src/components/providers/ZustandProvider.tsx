@@ -2,7 +2,7 @@
 
 import { useRef } from "react";
 import type { ColorTheme } from "@admin/src/utils/cookies";
-import { useColorThemeStore } from "@admin/src/data/stores/dashboard";
+import { useColorTheme } from "@admin/src/data/stores/dashboard";
 
 interface Props {
 	colorTheme: ColorTheme | undefined;
@@ -12,9 +12,9 @@ export function ZustandProvider(props: Props) {
 	const initialized = useRef(false);
 
 	if (!initialized.current) {
-		useColorThemeStore.setState({ colorTheme: props.colorTheme });
+		useColorTheme.setState({ colorTheme: props.colorTheme });
 		initialized.current = true;
 	}
 
-	return <>{props.children}</>;
+	return props.children;
 }

@@ -97,22 +97,38 @@ test("when changing the preferred system theme, the website theme is updated", a
 	expect(await getColorScheme(page)).toBe("dark");
 	expect(await getCookie(context)).toBe("dark");
 });
-test("when cookie disagrees with preferred theme, cookie takes precedence", async ({
-	page,
-	context,
-}) => {
-	await context.addCookies([
-		{
-			name: "color-theme" satisfies CookieName,
-			value: "dark",
-			sameSite: "Lax",
-			domain: "localhost",
-			path: "/",
-		},
-	]);
-	await page.emulateMedia({ colorScheme: "light" });
-	await page.goto("/admin/setup");
 
-	expect(await getColorScheme(page)).toBe("dark");
-	expect(await getCookie(context)).toBe("dark");
+test.describe("when cookie disagrees with preferred theme, cookie takes precedence", () => {
+	test("cookie: dark, system: light", async ({ page, context }) => {
+		await context.addCookies([
+			{
+				name: "color-theme" satisfies CookieName,
+				value: "dark",
+				sameSite: "Lax",
+				domain: "localhost",
+				path: "/admin",
+			},
+		]);
+		await page.emulateMedia({ colorScheme: "light" });
+		await page.goto("/admin/setup");
+
+		expect(await getColorScheme(page)).toBe("dark");
+		expect(await getCookie(context)).toBe("dark");
+	});
+	test("cookie: light, system: dark", async ({ page, context }) => {
+		await context.addCookies([
+			{
+				name: "color-theme" satisfies CookieName,
+				value: "light",
+				sameSite: "Lax",
+				domain: "localhost",
+				path: "/admin",
+			},
+		]);
+		await page.emulateMedia({ colorScheme: "light" });
+		await page.goto("/admin/setup");
+
+		expect(await getColorScheme(page)).toBe("light");
+		expect(await getCookie(context)).toBe("light");
+	});
 });

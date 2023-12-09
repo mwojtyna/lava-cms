@@ -6,7 +6,7 @@ import { Button, Tooltip, TooltipContent, TooltipTrigger } from "@admin/src/comp
 import { cn } from "@admin/src/utils/styling";
 import type { NavMenuRoute } from "@admin/src/data/routes/navMenu";
 import { usePathname } from "next/navigation";
-import { useMenuStore } from "@admin/src/data/stores/dashboard";
+import { useNavMenu } from "@admin/src/data/stores/dashboard";
 import { getRoute } from "@admin/src/data/routes/shared";
 
 interface Props {
@@ -16,7 +16,7 @@ interface Props {
 }
 export function NavMenuItem({ routes, route, small }: Props) {
 	const matchedRoute = getRoute(usePathname(), routes);
-	const menu = useMenuStore();
+	const { setOpen } = useNavMenu();
 
 	return (
 		<Tooltip>
@@ -24,7 +24,7 @@ export function NavMenuItem({ routes, route, small }: Props) {
 				<Link href={route.path} tabIndex={-1}>
 					<Button
 						// Wait for the button to highlight before navigating (better UX)
-						onClick={() => setTimeout(() => menu.set(false))}
+						onClick={() => setTimeout(() => setOpen(false))}
 						className={cn(
 							"w-full justify-start",
 							small && "p-3",
