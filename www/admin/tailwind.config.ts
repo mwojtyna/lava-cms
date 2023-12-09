@@ -1,5 +1,6 @@
 import type { Config } from "tailwindcss";
 import { fontFamily } from "tailwindcss/defaultTheme";
+import colors from "tailwindcss/colors";
 import tailwindAnimate from "tailwindcss-animate";
 
 const config: Config = {
@@ -48,6 +49,7 @@ const config: Config = {
 					DEFAULT: "hsl(var(--card))",
 					foreground: "hsl(var(--card-foreground))",
 				},
+				brand: colors.orange[500],
 			},
 			borderRadius: {
 				lg: `var(--radius)`,
