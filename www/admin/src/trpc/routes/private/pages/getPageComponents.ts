@@ -23,6 +23,9 @@ export const getPageComponents = privateProcedure
 							},
 						},
 					},
+					orderBy: {
+						order: "asc",
+					},
 				},
 			},
 		});
