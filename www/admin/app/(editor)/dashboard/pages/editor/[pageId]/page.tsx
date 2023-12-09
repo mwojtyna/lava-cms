@@ -40,6 +40,8 @@ export default async function Editor({
 		);
 	}
 
+	const components = await caller.pages.getPageComponents({ id: params.pageId });
+
 	return (
 		<div className="flex h-full flex-col">
 			<nav className="flex w-full items-center justify-between border-b border-border p-5 py-3">
@@ -55,7 +57,7 @@ export default async function Editor({
 
 			<main className="grid h-full w-full flex-1 grid-cols-1 lg:grid-cols-[3fr_22.5rem]">
 				<PagePreview baseUrl={baseUrl} pageUrl={pageUrl} />
-				<Inspector page={page} />
+				<Inspector page={page} components={components} />
 			</main>
 		</div>
 	);

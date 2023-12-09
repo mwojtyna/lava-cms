@@ -7,12 +7,14 @@ import { getGroupContents } from "./getGroupContents";
 import { getGroup } from "./getGroup";
 import { getAllGroups } from "./getAllGroups";
 import { checkConflict } from "./checkConflict";
+import { getPageComponents } from "./getPageComponents";
 
 export const pagesRouter = router({
 	addPage,
 	checkConflict,
 	deletePage,
 	editPage,
+	getPageComponents,
 	getAllGroups,
 	getGroup,
 	getGroupContents,

@@ -306,6 +306,7 @@ function FieldDef(props: FieldDefProps) {
 			)}
 			data-test-diff={props.dialogType === "edit" ? lastDiff : undefined}
 		>
+			{/* Grip, name, type */}
 			<div className="flex items-center gap-3">
 				<div {...attributes} {...listeners}>
 					<IconGripVertical
@@ -374,12 +375,14 @@ function FieldDef(props: FieldDefProps) {
 				)}
 			</div>
 
+			{/* Icons */}
 			<div
 				className={cn(
 					"ml-auto flex items-center gap-2 text-sm transition-opacity",
 					!isEditing && props.anyEditing && "pointer-events-none opacity-0",
 				)}
 			>
+				{/* Display undo arrow when edited or deleted a field */}
 				{props.dialogType === "edit" &&
 					!isEditing &&
 					(lastDiff === "edited" || lastDiff === "deleted") && (
@@ -399,13 +402,11 @@ function FieldDef(props: FieldDefProps) {
 						</ActionIcon>
 					)}
 
+				{/* Display normal or edit state */}
 				{lastDiff !== "deleted" &&
 					(isEditing ? (
 						<>
-							<ActionIcon
-								variant={"simple"}
-								onClick={() => form.handleSubmit(onSubmit)()}
-							>
+							<ActionIcon variant={"simple"} onClick={form.handleSubmit(onSubmit)}>
 								<ArrowRightIcon className="w-5" data-testid="save-field-btn" />
 							</ActionIcon>
 
