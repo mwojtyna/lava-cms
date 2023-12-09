@@ -39,7 +39,7 @@ const include = {
 			name: "asc",
 		},
 		include: {
-			components: true,
+			instances: true,
 			field_definitions: {
 				orderBy: {
 					order: "asc",
@@ -139,7 +139,7 @@ function groupItems(group: GroupWithIncludes): Item[] {
 			parentGroupId: component.group_id,
 			lastUpdate: component.last_update,
 			isGroup: false,
-			instances: group.component_definitions[i]!.components,
+			instances: group.component_definitions[i]!.instances,
 			fieldDefinitions: group.component_definitions[i]!.field_definitions,
 		}));
 
