@@ -65,7 +65,7 @@ export default async function Editor({
 				</div>
 			</nav>
 
-			<main className="grid h-full w-full flex-1 grid-cols-1 lg:grid-cols-[3fr_22.5rem]">
+			<main className="grid h-full w-full flex-1 grid-cols-1 overflow-auto lg:grid-cols-[3fr_22.5rem]">
 				<PagePreview baseUrl={baseUrl} pageUrl={pageUrl} />
 				<Inspector page={page} components={components} />
 			</main>
