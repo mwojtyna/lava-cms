@@ -1,8 +1,12 @@
+import type { Metadata } from "next";
 import { cookies } from "next/headers";
 import { type CookieName, tableCookieSchema } from "@admin/src/utils/cookies";
 import { ComponentsTable } from "./ComponentsTable";
 import { caller } from "@admin/src/trpc/routes/private/_private";
 
+export const metadata: Metadata = {
+	title: "Components - Lava CMS",
+};
 export const dynamic = "force-dynamic";
 
 export type ComponentsTableSearchParams =

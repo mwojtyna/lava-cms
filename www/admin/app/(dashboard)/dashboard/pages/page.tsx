@@ -1,9 +1,13 @@
+import type { Metadata } from "next";
 import { cookies } from "next/headers";
 import { caller } from "@admin/src/trpc/routes/private/_private";
 import { PagesTable } from "./PagesTable";
 import { type CookieName, tableCookieSchema } from "@admin/src/utils/cookies";
 import type { TableSearchParams } from "@admin/src/hooks";
 
+export const metadata: Metadata = {
+	title: "Pages - Lava CMS",
+};
 export const dynamic = "force-dynamic";
 
 export default async function Pages({ searchParams }: { searchParams: TableSearchParams }) {
