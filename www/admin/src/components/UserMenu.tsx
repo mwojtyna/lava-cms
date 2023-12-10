@@ -15,7 +15,6 @@ import { getCurrentUser } from "@admin/src/auth";
 interface Props {
 	className?: string;
 	small?: boolean;
-	responsive?: boolean;
 }
 export async function UserMenu(props: Props) {
 	const user = await getCurrentUser();
@@ -36,13 +35,7 @@ export async function UserMenu(props: Props) {
 					</AvatarFallback>
 				</Avatar>
 
-				<div
-					className={cn(
-						"text-left",
-						props.small && "hidden",
-						props.responsive && "max-md:hidden",
-					)}
-				>
+				<div className={cn("text-left", props.small && "hidden")}>
 					<p>
 						{user?.name} {user?.lastName}
 					</p>

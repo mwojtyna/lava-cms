@@ -1,13 +1,13 @@
 import type { Metadata } from "next";
+import { RedirectType, redirect } from "next/navigation";
 import Link from "next/link";
-import { PagePreview } from "./PagePreview";
 import { prisma } from "@admin/prisma/client";
-import { Inspector } from "./Inspector";
 import { UserMenu } from "@admin/src/components/UserMenu";
 import { ActionIcon, Button } from "@admin/src/components/ui/client";
 import { ArrowDownTrayIcon, ArrowUturnLeftIcon } from "@heroicons/react/24/outline";
 import { caller } from "@admin/src/trpc/routes/private/_private";
-import { RedirectType, redirect } from "next/navigation";
+import { PagePreview } from "./PagePreview";
+import { Inspector } from "./Inspector";
 
 export const dynamic = "force-dynamic";
 
@@ -44,7 +44,7 @@ export default async function Editor({
 
 	return (
 		<div className="flex h-full flex-col">
-			<nav className="relative flex w-full items-center justify-between border-b border-border p-5 py-3">
+			<nav className="flex w-full items-center justify-between border-b border-border p-5 py-3">
 				<Link href={"/dashboard/pages"}>
 					<ActionIcon variant={"outline"} aria-label="Go back to dashboard">
 						<ArrowUturnLeftIcon className="w-5" />
@@ -52,9 +52,8 @@ export default async function Editor({
 					</ActionIcon>
 				</Link>
 
-				<UserMenu className="absolute left-1/2 -translate-x-1/2" responsive />
-
-				<div className="flex gap-4">
+				<div className="flex items-center gap-4">
+					<UserMenu small />
 					<Button
 						className="flex-row-reverse"
 						icon={<ArrowDownTrayIcon className="w-5" />}
