@@ -5,6 +5,7 @@ import type { Page } from "@prisma/client";
 import { Button } from "@admin/src/components/ui/client";
 import { Stepper, TypographyH1, TypographyMuted } from "@admin/src/components/ui/server";
 import { ChevronRightIcon, CubeIcon, DocumentIcon, PlusIcon } from "@heroicons/react/24/outline";
+import { trpc } from "@admin/src/utils/trpc";
 import { cn } from "@admin/src/utils/styling";
 import { AddComponentDialog } from "./dialogs/AddComponentDialog";
 import { Components } from "./Components";
@@ -28,8 +29,13 @@ export function Inspector(props: Props) {
 	const [openAdd, setOpenAdd] = useState(false);
 	const [steps, setSteps] = useState<Step[]>([{ name: "components" }]);
 
+	const { data: components } = trpc.pages.getPageComponents.useQuery(
+		{ id: props.page.id },
+		{ initialData: props.components },
+	);
+
 	function getComponent(id: string) {
-		return props.components.find((comp) => comp.id === id)!;
+		return components.find((comp) => comp.id === id)!;
 	}
 	function displayStep() {
 		const currentStep = steps.at(-1)!;
@@ -38,8 +44,7 @@ export function Inspector(props: Props) {
 				return (
 					<>
 						<Components
-							pageId={props.page.id}
-							components={props.components}
+							components={components}
 							onComponentClicked={(id) =>
 								setSteps((prev) => [
 									...prev,
