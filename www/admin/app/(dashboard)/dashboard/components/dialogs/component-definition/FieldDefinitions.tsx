@@ -1,14 +1,4 @@
-import * as React from "react";
-import { useForm, type SubmitHandler } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { IconGripVertical } from "@tabler/icons-react";
-import {
-	ArrowRightIcon,
-	ArrowUturnLeftIcon,
-	PencilSquareIcon,
-	TrashIcon,
-	XMarkIcon,
-} from "@heroicons/react/24/outline";
+import type { ComponentDefinitionField } from "@prisma/client";
 import {
 	DndContext,
 	closestCenter,
@@ -18,6 +8,7 @@ import {
 	useSensors,
 	type DragEndEvent,
 } from "@dnd-kit/core";
+import { restrictToParentElement } from "@dnd-kit/modifiers";
 import {
 	arrayMove,
 	SortableContext,
@@ -26,8 +17,17 @@ import {
 	useSortable,
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { restrictToParentElement } from "@dnd-kit/modifiers";
-import type { ComponentDefinitionField } from "@prisma/client";
+import {
+	ArrowRightIcon,
+	ArrowUturnLeftIcon,
+	PencilSquareIcon,
+	TrashIcon,
+	XMarkIcon,
+} from "@heroicons/react/24/outline";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { IconGripVertical } from "@tabler/icons-react";
+import * as React from "react";
+import { useForm, type SubmitHandler } from "react-hook-form";
 import {
 	FormField,
 	FormItem,

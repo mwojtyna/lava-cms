@@ -1,15 +1,15 @@
-import * as context from "next/headers";
 import { TRPCError, initTRPC } from "@trpc/server";
-import SuperJSON from "superjson";
-import { auth } from "@admin/src/auth";
+import * as context from "next/headers";
+import superjson from "superjson";
 import { prisma } from "@admin/prisma/client";
+import { auth } from "@admin/src/auth";
 import { env } from "../env/server.mjs";
 
 export interface Meta {
 	noAuth: boolean;
 }
 
-const t = initTRPC.meta<Meta>().create({ transformer: SuperJSON });
+const t = initTRPC.meta<Meta>().create({ transformer: superjson });
 
 export const router = t.router;
 

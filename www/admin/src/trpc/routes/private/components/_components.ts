@@ -1,13 +1,13 @@
 import { router } from "@admin/src/trpc";
+import { addComponent } from "./addComponent";
 import { addComponentDefinition } from "./addComponentDefinition";
-import { editComponentDefinition } from "./editComponentDefinition";
-import { deleteComponentDefinition } from "./deleteComponentDefinition";
 import { addGroup } from "./addGroup";
-import { editGroup } from "./editGroup";
+import { deleteComponentDefinition } from "./deleteComponentDefinition";
 import { deleteGroup } from "./deleteGroup";
+import { editComponentDefinition } from "./editComponentDefinition";
+import { editGroup } from "./editGroup";
 import { getAllGroups } from "./getAllGroups";
 import { getGroup } from "./getGroup";
-import { addComponent } from "./addComponent";
 
 export const componentsRouter = router({
 	addComponentDefinition,

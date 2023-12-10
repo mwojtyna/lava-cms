@@ -1,10 +1,9 @@
 "use client";
 
-import * as React from "react";
 import type { Page } from "@prisma/client";
+import type { inferRouterOutputs } from "@trpc/server";
 import { DocumentIcon } from "@heroicons/react/24/outline";
-import { trpc } from "@admin/src/utils/trpc";
-import { AddDialog } from "./dialogs";
+import * as React from "react";
 import {
 	DataTable,
 	DataTableBreadcrumbs,
@@ -12,10 +11,11 @@ import {
 	DataTableActions,
 } from "@admin/src/components";
 import { useDataTable, type TableSearchParams } from "@admin/src/hooks";
-import { type TableCookie } from "@admin/src/utils/cookies";
-import { columns } from "./PagesTableColumns";
 import type { PrivateRouter } from "@admin/src/trpc/routes/private/_private";
-import type { inferRouterOutputs } from "@trpc/server";
+import { type TableCookie } from "@admin/src/utils/cookies";
+import { trpc } from "@admin/src/utils/trpc";
+import { AddDialog } from "./dialogs";
+import { columns } from "./PagesTableColumns";
 
 interface Props {
 	group: Page;

@@ -1,8 +1,8 @@
+import type { UseFormReturn } from "react-hook-form";
+import { FormProvider } from "@admin/src/components/ui/client";
+import { TypographyH1 } from "@admin/src/components/ui/server";
 import { cn } from "@admin/src/utils/styling";
 import { ThemeSwitch } from "./ThemeSwitch";
-import { TypographyH1 } from "@admin/src/components/ui/server";
-import { FormProvider } from "@admin/src/components/ui/client";
-import type { UseFormReturn } from "react-hook-form";
 
 interface Props extends React.ComponentPropsWithoutRef<"form"> {
 	/** Contents of a `TypographyH1` element */

@@ -1,10 +1,10 @@
-import * as React from "react";
 import {
 	useRouter,
 	useSearchParams as useNextSearchParams,
 	usePathname,
 	type ReadonlyURLSearchParams,
 } from "next/navigation";
+import * as React from "react";
 
 interface Options {
 	onChanged?: (value: URLSearchParams) => void;

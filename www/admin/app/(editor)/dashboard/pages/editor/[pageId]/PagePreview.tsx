@@ -1,25 +1,25 @@
 "use client";
 
-import * as React from "react";
-import { Resizable } from "re-resizable";
-import { useElementSize, useLocalStorage } from "@mantine/hooks";
+import { ExclamationTriangleIcon } from "@heroicons/react/20/solid";
 import {
 	ArrowPathIcon,
 	ArrowTopRightOnSquareIcon,
 	PencilSquareIcon,
 } from "@heroicons/react/24/outline";
+import { useElementSize, useLocalStorage } from "@mantine/hooks";
 import { IconMinusVertical } from "@tabler/icons-react";
-import { ExclamationTriangleIcon } from "@heroicons/react/20/solid";
-import { Card } from "@admin/src/components/ui/server";
+import { Resizable } from "re-resizable";
+import * as React from "react";
+import { EditableText } from "@admin/src/components/EditableText";
 import {
 	ActionIcon,
 	Tooltip,
 	TooltipContent,
 	TooltipTrigger,
 } from "@admin/src/components/ui/client";
-import { cn } from "@admin/src/utils/styling";
-import { EditableText } from "@admin/src/components/EditableText";
+import { Card } from "@admin/src/components/ui/server";
 import { useSearchParams } from "@admin/src/hooks";
+import { cn } from "@admin/src/utils/styling";
 
 const MIN_WIDTH = 250;
 

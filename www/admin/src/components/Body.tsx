@@ -1,7 +1,7 @@
 "use client";
 
-import * as React from "react";
 import type { NextFontWithVariable } from "next/dist/compiled/@next/font";
+import * as React from "react";
 import { cn } from "@admin/src/utils/styling";
 import { useColorTheme } from "../data/stores/dashboard";
 
@@ -31,7 +31,7 @@ export function Body({ children, fonts, ...props }: Props) {
 			className={cn(
 				colorTheme,
 				fonts.map((font) => font.variable),
-				"selection:bg-brand antialiased selection:text-background",
+				"antialiased selection:bg-brand selection:text-background",
 			)}
 			{...props}
 		>

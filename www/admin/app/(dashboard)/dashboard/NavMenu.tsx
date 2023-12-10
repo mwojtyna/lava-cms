@@ -1,6 +1,6 @@
-import { NavMenuLogo } from "./NavMenuLogo";
-import * as React from "react";
+import { Bars3Icon } from "@heroicons/react/24/outline";
 import { Poppins } from "next/font/google";
+import * as React from "react";
 import {
 	ActionIcon,
 	Separator,
@@ -10,11 +10,11 @@ import {
 	TooltipContent,
 	TooltipTrigger,
 } from "@admin/src/components/ui/client";
-import { Bars3Icon } from "@heroicons/react/24/outline";
+import { UserMenu } from "@admin/src/components/UserMenu";
 import { navMenuRoutes } from "@admin/src/data/routes/navMenu";
 import { cn } from "@admin/src/utils/styling";
-import { UserMenu } from "@admin/src/components/UserMenu";
 import { NavMenuItem } from "./NavMenuItem";
+import { NavMenuLogo } from "./NavMenuLogo";
 import { NavMenuWrapper } from "./NavMenuWrapper";
 
 const logoFont = Poppins({

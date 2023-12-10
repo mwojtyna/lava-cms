@@ -1,6 +1,6 @@
+import { z } from "zod";
 import { prisma } from "@admin/prisma/client";
 import { privateProcedure } from "@admin/src/trpc";
-import { z } from "zod";
 
 export const editGroup = privateProcedure
 	.input(

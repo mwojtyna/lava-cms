@@ -1,11 +1,11 @@
 "use client";
 
 import { ArrowLeftOnRectangleIcon, MoonIcon, SunIcon } from "@heroicons/react/24/outline";
+import { useRouter } from "next/navigation";
 import { DropdownMenuItem } from "@admin/src/components/ui/client";
+import { Loader } from "@admin/src/components/ui/server";
 import { useColorTheme } from "@admin/src/data/stores/dashboard";
 import { trpc } from "@admin/src/utils/trpc";
-import { useRouter } from "next/navigation";
-import { Loader } from "@admin/src/components/ui/server";
 
 export const ThemeSwitchItem = () => {
 	const { colorTheme, setColorTheme } = useColorTheme();

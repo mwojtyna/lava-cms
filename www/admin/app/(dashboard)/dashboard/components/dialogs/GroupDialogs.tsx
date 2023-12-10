@@ -1,7 +1,8 @@
-import * as React from "react";
-import { FormProvider, useForm, type SubmitHandler } from "react-hook-form";
+import type { ComponentsTableGroup } from "../ComponentsTable";
 import type { ComponentDefinitionGroup } from "@prisma/client";
 import { FolderIcon, PencilSquareIcon } from "@heroicons/react/24/outline";
+import * as React from "react";
+import { FormProvider, useForm, type SubmitHandler } from "react-hook-form";
 import {
 	Button,
 	Dialog,
@@ -17,7 +18,6 @@ import {
 	Input,
 } from "@admin/src/components/ui/client";
 import { trpc } from "@admin/src/utils/trpc";
-import type { ComponentsTableGroup } from "../ComponentsTable";
 
 interface Props {
 	open: boolean;

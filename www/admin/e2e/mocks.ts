@@ -1,5 +1,5 @@
-import { prisma } from "@admin/prisma/client";
 import type { AdminUser, SettingsConnection, SettingsSeo } from "@prisma/client";
+import { prisma } from "@admin/prisma/client";
 
 export const userMock: AdminUser = {
 	id: "pvelcizx9an5cufryuh85wd0",

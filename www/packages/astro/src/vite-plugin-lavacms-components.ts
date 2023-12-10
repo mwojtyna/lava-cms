@@ -1,6 +1,6 @@
+import type { ClientConfigAstro } from "./adapter";
 import type { Plugin } from "vite";
 import camelcase from "camelcase";
-import type { ClientConfigAstro } from "./adapter";
 
 export function vitePluginLavaCmsComponents(components: ClientConfigAstro["components"]): Plugin {
 	const virtualModuleId = "virtual:lavacms-components";

@@ -1,10 +1,10 @@
 "use client";
 
+import { ArrowPathIcon, CheckIcon, ClipboardIcon } from "@heroicons/react/24/outline";
+import { zodResolver } from "@hookform/resolvers/zod";
 import * as React from "react";
 import { FormProvider, useForm, type SubmitHandler } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { ArrowPathIcon, CheckIcon, ClipboardIcon } from "@heroicons/react/24/outline";
 import {
 	ActionIcon,
 	Button,
@@ -28,8 +28,8 @@ import {
 	CardTitle,
 	Loader,
 } from "@admin/src/components/ui/server";
-import { trpc } from "@admin/src/utils/trpc";
 import { useToast } from "@admin/src/hooks";
+import { trpc } from "@admin/src/utils/trpc";
 
 const schema = z.object({
 	developmentUrl: z

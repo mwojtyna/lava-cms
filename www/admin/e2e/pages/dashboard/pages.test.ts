@@ -1,6 +1,6 @@
+import { type Page, expect } from "@playwright/test";
 import { test } from "@admin/e2e/fixtures";
 import { prisma } from "@admin/prisma/client";
-import { type Page, expect } from "@playwright/test";
 
 async function fillAddEditDialog(page: Page, name: string, expectedUrl: string) {
 	const dialog = page.getByRole("dialog");

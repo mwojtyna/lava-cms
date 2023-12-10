@@ -1,11 +1,10 @@
 "use client";
 
-import * as React from "react";
-import { FolderArrowDownIcon, TrashIcon } from "@heroicons/react/24/outline";
-import { trpc } from "@admin/src/utils/trpc";
 import type { ComponentsTableItem } from "../ComponentsTable";
-import { AlertDialog, type MoveDialogInputs, NewParentSelect } from "@admin/src/components";
+import { FolderArrowDownIcon, TrashIcon } from "@heroicons/react/24/outline";
+import * as React from "react";
 import { FormProvider, useForm, type SubmitHandler } from "react-hook-form";
+import { AlertDialog, type MoveDialogInputs, NewParentSelect } from "@admin/src/components";
 import {
 	Button,
 	Dialog,
@@ -17,6 +16,7 @@ import {
 	FormField,
 	FormItem,
 } from "@admin/src/components/ui/client";
+import { trpc } from "@admin/src/utils/trpc";
 import { groupsToComboboxEntries } from "./component-definition/shared";
 
 interface Props {

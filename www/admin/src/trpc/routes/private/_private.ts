@@ -1,8 +1,8 @@
 import { router } from "@admin/src/trpc";
 import { authRouter } from "./auth/_auth";
-import { settingsRouter } from "./settings/_config";
-import { pagesRouter } from "./pages/_pages";
 import { componentsRouter } from "./components/_components";
+import { pagesRouter } from "./pages/_pages";
+import { settingsRouter } from "./settings/_config";
 
 export const privateRouter = router({
 	auth: authRouter,

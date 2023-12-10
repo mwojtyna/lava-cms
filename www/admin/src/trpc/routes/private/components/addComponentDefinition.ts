@@ -1,8 +1,8 @@
-import { z } from "zod";
-import { privateProcedure } from "@admin/src/trpc";
-import { ComponentDefinitionFieldSchema } from "@admin/prisma/generated/zod";
-import { prisma } from "@admin/prisma/client";
 import { TRPCError } from "@trpc/server";
+import { z } from "zod";
+import { prisma } from "@admin/prisma/client";
+import { ComponentDefinitionFieldSchema } from "@admin/prisma/generated/zod";
+import { privateProcedure } from "@admin/src/trpc";
 
 export const addComponentDefinition = privateProcedure
 	.input(

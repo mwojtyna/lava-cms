@@ -1,6 +1,9 @@
-import * as React from "react";
 import type { ComponentDefinitionGroup } from "@prisma/client";
-import { trpc } from "@admin/src/utils/trpc";
+import { CubeIcon } from "@heroicons/react/24/outline";
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as React from "react";
+import { useForm, type SubmitHandler } from "react-hook-form";
+import { z } from "zod";
 import {
 	Button,
 	Dialog,
@@ -16,13 +19,10 @@ import {
 	FormProvider,
 	Input,
 } from "@admin/src/components/ui/client";
-import { useForm, type SubmitHandler } from "react-hook-form";
-import { z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { CubeIcon } from "@heroicons/react/24/outline";
+import { TypographyMuted } from "@admin/src/components/ui/server";
+import { trpc } from "@admin/src/utils/trpc";
 import { AddFieldDefs, FieldDefs } from "./FieldDefinitions";
 import { ComponentDefinitionNameError, fieldDefinitionUISchema } from "./shared";
-import { TypographyMuted } from "@admin/src/components/ui/server";
 
 const addComponentDefDialogInputsSchema = z.object({
 	// This is named `compName` instead of `name` because `name` is already used

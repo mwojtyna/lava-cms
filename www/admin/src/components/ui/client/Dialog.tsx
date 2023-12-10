@@ -1,8 +1,8 @@
 "use client";
 
-import * as React from "react";
-import * as DialogPrimitive from "@radix-ui/react-dialog";
 import { XMarkIcon } from "@heroicons/react/20/solid";
+import * as DialogPrimitive from "@radix-ui/react-dialog";
+import * as React from "react";
 import { cn } from "@admin/src/utils/styling";
 
 const Dialog = DialogPrimitive.Root;

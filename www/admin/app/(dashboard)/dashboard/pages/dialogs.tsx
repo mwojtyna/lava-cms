@@ -2,6 +2,18 @@
 
 // TODO: Refactor into multiple files like with component definitions
 
+import type { Page } from "@prisma/client";
+import {
+	DocumentDuplicateIcon,
+	DocumentPlusIcon,
+	FolderArrowDownIcon,
+	FolderPlusIcon,
+	LockClosedIcon,
+	LockOpenIcon,
+	PencilSquareIcon,
+	TrashIcon,
+} from "@heroicons/react/24/outline";
+import { zodResolver } from "@hookform/resolvers/zod";
 import * as React from "react";
 import {
 	type SubmitHandler,
@@ -10,9 +22,10 @@ import {
 	type Path,
 	type PathValue,
 } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
+import slugify from "slugify";
 import { z } from "zod";
-import type { Page } from "@prisma/client";
+import { AlertDialog, NewParentSelect, type MoveDialogInputs } from "@admin/src/components";
+import type { ItemParent } from "@admin/src/components/DataTableDialogs";
 import {
 	Button,
 	Dialog,
@@ -28,22 +41,9 @@ import {
 	FormLabel,
 	Input,
 } from "@admin/src/components/ui/client";
-import { trpc } from "@admin/src/utils/trpc";
-import {
-	DocumentDuplicateIcon,
-	DocumentPlusIcon,
-	FolderArrowDownIcon,
-	FolderPlusIcon,
-	LockClosedIcon,
-	LockOpenIcon,
-	PencilSquareIcon,
-	TrashIcon,
-} from "@heroicons/react/24/outline";
-import { AlertDialog, NewParentSelect, type MoveDialogInputs } from "@admin/src/components";
 import { TypographyList } from "@admin/src/components/ui/server";
-import slugify from "slugify";
 import { usePagePreferences } from "@admin/src/hooks";
-import type { ItemParent } from "@admin/src/components/DataTableDialogs";
+import { trpc } from "@admin/src/utils/trpc";
 
 interface AddDialogProps {
 	group: Page;

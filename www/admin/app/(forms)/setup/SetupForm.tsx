@@ -1,10 +1,10 @@
 "use client";
 
+import { ArrowRightIcon } from "@heroicons/react/20/solid";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { type SubmitHandler, useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { ArrowRightIcon } from "@heroicons/react/20/solid";
 import { InfoTooltip } from "@admin/src/components";
 import {
 	Button,
@@ -16,8 +16,8 @@ import {
 	Textarea,
 } from "@admin/src/components/ui/client";
 import { TypographyCode } from "@admin/src/components/ui/server";
-import { SinglePageForm } from "../SinglePageForm";
 import { trpc } from "@admin/src/utils/trpc";
+import { SinglePageForm } from "../SinglePageForm";
 
 const schema = z.object({
 	title: z.string().min(1),

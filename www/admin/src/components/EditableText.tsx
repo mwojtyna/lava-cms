@@ -1,7 +1,7 @@
-import React, { useEffect, useRef, useState } from "react";
 import { ArrowRightIcon, PencilSquareIcon, XMarkIcon } from "@heroicons/react/24/outline";
-import { ActionIcon, Input } from "./ui/client";
+import React, { useEffect, useRef, useState } from "react";
 import { cn } from "../utils/styling";
+import { ActionIcon, Input } from "./ui/client";
 
 type Props = {
 	value: string;

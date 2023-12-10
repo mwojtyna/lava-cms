@@ -1,5 +1,9 @@
+import type { ComponentsTableComponentDef } from "../../ComponentsTable";
+import { PencilSquareIcon } from "@heroicons/react/24/outline";
+import { zodResolver } from "@hookform/resolvers/zod";
 import * as React from "react";
-import { trpc } from "@admin/src/utils/trpc";
+import { useForm, type SubmitHandler } from "react-hook-form";
+import { z } from "zod";
 import {
 	Button,
 	Dialog,
@@ -15,18 +19,14 @@ import {
 	FormProvider,
 	Input,
 } from "@admin/src/components/ui/client";
-import { useForm, type SubmitHandler } from "react-hook-form";
-import { z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { PencilSquareIcon } from "@heroicons/react/24/outline";
+import { TypographyMuted } from "@admin/src/components/ui/server";
+import { trpc } from "@admin/src/utils/trpc";
 import { AddFieldDefs, FieldDefs } from "./FieldDefinitions";
-import type { ComponentsTableComponentDef } from "../../ComponentsTable";
 import {
 	fieldDefinitionUISchema,
 	type FieldDefinitionUI,
 	ComponentDefinitionNameError,
 } from "./shared";
-import { TypographyMuted } from "@admin/src/components/ui/server";
 
 const editComponentDefDialogInputsSchema = z.object({
 	compName: z.string().min(1, { message: " " }),

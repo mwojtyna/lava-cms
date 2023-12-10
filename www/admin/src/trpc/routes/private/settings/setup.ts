@@ -1,6 +1,6 @@
+import { prisma } from "@admin/prisma/client";
 import { privateProcedure } from "@admin/src/trpc";
 import { caller } from "../_private";
-import { prisma } from "@admin/prisma/client";
 import { randomString } from "../auth/generateToken";
 
 export const setup = privateProcedure.mutation(async () => {

@@ -1,9 +1,9 @@
 "use client";
 
-import * as React from "react";
 import { MoonIcon, SunIcon } from "@heroicons/react/24/outline";
-import { Switch } from "../../src/components/ui/client";
+import * as React from "react";
 import { useColorTheme } from "@admin/src/data/stores/dashboard";
+import { Switch } from "../../src/components/ui/client";
 import { cn } from "../../src/utils/styling";
 
 export const ThemeSwitch = React.forwardRef<

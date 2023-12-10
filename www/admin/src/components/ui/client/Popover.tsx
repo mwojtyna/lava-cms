@@ -1,8 +1,8 @@
 "use client";
 
-import * as React from "react";
 import * as PopoverPrimitive from "@radix-ui/react-popover";
 import { type VariantProps, cva } from "class-variance-authority";
+import * as React from "react";
 
 const Popover = PopoverPrimitive.Root;
 const PopoverTrigger = PopoverPrimitive.Trigger;

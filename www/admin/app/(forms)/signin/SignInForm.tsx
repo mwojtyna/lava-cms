@@ -6,11 +6,10 @@ import {
 	ExclamationCircleIcon,
 	ArrowRightOnRectangleIcon,
 } from "@heroicons/react/24/outline";
-import { type SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
+import { type SubmitHandler, useForm } from "react-hook-form";
 import { z } from "zod";
-import { Alert, AlertTitle } from "@admin/src/components/ui/server";
 import {
 	Input,
 	Button,
@@ -20,8 +19,9 @@ import {
 	FormControl,
 	FormError,
 } from "@admin/src/components/ui/client";
-import { SinglePageForm } from "../SinglePageForm";
+import { Alert, AlertTitle } from "@admin/src/components/ui/server";
 import { trpc } from "@admin/src/utils/trpc";
+import { SinglePageForm } from "../SinglePageForm";
 
 const schema = z.object({
 	email: z.string().min(1, " ").email("The e-mail you provided is invalid."),

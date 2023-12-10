@@ -1,6 +1,6 @@
 import { router } from "@admin/src/trpc";
-import { getToken } from "./getToken";
 import { generateToken } from "./generateToken";
+import { getToken } from "./getToken";
 import { setupRequired } from "./setupRequired";
 import { signIn } from "./signIn";
 import { signOut } from "./signOut";

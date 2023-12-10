@@ -1,10 +1,10 @@
 "use client";
 
-import { useRouter } from "next/navigation";
-import { EnvelopeIcon, LockClosedIcon, UserIcon } from "@heroicons/react/24/outline";
 import { ArrowRightIcon } from "@heroicons/react/20/solid";
-import { type SubmitHandler, useForm } from "react-hook-form";
+import { EnvelopeIcon, LockClosedIcon, UserIcon } from "@heroicons/react/24/outline";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useRouter } from "next/navigation";
+import { type SubmitHandler, useForm } from "react-hook-form";
 import { z } from "zod";
 import {
 	Button,
@@ -15,8 +15,8 @@ import {
 	FormLabel,
 	Input,
 } from "@admin/src/components/ui/client";
-import { SinglePageForm } from "../SinglePageForm";
 import { trpc } from "@admin/src/utils/trpc";
+import { SinglePageForm } from "../SinglePageForm";
 
 const inputSchema = z
 	.object({

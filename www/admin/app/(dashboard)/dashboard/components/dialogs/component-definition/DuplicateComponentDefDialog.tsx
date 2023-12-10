@@ -1,8 +1,10 @@
-import * as React from "react";
-import { trpc } from "@admin/src/utils/trpc";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm, type SubmitHandler, FormProvider } from "react-hook-form";
+import type { ComponentsTableComponentDef } from "../../ComponentsTable";
 import { DocumentDuplicateIcon } from "@heroicons/react/24/outline";
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as React from "react";
+import { useForm, type SubmitHandler, FormProvider } from "react-hook-form";
+import { z } from "zod";
+import { NewParentSelect } from "@admin/src/components";
 import {
 	DialogHeader,
 	FormField,
@@ -17,16 +19,14 @@ import {
 	DialogContent,
 	DialogTitle,
 } from "@admin/src/components/ui/client";
-import { AddFieldDefs, FieldDefs } from "./FieldDefinitions";
-import type { ComponentsTableComponentDef } from "../../ComponentsTable";
 import { TypographyMuted } from "@admin/src/components/ui/server";
+import { trpc } from "@admin/src/utils/trpc";
+import { AddFieldDefs, FieldDefs } from "./FieldDefinitions";
 import {
 	ComponentDefinitionNameError,
 	fieldDefinitionUISchema,
 	groupsToComboboxEntries,
 } from "./shared";
-import { z } from "zod";
-import { NewParentSelect } from "@admin/src/components";
 
 const duplicateComponentDefDialogInputsSchema = z.object({
 	// This is named `compName` instead of `name` because `name` is already used

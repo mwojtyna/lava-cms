@@ -1,12 +1,6 @@
 "use client";
 
-import Link from "next/link";
-import {
-	flexRender,
-	type ColumnDef,
-	type Table as TableType,
-	type Column,
-} from "@tanstack/react-table";
+import { ChevronDownIcon, ChevronUpDownIcon, ChevronUpIcon } from "@heroicons/react/20/solid";
 import {
 	HomeIcon,
 	ChevronRightIcon,
@@ -16,14 +10,12 @@ import {
 	FolderIcon,
 } from "@heroicons/react/24/outline";
 import {
-	Table,
-	TableHeader,
-	TableRow,
-	TableHead,
-	TableBody,
-	TableCell,
-	Stepper,
-} from "./ui/server";
+	flexRender,
+	type ColumnDef,
+	type Table as TableType,
+	type Column,
+} from "@tanstack/react-table";
+import Link from "next/link";
 import { cn } from "../utils/styling";
 import {
 	ActionIcon,
@@ -34,7 +26,15 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from "./ui/client";
-import { ChevronDownIcon, ChevronUpDownIcon, ChevronUpIcon } from "@heroicons/react/20/solid";
+import {
+	Table,
+	TableHeader,
+	TableRow,
+	TableHead,
+	TableBody,
+	TableCell,
+	Stepper,
+} from "./ui/server";
 
 export const dateFormatOptions: Intl.DateTimeFormatOptions = {
 	year: "numeric",

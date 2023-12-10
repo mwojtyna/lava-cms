@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import { cookies } from "next/headers";
+import { caller } from "@admin/src/trpc/routes/private/_private";
 import { type CookieName, tableCookieSchema } from "@admin/src/utils/cookies";
 import { ComponentsTable } from "./ComponentsTable";
-import { caller } from "@admin/src/trpc/routes/private/_private";
 
 export const metadata: Metadata = {
 	title: "Components - Lava CMS",

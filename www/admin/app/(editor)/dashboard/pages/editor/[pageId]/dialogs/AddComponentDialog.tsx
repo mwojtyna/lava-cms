@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from "react";
 import { ChevronRightIcon, CubeIcon, FolderIcon, HomeIcon } from "@heroicons/react/24/outline";
+import { useState } from "react";
+import type { ComponentsTableItem } from "@admin/app/(dashboard)/dashboard/components/ComponentsTable";
 import {
 	ActionIcon,
 	Button,
@@ -12,10 +13,9 @@ import {
 	Input,
 	Separator,
 } from "@admin/src/components/ui/client";
-import { trpc } from "@admin/src/utils/trpc";
 import { Skeleton, Stepper, TypographyMuted } from "@admin/src/components/ui/server";
-import type { ComponentsTableItem } from "@admin/app/(dashboard)/dashboard/components/ComponentsTable";
 import { cn } from "@admin/src/utils/styling";
+import { trpc } from "@admin/src/utils/trpc";
 
 interface Props {
 	open: boolean;

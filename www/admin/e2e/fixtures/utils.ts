@@ -1,6 +1,6 @@
 import type { BrowserContextOptions, Browser, BrowserContext } from "@playwright/test";
 import fs from "node:fs";
-import { prisma } from "@admin/prisma/client";
+import { DEFAULT_SESSION_COOKIE_NAME } from "lucia";
 import {
 	createMockUser,
 	deleteMockUser,
@@ -9,7 +9,7 @@ import {
 	userPasswordDecrypted,
 	seoSettingsMock,
 } from "@admin/e2e/mocks";
-import { DEFAULT_SESSION_COOKIE_NAME } from "lucia";
+import { prisma } from "@admin/prisma/client";
 
 const STORAGE_STATE_PATH = "./e2e/storageState.json";
 

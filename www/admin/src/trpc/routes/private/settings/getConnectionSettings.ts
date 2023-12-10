@@ -1,5 +1,5 @@
-import { privateProcedure } from "@admin/src/trpc";
 import { prisma } from "@admin/prisma/client";
+import { privateProcedure } from "@admin/src/trpc";
 
 export const getConnectionSettings = privateProcedure.query(async () => {
 	const settings = await prisma.settingsConnection.findFirstOrThrow();

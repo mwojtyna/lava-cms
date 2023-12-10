@@ -1,5 +1,5 @@
-import { publicProcedure } from "@admin/src/trpc";
 import { prisma } from "@admin/prisma/client";
+import { publicProcedure } from "@admin/src/trpc";
 
 export const getHead = publicProcedure.query(async () => {
 	const config = await prisma.settingsSeo.findFirstOrThrow();

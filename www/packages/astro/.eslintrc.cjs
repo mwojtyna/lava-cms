@@ -5,7 +5,7 @@ module.exports = {
 		tsconfigRootDir: __dirname,
 	},
 	extends: ["package", "plugin:astro/recommended"],
-	ignorePatterns: [".eslintrc*", "rollup.config.js"],
+	ignorePatterns: ["rollup.config.js"],
 	overrides: [
 		{
 			// Define the configuration for `.astro` file.
@@ -17,6 +17,13 @@ module.exports = {
 			parserOptions: {
 				parser: "@typescript-eslint/parser",
 				extraFileExtensions: [".astro"],
+				sourceType: "module",
+			},
+			rules: {
+				"import/namespace": "off",
+				"import/default": "off",
+				"import/no-named-as-default": "off",
+				"import/no-named-as-default-member": "off",
 			},
 		},
 	],

@@ -1,6 +1,6 @@
 import { expect } from "@playwright/test";
-import { test } from "./fixtures";
 import { prisma } from "@admin/prisma/client";
+import { test } from "./fixtures";
 import { createMockUser, deleteMockUser, seoSettingsMock } from "./mocks";
 
 async function createSettings() {

@@ -1,3 +1,4 @@
+import type { Component } from "./types";
 import React, { forwardRef } from "react";
 import { FormProvider, useForm, type SubmitHandler } from "react-hook-form";
 import {
@@ -10,7 +11,6 @@ import {
 	Checkbox,
 	FormError,
 } from "@admin/src/components/ui/client";
-import type { Component } from "./types";
 import { TypographyMuted } from "@admin/src/components/ui/server";
 import { cn } from "@admin/src/utils/styling";
 

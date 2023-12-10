@@ -1,5 +1,4 @@
 import { expect } from "@playwright/test";
-import { prisma } from "@admin/prisma/client";
 import { test } from "@admin/e2e/fixtures";
 import {
 	createMockUser,
@@ -8,6 +7,7 @@ import {
 	userPasswordDecrypted,
 	seoSettingsMock,
 } from "@admin/e2e/mocks";
+import { prisma } from "@admin/prisma/client";
 
 test.describe("sign up step", () => {
 	test.afterAll(async () => {

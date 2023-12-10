@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
-import { PageTitle } from "@admin/src/components";
 import { getCurrentUser } from "@admin/src/auth";
+import { PageTitle } from "@admin/src/components";
 import { navMenuRoutes } from "@admin/src/data/routes/navMenu";
 import { NavMenu } from "./NavMenu";
 

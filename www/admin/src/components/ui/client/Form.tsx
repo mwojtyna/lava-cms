@@ -1,5 +1,5 @@
-import * as React from "react";
 import { Slot } from "@radix-ui/react-slot";
+import * as React from "react";
 import {
 	Controller,
 	type ControllerProps,
@@ -9,8 +9,8 @@ import {
 	FormProvider,
 	useFormContext,
 } from "react-hook-form";
-import { cn } from "@admin/src/utils/styling";
 import { Label } from "@admin/src/components/ui/client";
+import { cn } from "@admin/src/utils/styling";
 import { TypographyMuted } from "../server";
 
 interface FormFieldProps<T> {

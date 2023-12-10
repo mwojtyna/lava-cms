@@ -1,6 +1,6 @@
-import { z } from "zod";
-import { getCookie } from "cookies-next";
 import type { OptionsType } from "cookies-next/lib/types";
+import { getCookie } from "cookies-next";
+import { z } from "zod";
 
 export type CookieName = "color-theme" | "pages-table" | "components-table";
 

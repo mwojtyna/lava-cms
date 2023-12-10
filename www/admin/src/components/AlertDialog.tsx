@@ -4,8 +4,10 @@ import {
 	DialogContent,
 	DialogTitle,
 	DialogDescription,
+	DialogHeader,
+	DialogFooter,
+	Button,
 } from "@admin/src/components/ui/client";
-import { DialogHeader, DialogFooter, Button } from "./ui/client";
 
 interface Props {
 	icon: React.ReactNode;

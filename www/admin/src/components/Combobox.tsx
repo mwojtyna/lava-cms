@@ -1,8 +1,7 @@
 "use client";
 
-import * as React from "react";
 import { CheckIcon, ChevronUpDownIcon } from "@heroicons/react/20/solid";
-import { cn } from "@admin/src/utils/styling";
+import * as React from "react";
 import {
 	Button,
 	Command,
@@ -15,6 +14,7 @@ import {
 	PopoverContent,
 	PopoverTrigger,
 } from "@admin/src/components/ui/client";
+import { cn } from "@admin/src/utils/styling";
 
 type ComboboxData = Array<{
 	value: string;

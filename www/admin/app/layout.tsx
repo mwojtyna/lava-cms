@@ -1,9 +1,8 @@
 import type { Metadata } from "next";
 import { Inter, Poppins } from "next/font/google";
 import { cookies } from "next/headers";
-import { TrpcProvider } from "@admin/src/components/providers";
 import { Body } from "@admin/src/components";
-import { ZustandProvider } from "@admin/src/components/providers";
+import { TrpcProvider, ZustandProvider } from "@admin/src/components/providers";
 import { Toaster, TooltipProvider } from "@admin/src/components/ui/client";
 import { colorThemeSchema, type CookieName } from "@admin/src/utils/cookies";
 import "@admin/src/styles/globals.css";

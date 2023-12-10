@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 import { cookies } from "next/headers";
-import { caller } from "@admin/src/trpc/routes/private/_private";
-import { PagesTable } from "./PagesTable";
-import { type CookieName, tableCookieSchema } from "@admin/src/utils/cookies";
 import type { TableSearchParams } from "@admin/src/hooks";
+import { caller } from "@admin/src/trpc/routes/private/_private";
+import { type CookieName, tableCookieSchema } from "@admin/src/utils/cookies";
+import { PagesTable } from "./PagesTable";
 
 export const metadata: Metadata = {
 	title: "Pages - Lava CMS",

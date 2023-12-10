@@ -1,4 +1,4 @@
-import * as React from "react";
+import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 import {
 	getCoreRowModel,
 	getFilteredRowModel,
@@ -11,15 +11,15 @@ import {
 	type ColumnDef,
 } from "@tanstack/react-table";
 import { setCookie } from "cookies-next";
+import * as React from "react";
 import {
 	getJsonCookie,
 	permanentCookieOptions,
 	type CookieName,
 	type TableCookie,
 } from "@admin/src/utils/cookies";
-import { useSearchParams } from "./useSearchParams";
 import { Input } from "../components/ui/client";
-import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
+import { useSearchParams } from "./useSearchParams";
 
 export type TableSearchParams =
 	| {

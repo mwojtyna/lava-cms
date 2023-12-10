@@ -1,10 +1,9 @@
 "use client";
 
-import * as React from "react";
-import { z } from "zod";
-import { type SubmitHandler, useForm } from "react-hook-form";
-import { trpc } from "@admin/src/utils/trpc";
 import { zodResolver } from "@hookform/resolvers/zod";
+import * as React from "react";
+import { type SubmitHandler, useForm } from "react-hook-form";
+import { z } from "zod";
 import {
 	Button,
 	FormProvider,
@@ -26,6 +25,7 @@ import {
 	TypographyCode,
 } from "@admin/src/components/ui/server";
 import { useToast } from "@admin/src/hooks";
+import { trpc } from "@admin/src/utils/trpc";
 
 const schema = z.object({
 	title: z.string().min(1),

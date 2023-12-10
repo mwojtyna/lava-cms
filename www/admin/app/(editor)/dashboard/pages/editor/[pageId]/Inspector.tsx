@@ -1,16 +1,16 @@
 "use client";
 
-import { useState } from "react";
+import type { Component } from "./types";
 import type { Page } from "@prisma/client";
+import { ChevronRightIcon, CubeIcon, DocumentIcon, PlusIcon } from "@heroicons/react/24/outline";
+import { useState } from "react";
 import { Button } from "@admin/src/components/ui/client";
 import { Stepper, TypographyH1, TypographyMuted } from "@admin/src/components/ui/server";
-import { ChevronRightIcon, CubeIcon, DocumentIcon, PlusIcon } from "@heroicons/react/24/outline";
-import { trpc } from "@admin/src/utils/trpc";
 import { cn } from "@admin/src/utils/styling";
-import { AddComponentDialog } from "./dialogs/AddComponentDialog";
+import { trpc } from "@admin/src/utils/trpc";
 import { Components } from "./Components";
+import { AddComponentDialog } from "./dialogs/AddComponentDialog";
 import { EditComponent } from "./EditComponent";
-import type { Component } from "./types";
 
 type Step =
 	| {

@@ -1,18 +1,18 @@
-import * as React from "react";
-import Link from "next/link";
-import { Combobox, type ComboboxData, type ItemParent } from "@admin/src/components";
-import { ComponentFieldType } from "@prisma/client";
-import { z } from "zod";
+import type { inferRouterOutputs } from "@trpc/server";
 import { ArrowTopRightOnSquareIcon } from "@heroicons/react/20/solid";
+import { FolderIcon } from "@heroicons/react/24/outline";
+import { ComponentFieldType } from "@prisma/client";
+import Link from "next/link";
+import * as React from "react";
+import { z } from "zod";
 import {
 	ComponentDefinitionFieldSchema,
 	type ComponentFieldTypeType,
 } from "@admin/prisma/generated/zod";
-import { cn } from "@admin/src/utils/styling";
+import { Combobox, type ComboboxData, type ItemParent } from "@admin/src/components";
 import { Button, type FormFieldProps } from "@admin/src/components/ui/client";
 import type { PrivateRouter } from "@admin/src/trpc/routes/private/_private";
-import type { inferRouterOutputs } from "@trpc/server";
-import { FolderIcon } from "@heroicons/react/24/outline";
+import { cn } from "@admin/src/utils/styling";
 
 export const fieldTypeMap: Record<string, string> = Object.values(ComponentFieldType).reduce(
 	(acc, type) => {

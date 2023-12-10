@@ -1,8 +1,8 @@
-import type { AstroIntegration } from "astro";
 import type { LavaCms } from "@lavacms/core";
+import type { AstroIntegration } from "astro";
+import script from "./script";
 import { vitePluginLavaCmsComponents } from "./vite-plugin-lavacms-components";
 import { vitePluginLavaCmsConfig } from "./vite-plugin-lavacms-config";
-import script from "./script";
 
 export interface ClientConfigAstro extends LavaCms.ClientConfigBase {
 	/**

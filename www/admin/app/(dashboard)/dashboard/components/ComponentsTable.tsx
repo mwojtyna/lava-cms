@@ -1,22 +1,22 @@
 "use client";
 
-import * as React from "react";
 import type { inferRouterOutputs } from "@trpc/server";
 import { CubeIcon } from "@heroicons/react/24/outline";
-import { useDataTable, type TableSearchParams } from "@admin/src/hooks";
-import { trpc } from "@admin/src/utils/trpc";
-import type { PrivateRouter } from "@admin/src/trpc/routes/private/_private";
-import type { TableCookie } from "@admin/src/utils/cookies";
-import { columns } from "./ComponentsTableColumns";
+import * as React from "react";
 import {
 	DataTable,
 	DataTableActions,
 	DataTableBreadcrumbs,
 	DataTablePagination,
 } from "@admin/src/components";
-import { AddGroupDialog } from "./dialogs/GroupDialogs";
-import { AddComponentDefDialog } from "./dialogs/component-definition";
+import { useDataTable, type TableSearchParams } from "@admin/src/hooks";
+import type { PrivateRouter } from "@admin/src/trpc/routes/private/_private";
 import type { Item } from "@admin/src/trpc/routes/private/components/getGroup";
+import type { TableCookie } from "@admin/src/utils/cookies";
+import { trpc } from "@admin/src/utils/trpc";
+import { columns } from "./ComponentsTableColumns";
+import { AddComponentDefDialog } from "./dialogs/component-definition";
+import { AddGroupDialog } from "./dialogs/GroupDialogs";
 
 export type ComponentsTableItem = Item;
 export type ComponentsTableComponentDef = Omit<

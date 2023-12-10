@@ -1,7 +1,7 @@
-import { createTRPCProxyClient, httpBatchLink, loggerLink } from "@trpc/client";
-import SuperJSON from "superjson";
-import type { PublicRouter } from "@lavacms/types";
 import type { ClientConfigBase, Component } from "./types";
+import type { PublicRouter } from "@lavacms/types";
+import { createTRPCProxyClient, httpBatchLink, loggerLink } from "@trpc/client";
+import superjson from "superjson";
 
 export class ApiClient {
 	private readonly connection;
@@ -17,7 +17,7 @@ export class ApiClient {
 					},
 				}),
 			],
-			transformer: SuperJSON,
+			transformer: superjson,
 		});
 	}
 

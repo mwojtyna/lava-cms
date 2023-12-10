@@ -1,9 +1,9 @@
 "use client";
 
+import { type VariantProps, cva } from "class-variance-authority";
 import * as React from "react";
 import TextareaAutosize from "react-textarea-autosize";
 import { cn } from "@admin/src/utils/styling";
-import { type VariantProps, cva } from "class-variance-authority";
 
 const textAreaVariants = cva(
 	"flex h-20 w-full resize-none rounded-md border border-input bg-transparent px-3 py-2 ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50",

@@ -1,6 +1,5 @@
 import { test, expect, type BrowserContext } from "@playwright/test";
-import { type ColorTheme, colorThemeSchema } from "@admin/src/utils/cookies";
-import type { CookieName } from "@admin/src/utils/cookies";
+import { type ColorTheme, type CookieName, colorThemeSchema } from "@admin/src/utils/cookies";
 import { getColorScheme } from "../utils";
 
 const TEST_ID = "theme-switch";

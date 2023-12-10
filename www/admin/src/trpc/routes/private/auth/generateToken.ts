@@ -1,6 +1,6 @@
 import { generateRandomString } from "lucia/utils";
-import { privateProcedure } from "@admin/src/trpc";
 import { prisma } from "@admin/prisma/client";
+import { privateProcedure } from "@admin/src/trpc";
 
 export const generateToken = privateProcedure.mutation(async () => {
 	const token = randomString();

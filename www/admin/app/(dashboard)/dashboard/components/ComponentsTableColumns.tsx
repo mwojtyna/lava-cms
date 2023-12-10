@@ -1,8 +1,6 @@
 "use client";
 
-import * as React from "react";
-import Link from "next/link";
-import { sortingFns, type ColumnDef } from "@tanstack/react-table";
+import type { ComponentsTableItem } from "./ComponentsTable";
 import { EllipsisHorizontalIcon } from "@heroicons/react/20/solid";
 import {
 	CubeIcon,
@@ -12,7 +10,10 @@ import {
 	PencilSquareIcon,
 	TrashIcon,
 } from "@heroicons/react/24/outline";
-import type { ComponentsTableItem } from "./ComponentsTable";
+import { sortingFns, type ColumnDef } from "@tanstack/react-table";
+import Link from "next/link";
+import * as React from "react";
+import { DataTableSortableHeader, dateFormatOptions } from "@admin/src/components/DataTable";
 import {
 	ActionIcon,
 	Button,
@@ -22,13 +23,14 @@ import {
 	DropdownMenuItem,
 	DropdownMenuTrigger,
 } from "@admin/src/components/ui/client";
-import { DataTableSortableHeader, dateFormatOptions } from "@admin/src/components/DataTable";
-import { DeleteDialog, MoveDialog } from "./dialogs/SharedDialogs";
-import { EditGroupDialog } from "./dialogs/GroupDialogs";
-import { EditComponentDefDialog } from "./dialogs/component-definition";
-import { BulkDeleteDialog, BulkMoveDialog } from "./dialogs/BulkDialogs";
-import { DuplicateComponentDefDialog } from "./dialogs/component-definition";
 import { useComponentDefEditDialog } from "@admin/src/data/stores/componentDefinitions";
+import { BulkDeleteDialog, BulkMoveDialog } from "./dialogs/BulkDialogs";
+import {
+	EditComponentDefDialog,
+	DuplicateComponentDefDialog,
+} from "./dialogs/component-definition";
+import { EditGroupDialog } from "./dialogs/GroupDialogs";
+import { DeleteDialog, MoveDialog } from "./dialogs/SharedDialogs";
 
 export const columns: ColumnDef<ComponentsTableItem>[] = [
 	{

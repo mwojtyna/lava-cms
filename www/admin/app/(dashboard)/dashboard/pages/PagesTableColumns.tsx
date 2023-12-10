@@ -1,8 +1,7 @@
 "use client";
 
-import * as React from "react";
-import Link from "next/link";
 import type { Page } from "@prisma/client";
+import { EllipsisHorizontalIcon } from "@heroicons/react/20/solid";
 import {
 	DocumentIcon,
 	FolderIcon,
@@ -12,6 +11,9 @@ import {
 	DocumentDuplicateIcon,
 } from "@heroicons/react/24/outline";
 import { sortingFns, type ColumnDef } from "@tanstack/react-table";
+import Link from "next/link";
+import * as React from "react";
+import { DataTableSortableHeader, dateFormatOptions } from "@admin/src/components/DataTable";
 import {
 	ActionIcon,
 	Button,
@@ -21,7 +23,6 @@ import {
 	DropdownMenuItem,
 	DropdownMenuTrigger,
 } from "@admin/src/components/ui/client";
-import { EllipsisHorizontalIcon } from "@heroicons/react/20/solid";
 import {
 	BulkDeleteDialog,
 	BulkMoveDialog,
@@ -30,7 +31,6 @@ import {
 	EditDetailsDialog,
 	MoveDialog,
 } from "./dialogs";
-import { DataTableSortableHeader, dateFormatOptions } from "@admin/src/components/DataTable";
 
 export const columns: ColumnDef<Page>[] = [
 	{

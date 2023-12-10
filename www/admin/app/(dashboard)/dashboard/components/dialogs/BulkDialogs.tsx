@@ -1,7 +1,7 @@
+import type { ComponentsTableItem } from "../ComponentsTable";
+import { FolderArrowDownIcon, FolderIcon, TrashIcon } from "@heroicons/react/24/outline";
 import * as React from "react";
 import { useForm, type SubmitHandler } from "react-hook-form";
-import { trpc } from "@admin/src/utils/trpc";
-import { FolderArrowDownIcon, FolderIcon, TrashIcon } from "@heroicons/react/24/outline";
 import {
 	AlertDialog,
 	NewParentSelect,
@@ -20,7 +20,7 @@ import {
 	FormItem,
 	FormControl,
 } from "@admin/src/components/ui/client";
-import type { ComponentsTableItem } from "../ComponentsTable";
+import { trpc } from "@admin/src/utils/trpc";
 
 interface Props {
 	items: ComponentsTableItem[];

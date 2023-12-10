@@ -1,8 +1,8 @@
 "use client";
 
-import Link from "next/link";
 import type { NextFont } from "next/dist/compiled/@next/font";
 import { IconVolcano } from "@tabler/icons-react";
+import Link from "next/link";
 import { TypographyH1, TypographyMuted } from "@admin/src/components/ui/server";
 import { useNavMenu } from "@admin/src/data/stores/dashboard";
 import { cn } from "@admin/src/utils/styling";
