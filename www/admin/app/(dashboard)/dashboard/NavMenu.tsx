@@ -87,7 +87,7 @@ function MenuMobile({ className }: { className?: string }) {
 export function NavMenu() {
 	return (
 		<NavMenuWrapper>
-			<Menu className="hidden h-screen md:flex" />
+			<Menu className="h-screen max-md:hidden" />
 			<MenuMobile className="md:hidden" />
 
 			<SheetContent

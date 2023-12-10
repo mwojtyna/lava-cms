@@ -12,7 +12,7 @@ export const addComponent = privateProcedure
 		}),
 	)
 	.mutation(async ({ input }) => {
-		// TODO:
+		// TODO: Create field instances when creating component instance
 		// const instance = await prisma.componentInstance.create({
 		// 	data: {
 		// 		name: input.name,

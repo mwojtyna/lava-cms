@@ -16,12 +16,12 @@ export const getPageComponents = privateProcedure
 			include: {
 				components: {
 					include: {
-						fields: true,
-						definition: {
+						fields: {
 							include: {
-								field_definitions: true,
+								definition: true,
 							},
 						},
+						definition: true,
 					},
 					orderBy: {
 						order: "asc",
@@ -29,10 +29,5 @@ export const getPageComponents = privateProcedure
 				},
 			},
 		});
-		const components = page.components.map((component) => ({
-			...component,
-			definition_id: undefined,
-		}));
-
-		return components;
+		return page.components;
 	});

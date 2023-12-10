@@ -12,13 +12,21 @@ import { LogoutItem, ThemeSwitchItem } from "./UserMenuItems";
 import { cn } from "@admin/src/utils/styling";
 import { getCurrentUser } from "@admin/src/auth";
 
-export async function UserMenu({ small }: { small?: boolean }) {
+interface Props {
+	className?: string;
+	small?: boolean;
+	responsive?: boolean;
+}
+export async function UserMenu(props: Props) {
 	const user = await getCurrentUser();
 
 	return (
 		<DropdownMenu>
 			<DropdownMenuTrigger
-				className="inline-flex h-fit w-fit items-center gap-4 rounded-sm outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-8 focus-visible:ring-offset-background"
+				className={cn(
+					"inline-flex h-fit w-fit items-center gap-4 rounded-sm outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-8 focus-visible:ring-offset-background",
+					props.className,
+				)}
 				data-testid="user-menu"
 			>
 				<Avatar>
@@ -28,7 +36,13 @@ export async function UserMenu({ small }: { small?: boolean }) {
 					</AvatarFallback>
 				</Avatar>
 
-				<div className={cn("text-left", small && "hidden")}>
+				<div
+					className={cn(
+						"text-left",
+						props.small && "hidden",
+						props.responsive && "max-md:hidden",
+					)}
+				>
 					<p>
 						{user?.name} {user?.lastName}
 					</p>
@@ -37,7 +51,7 @@ export async function UserMenu({ small }: { small?: boolean }) {
 			</DropdownMenuTrigger>
 
 			<DropdownMenuContent
-				sideOffset={small ? 14 : 18}
+				sideOffset={props.small ? 14 : 18}
 				align="start"
 				className="w-48 md:ml-2 md:scale-110"
 				data-testid="user-menu-dropdown"

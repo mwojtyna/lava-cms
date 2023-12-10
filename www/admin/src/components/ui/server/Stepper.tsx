@@ -17,7 +17,12 @@ const Stepper = React.forwardRef<HTMLDivElement, StepperProps>(
 						step
 					) : (
 						<>
-							<span className={cn(currentStep !== i && "text-muted-foreground")}>
+							<span
+								className={cn(
+									"flex items-center justify-center",
+									currentStep !== i && "text-muted-foreground",
+								)}
+							>
 								{step}
 							</span>{" "}
 						</>
