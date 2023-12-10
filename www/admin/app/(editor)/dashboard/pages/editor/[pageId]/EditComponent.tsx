@@ -72,7 +72,7 @@ const Field = forwardRef<HTMLInputElement | HTMLButtonElement, FieldProps>(
 			case "TEXT": {
 				return (
 					<Input
-						ref={ref}
+						ref={ref as React.RefObject<HTMLInputElement>}
 						type="text"
 						value={value}
 						onChange={(e) => onChange(e.currentTarget.value)}
@@ -83,7 +83,7 @@ const Field = forwardRef<HTMLInputElement | HTMLButtonElement, FieldProps>(
 			case "NUMBER": {
 				return (
 					<Input
-						ref={ref}
+						ref={ref as React.RefObject<HTMLInputElement>}
 						type="number"
 						value={value}
 						onChange={(e) => onChange(e.currentTarget.value)}
@@ -94,7 +94,7 @@ const Field = forwardRef<HTMLInputElement | HTMLButtonElement, FieldProps>(
 			case "SWITCH": {
 				return (
 					<Checkbox
-						ref={ref}
+						ref={ref as React.RefObject<HTMLButtonElement>}
 						checked={value === "true"}
 						onCheckedChange={(checked) => onChange(checked ? "true" : "false")}
 						{...rest}
