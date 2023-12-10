@@ -1,7 +1,7 @@
 import type { Page } from "@prisma/client";
 import { z } from "zod";
-import { prisma } from "@admin/prisma/client";
-import { publicProcedure } from "@admin/src/trpc";
+import { prisma } from "@/prisma/client";
+import { publicProcedure } from "@/src/trpc";
 
 export const getPage = publicProcedure
 	.input(

@@ -36,9 +36,9 @@ import {
 	Button,
 	ActionIcon,
 	type FormFieldProps,
-} from "@admin/src/components/ui/client";
-import { Card, TypographyMuted } from "@admin/src/components/ui/server";
-import { cn } from "@admin/src/utils/styling";
+} from "@/src/components/ui/client";
+import { Card, TypographyMuted } from "@/src/components/ui/server";
+import { cn } from "@/src/utils/styling";
 import {
 	FieldTypePicker,
 	fieldDefinitionUISchema,

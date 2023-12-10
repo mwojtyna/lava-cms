@@ -18,9 +18,9 @@ import {
 	FormLabel,
 	FormControl,
 	FormError,
-} from "@admin/src/components/ui/client";
-import { Alert, AlertTitle } from "@admin/src/components/ui/server";
-import { trpc } from "@admin/src/utils/trpc";
+} from "@/src/components/ui/client";
+import { Alert, AlertTitle } from "@/src/components/ui/server";
+import { trpc } from "@/src/utils/trpc";
 import { SinglePageForm } from "../SinglePageForm";
 
 const schema = z.object({

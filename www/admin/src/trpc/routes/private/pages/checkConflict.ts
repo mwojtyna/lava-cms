@@ -1,7 +1,7 @@
 import { z } from "zod";
-import { prisma } from "@admin/prisma/client";
-import { privateProcedure } from "@admin/src/trpc";
-import { urlRegex } from "@admin/src/trpc/regex";
+import { prisma } from "@/prisma/client";
+import { privateProcedure } from "@/src/trpc";
+import { urlRegex } from "@/src/trpc/regex";
 
 type Conflicts =
 	| {

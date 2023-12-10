@@ -2,7 +2,7 @@
 
 import type { NextFontWithVariable } from "next/dist/compiled/@next/font";
 import * as React from "react";
-import { cn } from "@admin/src/utils/styling";
+import { cn } from "@/src/utils/styling";
 import { useColorTheme } from "../data/stores/dashboard";
 
 interface Props extends React.ComponentPropsWithRef<"body"> {

@@ -1,4 +1,4 @@
-import { router } from "@admin/src/trpc";
+import { router } from "@/src/trpc";
 import { getConnectionSettings } from "./getConnectionSettings";
 import { getSeoSettings } from "./getSeoSettings";
 import { setConnectionSettings } from "./setConnectionSettings";

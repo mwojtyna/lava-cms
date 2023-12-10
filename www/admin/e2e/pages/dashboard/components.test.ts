@@ -1,7 +1,7 @@
 import { expect, type Locator, type Page } from "@playwright/test";
-import { test } from "@admin/e2e/fixtures";
-import { prisma } from "@admin/prisma/client";
-import type { ComponentFieldTypeType } from "@admin/prisma/generated/zod";
+import { test } from "@/e2e/fixtures";
+import { prisma } from "@/prisma/client";
+import type { ComponentFieldTypeType } from "@/prisma/generated/zod";
 
 const URL = "/admin/dashboard/components";
 

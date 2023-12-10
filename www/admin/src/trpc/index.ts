@@ -1,8 +1,8 @@
 import { TRPCError, initTRPC } from "@trpc/server";
 import * as context from "next/headers";
 import superjson from "superjson";
-import { prisma } from "@admin/prisma/client";
-import { auth } from "@admin/src/auth";
+import { prisma } from "@/prisma/client";
+import { auth } from "@/src/auth";
 import { env } from "../env/server.mjs";
 
 export interface Meta {

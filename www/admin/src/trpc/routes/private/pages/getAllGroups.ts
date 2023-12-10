@@ -1,6 +1,6 @@
 import type { Page } from "@prisma/client";
-import { prisma } from "@admin/prisma/client";
-import { privateProcedure } from "@admin/src/trpc";
+import { prisma } from "@/prisma/client";
+import { privateProcedure } from "@/src/trpc";
 
 export const getAllGroups = privateProcedure.query(async (): Promise<Page[]> => {
 	return prisma.page.findMany({

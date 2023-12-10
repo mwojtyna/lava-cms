@@ -1,4 +1,4 @@
-import { router } from "@admin/src/trpc";
+import { router } from "@/src/trpc";
 import { addComponent } from "./addComponent";
 import { addComponentDefinition } from "./addComponentDefinition";
 import { addGroup } from "./addGroup";

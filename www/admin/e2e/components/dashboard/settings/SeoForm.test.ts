@@ -1,7 +1,7 @@
 import { expect } from "@playwright/test";
-import { test } from "@admin/e2e/fixtures";
-import { seoSettingsMock } from "@admin/e2e/mocks";
-import { prisma } from "@admin/prisma/client";
+import { test } from "@/e2e/fixtures";
+import { seoSettingsMock } from "@/e2e/mocks";
+import { prisma } from "@/prisma/client";
 
 const TEST_ID = "seo-form";
 

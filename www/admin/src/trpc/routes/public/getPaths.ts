@@ -1,7 +1,7 @@
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
-import { prisma } from "@admin/prisma/client";
-import { publicProcedure } from "@admin/src/trpc";
+import { prisma } from "@/prisma/client";
+import { publicProcedure } from "@/src/trpc";
 
 export const getPaths = publicProcedure
 	.input(

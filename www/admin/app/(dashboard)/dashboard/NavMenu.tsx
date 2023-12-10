@@ -9,10 +9,10 @@ import {
 	Tooltip,
 	TooltipContent,
 	TooltipTrigger,
-} from "@admin/src/components/ui/client";
-import { UserMenu } from "@admin/src/components/UserMenu";
-import { navMenuRoutes } from "@admin/src/data/routes/navMenu";
-import { cn } from "@admin/src/utils/styling";
+} from "@/src/components/ui/client";
+import { UserMenu } from "@/src/components/UserMenu";
+import { navMenuRoutes } from "@/src/data/routes/navMenu";
+import { cn } from "@/src/utils/styling";
 import { NavMenuItem } from "./NavMenuItem";
 import { NavMenuLogo } from "./NavMenuLogo";
 import { NavMenuWrapper } from "./NavMenuWrapper";
@@ -23,7 +23,7 @@ const logoFont = Poppins({
 });
 
 async function Menu({ className }: { className?: string }) {
-	const version = (await import("@admin/package.json")).version;
+	const version = (await import("@/package.json")).version;
 
 	return (
 		<nav

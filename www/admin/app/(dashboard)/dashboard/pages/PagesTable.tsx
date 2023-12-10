@@ -9,11 +9,11 @@ import {
 	DataTableBreadcrumbs,
 	DataTablePagination,
 	DataTableActions,
-} from "@admin/src/components";
-import { useDataTable, type TableSearchParams } from "@admin/src/hooks";
-import type { PrivateRouter } from "@admin/src/trpc/routes/private/_private";
-import { type TableCookie } from "@admin/src/utils/cookies";
-import { trpc } from "@admin/src/utils/trpc";
+} from "@/src/components";
+import { useDataTable, type TableSearchParams } from "@/src/hooks";
+import type { PrivateRouter } from "@/src/trpc/routes/private/_private";
+import { type TableCookie } from "@/src/utils/cookies";
+import { trpc } from "@/src/utils/trpc";
 import { AddDialog } from "./dialogs";
 import { columns } from "./PagesTableColumns";
 

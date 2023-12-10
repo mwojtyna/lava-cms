@@ -8,8 +8,8 @@ import {
 	userMock,
 	userPasswordDecrypted,
 	seoSettingsMock,
-} from "@admin/e2e/mocks";
-import { prisma } from "@admin/prisma/client";
+} from "@/e2e/mocks";
+import { prisma } from "@/prisma/client";
 
 const STORAGE_STATE_PATH = "./e2e/storageState.json";
 

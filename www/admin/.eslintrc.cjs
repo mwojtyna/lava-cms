@@ -40,7 +40,7 @@ module.exports = {
 				],
 				pathGroups: [
 					{
-						pattern: "@admin/**",
+						pattern: "@/**",
 						group: "internal",
 					},
 				],

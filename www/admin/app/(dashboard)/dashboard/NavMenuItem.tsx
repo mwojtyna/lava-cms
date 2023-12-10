@@ -3,11 +3,11 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import * as React from "react";
-import { Button, Tooltip, TooltipContent, TooltipTrigger } from "@admin/src/components/ui/client";
-import type { NavMenuRoute } from "@admin/src/data/routes/navMenu";
-import { getRoute } from "@admin/src/data/routes/shared";
-import { useNavMenu } from "@admin/src/data/stores/dashboard";
-import { cn } from "@admin/src/utils/styling";
+import { Button, Tooltip, TooltipContent, TooltipTrigger } from "@/src/components/ui/client";
+import type { NavMenuRoute } from "@/src/data/routes/navMenu";
+import { getRoute } from "@/src/data/routes/shared";
+import { useNavMenu } from "@/src/data/stores/dashboard";
+import { cn } from "@/src/utils/styling";
 
 interface Props {
 	routes: NavMenuRoute[];

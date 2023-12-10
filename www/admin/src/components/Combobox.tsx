@@ -13,8 +13,8 @@ import {
 	Popover,
 	PopoverContent,
 	PopoverTrigger,
-} from "@admin/src/components/ui/client";
-import { cn } from "@admin/src/utils/styling";
+} from "@/src/components/ui/client";
+import { cn } from "@/src/utils/styling";
 
 type ComboboxData = Array<{
 	value: string;

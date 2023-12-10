@@ -1,6 +1,6 @@
 import { expect, test } from "@playwright/test";
-import { createMockUser, deleteMockUser, userMock, userPasswordDecrypted } from "@admin/e2e/mocks";
-import { prisma } from "@admin/prisma/client";
+import { createMockUser, deleteMockUser, userMock, userPasswordDecrypted } from "@/e2e/mocks";
+import { prisma } from "@/prisma/client";
 
 test.beforeAll(async () => {
 	await createMockUser();

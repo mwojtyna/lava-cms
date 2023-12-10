@@ -1,6 +1,6 @@
 import { expect } from "@playwright/test";
-import { test } from "@admin/e2e/fixtures";
-import { connectionSettingsMock } from "@admin/e2e/mocks";
+import { test } from "@/e2e/fixtures";
+import { connectionSettingsMock } from "@/e2e/mocks";
 
 const TEST_ID = "connection-form";
 

@@ -13,7 +13,7 @@ import {
 import { sortingFns, type ColumnDef } from "@tanstack/react-table";
 import Link from "next/link";
 import * as React from "react";
-import { DataTableSortableHeader, dateFormatOptions } from "@admin/src/components/DataTable";
+import { DataTableSortableHeader, dateFormatOptions } from "@/src/components/DataTable";
 import {
 	ActionIcon,
 	Button,
@@ -22,7 +22,7 @@ import {
 	DropdownMenuContent,
 	DropdownMenuItem,
 	DropdownMenuTrigger,
-} from "@admin/src/components/ui/client";
+} from "@/src/components/ui/client";
 import {
 	BulkDeleteDialog,
 	BulkMoveDialog,

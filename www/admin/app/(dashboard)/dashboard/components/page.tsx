@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { cookies } from "next/headers";
-import { caller } from "@admin/src/trpc/routes/private/_private";
-import { type CookieName, tableCookieSchema } from "@admin/src/utils/cookies";
+import { caller } from "@/src/trpc/routes/private/_private";
+import { type CookieName, tableCookieSchema } from "@/src/utils/cookies";
 import { ComponentsTable } from "./ComponentsTable";
 
 export const metadata: Metadata = {

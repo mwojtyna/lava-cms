@@ -1,6 +1,6 @@
 // Inspired by react-hot-toast library
 import * as React from "react";
-import type { ToastActionElement, ToastProps } from "@admin/src/components/ui/client";
+import type { ToastActionElement, ToastProps } from "@/src/components/ui/client";
 import { TypographyCode } from "../components/ui/server";
 
 const TOAST_LIMIT = 1;

@@ -8,9 +8,9 @@ import { Prisma } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
 import natsort from "natsort";
 import { z } from "zod";
-import { prisma } from "@admin/prisma/client";
-import type { Breadcrumb } from "@admin/src/components/DataTable";
-import { privateProcedure } from "@admin/src/trpc";
+import { prisma } from "@/prisma/client";
+import type { Breadcrumb } from "@/src/components/DataTable";
+import { privateProcedure } from "@/src/trpc";
 
 export type Item = {
 	id: string;

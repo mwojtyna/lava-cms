@@ -5,8 +5,8 @@ import { MagnifyingGlassIcon } from "@heroicons/react/20/solid";
 import { Command as CommandPrimitive } from "cmdk";
 import * as React from "react";
 
-import { Dialog, DialogContent } from "@admin/src/components/ui/client";
-import { cn } from "@admin/src/utils/styling";
+import { Dialog, DialogContent } from "@/src/components/ui/client";
+import { cn } from "@/src/utils/styling";
 import { TypographyMuted } from "../server";
 
 const Command = React.forwardRef<

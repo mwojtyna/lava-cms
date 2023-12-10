@@ -1,5 +1,5 @@
 import { fetchRequestHandler } from "@trpc/server/adapters/fetch";
-import { privateRouter } from "@admin/src/trpc/routes/private/_private";
+import { privateRouter } from "@/src/trpc/routes/private/_private";
 
 const handler = (req: Request) =>
 	fetchRequestHandler({

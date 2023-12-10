@@ -1,4 +1,4 @@
-import { getCurrentUser } from "@admin/src/auth";
+import { getCurrentUser } from "@/src/auth";
 import {
 	Avatar,
 	AvatarFallback,
@@ -7,9 +7,9 @@ import {
 	DropdownMenuLabel,
 	DropdownMenuSeparator,
 	DropdownMenuTrigger,
-} from "@admin/src/components/ui/client";
-import { TypographyMuted } from "@admin/src/components/ui/server";
-import { cn } from "@admin/src/utils/styling";
+} from "@/src/components/ui/client";
+import { TypographyMuted } from "@/src/components/ui/server";
+import { cn } from "@/src/utils/styling";
 import { LogoutItem, ThemeSwitchItem } from "./UserMenuItems";
 
 interface Props {

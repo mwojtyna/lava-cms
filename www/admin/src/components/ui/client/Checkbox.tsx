@@ -3,7 +3,7 @@
 import { CheckIcon } from "@heroicons/react/20/solid";
 import * as CheckboxPrimitive from "@radix-ui/react-checkbox";
 import * as React from "react";
-import { cn } from "@admin/src/utils/styling";
+import { cn } from "@/src/utils/styling";
 
 const Checkbox = React.forwardRef<
 	React.ElementRef<typeof CheckboxPrimitive.Root>,

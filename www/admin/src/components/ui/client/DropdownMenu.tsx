@@ -4,7 +4,7 @@ import { CheckIcon, ChevronRightIcon } from "@heroicons/react/20/solid";
 import * as DropdownMenuPrimitive from "@radix-ui/react-dropdown-menu";
 import { IconCircle } from "@tabler/icons-react";
 import * as React from "react";
-import { cn } from "@admin/src/utils/styling";
+import { cn } from "@/src/utils/styling";
 
 const DropdownMenu = DropdownMenuPrimitive.Root;
 const DropdownMenuTrigger = DropdownMenuPrimitive.Trigger;

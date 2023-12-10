@@ -1,4 +1,4 @@
-import { router } from "@admin/src/trpc";
+import { router } from "@/src/trpc";
 import { generateToken } from "./generateToken";
 import { getToken } from "./getToken";
 import { setupRequired } from "./setupRequired";

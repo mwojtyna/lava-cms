@@ -2,10 +2,10 @@ import type { Metadata } from "next";
 import { ArrowDownTrayIcon, ArrowUturnLeftIcon } from "@heroicons/react/24/outline";
 import Link from "next/link";
 import { RedirectType, redirect } from "next/navigation";
-import { prisma } from "@admin/prisma/client";
-import { ActionIcon, Button } from "@admin/src/components/ui/client";
-import { UserMenu } from "@admin/src/components/UserMenu";
-import { caller } from "@admin/src/trpc/routes/private/_private";
+import { prisma } from "@/prisma/client";
+import { ActionIcon, Button } from "@/src/components/ui/client";
+import { UserMenu } from "@/src/components/UserMenu";
+import { caller } from "@/src/trpc/routes/private/_private";
 import { Inspector } from "./Inspector";
 import { PagePreview } from "./PagePreview";
 

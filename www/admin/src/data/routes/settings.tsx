@@ -1,7 +1,7 @@
 import type { Route } from "./shared";
 import { LinkIcon, MagnifyingGlassIcon } from "@heroicons/react/20/solid";
-import { ConnectionTab } from "@admin/app/(dashboard)/dashboard/settings/tabs/ConnectionTab";
-import { SeoTab } from "@admin/app/(dashboard)/dashboard/settings/tabs/SeoTab";
+import { ConnectionTab } from "@/app/(dashboard)/dashboard/settings/tabs/ConnectionTab";
+import { SeoTab } from "@/app/(dashboard)/dashboard/settings/tabs/SeoTab";
 import "server-only";
 
 export interface SettingsRoute extends Route {

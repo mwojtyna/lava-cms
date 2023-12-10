@@ -1,6 +1,6 @@
 import { notFound, redirect } from "next/navigation";
-import { prisma } from "@admin/prisma/client";
-import { getCurrentUser } from "@admin/src/auth";
+import { prisma } from "@/prisma/client";
+import { getCurrentUser } from "@/src/auth";
 
 export const dynamic = "force-dynamic";
 

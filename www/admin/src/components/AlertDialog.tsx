@@ -7,7 +7,7 @@ import {
 	DialogHeader,
 	DialogFooter,
 	Button,
-} from "@admin/src/components/ui/client";
+} from "@/src/components/ui/client";
 
 interface Props {
 	icon: React.ReactNode;

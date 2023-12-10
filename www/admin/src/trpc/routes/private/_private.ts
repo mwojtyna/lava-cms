@@ -1,4 +1,4 @@
-import { router } from "@admin/src/trpc";
+import { router } from "@/src/trpc";
 import { authRouter } from "./auth/_auth";
 import { componentsRouter } from "./components/_components";
 import { pagesRouter } from "./pages/_pages";

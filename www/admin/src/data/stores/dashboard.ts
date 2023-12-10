@@ -1,6 +1,6 @@
 import { setCookie } from "cookies-next";
 import { create } from "zustand";
-import { permanentCookieOptions, type ColorTheme, type CookieName } from "@admin/src/utils/cookies";
+import { permanentCookieOptions, type ColorTheme, type CookieName } from "@/src/utils/cookies";
 import "client-only";
 
 interface MenuState {

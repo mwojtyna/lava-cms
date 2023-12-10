@@ -1,5 +1,5 @@
 import type { Page } from "@playwright/test";
-import type { ColorTheme } from "@admin/src/utils/cookies";
+import type { ColorTheme } from "@/src/utils/cookies";
 
 export function getColorScheme(page: Page): Promise<ColorTheme> {
 	return page

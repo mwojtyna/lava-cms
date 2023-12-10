@@ -10,9 +10,9 @@ import {
 	FormLabel,
 	Checkbox,
 	FormError,
-} from "@admin/src/components/ui/client";
-import { TypographyMuted } from "@admin/src/components/ui/server";
-import { cn } from "@admin/src/utils/styling";
+} from "@/src/components/ui/client";
+import { TypographyMuted } from "@/src/components/ui/server";
+import { cn } from "@/src/utils/styling";
 
 type Input = any;
 

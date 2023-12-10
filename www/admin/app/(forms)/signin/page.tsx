@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
-import { getCurrentUser } from "@admin/src/auth";
-import { caller } from "@admin/src/trpc/routes/private/_private";
+import { getCurrentUser } from "@/src/auth";
+import { caller } from "@/src/trpc/routes/private/_private";
 import { SignInForm } from "./SignInForm";
 
 export const metadata: Metadata = {

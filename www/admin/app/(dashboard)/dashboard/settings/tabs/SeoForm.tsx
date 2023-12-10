@@ -15,7 +15,7 @@ import {
 	Textarea,
 	FormDescription,
 	Separator,
-} from "@admin/src/components/ui/client";
+} from "@/src/components/ui/client";
 import {
 	Card,
 	CardContent,
@@ -23,9 +23,9 @@ import {
 	CardHeader,
 	CardTitle,
 	TypographyCode,
-} from "@admin/src/components/ui/server";
-import { useToast } from "@admin/src/hooks";
-import { trpc } from "@admin/src/utils/trpc";
+} from "@/src/components/ui/server";
+import { useToast } from "@/src/hooks";
+import { trpc } from "@/src/utils/trpc";
 
 const schema = z.object({
 	title: z.string().min(1),

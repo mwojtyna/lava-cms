@@ -1,8 +1,8 @@
 import { TRPCError } from "@trpc/server";
 import tags from "language-tags";
 import { z } from "zod";
-import { prisma } from "@admin/prisma/client";
-import { privateProcedure } from "@admin/src/trpc";
+import { prisma } from "@/prisma/client";
+import { privateProcedure } from "@/src/trpc";
 
 export const setSeoSettings = privateProcedure
 	.input(

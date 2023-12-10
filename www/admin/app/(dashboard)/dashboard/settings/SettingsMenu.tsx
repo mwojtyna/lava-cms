@@ -2,9 +2,9 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Button } from "@admin/src/components/ui/client";
-import type { SettingsRoute } from "@admin/src/data/routes/settings";
-import { cn } from "@admin/src/utils/styling";
+import { Button } from "@/src/components/ui/client";
+import type { SettingsRoute } from "@/src/data/routes/settings";
+import { cn } from "@/src/utils/styling";
 
 export function SettingsMenu({ routes }: { routes: SettingsRoute[] }) {
 	const segments = usePathname().split("/");

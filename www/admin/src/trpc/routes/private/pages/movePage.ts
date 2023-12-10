@@ -1,7 +1,7 @@
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
-import { prisma } from "@admin/prisma/client";
-import { privateProcedure } from "@admin/src/trpc";
+import { prisma } from "@/prisma/client";
+import { privateProcedure } from "@/src/trpc";
 import { caller } from "../_private";
 
 export const movePage = privateProcedure

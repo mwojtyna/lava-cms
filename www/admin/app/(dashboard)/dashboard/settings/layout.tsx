@@ -1,4 +1,4 @@
-import { settingsRoutes } from "@admin/src/data/routes/settings";
+import { settingsRoutes } from "@/src/data/routes/settings";
 import { SettingsMenu } from "./SettingsMenu";
 
 export const dynamic = "force-dynamic";

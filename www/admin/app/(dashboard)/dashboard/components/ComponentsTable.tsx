@@ -8,12 +8,12 @@ import {
 	DataTableActions,
 	DataTableBreadcrumbs,
 	DataTablePagination,
-} from "@admin/src/components";
-import { useDataTable, type TableSearchParams } from "@admin/src/hooks";
-import type { PrivateRouter } from "@admin/src/trpc/routes/private/_private";
-import type { Item } from "@admin/src/trpc/routes/private/components/getGroup";
-import type { TableCookie } from "@admin/src/utils/cookies";
-import { trpc } from "@admin/src/utils/trpc";
+} from "@/src/components";
+import { useDataTable, type TableSearchParams } from "@/src/hooks";
+import type { PrivateRouter } from "@/src/trpc/routes/private/_private";
+import type { Item } from "@/src/trpc/routes/private/components/getGroup";
+import type { TableCookie } from "@/src/utils/cookies";
+import { trpc } from "@/src/utils/trpc";
 import { columns } from "./ComponentsTableColumns";
 import { AddComponentDefDialog } from "./dialogs/component-definition";
 import { AddGroupDialog } from "./dialogs/GroupDialogs";

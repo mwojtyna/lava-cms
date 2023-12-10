@@ -1,13 +1,13 @@
 import { expect } from "@playwright/test";
-import { test } from "@admin/e2e/fixtures";
+import { test } from "@/e2e/fixtures";
 import {
 	createMockUser,
 	deleteMockUser,
 	userMock,
 	userPasswordDecrypted,
 	seoSettingsMock,
-} from "@admin/e2e/mocks";
-import { prisma } from "@admin/prisma/client";
+} from "@/e2e/mocks";
+import { prisma } from "@/prisma/client";
 
 test.describe("sign up step", () => {
 	test.afterAll(async () => {

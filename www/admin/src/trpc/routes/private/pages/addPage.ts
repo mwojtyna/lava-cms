@@ -1,9 +1,9 @@
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
-import { prisma } from "@admin/prisma/client";
-import { privateProcedure } from "@admin/src/trpc";
-import { urlRegex } from "@admin/src/trpc/regex";
+import { prisma } from "@/prisma/client";
+import { privateProcedure } from "@/src/trpc";
+import { urlRegex } from "@/src/trpc/regex";
 
 export const addPage = privateProcedure
 	.input(

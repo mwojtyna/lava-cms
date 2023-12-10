@@ -1,9 +1,9 @@
 import type { Page } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
-import { prisma } from "@admin/prisma/client";
-import type { Breadcrumb } from "@admin/src/components/DataTable";
-import { privateProcedure } from "@admin/src/trpc";
+import { prisma } from "@/prisma/client";
+import type { Breadcrumb } from "@/src/components/DataTable";
+import { privateProcedure } from "@/src/trpc";
 
 export const getGroupContents = privateProcedure
 	.input(z.object({ id: z.string() }).nullish())

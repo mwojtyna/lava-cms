@@ -9,8 +9,8 @@ import {
 	FormProvider,
 	useFormContext,
 } from "react-hook-form";
-import { Label } from "@admin/src/components/ui/client";
-import { cn } from "@admin/src/utils/styling";
+import { Label } from "@/src/components/ui/client";
+import { cn } from "@/src/utils/styling";
 import { TypographyMuted } from "../server";
 
 interface FormFieldProps<T> {

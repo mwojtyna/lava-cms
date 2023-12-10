@@ -1,8 +1,8 @@
 import { createId } from "@paralleldrive/cuid2";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
-import { auth } from "@admin/src/auth";
-import { privateProcedure } from "@admin/src/trpc";
+import { auth } from "@/src/auth";
+import { privateProcedure } from "@/src/trpc";
 
 export const signIn = privateProcedure
 	.meta({ noAuth: true })

@@ -8,11 +8,11 @@ import { z } from "zod";
 import {
 	ComponentDefinitionFieldSchema,
 	type ComponentFieldTypeType,
-} from "@admin/prisma/generated/zod";
-import { Combobox, type ComboboxData, type ItemParent } from "@admin/src/components";
-import { Button, type FormFieldProps } from "@admin/src/components/ui/client";
-import type { PrivateRouter } from "@admin/src/trpc/routes/private/_private";
-import { cn } from "@admin/src/utils/styling";
+} from "@/prisma/generated/zod";
+import { Combobox, type ComboboxData, type ItemParent } from "@/src/components";
+import { Button, type FormFieldProps } from "@/src/components/ui/client";
+import type { PrivateRouter } from "@/src/trpc/routes/private/_private";
+import { cn } from "@/src/utils/styling";
 
 export const fieldTypeMap: Record<string, string> = Object.values(ComponentFieldType).reduce(
 	(acc, type) => {

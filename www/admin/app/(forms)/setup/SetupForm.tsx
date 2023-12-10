@@ -5,7 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { type SubmitHandler, useForm } from "react-hook-form";
 import { z } from "zod";
-import { InfoTooltip } from "@admin/src/components";
+import { InfoTooltip } from "@/src/components";
 import {
 	Button,
 	FormControl,
@@ -14,9 +14,9 @@ import {
 	FormLabel,
 	Input,
 	Textarea,
-} from "@admin/src/components/ui/client";
-import { TypographyCode } from "@admin/src/components/ui/server";
-import { trpc } from "@admin/src/utils/trpc";
+} from "@/src/components/ui/client";
+import { TypographyCode } from "@/src/components/ui/server";
+import { trpc } from "@/src/utils/trpc";
 import { SinglePageForm } from "../SinglePageForm";
 
 const schema = z.object({

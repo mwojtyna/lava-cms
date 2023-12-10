@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
 import { Inter, Poppins } from "next/font/google";
 import { cookies } from "next/headers";
-import { Body } from "@admin/src/components";
-import { TrpcProvider, ZustandProvider } from "@admin/src/components/providers";
-import { Toaster, TooltipProvider } from "@admin/src/components/ui/client";
-import { colorThemeSchema, type CookieName } from "@admin/src/utils/cookies";
-import "@admin/src/styles/globals.css";
+import { Body } from "@/src/components";
+import { TrpcProvider, ZustandProvider } from "@/src/components/providers";
+import { Toaster, TooltipProvider } from "@/src/components/ui/client";
+import { colorThemeSchema, type CookieName } from "@/src/utils/cookies";
+import "@/src/styles/globals.css";
 
 export const metadata: Metadata = {
 	icons: ["/admin/favicon.ico"],

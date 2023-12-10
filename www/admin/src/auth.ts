@@ -3,8 +3,8 @@ import bcrypt from "bcrypt";
 import { lucia, type User } from "lucia";
 import { nextjs_future } from "lucia/middleware";
 import * as context from "next/headers";
-import { prisma as prismaClient } from "@admin/prisma/client";
-import { env } from "@admin/src/env/server.mjs";
+import { prisma as prismaClient } from "@/prisma/client";
+import { env } from "@/src/env/server.mjs";
 
 export const auth = lucia({
 	adapter: prisma(prismaClient, {

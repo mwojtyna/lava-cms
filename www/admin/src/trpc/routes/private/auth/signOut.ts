@@ -1,5 +1,5 @@
-import { auth } from "@admin/src/auth";
-import { privateProcedure } from "@admin/src/trpc";
+import { auth } from "@/src/auth";
+import { privateProcedure } from "@/src/trpc";
 
 export const signOut = privateProcedure.mutation(async ({ ctx }) => {
 	await auth.invalidateSession(ctx.session!.sessionId);

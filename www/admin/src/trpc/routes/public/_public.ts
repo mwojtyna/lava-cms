@@ -1,4 +1,4 @@
-import { router } from "@admin/src/trpc";
+import { router } from "@/src/trpc";
 import { getHead } from "./getHead";
 import { getPage } from "./getPage";
 import { getPaths } from "./getPaths";

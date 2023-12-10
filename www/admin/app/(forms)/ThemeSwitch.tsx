@@ -2,7 +2,7 @@
 
 import { MoonIcon, SunIcon } from "@heroicons/react/24/outline";
 import * as React from "react";
-import { useColorTheme } from "@admin/src/data/stores/dashboard";
+import { useColorTheme } from "@/src/data/stores/dashboard";
 import { Switch } from "../../src/components/ui/client";
 import { cn } from "../../src/utils/styling";
 

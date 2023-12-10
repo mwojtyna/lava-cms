@@ -4,7 +4,7 @@ import type { ComponentsTableItem } from "../ComponentsTable";
 import { FolderArrowDownIcon, TrashIcon } from "@heroicons/react/24/outline";
 import * as React from "react";
 import { FormProvider, useForm, type SubmitHandler } from "react-hook-form";
-import { AlertDialog, type MoveDialogInputs, NewParentSelect } from "@admin/src/components";
+import { AlertDialog, type MoveDialogInputs, NewParentSelect } from "@/src/components";
 import {
 	Button,
 	Dialog,
@@ -15,8 +15,8 @@ import {
 	FormControl,
 	FormField,
 	FormItem,
-} from "@admin/src/components/ui/client";
-import { trpc } from "@admin/src/utils/trpc";
+} from "@/src/components/ui/client";
+import { trpc } from "@/src/utils/trpc";
 import { groupsToComboboxEntries } from "./component-definition/shared";
 
 interface Props {

@@ -1,5 +1,5 @@
 import { createTRPCReact } from "@trpc/react-query";
-import type { PrivateRouter } from "@admin/src/trpc/routes/private/_private";
+import type { PrivateRouter } from "@/src/trpc/routes/private/_private";
 import "client-only";
 
 export const trpc = createTRPCReact<PrivateRouter>({

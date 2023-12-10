@@ -1,7 +1,7 @@
 import { createId } from "@paralleldrive/cuid2";
 import { z } from "zod";
-import { auth } from "@admin/src/auth";
-import { privateProcedure } from "@admin/src/trpc";
+import { auth } from "@/src/auth";
+import { privateProcedure } from "@/src/trpc";
 
 export const signUp = privateProcedure
 	.input(

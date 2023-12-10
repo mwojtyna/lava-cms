@@ -18,9 +18,9 @@ import {
 	FormLabel,
 	FormProvider,
 	Input,
-} from "@admin/src/components/ui/client";
-import { TypographyMuted } from "@admin/src/components/ui/server";
-import { trpc } from "@admin/src/utils/trpc";
+} from "@/src/components/ui/client";
+import { TypographyMuted } from "@/src/components/ui/server";
+import { trpc } from "@/src/utils/trpc";
 import { AddFieldDefs, FieldDefs } from "./FieldDefinitions";
 import {
 	fieldDefinitionUISchema,

@@ -16,8 +16,8 @@ import {
 	FormItem,
 	FormLabel,
 	Input,
-} from "@admin/src/components/ui/client";
-import { trpc } from "@admin/src/utils/trpc";
+} from "@/src/components/ui/client";
+import { trpc } from "@/src/utils/trpc";
 
 interface Props {
 	open: boolean;

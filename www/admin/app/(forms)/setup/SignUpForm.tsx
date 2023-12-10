@@ -14,8 +14,8 @@ import {
 	FormItem,
 	FormLabel,
 	Input,
-} from "@admin/src/components/ui/client";
-import { trpc } from "@admin/src/utils/trpc";
+} from "@/src/components/ui/client";
+import { trpc } from "@/src/utils/trpc";
 import { SinglePageForm } from "../SinglePageForm";
 
 const inputSchema = z

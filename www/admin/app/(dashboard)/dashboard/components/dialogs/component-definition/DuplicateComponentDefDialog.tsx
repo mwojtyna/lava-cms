@@ -4,7 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import * as React from "react";
 import { useForm, type SubmitHandler, FormProvider } from "react-hook-form";
 import { z } from "zod";
-import { NewParentSelect } from "@admin/src/components";
+import { NewParentSelect } from "@/src/components";
 import {
 	DialogHeader,
 	FormField,
@@ -18,9 +18,9 @@ import {
 	Dialog,
 	DialogContent,
 	DialogTitle,
-} from "@admin/src/components/ui/client";
-import { TypographyMuted } from "@admin/src/components/ui/server";
-import { trpc } from "@admin/src/utils/trpc";
+} from "@/src/components/ui/client";
+import { TypographyMuted } from "@/src/components/ui/server";
+import { trpc } from "@/src/utils/trpc";
 import { AddFieldDefs, FieldDefs } from "./FieldDefinitions";
 import {
 	ComponentDefinitionNameError,

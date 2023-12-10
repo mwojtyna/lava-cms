@@ -1,4 +1,4 @@
-import { cn } from "@admin/src/utils/styling";
+import { cn } from "@/src/utils/styling";
 
 export function Loader({ className }: { className?: string }) {
 	return (

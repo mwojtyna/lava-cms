@@ -1,7 +1,7 @@
 import { expect } from "@playwright/test";
-import { test } from "@admin/e2e/fixtures";
-import { userMock } from "@admin/e2e/mocks";
-import { getColorScheme } from "@admin/e2e/utils";
+import { test } from "@/e2e/fixtures";
+import { userMock } from "@/e2e/mocks";
+import { getColorScheme } from "@/e2e/utils";
 
 const MENU_ID = "user-menu";
 const MENU_DROPDOWN_ID = "user-menu-dropdown";

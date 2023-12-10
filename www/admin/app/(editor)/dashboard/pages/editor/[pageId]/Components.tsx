@@ -3,7 +3,7 @@
 import type { Component } from "./types";
 import { IconGripVertical } from "@tabler/icons-react";
 import React from "react";
-import { Card, TypographyMuted } from "@admin/src/components/ui/server";
+import { Card, TypographyMuted } from "@/src/components/ui/server";
 
 interface Props {
 	components: Component[];

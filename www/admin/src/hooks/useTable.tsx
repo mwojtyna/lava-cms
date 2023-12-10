@@ -17,7 +17,7 @@ import {
 	permanentCookieOptions,
 	type CookieName,
 	type TableCookie,
-} from "@admin/src/utils/cookies";
+} from "@/src/utils/cookies";
 import { Input } from "../components/ui/client";
 import { useSearchParams } from "./useSearchParams";
 

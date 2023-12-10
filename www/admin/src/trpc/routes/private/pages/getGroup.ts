@@ -1,8 +1,8 @@
 import type { Page } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
-import { prisma } from "@admin/prisma/client";
-import { privateProcedure } from "@admin/src/trpc";
+import { prisma } from "@/prisma/client";
+import { privateProcedure } from "@/src/trpc";
 
 export const getGroup = privateProcedure
 	.input(z.object({ id: z.string().cuid() }).nullish())

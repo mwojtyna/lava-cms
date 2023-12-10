@@ -2,8 +2,8 @@ import type { inferAsyncReturnType } from "@trpc/server";
 import type { Metadata } from "next";
 import { ArrowRightIcon } from "@heroicons/react/20/solid";
 import { redirect } from "next/navigation";
-import { Stepper } from "@admin/src/components/ui/server";
-import { caller } from "@admin/src/trpc/routes/private/_private";
+import { Stepper } from "@/src/components/ui/server";
+import { caller } from "@/src/trpc/routes/private/_private";
 import { SetupForm } from "./SetupForm";
 import { SignUpForm } from "./SignUpForm";
 

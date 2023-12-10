@@ -19,7 +19,7 @@ import {
 	Tooltip,
 	TooltipContent,
 	TooltipTrigger,
-} from "@admin/src/components/ui/client";
+} from "@/src/components/ui/client";
 import {
 	Card,
 	CardContent,
@@ -27,9 +27,9 @@ import {
 	CardHeader,
 	CardTitle,
 	Loader,
-} from "@admin/src/components/ui/server";
-import { useToast } from "@admin/src/hooks";
-import { trpc } from "@admin/src/utils/trpc";
+} from "@/src/components/ui/server";
+import { useToast } from "@/src/hooks";
+import { trpc } from "@/src/utils/trpc";
 
 const schema = z.object({
 	developmentUrl: z

@@ -1,5 +1,5 @@
-import { prisma } from "@admin/prisma/client";
-import { privateProcedure } from "@admin/src/trpc";
+import { prisma } from "@/prisma/client";
+import { privateProcedure } from "@/src/trpc";
 import { caller } from "../_private";
 import { randomString } from "../auth/generateToken";
 

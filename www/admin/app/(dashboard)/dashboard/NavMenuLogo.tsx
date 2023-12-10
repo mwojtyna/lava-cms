@@ -3,9 +3,9 @@
 import type { NextFont } from "next/dist/compiled/@next/font";
 import { IconVolcano } from "@tabler/icons-react";
 import Link from "next/link";
-import { TypographyH1, TypographyMuted } from "@admin/src/components/ui/server";
-import { useNavMenu } from "@admin/src/data/stores/dashboard";
-import { cn } from "@admin/src/utils/styling";
+import { TypographyH1, TypographyMuted } from "@/src/components/ui/server";
+import { useNavMenu } from "@/src/data/stores/dashboard";
+import { cn } from "@/src/utils/styling";
 
 export function NavMenuLogo({ version, font }: { version: string; font: NextFont }) {
 	const { setOpen } = useNavMenu();

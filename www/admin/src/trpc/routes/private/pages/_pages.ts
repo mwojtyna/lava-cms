@@ -1,4 +1,4 @@
-import { router } from "@admin/src/trpc";
+import { router } from "@/src/trpc";
 import { addPage } from "./addPage";
 import { checkConflict } from "./checkConflict";
 import { deletePage } from "./deletePage";

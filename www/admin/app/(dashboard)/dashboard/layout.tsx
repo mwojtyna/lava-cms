@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
-import { getCurrentUser } from "@admin/src/auth";
-import { PageTitle } from "@admin/src/components";
-import { navMenuRoutes } from "@admin/src/data/routes/navMenu";
+import { getCurrentUser } from "@/src/auth";
+import { PageTitle } from "@/src/components";
+import { navMenuRoutes } from "@/src/data/routes/navMenu";
 import { NavMenu } from "./NavMenu";
 
 export const dynamic = "force-dynamic";

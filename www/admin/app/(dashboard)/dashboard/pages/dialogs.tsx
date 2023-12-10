@@ -24,8 +24,8 @@ import {
 } from "react-hook-form";
 import slugify from "slugify";
 import { z } from "zod";
-import { AlertDialog, NewParentSelect, type MoveDialogInputs } from "@admin/src/components";
-import type { ItemParent } from "@admin/src/components/DataTableDialogs";
+import { AlertDialog, NewParentSelect, type MoveDialogInputs } from "@/src/components";
+import type { ItemParent } from "@/src/components/DataTableDialogs";
 import {
 	Button,
 	Dialog,
@@ -40,10 +40,10 @@ import {
 	FormItem,
 	FormLabel,
 	Input,
-} from "@admin/src/components/ui/client";
-import { TypographyList } from "@admin/src/components/ui/server";
-import { usePagePreferences } from "@admin/src/hooks";
-import { trpc } from "@admin/src/utils/trpc";
+} from "@/src/components/ui/client";
+import { TypographyList } from "@/src/components/ui/server";
+import { usePagePreferences } from "@/src/hooks";
+import { trpc } from "@/src/utils/trpc";
 
 interface AddDialogProps {
 	group: Page;
