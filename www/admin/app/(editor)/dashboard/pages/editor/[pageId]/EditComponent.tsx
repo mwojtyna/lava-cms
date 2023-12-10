@@ -66,40 +66,42 @@ export function EditComponent(props: { component: Component }) {
 interface FieldProps extends FormFieldProps<string> {
 	fieldType: Component["fields"][number]["definition"]["type"];
 }
-const Field = forwardRef<unknown, FieldProps>(({ fieldType, value, onChange, ...rest }, ref) => {
-	switch (fieldType) {
-		case "TEXT": {
-			return (
-				<Input
-					ref={ref}
-					type="text"
-					value={value}
-					onChange={(e) => onChange(e.currentTarget.value)}
-					{...rest}
-				/>
-			);
+const Field = forwardRef<HTMLInputElement | HTMLButtonElement, FieldProps>(
+	({ fieldType, value, onChange, ...rest }, ref) => {
+		switch (fieldType) {
+			case "TEXT": {
+				return (
+					<Input
+						ref={ref}
+						type="text"
+						value={value}
+						onChange={(e) => onChange(e.currentTarget.value)}
+						{...rest}
+					/>
+				);
+			}
+			case "NUMBER": {
+				return (
+					<Input
+						ref={ref}
+						type="number"
+						value={value}
+						onChange={(e) => onChange(e.currentTarget.value)}
+						{...rest}
+					/>
+				);
+			}
+			case "SWITCH": {
+				return (
+					<Checkbox
+						ref={ref}
+						checked={value === "true"}
+						onCheckedChange={(checked) => onChange(checked ? "true" : "false")}
+						{...rest}
+					/>
+				);
+			}
 		}
-		case "NUMBER": {
-			return (
-				<Input
-					ref={ref}
-					type="number"
-					value={value}
-					onChange={(e) => onChange(e.currentTarget.value)}
-					{...rest}
-				/>
-			);
-		}
-		case "SWITCH": {
-			return (
-				<Checkbox
-					ref={ref}
-					checked={value === "true"}
-					onCheckedChange={(checked) => onChange(checked ? "true" : "false")}
-					{...rest}
-				/>
-			);
-		}
-	}
-});
+	},
+);
 Field.displayName = "Field";
