@@ -1,13 +1,14 @@
 import type { Metadata } from "next";
-import { ArrowDownTrayIcon, ArrowUturnLeftIcon } from "@heroicons/react/24/outline";
+import { ArrowUturnLeftIcon } from "@heroicons/react/24/outline";
 import Link from "next/link";
 import { RedirectType, redirect } from "next/navigation";
 import { prisma } from "@/prisma/client";
-import { ActionIcon, Button } from "@/src/components/ui/client";
+import { ActionIcon } from "@/src/components/ui/client";
 import { UserMenu } from "@/src/components/UserMenu";
 import { caller } from "@/src/trpc/routes/private/_private";
 import { Inspector } from "./Inspector";
 import { PagePreview } from "./PagePreview";
+import { SaveButton } from "./SaveButton";
 
 export const dynamic = "force-dynamic";
 
@@ -54,13 +55,7 @@ export default async function Editor({
 
 				<div className="flex items-center gap-4">
 					<UserMenu small />
-					<Button
-						className="flex-row-reverse"
-						icon={<ArrowDownTrayIcon className="w-5" />}
-						// disabled={!dirty}
-					>
-						Save
-					</Button>
+					<SaveButton />
 				</div>
 			</nav>
 

@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import "client-only";
 
 interface ComponentDefEditDialogState {
 	open: boolean;

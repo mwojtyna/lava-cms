@@ -26,7 +26,7 @@ export function Components(props: Props) {
 						<span className="font-medium">{component.name}</span>
 					</div>
 
-					<TypographyMuted>{component.definition.name}</TypographyMuted>
+					<TypographyMuted>{component.definitionName}</TypographyMuted>
 				</Card>
 			))}
 		</div>

@@ -1,5 +1,5 @@
 import type { Component } from "./types";
-import React, { forwardRef } from "react";
+import React, { forwardRef, useCallback, useEffect } from "react";
 import { FormProvider, useForm, type SubmitHandler } from "react-hook-form";
 import {
 	Input,
@@ -12,23 +12,45 @@ import {
 	FormError,
 } from "@/src/components/ui/client";
 import { TypographyMuted } from "@/src/components/ui/server";
+import { usePageEditor } from "@/src/data/stores/pageEditor";
 import { cn } from "@/src/utils/styling";
 
-type Input = any;
-
-// TODO: Keep state local, only submit to API when clicking save (like in Storyblok)
-// Keep whole json from `getPageComponents` in state
-// Ctrl+Z, Ctrl+Y, Ctrl+Shift+Z, Ctrl+S
+type Input = Record<string, string>; // fieldId: data
 
 export function EditComponent(props: { component: Component }) {
 	const form = useForm<Input>({
-		defaultValues: props.component.fields.reduce<Record<string, any>>((acc, field) => {
+		defaultValues: props.component.fields.reduce<Input>((acc, field) => {
 			acc[field.id] = field.data;
 			return acc;
 		}, {}),
 	});
 
-	const onSubmit: SubmitHandler<Input> = (data) => {};
+	const { currentComponents: components, setComponents } = usePageEditor();
+	const onSubmit: SubmitHandler<Input> = useCallback(
+		(data: Input) => {
+			const newComponents = components.map((component) => {
+				if (component.id === props.component.id) {
+					return {
+						...component,
+						fields: component.fields.map((field) => ({
+							...field,
+							data: data[field.id]!,
+						})),
+					};
+				} else {
+					return component;
+				}
+			});
+			setComponents(newComponents);
+		},
+		[components, props.component.id, setComponents],
+	);
+
+	useEffect(() => {
+		// TODO: Try debounce
+		const { unsubscribe } = form.watch(() => form.handleSubmit(onSubmit)());
+		return unsubscribe;
+	}, [form, onSubmit]);
 
 	return props.component.fields.length > 0 ? (
 		<FormProvider {...form}>
@@ -40,16 +62,11 @@ export function EditComponent(props: { component: Component }) {
 						name={componentField.id}
 						render={({ field: formField }) => (
 							<FormItem
-								className={cn(
-									componentField.definition.type === "SWITCH" && "flex-row gap-4",
-								)}
+								className={cn(componentField.type === "SWITCH" && "flex-row gap-4")}
 							>
-								<FormLabel>{componentField.definition.name}</FormLabel>
+								<FormLabel>{componentField.name}</FormLabel>
 								<FormControl>
-									<Field
-										fieldType={componentField.definition.type}
-										{...formField}
-									/>
+									<Field fieldType={componentField.type} {...formField} />
 								</FormControl>
 								<FormError />
 							</FormItem>
@@ -63,8 +80,9 @@ export function EditComponent(props: { component: Component }) {
 	);
 }
 
+// TODO: Button to restore to original values
 interface FieldProps extends FormFieldProps<string> {
-	fieldType: Component["fields"][number]["definition"]["type"];
+	fieldType: Component["fields"][number]["type"];
 }
 const Field = forwardRef<HTMLInputElement | HTMLButtonElement, FieldProps>(
 	({ fieldType, value, onChange, ...rest }, ref) => {
@@ -85,6 +103,7 @@ const Field = forwardRef<HTMLInputElement | HTMLButtonElement, FieldProps>(
 					<Input
 						ref={ref as React.RefObject<HTMLInputElement>}
 						type="number"
+						step="any"
 						value={value}
 						onChange={(e) => onChange(e.currentTarget.value)}
 						{...rest}
