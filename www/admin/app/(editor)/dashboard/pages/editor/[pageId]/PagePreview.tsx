@@ -1,5 +1,6 @@
 "use client";
 
+import type { IframeMessage } from "./types";
 import { ExclamationTriangleIcon } from "@heroicons/react/20/solid";
 import {
 	ArrowPathIcon,
@@ -11,12 +12,7 @@ import { IconMinusVertical } from "@tabler/icons-react";
 import { Resizable } from "re-resizable";
 import * as React from "react";
 import { EditableText } from "@/src/components/EditableText";
-import {
-	ActionIcon,
-	Tooltip,
-	TooltipContent,
-	TooltipTrigger,
-} from "@/src/components/ui/client";
+import { ActionIcon, Tooltip, TooltipContent, TooltipTrigger } from "@/src/components/ui/client";
 import { Card } from "@/src/components/ui/server";
 import { useSearchParams } from "@/src/hooks";
 import { cn } from "@/src/utils/styling";
@@ -48,6 +44,10 @@ export function PagePreview(props: { baseUrl: string; pageUrl: string }) {
 		setSearchParams({ path });
 		setUrl(url); // Set the URL right away to prevent url lag
 		setRemountIframe((prev) => !prev);
+	}
+
+	function initIframeScript(e: React.SyntheticEvent<HTMLIFrameElement, Event>) {
+		e.currentTarget.contentWindow?.postMessage({ name: "init" } as IframeMessage);
 	}
 
 	return (
@@ -132,6 +132,7 @@ export function PagePreview(props: { baseUrl: string; pageUrl: string }) {
 						className={cn("h-full")}
 						title="Page preview"
 						src={url}
+						onLoad={initIframeScript}
 						// Allow all
 						sandbox="allow-downloads allow-forms allow-modals allow-orientation-lock allow-pointer-lock allow-popups allow-popups-to-escape-sandbox allow-presentation allow-same-origin allow-scripts allow-storage-access-by-user-activation allow-top-navigation allow-top-navigation-by-user-activation allow-top-navigation-to-custom-protocols"
 						loading="lazy"
