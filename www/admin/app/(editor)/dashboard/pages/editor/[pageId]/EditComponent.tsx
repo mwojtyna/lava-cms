@@ -1,5 +1,5 @@
 import type { Component } from "./types";
-import React, { forwardRef, useCallback, useEffect } from "react";
+import React, { forwardRef, useCallback, useEffect, useRef } from "react";
 import { FormProvider, useForm, type SubmitHandler } from "react-hook-form";
 import {
 	Input,
@@ -16,6 +16,7 @@ import { usePageEditor } from "@/src/data/stores/pageEditor";
 import { cn } from "@/src/utils/styling";
 
 type Input = Record<string, string>; // fieldId: data
+const DEBOUNCE_TIME = 250;
 
 export function EditComponent(props: { component: Component }) {
 	const form = useForm<Input>({
@@ -46,9 +47,15 @@ export function EditComponent(props: { component: Component }) {
 		[components, props.component.id, setComponents],
 	);
 
+	const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 	useEffect(() => {
-		// TODO: Try debounce
-		const { unsubscribe } = form.watch(() => form.handleSubmit(onSubmit)());
+		const { unsubscribe } = form.watch(() => {
+			if (timeoutRef.current !== null) {
+				clearTimeout(timeoutRef.current);
+			}
+			timeoutRef.current = setTimeout(form.handleSubmit(onSubmit), DEBOUNCE_TIME);
+		});
+
 		return unsubscribe;
 	}, [form, onSubmit]);
 
