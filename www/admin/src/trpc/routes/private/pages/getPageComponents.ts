@@ -1,20 +1,7 @@
 import { z } from "zod";
 import { prisma } from "@/prisma/client";
 import { privateProcedure } from "@/src/trpc";
-
-interface Component {
-	id: string;
-	name: string;
-	definitionName: string;
-	order: number;
-	fields: Field[];
-}
-interface Field {
-	id: string;
-	name: string;
-	data: string;
-	type: string;
-}
+import type { Component } from "./types";
 
 export const getPageComponents = privateProcedure
 	.input(

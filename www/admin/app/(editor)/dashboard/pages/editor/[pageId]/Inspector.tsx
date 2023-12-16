@@ -9,9 +9,9 @@ import { Stepper, TypographyH1, TypographyMuted } from "@/src/components/ui/serv
 import { usePageEditor } from "@/src/data/stores/pageEditor";
 import { cn } from "@/src/utils/styling";
 import { trpc } from "@/src/utils/trpc";
+import { ComponentEditor } from "./ComponentEditor";
 import { Components } from "./Components";
 import { AddComponentDialog } from "./dialogs/AddComponentDialog";
-import { EditComponent } from "./EditComponent";
 
 type Step =
 	| {
@@ -37,7 +37,7 @@ export function Inspector(props: Props) {
 	);
 	useEffect(() => {
 		// Set initial components state
-		init(data);
+		init(data.map((comp) => ({ ...comp, diff: "none" })));
 	}, [data, init]);
 
 	function getComponent(id: string) {
@@ -70,7 +70,7 @@ export function Inspector(props: Props) {
 				);
 			}
 			case "edit-component": {
-				return <EditComponent component={getComponent(currentStep.componentId)} />;
+				return <ComponentEditor component={getComponent(currentStep.componentId)} />;
 			}
 		}
 	}

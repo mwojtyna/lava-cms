@@ -55,7 +55,7 @@ export default async function Editor({
 
 				<div className="flex items-center gap-4">
 					<UserMenu small />
-					<SaveButton />
+					<SaveButton pageId={params.pageId} />
 				</div>
 			</nav>
 

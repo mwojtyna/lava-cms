@@ -3,6 +3,7 @@ import { addPage } from "./addPage";
 import { checkConflict } from "./checkConflict";
 import { deletePage } from "./deletePage";
 import { editPage } from "./editPage";
+import { editPageComponents } from "./editPageComponents";
 import { getAllGroups } from "./getAllGroups";
 import { getGroup } from "./getGroup";
 import { getGroupContents } from "./getGroupContents";
@@ -14,6 +15,7 @@ export const pagesRouter = router({
 	checkConflict,
 	deletePage,
 	editPage,
+	editPageComponents,
 	getPageComponents,
 	getAllGroups,
 	getGroup,

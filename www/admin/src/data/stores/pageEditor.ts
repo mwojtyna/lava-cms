@@ -2,13 +2,17 @@ import { create } from "zustand";
 import type { Component } from "@/app/(editor)/dashboard/pages/editor/[pageId]/types";
 import "client-only";
 
+export interface ComponentUI extends Component {
+	diff: "added" | "edited" | "deleted" | "none";
+}
+
 interface PageEditorState {
 	isDirty: boolean;
-	originalComponents: Component[];
-	currentComponents: Component[];
+	originalComponents: ComponentUI[];
+	currentComponents: ComponentUI[];
 
-	init: (components: Component[]) => void;
-	setComponents: (components: Component[]) => void;
+	init: (components: ComponentUI[]) => void;
+	setComponents: (components: ComponentUI[]) => void;
 }
 export const usePageEditor = create<PageEditorState>((set) => ({
 	isDirty: false,
@@ -19,13 +23,13 @@ export const usePageEditor = create<PageEditorState>((set) => ({
 		set({
 			originalComponents: components,
 			currentComponents: components,
+			isDirty: false,
 		}),
-	setComponents: (newComponents) =>
+	setComponents: (components) =>
 		set((prev) => {
-			const isDirty =
-				JSON.stringify(newComponents) !== JSON.stringify(prev.originalComponents);
+			const isDirty = JSON.stringify(components) !== JSON.stringify(prev.originalComponents);
 			return {
-				currentComponents: newComponents,
+				currentComponents: components,
 				isDirty,
 			};
 		}),

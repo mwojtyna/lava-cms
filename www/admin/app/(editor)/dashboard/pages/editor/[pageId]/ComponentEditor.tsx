@@ -12,13 +12,13 @@ import {
 	FormError,
 } from "@/src/components/ui/client";
 import { TypographyMuted } from "@/src/components/ui/server";
-import { usePageEditor } from "@/src/data/stores/pageEditor";
+import { usePageEditor, type ComponentUI } from "@/src/data/stores/pageEditor";
 import { cn } from "@/src/utils/styling";
 
 type Input = Record<string, string>; // fieldId: data
 const DEBOUNCE_TIME = 250;
 
-export function EditComponent(props: { component: Component }) {
+export function ComponentEditor(props: { component: Component }) {
 	const form = useForm<Input>({
 		defaultValues: props.component.fields.reduce<Input>((acc, field) => {
 			acc[field.id] = field.data;
@@ -26,10 +26,10 @@ export function EditComponent(props: { component: Component }) {
 		}, {}),
 	});
 
-	const { currentComponents: components, setComponents } = usePageEditor();
+	const { currentComponents: components, setComponents: editComponents } = usePageEditor();
 	const onSubmit: SubmitHandler<Input> = useCallback(
 		(data: Input) => {
-			const newComponents = components.map((component) => {
+			const changedComponents: ComponentUI[] = components.map((component) => {
 				if (component.id === props.component.id) {
 					return {
 						...component,
@@ -37,14 +37,15 @@ export function EditComponent(props: { component: Component }) {
 							...field,
 							data: data[field.id]!,
 						})),
+						diff: "edited",
 					};
 				} else {
 					return component;
 				}
 			});
-			setComponents(newComponents);
+			editComponents(changedComponents);
 		},
-		[components, props.component.id, setComponents],
+		[components, props.component.id, editComponents],
 	);
 
 	const timeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -61,7 +62,7 @@ export function EditComponent(props: { component: Component }) {
 
 	return props.component.fields.length > 0 ? (
 		<FormProvider {...form}>
-			<form className="flex flex-col gap-4" onSubmit={form.handleSubmit(onSubmit)}>
+			<form className="flex flex-col gap-4">
 				{props.component.fields.map((componentField) => (
 					<FormField
 						key={componentField.id}
@@ -87,6 +88,7 @@ export function EditComponent(props: { component: Component }) {
 	);
 }
 
+// TODO: Spinner when debouncing
 // TODO: Button to restore to original values
 interface FieldProps extends FormFieldProps<string> {
 	fieldType: Component["fields"][number]["type"];
