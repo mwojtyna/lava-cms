@@ -140,9 +140,7 @@ export function DataTableBreadcrumbs<T extends Breadcrumb>({
 								)}
 								asChild
 							>
-								<Link key={i} href={`${rootUrl}/${breadcrumb.id}`}>
-									{breadcrumb.name}
-								</Link>
+								<Link href={`${rootUrl}/${breadcrumb.id}`}>{breadcrumb.name}</Link>
 							</Button>
 						)),
 					]}

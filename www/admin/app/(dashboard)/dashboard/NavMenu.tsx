@@ -37,7 +37,7 @@ async function Menu({ className }: { className?: string }) {
 			<div className="flex flex-grow flex-col justify-between gap-8">
 				<div className="flex flex-col gap-2">
 					{navMenuRoutes.map((route, i) => (
-						<React.Fragment key={i}>
+						<React.Fragment key={route.path}>
 							{i === 1 && <Separator />}
 
 							<NavMenuItem routes={navMenuRoutes} route={route} />
@@ -74,8 +74,13 @@ function MenuMobile({ className }: { className?: string }) {
 			</Tooltip>
 
 			<div className="flex gap-0.5">
-				{navMenuRoutes.map((route, i) => (
-					<NavMenuItem key={i} routes={navMenuRoutes} route={route} small={true} />
+				{navMenuRoutes.map((route) => (
+					<NavMenuItem
+						key={route.path}
+						routes={navMenuRoutes}
+						route={route}
+						small={true}
+					/>
 				))}
 			</div>
 

@@ -11,13 +11,13 @@ export interface SettingsRoute extends Route {
 export const settingsRoutes: SettingsRoute[] = [
 	{
 		label: "SEO",
-		path: "",
+		path: "/dashboard/settings",
 		icon: <MagnifyingGlassIcon className="w-4" />,
 		content: <SeoTab />,
 	},
 	{
 		label: "Connection",
-		path: "connection",
+		path: "/dashboard/settings/connection",
 		icon: <LinkIcon className="w-4" />,
 		content: <ConnectionTab />,
 	},

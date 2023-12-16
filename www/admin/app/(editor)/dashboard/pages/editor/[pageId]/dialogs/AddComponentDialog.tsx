@@ -93,7 +93,7 @@ export function AddComponentDialog(props: Props) {
 								}
 								return (
 									<ListItem
-										key={i}
+										key={item.id}
 										item={item}
 										groupClick={() => openGroup(item.id)}
 										componentClick={() => props.onSubmit(item.id)}

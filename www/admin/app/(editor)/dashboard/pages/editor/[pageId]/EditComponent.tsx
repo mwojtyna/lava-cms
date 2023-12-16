@@ -55,9 +55,9 @@ export function EditComponent(props: { component: Component }) {
 	return props.component.fields.length > 0 ? (
 		<FormProvider {...form}>
 			<form className="flex flex-col gap-4" onSubmit={form.handleSubmit(onSubmit)}>
-				{props.component.fields.map((componentField, i) => (
+				{props.component.fields.map((componentField) => (
 					<FormField
-						key={i}
+						key={componentField.id}
 						control={form.control}
 						name={componentField.id}
 						render={({ field: formField }) => (

@@ -12,9 +12,9 @@ interface Props {
 export function Components(props: Props) {
 	return (
 		<div className="flex flex-col gap-2">
-			{props.components.map((component, i) => (
+			{props.components.map((component) => (
 				<Card
-					key={i}
+					key={component.id}
 					className="cursor-pointer flex-row items-center gap-3 shadow-none transition-colors hover:border-l-brand hover:bg-accent/70 md:p-4"
 					onClick={() => props.onComponentClicked(component.id)}
 				>
