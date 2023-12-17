@@ -31,7 +31,7 @@ interface InputProps
 	rightButton?: {
 		iconOn: React.ReactNode;
 		iconOff: React.ReactNode;
-		tooltip: React.ReactNode;
+		tooltip: string;
 		state: boolean;
 	} & (
 		| {
@@ -81,7 +81,8 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
 						)}
 					</ActionIcon>
 				) : (
-					rightButton && (
+					rightButton &&
+					(rightButton.state ? rightButton.iconOn : rightButton.iconOff) && (
 						<Tooltip>
 							<TooltipTrigger asChild>
 								<ActionIcon
@@ -94,6 +95,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
 										}
 									}}
 									size={size}
+									aria-label={rightButton.tooltip}
 								>
 									{rightButton.state ? rightButton.iconOn : rightButton.iconOff}
 								</ActionIcon>

@@ -1,5 +1,6 @@
 import type { Component } from "./types";
-import React, { forwardRef, useCallback, useEffect, useRef } from "react";
+import { ArrowUturnLeftIcon } from "@heroicons/react/24/outline";
+import React, { forwardRef, useCallback, useEffect, useMemo, useRef } from "react";
 import { FormProvider, useForm, type SubmitHandler, type FieldErrors } from "react-hook-form";
 import type { ComponentFieldTypeType } from "@/prisma/generated/zod";
 import {
@@ -11,6 +12,10 @@ import {
 	FormLabel,
 	Checkbox,
 	FormError,
+	ActionIcon,
+	TooltipContent,
+	Tooltip,
+	TooltipTrigger,
 } from "@/src/components/ui/client";
 import { TypographyMuted } from "@/src/components/ui/server";
 import { usePageEditor, type ComponentUI } from "@/src/data/stores/pageEditor";
@@ -19,8 +24,12 @@ import { cn } from "@/src/utils/styling";
 type Input = Record<string, string>; // fieldId: data
 const DEBOUNCE_TIME = 250;
 
-export function ComponentEditor(props: { component: Component }) {
-	const { components, setComponents, setIsValid } = usePageEditor();
+export function ComponentEditor(props: { component: ComponentUI }) {
+	const { originalComponents, components, setComponents, setIsValid } = usePageEditor();
+	const originalComponent = useMemo(
+		() => originalComponents.find((comp) => comp.id === props.component.id)!,
+		[originalComponents, props.component.id],
+	);
 
 	const form = useForm<Input>({
 		defaultValues: props.component.fields.reduce<Input>((acc, field) => {
@@ -96,24 +105,38 @@ export function ComponentEditor(props: { component: Component }) {
 	return props.component.fields.length > 0 ? (
 		<FormProvider {...form}>
 			<form className="flex flex-col gap-4">
-				{props.component.fields.map((componentField) => (
-					<FormField
-						key={componentField.id}
-						control={form.control}
-						name={componentField.id}
-						render={({ field: formField }) => (
-							<FormItem
-								className={cn(componentField.type === "SWITCH" && "flex-row gap-4")}
-							>
-								<FormLabel>{componentField.name}</FormLabel>
-								<FormControl>
-									<Field fieldType={componentField.type} {...formField} />
-								</FormControl>
-								<FormError />
-							</FormItem>
-						)}
-					/>
-				))}
+				{props.component.fields.map((field, i) => {
+					const originalField = originalComponent.fields[i]!;
+					return (
+						<FormField
+							key={field.id}
+							control={form.control}
+							name={field.id}
+							render={({ field: formField }) => {
+								return (
+									<FormItem
+										className={cn(field.type === "SWITCH" && "flex-row gap-4")}
+									>
+										<FormLabel>{field.name}</FormLabel>
+										<FormControl>
+											<Field
+												edited={field.data !== originalField.data}
+												type={field.type}
+												onRestore={() => {
+													form.setValue(field.id, originalField.data);
+													void form.handleSubmit(onSubmit)();
+													setIsValid(form.formState.isValid);
+												}}
+												{...formField}
+											/>
+										</FormControl>
+										<FormError />
+									</FormItem>
+								);
+							}}
+						/>
+					);
+				})}
 			</form>
 		</FormProvider>
 	) : (
@@ -121,13 +144,25 @@ export function ComponentEditor(props: { component: Component }) {
 	);
 }
 
-// TODO: Spinner when debouncing
-// TODO: Button to restore to original values
 interface FieldProps extends FormFieldProps<string> {
-	fieldType: Component["fields"][number]["type"];
+	type: Component["fields"][number]["type"];
+	edited: boolean;
+	onRestore: () => void;
 }
 const Field = forwardRef<HTMLInputElement | HTMLButtonElement, FieldProps>(
-	({ fieldType, value, onChange, ...rest }, ref) => {
+	({ type: fieldType, edited, onRestore, value, onChange, ...rest }, ref) => {
+		const sharedProps: React.ComponentProps<typeof Input> = {
+			inputClassName: cn("transition-colors", edited && "border-b-brand"),
+			rightButton: {
+				iconOn: <ArrowUturnLeftIcon className="w-4" />,
+				iconOff: null,
+				tooltip: "Restore",
+				onClick: onRestore,
+				state: edited,
+				setState: null,
+			},
+		};
+
 		switch (fieldType) {
 			case "TEXT": {
 				return (
@@ -136,6 +171,7 @@ const Field = forwardRef<HTMLInputElement | HTMLButtonElement, FieldProps>(
 						type="text"
 						value={value}
 						onChange={(e) => onChange(e.currentTarget.value)}
+						{...sharedProps}
 						{...rest}
 					/>
 				);
@@ -147,18 +183,39 @@ const Field = forwardRef<HTMLInputElement | HTMLButtonElement, FieldProps>(
 						step="any"
 						value={value}
 						onChange={(e) => onChange(e.currentTarget.value)}
+						{...sharedProps}
 						{...rest}
 					/>
 				);
 			}
 			case "SWITCH": {
 				return (
-					<Checkbox
-						ref={ref as React.RefObject<HTMLButtonElement>}
-						checked={value === "true"}
-						onCheckedChange={(checked) => onChange(checked ? "true" : "false")}
-						{...rest}
-					/>
+					<div className="flex items-center gap-3">
+						<div
+							className={cn(
+								edited &&
+									"rounded ring-2 ring-brand ring-offset-2 ring-offset-black",
+							)}
+						>
+							<Checkbox
+								ref={ref as React.RefObject<HTMLButtonElement>}
+								checked={value === "true"}
+								onCheckedChange={(checked) => onChange(checked ? "true" : "false")}
+								{...rest}
+							/>
+						</div>
+
+						{edited && (
+							<Tooltip>
+								<TooltipTrigger asChild>
+									<ActionIcon variant={"simple"} onClick={onRestore}>
+										<ArrowUturnLeftIcon className="w-4" />
+									</ActionIcon>
+								</TooltipTrigger>
+								<TooltipContent>Restore</TooltipContent>
+							</Tooltip>
+						)}
+					</div>
 				);
 			}
 		}
