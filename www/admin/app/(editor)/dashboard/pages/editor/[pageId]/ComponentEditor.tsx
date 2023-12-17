@@ -1,4 +1,3 @@
-import type { Component } from "./types";
 import { ArrowUturnLeftIcon } from "@heroicons/react/24/outline";
 import React, { forwardRef, useCallback, useEffect, useMemo, useRef } from "react";
 import { FormProvider, useForm, type SubmitHandler, type FieldErrors } from "react-hook-form";
@@ -142,7 +141,7 @@ export function ComponentEditor(props: { component: ComponentUI }) {
 }
 
 interface FieldProps extends FormFieldProps<string> {
-	type: Component["fields"][number]["type"];
+	type: ComponentUI["fields"][number]["type"];
 	edited: boolean;
 	onRestore: () => void;
 }

@@ -13,13 +13,14 @@ interface Props {
 	onComponentClicked: (componentId: string) => void;
 }
 export function Components(props: Props) {
-	const { originalComponents, components, setComponents } = usePageEditor();
+	// Don't get components from the store to avoid showing no components before hydration
+	const { originalComponents, setComponents } = usePageEditor();
 
 	function restoreComponent(component: ComponentUI): React.MouseEventHandler<HTMLButtonElement> {
 		return (e) => {
 			e.stopPropagation();
 			const original = originalComponents.find((comp) => comp.id === component.id)!;
-			const componentsCopy = [...components];
+			const componentsCopy = [...props.components];
 			componentsCopy.splice(componentsCopy.indexOf(component), 1, original);
 			setComponents(componentsCopy);
 		};

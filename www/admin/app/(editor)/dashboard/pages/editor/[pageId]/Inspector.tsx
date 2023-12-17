@@ -60,7 +60,12 @@ export function Inspector(props: Props) {
 				return (
 					<>
 						<Components
-							components={components}
+							// Avoid showing no components before hydration
+							components={
+								components.length > 0
+									? components
+									: props.components.map((comp) => ({ ...comp, diffs: [] }))
+							}
 							onComponentClicked={(id) =>
 								setSteps((prev) => [
 									...prev,
