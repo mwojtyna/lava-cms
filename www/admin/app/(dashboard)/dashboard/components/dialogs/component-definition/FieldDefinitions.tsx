@@ -397,6 +397,7 @@ function FieldDef(props: FieldDefProps) {
 									  })
 									: props.onUnDelete(props.field);
 							}}
+							tooltip="Restore"
 						>
 							<ArrowUturnLeftIcon className="w-5" data-testid="restore-field-btn" />
 						</ActionIcon>
