@@ -3,7 +3,7 @@ import type { Component } from "@/app/(editor)/dashboard/pages/editor/[pageId]/t
 import type { trpc } from "@/src/utils/trpc";
 import "client-only";
 
-type Diff = "added" | "edited" | "deleted";
+export type Diff = "added" | "edited" | "deleted";
 export interface ComponentUI extends Component {
 	diffs: Diff[];
 }

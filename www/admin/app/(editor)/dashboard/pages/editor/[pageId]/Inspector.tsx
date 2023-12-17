@@ -60,7 +60,7 @@ export function Inspector(props: Props) {
 				return (
 					<>
 						<Components
-							components={data}
+							components={components}
 							onComponentClicked={(id) =>
 								setSteps((prev) => [
 									...prev,
