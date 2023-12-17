@@ -406,11 +406,15 @@ function FieldDef(props: FieldDefProps) {
 				{lastDiff !== "deleted" &&
 					(isEditing ? (
 						<>
-							<ActionIcon variant={"simple"} onClick={form.handleSubmit(onSubmit)}>
+							<ActionIcon
+								variant={"simple"}
+								onClick={form.handleSubmit(onSubmit)}
+								tooltip="Save"
+							>
 								<ArrowRightIcon className="w-5" data-testid="save-field-btn" />
 							</ActionIcon>
 
-							<ActionIcon variant={"simple"} onClick={cancel}>
+							<ActionIcon variant={"simple"} onClick={cancel} tooltip="Cancel">
 								<XMarkIcon className="w-5" data-testid="cancel-field-btn" />
 							</ActionIcon>
 						</>
@@ -423,6 +427,7 @@ function FieldDef(props: FieldDefProps) {
 									setIsEditing(true);
 									props.onEditToggle(true);
 								}}
+								tooltip="Edit"
 							>
 								<PencilSquareIcon className="w-5" data-testid="edit-field-btn" />
 							</ActionIcon>
@@ -431,6 +436,7 @@ function FieldDef(props: FieldDefProps) {
 								variant={"simple"}
 								className="text-destructive/75 hover:text-destructive"
 								onClick={() => props.onDelete(props.field)}
+								tooltip="Delete"
 							>
 								<TrashIcon className="w-5" data-testid="delete-field-btn" />
 							</ActionIcon>

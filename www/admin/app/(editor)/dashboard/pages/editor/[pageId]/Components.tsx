@@ -59,6 +59,7 @@ export function Components(props: Props) {
 								<ActionIcon
 									variant={"simple"}
 									onClick={restoreComponent(component)}
+									tooltip="Restore"
 								>
 									<ArrowUturnLeftIcon
 										className="w-5"
