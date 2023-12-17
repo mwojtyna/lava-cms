@@ -31,24 +31,14 @@ export function Inspector(props: Props) {
 	const [openAdd, setOpenAdd] = useState(false);
 	const [steps, setSteps] = useState<Step[]>([{ name: "components" }]);
 
-	const { init, currentComponents, isDirty, save } = usePageEditor();
+	const { init, currentComponents } = usePageEditor();
 	const { data } = trpc.pages.getPageComponents.useQuery(
 		{ id: props.page.id },
 		{ initialData: props.components },
 	);
 	useEffect(() => {
-		init(data.map((comp) => ({ ...comp, diff: "none" })));
+		init(data.map((comp) => ({ ...comp, diff: "edited" })));
 	}, [data, init]);
-
-	const saveMutation = trpc.pages.editPageComponents.useMutation();
-	useWindowEvent("keydown" satisfies keyof WindowEventMap, (e) => {
-		if (e.ctrlKey && e.key === "s") {
-			e.preventDefault();
-			if (isDirty) {
-				save(saveMutation, props.page.id);
-			}
-		}
-	});
 
 	function getComponent(id: string) {
 		return currentComponents.find((comp) => comp.id === id)!;
@@ -80,7 +70,12 @@ export function Inspector(props: Props) {
 				);
 			}
 			case "edit-component": {
-				return <ComponentEditor component={getComponent(currentStep.componentId)} />;
+				return (
+					<ComponentEditor
+						component={getComponent(currentStep.componentId)}
+						pageId={props.page.id}
+					/>
+				);
 			}
 		}
 	}

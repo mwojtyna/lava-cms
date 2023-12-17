@@ -1,6 +1,8 @@
 import type { Component } from "./types";
+import { useWindowEvent } from "@mantine/hooks";
 import React, { forwardRef, useCallback, useEffect, useRef } from "react";
-import { FormProvider, useForm, type SubmitHandler } from "react-hook-form";
+import { FormProvider, useForm, type SubmitHandler, type FieldErrors } from "react-hook-form";
+import type { ComponentFieldTypeType } from "@/prisma/generated/zod";
 import {
 	Input,
 	type FormFieldProps,
@@ -14,19 +16,41 @@ import {
 import { TypographyMuted } from "@/src/components/ui/server";
 import { usePageEditor, type ComponentUI } from "@/src/data/stores/pageEditor";
 import { cn } from "@/src/utils/styling";
+import { trpc } from "@/src/utils/trpc";
 
 type Input = Record<string, string>; // fieldId: data
 const DEBOUNCE_TIME = 250;
 
-export function ComponentEditor(props: { component: Component }) {
+export function ComponentEditor(props: { component: Component; pageId: string }) {
+	const { currentComponents: components, setComponents, isDirty, save } = usePageEditor();
+
 	const form = useForm<Input>({
 		defaultValues: props.component.fields.reduce<Input>((acc, field) => {
 			acc[field.id] = field.data;
 			return acc;
 		}, {}),
-	});
+		shouldFocusError: false,
+		resolver: (values) => {
+			const errors: FieldErrors = {};
 
-	const { currentComponents: components, setComponents: editComponents } = usePageEditor();
+			for (const [k, v] of Object.entries(values)) {
+				const type = props.component.fields.find((field) => field.id === k)!
+					.type as ComponentFieldTypeType;
+
+				if (type === "NUMBER" && isNaN(Number(v))) {
+					errors[k] = {
+						type: "manual",
+						message: "Not a number",
+					};
+				}
+			}
+
+			return {
+				values,
+				errors,
+			};
+		},
+	});
 	const onSubmit: SubmitHandler<Input> = useCallback(
 		(data: Input) => {
 			const changedComponents: ComponentUI[] = components.map((component) => {
@@ -43,9 +67,9 @@ export function ComponentEditor(props: { component: Component }) {
 					return component;
 				}
 			});
-			editComponents(changedComponents);
+			setComponents(changedComponents);
 		},
-		[components, props.component.id, editComponents],
+		[components, props.component.id, setComponents],
 	);
 
 	const timeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -57,8 +81,23 @@ export function ComponentEditor(props: { component: Component }) {
 			timeoutRef.current = setTimeout(form.handleSubmit(onSubmit), DEBOUNCE_TIME);
 		});
 
-		return unsubscribe;
+		return () => {
+			unsubscribe();
+			if (timeoutRef.current !== null) {
+				clearTimeout(timeoutRef.current);
+			}
+		};
 	}, [form, onSubmit]);
+
+	const saveMutation = trpc.pages.editPageComponents.useMutation();
+	useWindowEvent("keydown" satisfies keyof WindowEventMap, (e) => {
+		if ((e.ctrlKey || e.metaKey) && e.key === "s") {
+			e.preventDefault();
+			if (isDirty && form.formState.isValid) {
+				save(saveMutation, props.pageId);
+			}
+		}
+	});
 
 	return props.component.fields.length > 0 ? (
 		<FormProvider {...form}>
@@ -111,7 +150,6 @@ const Field = forwardRef<HTMLInputElement | HTMLButtonElement, FieldProps>(
 				return (
 					<Input
 						ref={ref as React.RefObject<HTMLInputElement>}
-						type="number"
 						step="any"
 						value={value}
 						onChange={(e) => onChange(e.currentTarget.value)}

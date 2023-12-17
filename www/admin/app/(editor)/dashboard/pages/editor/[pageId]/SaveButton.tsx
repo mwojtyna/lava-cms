@@ -17,6 +17,7 @@ export function SaveButton(props: { pageId: string }) {
 			disabled={!isDirty}
 			loading={mutation.isLoading}
 			onClick={() => save(mutation, props.pageId)}
+			aria-keyshortcuts="Control+S"
 		>
 			Save
 		</Button>

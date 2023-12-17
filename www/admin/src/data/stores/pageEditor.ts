@@ -1,10 +1,10 @@
 import { create } from "zustand";
 import type { Component } from "@/app/(editor)/dashboard/pages/editor/[pageId]/types";
-import "client-only";
 import type { trpc } from "@/src/utils/trpc";
+import "client-only";
 
 export interface ComponentUI extends Component {
-	diff: "added" | "edited" | "deleted" | "none";
+	diff: "added" | "edited" | "deleted";
 }
 
 interface PageEditorState {
@@ -31,8 +31,8 @@ export const usePageEditor = create<PageEditorState>((set) => ({
 			isDirty: false,
 		}),
 	setComponents: (components) =>
-		set((prev) => {
-			const isDirty = JSON.stringify(components) !== JSON.stringify(prev.originalComponents);
+		set((state) => {
+			const isDirty = JSON.stringify(components) !== JSON.stringify(state.originalComponents);
 			return {
 				currentComponents: components,
 				isDirty,
