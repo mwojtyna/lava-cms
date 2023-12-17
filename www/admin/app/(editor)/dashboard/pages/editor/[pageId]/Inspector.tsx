@@ -31,7 +31,7 @@ export function Inspector(props: Props) {
 	const [openAdd, setOpenAdd] = useState(false);
 	const [steps, setSteps] = useState<Step[]>([{ name: "components" }]);
 
-	const { init, currentComponents } = usePageEditor();
+	const { init, components, isDirty, isValid, save } = usePageEditor();
 	const { data } = trpc.pages.getPageComponents.useQuery(
 		{ id: props.page.id },
 		{ initialData: props.components },
@@ -40,8 +40,18 @@ export function Inspector(props: Props) {
 		init(data.map((comp) => ({ ...comp, diffs: [] })));
 	}, [data, init]);
 
+	const saveMutation = trpc.pages.editPageComponents.useMutation();
+	useWindowEvent("keydown" satisfies keyof WindowEventMap, (e) => {
+		if ((e.ctrlKey || e.metaKey) && e.key === "s") {
+			e.preventDefault();
+			if (isDirty && isValid) {
+				save(saveMutation, props.page.id);
+			}
+		}
+	});
+
 	function getComponent(id: string) {
-		return currentComponents.find((comp) => comp.id === id)!;
+		return components.find((comp) => comp.id === id)!;
 	}
 	function displayStep() {
 		const currentStep = steps.at(-1)!;
@@ -70,12 +80,7 @@ export function Inspector(props: Props) {
 				);
 			}
 			case "edit-component": {
-				return (
-					<ComponentEditor
-						component={getComponent(currentStep.componentId)}
-						pageId={props.page.id}
-					/>
-				);
+				return <ComponentEditor component={getComponent(currentStep.componentId)} />;
 			}
 		}
 	}

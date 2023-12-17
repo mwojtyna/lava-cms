@@ -10,8 +10,11 @@ export interface ComponentUI extends Component {
 
 interface PageEditorState {
 	isDirty: boolean;
+	isValid: boolean;
+	setIsValid: (isValid: boolean) => void;
+
 	originalComponents: ComponentUI[];
-	currentComponents: ComponentUI[];
+	components: ComponentUI[];
 
 	init: (components: ComponentUI[]) => void;
 	setComponents: (components: ComponentUI[]) => void;
@@ -22,18 +25,21 @@ interface PageEditorState {
 }
 export const usePageEditor = create<PageEditorState>((set) => ({
 	isDirty: false,
+	isValid: true,
+	setIsValid: (isValid) => set({ isValid }),
+
 	originalComponents: [],
-	currentComponents: [],
+	components: [],
 
 	init: (components) =>
 		set({
 			originalComponents: components,
-			currentComponents: components,
+			components: components,
 			isDirty: false,
 		}),
-	setComponents: (components) =>
+	setComponents: (changedComponents) =>
 		set((state) => {
-			for (const comp of components) {
+			for (const comp of changedComponents) {
 				if (comp.diffs.at(-1) === "edited") {
 					const original = state.originalComponents.find((c) => c.id === comp.id)!;
 					if (areSame(original, comp)) {
@@ -43,17 +49,16 @@ export const usePageEditor = create<PageEditorState>((set) => ({
 			}
 
 			return {
-				currentComponents: components,
-				isDirty: JSON.stringify(state.originalComponents) !== JSON.stringify(components),
+				components: changedComponents,
+				isDirty:
+					JSON.stringify(state.originalComponents) !== JSON.stringify(changedComponents),
 			};
 		}),
 	save: (mutation, pageId) =>
 		set((state) => {
 			mutation.mutate({
 				pageId,
-				editedComponents: state.currentComponents.filter(
-					(comp) => comp.diffs.at(-1) === "edited",
-				),
+				editedComponents: state.components.filter((comp) => comp.diffs.at(-1) === "edited"),
 			});
 			return state;
 		}),
