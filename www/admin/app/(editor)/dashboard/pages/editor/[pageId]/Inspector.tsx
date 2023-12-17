@@ -37,7 +37,7 @@ export function Inspector(props: Props) {
 		{ initialData: props.components },
 	);
 	useEffect(() => {
-		init(data.map((comp) => ({ ...comp, diff: "edited" })));
+		init(data.map((comp) => ({ ...comp, diffs: [] })));
 	}, [data, init]);
 
 	function getComponent(id: string) {

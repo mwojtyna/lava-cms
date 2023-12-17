@@ -3,8 +3,9 @@ import type { Component } from "@/app/(editor)/dashboard/pages/editor/[pageId]/t
 import type { trpc } from "@/src/utils/trpc";
 import "client-only";
 
+type Diff = "added" | "edited" | "deleted";
 export interface ComponentUI extends Component {
-	diff: "added" | "edited" | "deleted";
+	diffs: Diff[];
 }
 
 interface PageEditorState {
@@ -32,18 +33,34 @@ export const usePageEditor = create<PageEditorState>((set) => ({
 		}),
 	setComponents: (components) =>
 		set((state) => {
-			const isDirty = JSON.stringify(components) !== JSON.stringify(state.originalComponents);
+			for (const comp of components) {
+				if (comp.diffs.at(-1) === "edited") {
+					const original = state.originalComponents.find((c) => c.id === comp.id)!;
+					if (areSame(original, comp)) {
+						comp.diffs = [];
+					}
+				}
+			}
+
 			return {
 				currentComponents: components,
-				isDirty,
+				isDirty: JSON.stringify(state.originalComponents) !== JSON.stringify(components),
 			};
 		}),
 	save: (mutation, pageId) =>
 		set((state) => {
 			mutation.mutate({
 				pageId,
-				editedComponents: state.currentComponents.filter((comp) => comp.diff === "edited"),
+				editedComponents: state.currentComponents.filter(
+					(comp) => comp.diffs.at(-1) === "edited",
+				),
 			});
 			return state;
 		}),
 }));
+
+function areSame(original: ComponentUI, current: ComponentUI) {
+	const a = { ...original, diffs: undefined };
+	const b = { ...current, diffs: undefined };
+	return JSON.stringify(a) === JSON.stringify(b);
+}

@@ -61,7 +61,7 @@ export function ComponentEditor(props: { component: Component; pageId: string })
 							...field,
 							data: data[field.id]!,
 						})),
-						diff: "edited",
+						diffs: ["edited"],
 					};
 				} else {
 					return component;
