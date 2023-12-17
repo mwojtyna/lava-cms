@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import type { Component } from "@/app/(editor)/dashboard/pages/editor/[pageId]/types";
 import "client-only";
+import type { trpc } from "@/src/utils/trpc";
 
 export interface ComponentUI extends Component {
 	diff: "added" | "edited" | "deleted" | "none";
@@ -13,6 +14,10 @@ interface PageEditorState {
 
 	init: (components: ComponentUI[]) => void;
 	setComponents: (components: ComponentUI[]) => void;
+	save: (
+		mutation: ReturnType<typeof trpc.pages.editPageComponents.useMutation>,
+		pageId: string,
+	) => void;
 }
 export const usePageEditor = create<PageEditorState>((set) => ({
 	isDirty: false,
@@ -32,5 +37,13 @@ export const usePageEditor = create<PageEditorState>((set) => ({
 				currentComponents: components,
 				isDirty,
 			};
+		}),
+	save: (mutation, pageId) =>
+		set((state) => {
+			mutation.mutate({
+				pageId,
+				editedComponents: state.currentComponents.filter((comp) => comp.diff === "edited"),
+			});
+			return state;
 		}),
 }));

@@ -3,6 +3,7 @@
 import type { Component } from "./types";
 import type { Page } from "@prisma/client";
 import { ChevronRightIcon, CubeIcon, DocumentIcon, PlusIcon } from "@heroicons/react/24/outline";
+import { useWindowEvent } from "@mantine/hooks";
 import { useEffect, useState } from "react";
 import { Button } from "@/src/components/ui/client";
 import { Stepper, TypographyH1, TypographyMuted } from "@/src/components/ui/server";
@@ -30,15 +31,24 @@ export function Inspector(props: Props) {
 	const [openAdd, setOpenAdd] = useState(false);
 	const [steps, setSteps] = useState<Step[]>([{ name: "components" }]);
 
-	const { init, currentComponents } = usePageEditor();
+	const { init, currentComponents, isDirty, save } = usePageEditor();
 	const { data } = trpc.pages.getPageComponents.useQuery(
 		{ id: props.page.id },
 		{ initialData: props.components },
 	);
 	useEffect(() => {
-		// Set initial components state
 		init(data.map((comp) => ({ ...comp, diff: "none" })));
 	}, [data, init]);
+
+	const saveMutation = trpc.pages.editPageComponents.useMutation();
+	useWindowEvent("keydown" satisfies keyof WindowEventMap, (e) => {
+		if (e.ctrlKey && e.key === "s") {
+			e.preventDefault();
+			if (isDirty) {
+				save(saveMutation, props.page.id);
+			}
+		}
+	});
 
 	function getComponent(id: string) {
 		return currentComponents.find((comp) => comp.id === id)!;
