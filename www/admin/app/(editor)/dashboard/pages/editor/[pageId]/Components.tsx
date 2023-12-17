@@ -1,9 +1,11 @@
 "use client";
 
+import { ArrowUturnLeftIcon } from "@heroicons/react/24/outline";
 import { IconGripVertical } from "@tabler/icons-react";
 import React from "react";
+import { ActionIcon } from "@/src/components/ui/client";
 import { Card, TypographyMuted } from "@/src/components/ui/server";
-import type { ComponentUI, Diff } from "@/src/data/stores/pageEditor";
+import { usePageEditor, type ComponentUI, type Diff } from "@/src/data/stores/pageEditor";
 import { cn } from "@/src/utils/styling";
 
 interface Props {
@@ -11,6 +13,18 @@ interface Props {
 	onComponentClicked: (componentId: string) => void;
 }
 export function Components(props: Props) {
+	const { originalComponents, components, setComponents } = usePageEditor();
+
+	function restoreComponent(component: ComponentUI): React.MouseEventHandler<HTMLButtonElement> {
+		return (e) => {
+			e.stopPropagation();
+			const original = originalComponents.find((comp) => comp.id === component.id)!;
+			const componentsCopy = [...components];
+			componentsCopy.splice(componentsCopy.indexOf(component), 1, original);
+			setComponents(componentsCopy);
+		};
+	}
+
 	return (
 		<div className="flex flex-col gap-2">
 			{props.components.map((component) => {
@@ -39,6 +53,20 @@ export function Components(props: Props) {
 						</div>
 
 						<TypographyMuted>{component.definitionName}</TypographyMuted>
+
+						{lastDiff === "edited" ? (
+							<div className="ml-auto flex items-center justify-center">
+								<ActionIcon
+									variant={"simple"}
+									onClick={restoreComponent(component)}
+								>
+									<ArrowUturnLeftIcon
+										className="w-5"
+										data-testid="restore-field-btn"
+									/>
+								</ActionIcon>
+							</div>
+						) : null}
 					</Card>
 				);
 			})}
