@@ -1,7 +1,7 @@
+import type { Component } from "./types";
 import { z } from "zod";
 import { prisma } from "@/prisma/client";
 import { privateProcedure } from "@/src/trpc";
-import type { Component } from "./types";
 
 export const getPageComponents = privateProcedure
 	.input(
@@ -20,6 +20,11 @@ export const getPageComponents = privateProcedure
 						fields: {
 							include: {
 								definition: true,
+							},
+							orderBy: {
+								definition: {
+									order: "asc",
+								},
 							},
 						},
 						definition: true,
