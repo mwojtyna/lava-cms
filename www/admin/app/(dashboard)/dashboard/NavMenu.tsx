@@ -1,15 +1,7 @@
 import { Bars3Icon } from "@heroicons/react/24/outline";
 import { Poppins } from "next/font/google";
 import * as React from "react";
-import {
-	ActionIcon,
-	Separator,
-	SheetContent,
-	SheetTrigger,
-	Tooltip,
-	TooltipContent,
-	TooltipTrigger,
-} from "@/src/components/ui/client";
+import { ActionIcon, Separator, SheetContent, SheetTrigger } from "@/src/components/ui/client";
 import { UserMenu } from "@/src/components/UserMenu";
 import { navMenuRoutes } from "@/src/data/routes/navMenu";
 import { cn } from "@/src/utils/styling";
@@ -61,17 +53,11 @@ function MenuMobile({ className }: { className?: string }) {
 				className,
 			)}
 		>
-			<Tooltip>
-				<TooltipTrigger className="mr-4 flex w-fit gap-4" asChild>
-					<SheetTrigger asChild>
-						<ActionIcon variant={"ghost"} className="p-3" aria-label="Expand menu">
-							<Bars3Icon className="w-5 scale-[120%]" />
-						</ActionIcon>
-					</SheetTrigger>
-				</TooltipTrigger>
-
-				<TooltipContent>Expand menu</TooltipContent>
-			</Tooltip>
+			<SheetTrigger asChild>
+				<ActionIcon variant={"outline"} className="p-3" tooltip="Expand menu">
+					<Bars3Icon className="w-5 scale-[120%]" />
+				</ActionIcon>
+			</SheetTrigger>
 
 			<div className="flex gap-0.5">
 				{navMenuRoutes.map((route) => (
@@ -83,7 +69,6 @@ function MenuMobile({ className }: { className?: string }) {
 					/>
 				))}
 			</div>
-
 			<UserMenu small />
 		</nav>
 	);

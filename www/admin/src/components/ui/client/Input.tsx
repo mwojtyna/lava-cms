@@ -4,7 +4,6 @@ import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline";
 import { type VariantProps, cva } from "class-variance-authority";
 import * as React from "react";
 import { cn } from "@/src/utils/styling";
-import { Tooltip, TooltipContent, TooltipTrigger } from "../client";
 import { ActionIcon } from "./ActionIcon";
 
 const inputVariants = cva(
@@ -83,28 +82,20 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
 				) : (
 					rightButton &&
 					(rightButton.state ? rightButton.iconOn : rightButton.iconOff) && (
-						<Tooltip>
-							<TooltipTrigger asChild>
-								<ActionIcon
-									className="absolute right-1.5 bg-background"
-									onClick={() => {
-										if (!rightButton.onClick) {
-											rightButton.setState(!rightButton.state);
-										} else {
-											rightButton.onClick();
-										}
-									}}
-									size={size}
-									aria-label={rightButton.tooltip}
-								>
-									{rightButton.state ? rightButton.iconOn : rightButton.iconOff}
-								</ActionIcon>
-							</TooltipTrigger>
-
-							<TooltipContent className="font-sans">
-								{rightButton.tooltip}
-							</TooltipContent>
-						</Tooltip>
+						<ActionIcon
+							className="absolute right-1.5 bg-background"
+							onClick={() => {
+								if (!rightButton.onClick) {
+									rightButton.setState(!rightButton.state);
+								} else {
+									rightButton.onClick();
+								}
+							}}
+							size={size}
+							tooltip={rightButton.tooltip}
+						>
+							{rightButton.state ? rightButton.iconOn : rightButton.iconOff}
+						</ActionIcon>
 					)
 				)}
 			</div>

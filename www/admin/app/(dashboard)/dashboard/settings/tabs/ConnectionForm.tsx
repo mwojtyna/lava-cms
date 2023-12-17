@@ -16,9 +16,6 @@ import {
 	FormLabel,
 	Input,
 	Separator,
-	Tooltip,
-	TooltipContent,
-	TooltipTrigger,
 } from "@/src/components/ui/client";
 import {
 	Card,
@@ -159,34 +156,28 @@ function TokenInput(props: { token: string }) {
 				aria-label="Token input"
 			/>
 
-			<Tooltip>
-				<TooltipTrigger asChild>
-					<ActionIcon
-						onClick={async () => {
-							setCopied(false);
-							try {
-								await mutation.mutateAsync();
-								toast({
-									title: "Success",
-									description:
-										"Token regenerated, previous token is now invalid.",
-								});
-							} catch (error) {
-								if (error instanceof Error) {
-									toastError({
-										title: "Error",
-										description: error.message.trim(),
-									});
-								}
-							}
-						}}
-						aria-label="Regenerate token"
-					>
-						{mutation.isLoading ? <Loader /> : <ArrowPathIcon className="w-5" />}
-					</ActionIcon>
-				</TooltipTrigger>
-				<TooltipContent>Regenerate token</TooltipContent>
-			</Tooltip>
+			<ActionIcon
+				onClick={async () => {
+					setCopied(false);
+					try {
+						await mutation.mutateAsync();
+						toast({
+							title: "Success",
+							description: "Token regenerated, previous token is now invalid.",
+						});
+					} catch (error) {
+						if (error instanceof Error) {
+							toastError({
+								title: "Error",
+								description: error.message.trim(),
+							});
+						}
+					}
+				}}
+				tooltip="Regenerate token"
+			>
+				{mutation.isLoading ? <Loader /> : <ArrowPathIcon className="w-5" />}
+			</ActionIcon>
 		</div>
 	);
 }

@@ -3,20 +3,30 @@
 import * as React from "react";
 import { cn } from "@/src/utils/styling";
 import { Button } from "./Button";
+import { Tooltip, TooltipContent, TooltipTrigger } from "./Tooltip";
 
-type ActionIconProps = Omit<React.ComponentPropsWithoutRef<typeof Button>, "icon">;
+interface ActionIconProps extends Omit<React.ComponentPropsWithoutRef<typeof Button>, "icon"> {
+	tooltip?: string;
+}
 
 const ActionIcon = React.forwardRef<HTMLButtonElement, ActionIconProps>(
-	({ className, children, variant = "ghost", ...props }, ref) => {
+	({ className, children, variant = "ghost", tooltip, ...props }, ref) => {
 		return (
-			<Button
-				ref={ref}
-				className={cn("h-auto w-fit rounded-md p-2 hover:bg-muted", className)}
-				variant={variant}
-				{...props}
-			>
-				{children}
-			</Button>
+			<Tooltip>
+				<TooltipTrigger asChild>
+					<Button
+						ref={ref}
+						className={cn("h-auto w-fit rounded-md p-2 hover:bg-muted", className)}
+						variant={variant}
+						aria-label={tooltip}
+						{...props}
+					>
+						{children}
+					</Button>
+				</TooltipTrigger>
+
+				{tooltip && <TooltipContent>{tooltip}</TooltipContent>}
+			</Tooltip>
 		);
 	},
 );

@@ -13,9 +13,6 @@ import {
 	Checkbox,
 	FormError,
 	ActionIcon,
-	TooltipContent,
-	Tooltip,
-	TooltipTrigger,
 } from "@/src/components/ui/client";
 import { TypographyMuted } from "@/src/components/ui/server";
 import { usePageEditor, type ComponentUI } from "@/src/data/stores/pageEditor";
@@ -206,14 +203,9 @@ const Field = forwardRef<HTMLInputElement | HTMLButtonElement, FieldProps>(
 						</div>
 
 						{edited && (
-							<Tooltip>
-								<TooltipTrigger asChild>
-									<ActionIcon variant={"simple"} onClick={onRestore}>
-										<ArrowUturnLeftIcon className="w-4" />
-									</ActionIcon>
-								</TooltipTrigger>
-								<TooltipContent>Restore</TooltipContent>
-							</Tooltip>
+							<ActionIcon variant={"simple"} onClick={onRestore} tooltip="Restore">
+								<ArrowUturnLeftIcon className="w-4" />
+							</ActionIcon>
 						)}
 					</div>
 				);

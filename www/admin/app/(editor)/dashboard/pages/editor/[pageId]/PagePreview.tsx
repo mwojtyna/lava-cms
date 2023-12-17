@@ -80,21 +80,16 @@ export function PagePreview(props: { baseUrl: string; pageUrl: string }) {
 				<Card className="m-4 mx-0 h-auto flex-1 gap-0 overflow-hidden p-0 md:m-4 md:mx-0 md:p-0">
 					<div className="flex items-center gap-2 p-2 md:p-2">
 						<div className="flex">
-							<Tooltip>
-								<TooltipTrigger asChild>
-									<ActionIcon
-										onClick={() => {
-											if (iframeRef.current) {
-												iframeRef.current.src = url;
-											}
-										}}
-										aria-label="Refresh"
-									>
-										<ArrowPathIcon className="w-5" />
-									</ActionIcon>
-								</TooltipTrigger>
-								<TooltipContent>Refresh</TooltipContent>
-							</Tooltip>
+							<ActionIcon
+								onClick={() => {
+									if (iframeRef.current) {
+										iframeRef.current.src = url;
+									}
+								}}
+								tooltip="Refresh"
+							>
+								<ArrowPathIcon className="w-5" />
+							</ActionIcon>
 						</div>
 
 						<Url baseUrl={props.baseUrl} url={url} onUrlChanged={navigate} />
@@ -113,16 +108,13 @@ export function PagePreview(props: { baseUrl: string; pageUrl: string }) {
 							</Tooltip>
 						)}
 						<Tooltip>
-							<TooltipTrigger asChild>
-								<ActionIcon
-									className="ml-auto"
-									onClick={() => window.open(url)}
-									aria-label="Open in new tab"
-								>
-									<ArrowTopRightOnSquareIcon className="w-5" />
-								</ActionIcon>
-							</TooltipTrigger>
-							<TooltipContent>Open in new tab</TooltipContent>
+							<ActionIcon
+								className="ml-auto"
+								onClick={() => window.open(url)}
+								tooltip="Open in new tab"
+							>
+								<ArrowTopRightOnSquareIcon className="w-5" />
+							</ActionIcon>
 						</Tooltip>
 					</div>
 
@@ -177,14 +169,9 @@ function Url(props: UrlProps) {
 			</div>
 
 			{!editing && (
-				<Tooltip>
-					<TooltipTrigger asChild>
-						<ActionIcon variant={"simple"} aria-label="Edit">
-							<PencilSquareIcon className="w-5" onClick={() => setEditing(true)} />
-						</ActionIcon>
-					</TooltipTrigger>
-					<TooltipContent>Edit</TooltipContent>
-				</Tooltip>
+				<ActionIcon variant={"simple"} tooltip="Edit">
+					<PencilSquareIcon className="w-5" onClick={() => setEditing(true)} />
+				</ActionIcon>
 			)}
 		</div>
 	);
