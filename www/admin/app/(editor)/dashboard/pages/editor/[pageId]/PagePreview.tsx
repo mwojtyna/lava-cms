@@ -38,16 +38,20 @@ export function PagePreview(props: { baseUrl: string; pageUrl: string }) {
 		},
 	});
 
+	const initIframeScript = React.useCallback(() => {
+		const origin = new URL(props.baseUrl).origin;
+		iframeRef.current?.contentWindow?.postMessage({ name: "init" } as IframeMessage, origin);
+	}, [props.baseUrl]);
+	React.useEffect(() => {
+		initIframeScript();
+	}, [initIframeScript]);
+
 	function navigate(url: string) {
 		// Only store pathname to prevent overriding the iframe origin set in Connection Settings
 		const path = url.slice(props.baseUrl.length);
 		setSearchParams({ path });
 		setUrl(url); // Set the URL right away to prevent url lag
 		setRemountIframe((prev) => !prev);
-	}
-
-	function initIframeScript(e: React.SyntheticEvent<HTMLIFrameElement, Event>) {
-		e.currentTarget.contentWindow?.postMessage({ name: "init" } as IframeMessage);
 	}
 
 	return (
