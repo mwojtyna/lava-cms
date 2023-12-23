@@ -21,7 +21,7 @@ type Step =
 	| {
 			name: "edit-component";
 			// Don't use id because when adding a new component, the id is not known yet and it leads to errors
-			componentOrder: number;
+			componentIndex: number;
 	  };
 
 interface Props {
@@ -77,8 +77,8 @@ export function Inspector(props: Props) {
 		setOpenAdd(false);
 	}
 
-	function getComponent(order: number) {
-		return components.find((comp) => comp.order === order)!;
+	function getComponent(index: number) {
+		return components.find((comp) => comp.order === index)!;
 	}
 	function displayStep() {
 		const currentStep = steps.at(-1)!;
@@ -93,10 +93,10 @@ export function Inspector(props: Props) {
 									? components
 									: props.components.map((comp) => ({ ...comp, diffs: [] }))
 							}
-							onComponentClicked={(order) =>
+							onComponentClicked={(index) =>
 								setSteps((prev) => [
 									...prev,
-									{ name: "edit-component", componentOrder: order },
+									{ name: "edit-component", componentIndex: index },
 								])
 							}
 						/>
@@ -112,7 +112,7 @@ export function Inspector(props: Props) {
 				);
 			}
 			case "edit-component": {
-				return <ComponentEditor component={getComponent(currentStep.componentOrder)} />;
+				return <ComponentEditor component={getComponent(currentStep.componentIndex)} />;
 			}
 		}
 	}
@@ -152,7 +152,7 @@ export function Inspector(props: Props) {
 									>
 										<CubeIcon className="w-4" />
 										{step.name === "edit-component" &&
-											getComponent(step.componentOrder).name}
+											getComponent(step.componentIndex).name}
 									</Button>
 								)),
 							]}

@@ -375,7 +375,7 @@ function FieldDef(props: FieldDefProps) {
 				)}
 			</div>
 
-			{/* Icons */}
+			{/* Actions */}
 			<div
 				className={cn(
 					"ml-auto flex items-center gap-2 text-sm transition-opacity",

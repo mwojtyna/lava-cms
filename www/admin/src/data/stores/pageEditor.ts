@@ -71,6 +71,9 @@ export const usePageEditor = create<PageEditorState>((set) => ({
 						})),
 					})),
 				editedComponents: state.components.filter((comp) => comp.diffs.at(-1) === "edited"),
+				deletedComponentIds: state.components
+					.filter((comp) => comp.diffs.at(-1) === "deleted")
+					.map((comp) => comp.id),
 			});
 			return state;
 		}),

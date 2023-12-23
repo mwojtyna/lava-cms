@@ -17,7 +17,7 @@ import { TypographyMuted } from "@/src/components/ui/server";
 import { usePageEditor, type ComponentUI } from "@/src/data/stores/pageEditor";
 import { cn } from "@/src/utils/styling";
 
-type Input = Record<string, string>; // fieldOrder: data
+type Input = Record<string, string>; // fieldIndex (order): data
 const DEBOUNCE_TIME = 200;
 
 export function ComponentEditor(props: { component: ComponentUI }) {

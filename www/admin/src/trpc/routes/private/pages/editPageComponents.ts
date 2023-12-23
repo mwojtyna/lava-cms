@@ -25,6 +25,7 @@ export const editPageComponents = privateProcedure
 			pageId: z.string().cuid(),
 			addedComponents: z.array(addedComponentSchema),
 			editedComponents: z.array(componentSchema),
+			deletedComponentIds: z.array(z.string().cuid()),
 		}),
 	)
 	.mutation(async ({ input }) => {
@@ -61,5 +62,13 @@ export const editPageComponents = privateProcedure
 			}),
 		);
 
-		await prisma.$transaction([...added, ...edited]);
+		const deleted = prisma.componentInstance.deleteMany({
+			where: {
+				id: {
+					in: input.deletedComponentIds,
+				},
+			},
+		});
+
+		await prisma.$transaction([...added, ...edited, deleted]);
 	});

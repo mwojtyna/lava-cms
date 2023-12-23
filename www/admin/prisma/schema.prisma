@@ -151,7 +151,7 @@ model ComponentInstanceField {
     /// If type is a component, then data is that component's id
     data                String
 
-    component  ComponentInstance        @relation(fields: [component_id], references: [id])
+    component  ComponentInstance        @relation(fields: [component_id], references: [id], onDelete: Cascade)
     definition ComponentDefinitionField @relation(fields: [field_definition_id], references: [id])
 
     @@index([component_id])

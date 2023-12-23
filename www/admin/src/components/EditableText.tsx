@@ -58,7 +58,7 @@ export function EditableText(props: Props) {
 							{...props.editButtonProps}
 							className={cn(props.editButtonProps?.className, "ml-auto")}
 						>
-							<PencilSquareIcon className="w-5" data-testid="edit-field-btn" />
+							<PencilSquareIcon className="w-5" data-testid="edit-btn" />
 						</ActionIcon>
 					)}
 				</>
@@ -90,11 +90,11 @@ export function EditableText(props: Props) {
 						onClick={() => handleSubmit(input)}
 						aria-label="Save"
 					>
-						<ArrowRightIcon className="w-5" data-testid="save-field-btn" />
+						<ArrowRightIcon className="w-5" data-testid="save-btn" />
 					</ActionIcon>
 
 					<ActionIcon variant={"simple"} onClick={handleCancel} aria-label="Cancel">
-						<XMarkIcon className="w-5" data-testid="cancel-field-btn" />
+						<XMarkIcon className="w-5" data-testid="cancel-btn" />
 					</ActionIcon>
 				</>
 			)}
