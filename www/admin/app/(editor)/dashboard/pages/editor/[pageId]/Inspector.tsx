@@ -3,11 +3,11 @@
 import type { Component } from "./types";
 import type { Page } from "@prisma/client";
 import { ChevronRightIcon, CubeIcon, DocumentIcon, PlusIcon } from "@heroicons/react/24/outline";
-import { useWindowEvent } from "@mantine/hooks";
 import { useEffect, useState } from "react";
 import { Button } from "@/src/components/ui/client";
 import { Stepper, TypographyH1, TypographyMuted } from "@/src/components/ui/server";
 import { usePageEditor } from "@/src/data/stores/pageEditor";
+import { useWindowEvent } from "@/src/hooks";
 import { cn } from "@/src/utils/styling";
 import { trpc, trpcFetch } from "@/src/utils/trpc";
 import { ComponentEditor } from "./ComponentEditor";
@@ -42,12 +42,19 @@ export function Inspector(props: Props) {
 	}, [data, init]);
 
 	const saveMutation = trpc.pages.editPageComponents.useMutation();
-	useWindowEvent("keydown" satisfies keyof WindowEventMap, (e) => {
+	useWindowEvent("keydown", (e) => {
 		if ((e.ctrlKey || e.metaKey) && e.key === "s") {
 			e.preventDefault();
 			if (isDirty && isValid) {
 				save(saveMutation, props.page.id);
 			}
+		}
+	});
+
+	useWindowEvent("beforeunload", (e) => {
+		if (isDirty) {
+			// Display a confirmation dialog
+			e.preventDefault();
 		}
 	});
 

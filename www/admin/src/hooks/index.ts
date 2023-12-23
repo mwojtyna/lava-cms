@@ -4,3 +4,4 @@ export * from "./usePagePreferences";
 export * from "./useSearchParams";
 export * from "./useTable";
 export * from "./useToast";
+export * from "./useWindowEvent";
