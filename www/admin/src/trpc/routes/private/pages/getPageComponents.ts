@@ -42,12 +42,17 @@ export const getPageComponents = privateProcedure
 				name: field.definition.name,
 				data: field.data,
 				type: field.definition.type,
+				definitionId: field.definition.id,
+				order: field.definition.order,
 			}));
 
 			return {
 				id: component.id,
 				name: component.name,
-				definitionName: component.definition.name,
+				definition: {
+					id: component.definition.id,
+					name: component.definition.name,
+				},
 				order: component.order,
 				fields,
 			};

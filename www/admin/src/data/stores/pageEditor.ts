@@ -58,6 +58,18 @@ export const usePageEditor = create<PageEditorState>((set) => ({
 		set((state) => {
 			mutation.mutate({
 				pageId,
+				addedComponents: state.components
+					.filter((comp) => comp.diffs.at(-1) === "added")
+					.map((comp) => ({
+						name: comp.name,
+						pageId,
+						definition: comp.definition,
+						order: comp.order,
+						fields: comp.fields.map((field) => ({
+							data: field.data,
+							definitionId: field.definitionId,
+						})),
+					})),
 				editedComponents: state.components.filter((comp) => comp.diffs.at(-1) === "edited"),
 			});
 			return state;

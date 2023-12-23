@@ -1,5 +1,4 @@
 import { router } from "@/src/trpc";
-import { addComponent } from "./addComponent";
 import { addComponentDefinition } from "./addComponentDefinition";
 import { addGroup } from "./addGroup";
 import { deleteComponentDefinition } from "./deleteComponentDefinition";
@@ -7,6 +6,7 @@ import { deleteGroup } from "./deleteGroup";
 import { editComponentDefinition } from "./editComponentDefinition";
 import { editGroup } from "./editGroup";
 import { getAllGroups } from "./getAllGroups";
+import { getComponentDefinition } from "./getComponentDefinition";
 import { getGroup } from "./getGroup";
 
 export const componentsRouter = router({
@@ -17,6 +17,6 @@ export const componentsRouter = router({
 	editGroup,
 	deleteGroup,
 	getAllGroups,
+	getComponentDefinition,
 	getGroup,
-	addComponent,
 });

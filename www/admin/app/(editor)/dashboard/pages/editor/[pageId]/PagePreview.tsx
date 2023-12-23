@@ -38,6 +38,7 @@ export function PagePreview(props: { baseUrl: string; pageUrl: string }) {
 		},
 	});
 
+	// Fix script not being initialized sometimes
 	const initIframeScript = React.useCallback(() => {
 		const origin = new URL(props.baseUrl).origin;
 		iframeRef.current?.contentWindow?.postMessage({ name: "init" } as IframeMessage, origin);

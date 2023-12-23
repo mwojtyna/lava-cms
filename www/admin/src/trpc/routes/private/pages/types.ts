@@ -6,12 +6,17 @@ const fieldSchema = z.object({
 	name: z.string(),
 	data: z.string(),
 	type: ComponentFieldTypeSchema,
+	definitionId: z.string(),
+	order: z.number(),
 });
 
 export const componentSchema = z.object({
 	id: z.string(),
 	name: z.string(),
-	definitionName: z.string(),
+	definition: z.object({
+		id: z.string(),
+		name: z.string(),
+	}),
 	order: z.number(),
 	fields: z.array(fieldSchema),
 });

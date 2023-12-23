@@ -9,7 +9,7 @@ import { Button } from "@/src/components/ui/client";
 import { Stepper, TypographyH1, TypographyMuted } from "@/src/components/ui/server";
 import { usePageEditor } from "@/src/data/stores/pageEditor";
 import { cn } from "@/src/utils/styling";
-import { trpc } from "@/src/utils/trpc";
+import { trpc, trpcFetch } from "@/src/utils/trpc";
 import { ComponentEditor } from "./ComponentEditor";
 import { Components } from "./Components";
 import { AddComponentDialog } from "./dialogs/AddComponentDialog";
@@ -20,7 +20,8 @@ type Step =
 	  }
 	| {
 			name: "edit-component";
-			componentId: string;
+			// Don't use id because when adding a new component, the id is not known yet and it leads to errors
+			componentOrder: number;
 	  };
 
 interface Props {
@@ -31,7 +32,7 @@ export function Inspector(props: Props) {
 	const [openAdd, setOpenAdd] = useState(false);
 	const [steps, setSteps] = useState<Step[]>([{ name: "components" }]);
 
-	const { init, components, isDirty, isValid, save } = usePageEditor();
+	const { init, components, setComponents, isDirty, isValid, save } = usePageEditor();
 	const { data } = trpc.pages.getPageComponents.useQuery(
 		{ id: props.page.id },
 		{ initialData: props.components },
@@ -50,8 +51,34 @@ export function Inspector(props: Props) {
 		}
 	});
 
-	function getComponent(id: string) {
-		return components.find((comp) => comp.id === id)!;
+	async function addComponent(id: string) {
+		const componentDef = await trpcFetch.components.getComponentDefinition.query({ id });
+		setComponents([
+			...components,
+			{
+				id: "",
+				name: "Placeholder 2",
+				definition: {
+					id: componentDef.id,
+					name: componentDef.name,
+				},
+				order: components.length,
+				fields: componentDef.field_definitions.map((fieldDef, i) => ({
+					id: i.toString(),
+					name: fieldDef.name,
+					type: fieldDef.type,
+					data: fieldDef.type === "SWITCH" ? "false" : "",
+					definitionId: fieldDef.id,
+					order: i,
+				})),
+				diffs: ["added"],
+			},
+		]);
+		setOpenAdd(false);
+	}
+
+	function getComponent(order: number) {
+		return components.find((comp) => comp.order === order)!;
 	}
 	function displayStep() {
 		const currentStep = steps.at(-1)!;
@@ -66,10 +93,10 @@ export function Inspector(props: Props) {
 									? components
 									: props.components.map((comp) => ({ ...comp, diffs: [] }))
 							}
-							onComponentClicked={(id) =>
+							onComponentClicked={(order) =>
 								setSteps((prev) => [
 									...prev,
-									{ name: "edit-component", componentId: id },
+									{ name: "edit-component", componentOrder: order },
 								])
 							}
 						/>
@@ -85,7 +112,7 @@ export function Inspector(props: Props) {
 				);
 			}
 			case "edit-component": {
-				return <ComponentEditor component={getComponent(currentStep.componentId)} />;
+				return <ComponentEditor component={getComponent(currentStep.componentOrder)} />;
 			}
 		}
 	}
@@ -125,7 +152,7 @@ export function Inspector(props: Props) {
 									>
 										<CubeIcon className="w-4" />
 										{step.name === "edit-component" &&
-											getComponent(step.componentId).name}
+											getComponent(step.componentOrder).name}
 									</Button>
 								)),
 							]}
@@ -138,11 +165,8 @@ export function Inspector(props: Props) {
 				</div>
 			</div>
 
-			<AddComponentDialog
-				open={openAdd}
-				setOpen={setOpenAdd}
-				onSubmit={(id) => console.log(id)}
-			/>
+			{/* TODO: Add component name input */}
+			<AddComponentDialog open={openAdd} setOpen={setOpenAdd} onSubmit={addComponent} />
 		</>
 	);
 }

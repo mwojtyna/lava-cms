@@ -17,19 +17,19 @@ import { TypographyMuted } from "@/src/components/ui/server";
 import { usePageEditor, type ComponentUI } from "@/src/data/stores/pageEditor";
 import { cn } from "@/src/utils/styling";
 
-type Input = Record<string, string>; // fieldId: data
-const DEBOUNCE_TIME = 250;
+type Input = Record<string, string>; // fieldOrder: data
+const DEBOUNCE_TIME = 200;
 
 export function ComponentEditor(props: { component: ComponentUI }) {
 	const { originalComponents, components, setComponents, setIsValid } = usePageEditor();
 	const originalComponent = useMemo(
-		() => originalComponents.find((comp) => comp.id === props.component.id)!,
+		() => originalComponents.find((comp) => comp.id === props.component.id),
 		[originalComponents, props.component.id],
 	);
 
 	const form = useForm<Input>({
 		defaultValues: props.component.fields.reduce<Input>((acc, field) => {
-			acc[field.id] = field.data;
+			acc[field.order] = field.data;
 			return acc;
 		}, {}),
 		shouldFocusError: false,
@@ -37,7 +37,7 @@ export function ComponentEditor(props: { component: ComponentUI }) {
 			const errors: FieldErrors = {};
 
 			for (const [k, v] of Object.entries(values)) {
-				const type = props.component.fields.find((field) => field.id === k)!
+				const type = props.component.fields.find((field) => field.order.toString() === k)!
 					.type as ComponentFieldTypeType;
 
 				if (type === "NUMBER" && isNaN(Number(v))) {
@@ -62,9 +62,9 @@ export function ComponentEditor(props: { component: ComponentUI }) {
 						...component,
 						fields: component.fields.map((field) => ({
 							...field,
-							data: data[field.id]!,
+							data: data[field.order]!,
 						})),
-						diffs: ["edited"],
+						diffs: component.diffs.at(-1) === "added" ? component.diffs : ["edited"],
 					};
 				} else {
 					return component;
@@ -102,34 +102,43 @@ export function ComponentEditor(props: { component: ComponentUI }) {
 		<FormProvider {...form}>
 			<form className="flex flex-col gap-4">
 				{props.component.fields.map((field, i) => {
-					const originalField = originalComponent.fields[i]!;
+					// Is undefined if the component was only added in the page editor and not yet saved
+					const originalField = originalComponent?.fields[i];
 					return (
 						<FormField
 							key={field.id}
 							control={form.control}
-							name={field.id}
-							render={({ field: formField }) => {
-								return (
-									<FormItem
-										className={cn(field.type === "SWITCH" && "flex-row gap-4")}
-									>
-										<FormLabel>{field.name}</FormLabel>
-										<FormControl>
-											<Field
-												edited={field.data !== originalField.data}
-												type={field.type}
-												onRestore={() => {
-													form.setValue(field.id, originalField.data);
-													void form.handleSubmit(onSubmit)();
-													setIsValid(form.formState.isValid);
-												}}
-												{...formField}
-											/>
-										</FormControl>
-										<FormError />
-									</FormItem>
-								);
-							}}
+							name={field.order.toString()}
+							render={({ field: formField }) => (
+								<FormItem
+									className={cn(field.type === "SWITCH" && "flex-row gap-4")}
+								>
+									<FormLabel>{field.name}</FormLabel>
+									<FormControl>
+										<Field
+											edited={
+												originalField
+													? field.data !== originalField.data
+													: false
+											}
+											type={field.type}
+											onRestore={() => {
+												if (!originalField) {
+													return;
+												}
+												form.setValue(
+													field.order.toString(),
+													originalField.data,
+												);
+												void form.handleSubmit(onSubmit)();
+												setIsValid(form.formState.isValid);
+											}}
+											{...formField}
+										/>
+									</FormControl>
+									<FormError />
+								</FormItem>
+							)}
 						/>
 					);
 				})}

@@ -10,7 +10,7 @@ import { cn } from "@/src/utils/styling";
 
 interface Props {
 	components: ComponentUI[];
-	onComponentClicked: (componentId: string) => void;
+	onComponentClicked: (order: number) => void;
 }
 export function Components(props: Props) {
 	// Don't get components from the store to avoid showing no components before hydration
@@ -43,7 +43,7 @@ export function Components(props: Props) {
 							lastDiff && `border-l-[3px] ${diffStyle[lastDiff]}`,
 							"cursor-pointer flex-row items-center gap-3 shadow-none transition-colors hover:bg-accent/70 md:p-4",
 						)}
-						onClick={() => props.onComponentClicked(component.id)}
+						onClick={() => props.onComponentClicked(component.order)}
 					>
 						<div className="flex items-center gap-2">
 							<IconGripVertical
@@ -53,7 +53,7 @@ export function Components(props: Props) {
 							<span className="font-medium">{component.name}</span>
 						</div>
 
-						<TypographyMuted>{component.definitionName}</TypographyMuted>
+						<TypographyMuted>{component.definition.name}</TypographyMuted>
 
 						{lastDiff === "edited" ? (
 							<div className="ml-auto flex items-center justify-center">
