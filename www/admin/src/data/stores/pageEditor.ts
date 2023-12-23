@@ -3,9 +3,9 @@ import type { Component } from "@/app/(editor)/dashboard/pages/editor/[pageId]/t
 import type { trpc } from "@/src/utils/trpc";
 import "client-only";
 
-export type Diff = "added" | "edited" | "deleted";
+export type Diff = "added" | "edited" | "deleted" | "none";
 export interface ComponentUI extends Component {
-	diffs: Diff[];
+	diff: Diff;
 }
 
 interface PageEditorState {
@@ -40,10 +40,10 @@ export const usePageEditor = create<PageEditorState>((set) => ({
 	setComponents: (changedComponents) =>
 		set((state) => {
 			for (const comp of changedComponents) {
-				if (comp.diffs.at(-1) === "edited") {
+				if (comp.diff === "edited") {
 					const original = state.originalComponents.find((c) => c.id === comp.id)!;
 					if (areSame(original, comp)) {
-						comp.diffs = [];
+						comp.diff = "none";
 					}
 				}
 			}
@@ -59,7 +59,7 @@ export const usePageEditor = create<PageEditorState>((set) => ({
 			mutation.mutate({
 				pageId,
 				addedComponents: state.components
-					.filter((comp) => comp.diffs.at(-1) === "added")
+					.filter((comp) => comp.diff === "added")
 					.map((comp) => ({
 						name: comp.name,
 						pageId,
@@ -70,9 +70,9 @@ export const usePageEditor = create<PageEditorState>((set) => ({
 							definitionId: field.definitionId,
 						})),
 					})),
-				editedComponents: state.components.filter((comp) => comp.diffs.at(-1) === "edited"),
+				editedComponents: state.components.filter((comp) => comp.diff === "edited"),
 				deletedComponentIds: state.components
-					.filter((comp) => comp.diffs.at(-1) === "deleted")
+					.filter((comp) => comp.diff === "deleted")
 					.map((comp) => comp.id),
 			});
 			return state;
@@ -80,7 +80,7 @@ export const usePageEditor = create<PageEditorState>((set) => ({
 }));
 
 function areSame(original: ComponentUI, current: ComponentUI) {
-	const a = { ...original, diffs: undefined };
-	const b = { ...current, diffs: undefined };
+	const a = { ...original, diff: undefined };
+	const b = { ...current, diff: undefined };
 	return JSON.stringify(a) === JSON.stringify(b);
 }

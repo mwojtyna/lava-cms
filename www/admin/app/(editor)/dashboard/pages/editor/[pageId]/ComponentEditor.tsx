@@ -64,7 +64,7 @@ export function ComponentEditor(props: { component: ComponentUI }) {
 							...field,
 							data: data[field.order]!,
 						})),
-						diffs: component.diffs.at(-1) === "added" ? component.diffs : ["edited"],
+						diff: component.diff === "added" ? component.diff : "edited",
 					};
 				} else {
 					return component;

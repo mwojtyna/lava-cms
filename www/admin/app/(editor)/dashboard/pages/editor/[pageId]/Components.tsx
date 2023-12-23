@@ -22,12 +22,11 @@ export function Components(props: Props) {
 		componentsCopy.splice(componentsCopy.indexOf(component), 1, original);
 		setComponents(componentsCopy);
 	}
-
 	function deleteComponent(component: ComponentUI) {
 		const componentsCopy = [...props.components];
 		componentsCopy.splice(componentsCopy.indexOf(component), 1, {
 			...component,
-			diffs: [...component.diffs, "deleted"],
+			diff: "deleted",
 		});
 		setComponents(componentsCopy);
 	}
@@ -35,7 +34,7 @@ export function Components(props: Props) {
 		const componentsCopy = [...props.components];
 		componentsCopy.splice(componentsCopy.indexOf(component), 1, {
 			...component,
-			diffs: component.diffs.filter((diff) => diff !== "deleted"),
+			diff: "none",
 		});
 		setComponents(componentsCopy);
 	}
@@ -43,27 +42,33 @@ export function Components(props: Props) {
 	return (
 		<div className="flex flex-col gap-2">
 			{props.components.map((component) => {
-				const diffStyle: Record<Diff, string> = {
+				const diffStyle: Record<Exclude<Diff, "none">, string> = {
 					added: "border-l-green-500",
 					edited: "border-l-brand",
 					deleted: "border-l-red-500",
 				};
-				const lastDiff = component.diffs.at(-1);
 
 				return (
 					<Card
 						key={component.id}
 						className={cn(
-							lastDiff && `border-l-[3px] ${diffStyle[lastDiff]}`,
-							"cursor-pointer flex-row items-center gap-3 shadow-none transition-colors hover:bg-accent/70 md:p-4",
+							component.diff !== "none" &&
+								`border-l-[3px] ${diffStyle[component.diff]}`,
+							"flex-row items-center gap-3 shadow-none transition-colors md:p-4",
+							component.diff !== "deleted" && "cursor-pointer hover:bg-accent/70",
 						)}
-						onClick={() => props.onComponentClicked(component.order)}
+						onClick={() =>
+							component.diff === "deleted"
+								? undefined
+								: props.onComponentClicked(component.order)
+						}
+						aria-disabled={component.diff === "deleted"}
 					>
 						<div className="flex items-center gap-2">
 							<IconGripVertical
 								className={cn(
 									"w-5 cursor-move text-muted-foreground",
-									lastDiff === "deleted" &&
+									component.diff === "deleted" &&
 										"cursor-auto text-muted-foreground/50",
 								)}
 								onClick={(e) => e.stopPropagation()}
@@ -74,7 +79,7 @@ export function Components(props: Props) {
 						<TypographyMuted>{component.definition.name}</TypographyMuted>
 
 						<Actions
-							lastDiff={lastDiff}
+							diff={component.diff}
 							restoreComponent={() => restoreComponent(component)}
 							deleteComponent={() => deleteComponent(component)}
 							unDeleteComponent={() => unDeleteComponent(component)}
@@ -87,7 +92,7 @@ export function Components(props: Props) {
 }
 
 interface ActionsProps {
-	lastDiff: Diff | undefined;
+	diff: Diff;
 	restoreComponent: () => void;
 	deleteComponent: () => void;
 	unDeleteComponent: () => void;
@@ -98,7 +103,7 @@ function Actions(props: ActionsProps) {
 		cb();
 	}
 
-	switch (props.lastDiff) {
+	switch (props.diff) {
 		case "edited": {
 			return (
 				<div className="ml-auto flex items-center justify-center">
@@ -125,8 +130,7 @@ function Actions(props: ActionsProps) {
 				</div>
 			);
 		}
-
-		case undefined: {
+		case "none": {
 			return (
 				<div className="ml-auto flex items-center justify-center">
 					<ActionIcon

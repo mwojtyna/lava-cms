@@ -38,7 +38,7 @@ export function Inspector(props: Props) {
 		{ initialData: props.components },
 	);
 	useEffect(() => {
-		init(data.map((comp) => ({ ...comp, diffs: [] })));
+		init(data.map((comp) => ({ ...comp, diff: "none" })));
 	}, [data, init]);
 
 	const saveMutation = trpc.pages.editPageComponents.useMutation();
@@ -71,7 +71,7 @@ export function Inspector(props: Props) {
 					definitionId: fieldDef.id,
 					order: i,
 				})),
-				diffs: ["added"],
+				diff: "added",
 			},
 		]);
 		setOpenAdd(false);
@@ -91,7 +91,7 @@ export function Inspector(props: Props) {
 							components={
 								components.length > 0
 									? components
-									: props.components.map((comp) => ({ ...comp, diffs: [] }))
+									: props.components.map((comp) => ({ ...comp, diff: "none" }))
 							}
 							onComponentClicked={(index) =>
 								setSteps((prev) => [
