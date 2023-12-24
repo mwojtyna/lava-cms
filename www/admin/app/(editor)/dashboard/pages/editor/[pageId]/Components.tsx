@@ -124,6 +124,9 @@ function Component(props: ComponentProps) {
 		});
 		setComponents(componentsCopy);
 	}
+	function unAdd(component: ComponentUI) {
+		setComponents(components.filter((comp) => comp.id !== component.id));
+	}
 
 	const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
 		id: props.id,
@@ -183,6 +186,7 @@ function Component(props: ComponentProps) {
 				restoreComponent={() => restore(props.component)}
 				deleteComponent={() => remove(props.component)}
 				unDeleteComponent={() => unRemove(props.component)}
+				unAddComponent={() => unAdd(props.component)}
 			/>
 		</Card>
 	);
@@ -193,6 +197,7 @@ interface ActionsProps {
 	restoreComponent: () => void;
 	deleteComponent: () => void;
 	unDeleteComponent: () => void;
+	unAddComponent: () => void;
 }
 function Actions(props: ActionsProps) {
 	function handleClick(e: React.MouseEvent<HTMLButtonElement, MouseEvent>, cb: () => void) {
@@ -228,13 +233,21 @@ function Actions(props: ActionsProps) {
 			);
 		}
 
+		case "added":
 		case "reordered":
 		case "none": {
 			return (
 				<div className="ml-auto flex items-center justify-center">
 					<ActionIcon
 						variant={"simple"}
-						onClick={(e) => handleClick(e, props.deleteComponent)}
+						onClick={(e) =>
+							handleClick(
+								e,
+								props.diff === "added"
+									? props.unAddComponent
+									: props.deleteComponent,
+							)
+						}
 						tooltip="Delete"
 					>
 						<TrashIcon
