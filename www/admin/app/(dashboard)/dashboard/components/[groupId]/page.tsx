@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { cookies } from "next/headers";
 import { notFound } from "next/navigation";
 import type { TableSearchParams } from "@/src/hooks";
@@ -5,6 +6,9 @@ import { caller } from "@/src/trpc/routes/private/_private";
 import { type CookieName, tableCookieSchema } from "@/src/utils/cookies";
 import { ComponentsTable } from "../ComponentsTable";
 
+export const metadata: Metadata = {
+	title: "Components - Lava CMS",
+};
 export const dynamic = "force-dynamic";
 
 export default async function Group({
