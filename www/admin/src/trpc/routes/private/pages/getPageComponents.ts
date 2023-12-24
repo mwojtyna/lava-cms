@@ -48,7 +48,6 @@ export const getPageComponents = privateProcedure
 
 			return {
 				id: component.id,
-				name: component.name,
 				definition: {
 					id: component.definition.id,
 					name: component.definition.name,

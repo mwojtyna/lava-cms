@@ -54,7 +54,6 @@ export function Inspector(props: Props) {
 			...components,
 			{
 				id: "",
-				name: "Placeholder 2",
 				definition: {
 					id: componentDef.id,
 					name: componentDef.name,
@@ -149,7 +148,7 @@ export function Inspector(props: Props) {
 									>
 										<CubeIcon className="w-4" />
 										{step.name === "edit-component" &&
-											getComponent(step.componentIndex)?.name}
+											getComponent(step.componentIndex)?.definition.name}
 									</Button>
 								)),
 							]}

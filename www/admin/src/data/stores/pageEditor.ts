@@ -103,7 +103,6 @@ export const usePageEditor = create<PageEditorState>((set) => ({
 				addedComponents: state.components
 					.filter((comp) => comp.diff === "added")
 					.map((comp) => ({
-						name: comp.name,
 						pageId,
 						definition: comp.definition,
 						order: comp.order,

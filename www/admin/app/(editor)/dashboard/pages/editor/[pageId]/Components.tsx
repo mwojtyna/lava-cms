@@ -22,7 +22,7 @@ import { ArrowUturnLeftIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { IconGripVertical } from "@tabler/icons-react";
 import React, { useMemo } from "react";
 import { ActionIcon } from "@/src/components/ui/client";
-import { Card, TypographyMuted } from "@/src/components/ui/server";
+import { Card } from "@/src/components/ui/server";
 import { usePageEditor, type ComponentUI, type Diff } from "@/src/data/stores/pageEditor";
 import { cn } from "@/src/utils/styling";
 
@@ -134,7 +134,7 @@ function Component(props: ComponentProps) {
 		disabled: props.component.diff === "deleted",
 	});
 	const style: React.CSSProperties = {
-		transform: CSS.Transform.toString(transform),
+		transform: CSS.Translate.toString(transform),
 		transition,
 		zIndex: isDragging ? 1 : undefined,
 	};
@@ -175,10 +175,8 @@ function Component(props: ComponentProps) {
 					{...attributes}
 					{...listeners}
 				/>
-				<span className="font-medium">{props.component.name}</span>
+				<span className="font-medium">{props.component.definition.name}</span>
 			</div>
-
-			<TypographyMuted>{props.component.definition.name}</TypographyMuted>
 
 			<Actions
 				diff={props.component.diff}

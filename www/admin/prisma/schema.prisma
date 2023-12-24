@@ -129,7 +129,6 @@ model ComponentDefinitionField {
 
 model ComponentInstance {
     id            String @id @default(cuid())
-    name          String
     page_id       String
     definition_id String
     order         Int

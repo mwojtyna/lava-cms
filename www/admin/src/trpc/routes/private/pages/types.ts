@@ -12,7 +12,6 @@ const fieldSchema = z.object({
 
 export const componentSchema = z.object({
 	id: z.string(),
-	name: z.string(),
 	definition: z.object({
 		id: z.string(),
 		name: z.string(),

@@ -4,7 +4,6 @@ import { privateProcedure } from "@/src/trpc";
 import { componentSchema } from "./types";
 
 const addedComponentSchema = z.object({
-	name: z.string(),
 	pageId: z.string().cuid(),
 	definition: z.object({
 		id: z.string().cuid(),
@@ -32,7 +31,6 @@ export const editPageComponents = privateProcedure
 		const added = input.addedComponents.map((component) =>
 			prisma.componentInstance.create({
 				data: {
-					name: component.name,
 					page_id: component.pageId,
 					definition_id: component.definition.id,
 					order: component.order,
