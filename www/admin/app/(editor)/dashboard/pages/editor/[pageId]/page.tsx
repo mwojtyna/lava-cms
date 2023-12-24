@@ -8,6 +8,7 @@ import { UserMenu } from "@/src/components/UserMenu";
 import { caller } from "@/src/trpc/routes/private/_private";
 import { Inspector } from "./Inspector";
 import { PagePreview } from "./PagePreview";
+import { ResetButton } from "./ResetButton";
 import { SaveButton } from "./SaveButton";
 
 export const dynamic = "force-dynamic";
@@ -55,6 +56,7 @@ export default async function Editor({
 
 				<div className="flex items-center gap-4">
 					<UserMenu small />
+					<ResetButton />
 					<SaveButton pageId={params.pageId} />
 				</div>
 			</nav>

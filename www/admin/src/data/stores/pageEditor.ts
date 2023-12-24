@@ -17,11 +17,12 @@ interface PageEditorState {
 	components: ComponentUI[];
 
 	init: (components: ComponentUI[]) => void;
-	setComponents: (components: ComponentUI[]) => void;
+	reset: () => void;
 	save: (
 		mutation: ReturnType<typeof trpc.pages.editPageComponents.useMutation>,
 		pageId: string,
 	) => void;
+	setComponents: (components: ComponentUI[]) => void;
 }
 export const usePageEditor = create<PageEditorState>((set) => ({
 	isDirty: false,
@@ -38,23 +39,11 @@ export const usePageEditor = create<PageEditorState>((set) => ({
 			isDirty: false,
 		});
 	},
-	setComponents: (changedComponents) =>
-		set((state) => {
-			for (const comp of changedComponents) {
-				const original = state.originalComponents.find((c) => c.id === comp.id)!;
-				if (comp.diff === "edited" || comp.diff === "reordered") {
-					if (areSame(original, comp)) {
-						comp.diff = "none";
-					}
-				}
-			}
-
-			return {
-				components: changedComponents,
-				isDirty:
-					JSON.stringify(state.originalComponents) !== JSON.stringify(changedComponents),
-			};
-		}),
+	reset: () =>
+		set((state) => ({
+			components: state.originalComponents,
+			isDirty: false,
+		})),
 	save: (mutation, pageId) =>
 		set((state) => {
 			mutation.mutate({
@@ -79,6 +68,24 @@ export const usePageEditor = create<PageEditorState>((set) => ({
 					.map((comp) => comp.id),
 			});
 			return state;
+		}),
+
+	setComponents: (changedComponents) =>
+		set((state) => {
+			for (const comp of changedComponents) {
+				const original = state.originalComponents.find((c) => c.id === comp.id)!;
+				if (comp.diff === "edited" || comp.diff === "reordered") {
+					if (areSame(original, comp)) {
+						comp.diff = "none";
+					}
+				}
+			}
+
+			return {
+				components: changedComponents,
+				isDirty:
+					JSON.stringify(state.originalComponents) !== JSON.stringify(changedComponents),
+			};
 		}),
 }));
 
