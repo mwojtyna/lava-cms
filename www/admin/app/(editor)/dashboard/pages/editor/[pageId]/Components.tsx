@@ -60,7 +60,9 @@ export function Components(props: Props) {
 				const isDifferent = item.order !== i;
 				if (isDifferent) {
 					item.order = i;
-					item.diff = "reordered";
+					if (item.diff !== "edited") {
+						item.diff = "reordered";
+					}
 				}
 			}
 			setComponents(reordered);
