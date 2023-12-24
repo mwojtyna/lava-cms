@@ -69,6 +69,8 @@ export function Components(props: Props) {
 
 	return (
 		<DndContext
+			// https://github.com/clauderic/dnd-kit/issues/926#issuecomment-1640115665
+			id={"id"}
 			sensors={sensors}
 			collisionDetection={closestCenter}
 			modifiers={[restrictToParentElement]}
