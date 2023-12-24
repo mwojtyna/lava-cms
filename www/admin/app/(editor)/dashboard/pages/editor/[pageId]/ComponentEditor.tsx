@@ -22,13 +22,18 @@ const DEBOUNCE_TIME = 200;
 
 export function ComponentEditor(props: { component: ComponentUI }) {
 	const { originalComponents, components, setComponents, setIsValid } = usePageEditor();
+
+	const component = useMemo(
+		() => components.find((comp) => comp.id === props.component.id)!,
+		[components, props.component.id],
+	);
 	const originalComponent = useMemo(
 		() => originalComponents.find((comp) => comp.id === props.component.id),
 		[originalComponents, props.component.id],
 	);
 
 	const form = useForm<Input>({
-		defaultValues: props.component.fields.reduce<Input>((acc, field) => {
+		defaultValues: component.fields.reduce<Input>((acc, field) => {
 			acc[field.order] = field.data;
 			return acc;
 		}, {}),
@@ -98,6 +103,16 @@ export function ComponentEditor(props: { component: ComponentUI }) {
 		};
 	}, [form, onSubmit, setIsValid]);
 
+	// Update fields when global reset button pressed
+	useEffect(() => {
+		form.reset(
+			component.fields.reduce<Input>((acc, field) => {
+				acc[field.order] = field.data;
+				return acc;
+			}, {}),
+		);
+	}, [component, form]);
+
 	return props.component.fields.length > 0 ? (
 		<FormProvider {...form}>
 			<form className="flex flex-col gap-4">
@@ -123,12 +138,9 @@ export function ComponentEditor(props: { component: ComponentUI }) {
 											}
 											type={field.type}
 											onRestore={() => {
-												if (!originalField) {
-													return;
-												}
 												form.setValue(
 													field.order.toString(),
-													originalField.data,
+													originalField!.data,
 												);
 												void form.handleSubmit(onSubmit)();
 												setIsValid(form.formState.isValid);

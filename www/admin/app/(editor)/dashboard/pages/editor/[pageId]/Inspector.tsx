@@ -14,25 +14,15 @@ import { ComponentEditor } from "./ComponentEditor";
 import { Components } from "./Components";
 import { AddComponentDialog } from "./dialogs/AddComponentDialog";
 
-type Step =
-	| {
-			name: "components";
-	  }
-	| {
-			name: "edit-component";
-			// Don't use id because when adding a new component, the id is not known yet and it leads to errors
-			componentIndex: number;
-	  };
-
 interface Props {
 	page: Page;
 	components: Component[];
 }
 export function Inspector(props: Props) {
 	const [openAdd, setOpenAdd] = useState(false);
-	const [steps, setSteps] = useState<Step[]>([{ name: "components" }]);
 
-	const { init, components, setComponents, isDirty, isValid, save } = usePageEditor();
+	const { init, components, setComponents, steps, setSteps, isDirty, isValid, save } =
+		usePageEditor();
 	const { data } = trpc.pages.getPageComponents.useQuery(
 		{ id: props.page.id },
 		{ initialData: props.components },
@@ -88,8 +78,8 @@ export function Inspector(props: Props) {
 		return components.find((comp) => comp.order === index)!;
 	}
 	function displayStep() {
-		const currentStep = steps.at(-1)!;
-		switch (currentStep.name) {
+		const currentStep = steps.at(-1);
+		switch (currentStep?.name) {
 			case "components": {
 				return (
 					<>
@@ -101,8 +91,8 @@ export function Inspector(props: Props) {
 									: props.components.map((comp) => ({ ...comp, diff: "none" }))
 							}
 							onComponentClicked={(index) =>
-								setSteps((prev) => [
-									...prev,
+								setSteps([
+									...steps,
 									{ name: "edit-component", componentIndex: index },
 								])
 							}
@@ -119,7 +109,7 @@ export function Inspector(props: Props) {
 				);
 			}
 			case "edit-component": {
-				return <ComponentEditor component={getComponent(currentStep.componentIndex)} />;
+				return <ComponentEditor component={getComponent(currentStep.componentIndex)!} />;
 			}
 		}
 	}
@@ -155,11 +145,11 @@ export function Inspector(props: Props) {
 											"gap-1 whitespace-nowrap font-normal",
 											i + 1 < steps.length - 1 && "text-muted-foreground",
 										)}
-										onClick={() => setSteps((prev) => prev.slice(0, i + 2))}
+										onClick={() => setSteps(steps.slice(0, i + 2))}
 									>
 										<CubeIcon className="w-4" />
 										{step.name === "edit-component" &&
-											getComponent(step.componentIndex).name}
+											getComponent(step.componentIndex)?.name}
 									</Button>
 								)),
 							]}
