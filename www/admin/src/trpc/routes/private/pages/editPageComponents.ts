@@ -52,6 +52,7 @@ export const editPageComponents = privateProcedure
 			prisma.componentInstance.update({
 				where: { id: component.id },
 				data: {
+					order: component.order,
 					fields: {
 						update: component.fields.map((field) => ({
 							where: { id: field.id },

@@ -208,7 +208,8 @@ export const FieldDefs = React.forwardRef<React.ComponentRef<"div">, FieldDefsPr
 				<SortableContext items={ids} strategy={verticalListSortingStrategy}>
 					{props.value.map((field, i) => {
 						const sharedProps: Omit<
-							Extract<FieldDefProps, { dialogType: "add" }>, // Extract the props that are shared between the two types
+							// Extract the props that are shared between the two types
+							Extract<FieldDefProps, { dialogType: "add" }>,
 							"dialogType"
 						> = {
 							id: i.toString(),

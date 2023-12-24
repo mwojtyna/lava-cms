@@ -3,7 +3,7 @@ import type { Component } from "@/app/(editor)/dashboard/pages/editor/[pageId]/t
 import type { trpc } from "@/src/utils/trpc";
 import "client-only";
 
-export type Diff = "added" | "edited" | "deleted" | "none";
+export type Diff = "added" | "edited" | "deleted" | "reordered" | "none";
 export interface ComponentUI extends Component {
 	diff: Diff;
 }
@@ -31,17 +31,18 @@ export const usePageEditor = create<PageEditorState>((set) => ({
 	originalComponents: [],
 	components: [],
 
-	init: (components) =>
+	init: (components) => {
 		set({
 			originalComponents: components,
 			components: components,
 			isDirty: false,
-		}),
+		});
+	},
 	setComponents: (changedComponents) =>
 		set((state) => {
 			for (const comp of changedComponents) {
-				if (comp.diff === "edited") {
-					const original = state.originalComponents.find((c) => c.id === comp.id)!;
+				const original = state.originalComponents.find((c) => c.id === comp.id)!;
+				if (comp.diff === "edited" || comp.diff === "reordered") {
 					if (areSame(original, comp)) {
 						comp.diff = "none";
 					}
@@ -70,7 +71,9 @@ export const usePageEditor = create<PageEditorState>((set) => ({
 							definitionId: field.definitionId,
 						})),
 					})),
-				editedComponents: state.components.filter((comp) => comp.diff === "edited"),
+				editedComponents: state.components.filter(
+					(comp) => comp.diff === "edited" || comp.diff === "reordered",
+				),
 				deletedComponentIds: state.components
 					.filter((comp) => comp.diff === "deleted")
 					.map((comp) => comp.id),
