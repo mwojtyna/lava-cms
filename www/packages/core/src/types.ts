@@ -16,11 +16,3 @@ export interface ClientConfigBase {
 	/** Log requests and responses to console */
 	log?: boolean;
 }
-
-export type ContentType = string | number | boolean | object;
-
-export interface Component {
-	name: string;
-	data: ComponentData;
-}
-export type ComponentData = Record<string, ContentType>;

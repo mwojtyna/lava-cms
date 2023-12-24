@@ -161,7 +161,6 @@ export function Inspector(props: Props) {
 				</div>
 			</div>
 
-			{/* TODO: Add component name input */}
 			<AddComponentDialog open={openAdd} setOpen={setOpenAdd} onSubmit={addComponent} />
 		</>
 	);

@@ -1,0 +1,16 @@
+---
+interface Props {
+	cms: {
+		Content: string;
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		Author: any;
+	}
+}
+const { cms } = Astro.props;
+---
+<div>
+	<cite>{cms.Content}</cite>
+	<p>
+		{cms.Author}
+	</p>
+</div>

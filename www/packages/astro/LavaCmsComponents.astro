@@ -1,17 +1,17 @@
 ---
 /* eslint-disable @typescript-eslint/no-unsafe-return */
 
-import type { LavaCms } from "@lavacms/core";
+import type { Component as CmsComponent } from "@lavacms/types";
 import LavaCmsComponent from "./LavaCmsComponent.astro";
 
 interface Props {
-	components: LavaCms.Component[];
+	components: CmsComponent[];
 }
 
 const { components: cmsComponents } = Astro.props;
 if (!cmsComponents) {
-	throw new Error("No page data provided to `LavaCmsComponents` Astro component");
+	throw new Error("No components provided to `LavaCmsComponents` Astro component");
 }
 ---
 
-{cmsComponents.map((comp) => <LavaCmsComponent component={comp} />)}
+{cmsComponents.map((cmsComp) => <LavaCmsComponent component={cmsComp} />)}

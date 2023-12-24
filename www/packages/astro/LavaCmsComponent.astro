@@ -1,12 +1,12 @@
 ---
-import type { LavaCms } from "@lavacms/core";
+import type { Component as CmsComponent } from "@lavacms/types";
 import camelcase from "camelcase";
 import astroComponents from "virtual:lavacms-components";
 import config from "virtual:lavacms-config";
 import FallbackComponent from "./FallbackComponent.astro";
 
 interface Props {
-	component: LavaCms.Component;
+	component: CmsComponent;
 }
 
 const { component: cmsComponent } = Astro.props;
@@ -32,4 +32,4 @@ if (!(name in astroComponents) && !config.enableFallbackComponent) {
 }
 ---
 
-{!Comp ? <FallbackComponent name={cmsComponent.name} /> : <Comp cms={cmsComponent.data} />}
+{!Comp ? <FallbackComponent name={cmsComponent.name} /> : <Comp cms={cmsComponent.fields} />}
