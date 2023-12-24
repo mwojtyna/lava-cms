@@ -36,8 +36,9 @@ export default async function Editor({
 	const pageUrl = page.url.slice(1);
 
 	if (searchParams.path === undefined) {
+		const search = new URLSearchParams({ path: pageUrl });
 		redirect(
-			`/dashboard/pages/editor/${params.pageId}?path=${encodeURIComponent(pageUrl)}`,
+			`/dashboard/pages/editor/${params.pageId}?${search.toString()}`,
 			RedirectType.replace,
 		);
 	}
