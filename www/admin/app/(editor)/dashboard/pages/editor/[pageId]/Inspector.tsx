@@ -115,13 +115,13 @@ export function Inspector(props: Props) {
 
 	return (
 		<>
-			<div className="overflow-auto border-l p-4 max-md:hidden">
-				<header className="mb-4">
+			<div className="space-y-5 overflow-auto border-l p-4 max-md:hidden">
+				<header>
 					<TypographyH1 className="text-4xl">{props.page.name}</TypographyH1>
 					<TypographyMuted className="text-base">{props.page.url}</TypographyMuted>
 				</header>
 
-				<div className="flex flex-col gap-4">
+				<div className="flex flex-col gap-6">
 					{steps.length > 1 && (
 						<Stepper
 							className="overflow-x-auto"

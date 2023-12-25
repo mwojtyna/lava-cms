@@ -95,7 +95,7 @@ export function ComponentEditor(props: { component: ComponentUI }) {
 
 	return props.component.fields.length > 0 ? (
 		<FormProvider {...form}>
-			<form className="flex flex-col gap-4">
+			<form className="flex flex-col gap-5">
 				{props.component.fields.map((field, i) => {
 					// Is undefined if the component was only added in the page editor and not yet saved
 					const originalField = originalComponent?.fields[i];
@@ -106,7 +106,7 @@ export function ComponentEditor(props: { component: ComponentUI }) {
 							name={field.order.toString()}
 							render={({ field: formField }) => (
 								<FormItem
-									className={cn(field.type === "SWITCH" && "flex-row gap-4")}
+									className={cn(field.type === "SWITCH" && "flex-row", "gap-3")}
 								>
 									<FormLabel>{field.name}</FormLabel>
 									<FormControl>

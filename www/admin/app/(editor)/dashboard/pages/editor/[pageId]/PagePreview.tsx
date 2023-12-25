@@ -72,19 +72,20 @@ export function PagePreview(props: { baseUrl: string; pageUrl: string }) {
 				handleComponent={{
 					left: (
 						<IconMinusVertical
-							size={64}
-							className="relative right-[38px] h-full text-muted-foreground transition-colors hover:text-foreground"
+							width={64}
+							className="relative right-[38px] h-full text-muted-foreground transition-colors hover:text-foreground/90 active:text-foreground/90"
 							aria-label="Left resize handle"
 						/>
 					),
 					right: (
 						<IconMinusVertical
 							size={64}
-							className="relative right-[16px] h-full text-muted-foreground transition-colors hover:text-foreground"
+							className="relative right-[16px] h-full text-muted-foreground transition-colors hover:text-foreground/90 active:text-foreground/90"
 							aria-label="Right resize handle"
 						/>
 					),
 				}}
+				resizeRatio={2}
 				onResizeStop={(_, __, ___, delta) => setWidth(width + delta.width)}
 			>
 				<Card className="m-4 mx-0 h-auto flex-1 gap-0 overflow-hidden p-0 md:m-4 md:mx-0 md:p-0">
@@ -131,7 +132,7 @@ export function PagePreview(props: { baseUrl: string; pageUrl: string }) {
 					<iframe
 						key={+remountIframe}
 						ref={iframeRef}
-						className={cn("h-full")}
+						className="h-full"
 						title="Page preview"
 						src={url}
 						onLoad={initIframeScript}
