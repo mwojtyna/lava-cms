@@ -19,7 +19,7 @@ export default {
 	plugins: [
 		typescript(),
 		string({
-			include: "./src/script.ts",
+			include: "./src/bridge.ts",
 		}),
 	],
 	external: ["@lavacms/core", "camelcase"],

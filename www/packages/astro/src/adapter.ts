@@ -1,6 +1,6 @@
 import type { LavaCms } from "@lavacms/core";
 import type { AstroIntegration } from "astro";
-import script from "./script";
+import bridgeScript from "./bridge";
 import { vitePluginLavaCmsComponents } from "./vite-plugin-lavacms-components";
 import { vitePluginLavaCmsConfig } from "./vite-plugin-lavacms-config";
 
@@ -53,8 +53,8 @@ export function lavaCmsAstro(config: ClientConfigAstro): AstroIntegration {
 				);
 
 				// Remove source map (last comment)
-				const sourceMapIndex = script.lastIndexOf("//");
-				const pageEditorScript = script.slice(0, sourceMapIndex);
+				const sourceMapIndex = bridgeScript.lastIndexOf("//");
+				const pageEditorScript = bridgeScript.slice(0, sourceMapIndex);
 				injectScript("page", pageEditorScript);
 
 				updateConfig({
