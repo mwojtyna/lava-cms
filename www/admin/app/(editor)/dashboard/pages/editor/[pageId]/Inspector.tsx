@@ -115,7 +115,7 @@ export function Inspector(props: Props) {
 
 	return (
 		<>
-			<div className="overflow-auto border-l p-4">
+			<div className="overflow-auto border-l p-4 max-md:hidden">
 				<header className="mb-4">
 					<TypographyH1 className="text-4xl">{props.page.name}</TypographyH1>
 					<TypographyMuted className="text-base">{props.page.url}</TypographyMuted>
