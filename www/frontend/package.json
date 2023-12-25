@@ -17,6 +17,7 @@
 		"vite": "^5.0.2"
 	},
 	"devDependencies": {
-		"eslint-plugin-astro": "^0.29.1"
+		"eslint-plugin-astro": "^0.29.1",
+		"prettier-plugin-astro": "^0.12.2"
 	}
 }
