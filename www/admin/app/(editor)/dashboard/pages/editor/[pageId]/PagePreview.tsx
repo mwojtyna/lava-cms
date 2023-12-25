@@ -14,6 +14,7 @@ import * as React from "react";
 import { EditableText } from "@/src/components/EditableText";
 import { ActionIcon, Tooltip, TooltipContent, TooltipTrigger } from "@/src/components/ui/client";
 import { Card } from "@/src/components/ui/server";
+import { usePageEditor } from "@/src/data/stores/pageEditor";
 import { useSearchParams } from "@/src/hooks";
 import { cn } from "@/src/utils/styling";
 
@@ -45,7 +46,11 @@ export function PagePreview(props: { baseUrl: string; pageUrl: string }) {
 	}, [props.baseUrl]);
 	React.useEffect(() => {
 		initIframeScript();
-	}, [initIframeScript]);
+		usePageEditor.setState({
+			iframe: iframeRef.current,
+			iframeOrigin: new URL(props.baseUrl).origin,
+		});
+	}, [initIframeScript, props.baseUrl]);
 
 	function navigate(url: string) {
 		// Only store pathname to prevent overriding the iframe origin set in Connection Settings

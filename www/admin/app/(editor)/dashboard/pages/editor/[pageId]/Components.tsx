@@ -49,7 +49,7 @@ export function Components(props: Props) {
 		if (over && active.id !== over.id) {
 			// I have no fucking clue how the fuck mutating items of this array in the for loop below
 			// changes `components` and `originalComponents` arrays in the page editor store,
-			// but it somehow fucking does. So I have to write this stupid shit to fix it.
+			// but it somehow fucking does. So I have to write this `structuredClone` bullshit to fix it.
 			// Even the fucking browser doesn't understand this clusterfuck and displays completely different
 			// values in the expanded view of a `console.log(components)` entry vs the collapsed view.
 			const reordered = structuredClone(

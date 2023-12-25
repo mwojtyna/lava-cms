@@ -8,15 +8,16 @@ window.addEventListener("message", (e) => {
 		return;
 	}
 
-	switch ((e.data as IframeMessage).name) {
-		case "init": {
-			const all = document.querySelectorAll("*, *::before, *::after");
-			all.forEach((el) => {
-				el.addEventListener("click", (e) => {
-					e.preventDefault();
-				});
+	const data = e.data as IframeMessage;
+	if (data.name === "init") {
+		const all = document.querySelectorAll("*, *::before, *::after");
+		all.forEach((el) => {
+			el.addEventListener("click", (e) => {
+				e.preventDefault();
 			});
-		}
+		});
+	} else if (data.name === "update") {
+		location.reload();
 	}
 });
 

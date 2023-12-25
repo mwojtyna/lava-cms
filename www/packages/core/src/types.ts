@@ -1,7 +1,7 @@
+/* eslint-disable no-var */
 import type { ApiClient } from "./client";
 
 declare global {
-	// eslint-disable-next-line no-var
 	var client: ApiClient | undefined;
 }
 

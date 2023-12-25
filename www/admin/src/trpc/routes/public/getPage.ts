@@ -27,9 +27,9 @@ export interface Page {
 }
 export interface Component {
 	name: string;
-	fields: Record<string, ContentType>;
+	fields: Record<string, FieldContent>;
 }
-export type ContentType = string | number | boolean | object;
+export type FieldContent = string | number | boolean | object;
 
 export const getPage = publicProcedure
 	.input(
@@ -70,8 +70,8 @@ export const getPage = publicProcedure
 		} else {
 			const components = page.components.map((component) => ({
 				name: component.definition.name,
-				fields: component.fields.reduce<Record<string, ContentType>>((acc, field) => {
-					let data: ContentType;
+				fields: component.fields.reduce<Record<string, FieldContent>>((acc, field) => {
+					let data: FieldContent;
 
 					switch (field.definition.type) {
 						case "TEXT": {

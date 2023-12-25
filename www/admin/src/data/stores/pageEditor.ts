@@ -1,5 +1,9 @@
 import { create } from "zustand";
-import type { Component } from "@/app/(editor)/dashboard/pages/editor/[pageId]/types";
+import type {
+	Component,
+	IframeMessage,
+} from "@/app/(editor)/dashboard/pages/editor/[pageId]/types";
+import type { FieldContent, Component as CmsComponent } from "@/src/trpc/routes/public/getPage";
 import type { trpc } from "@/src/utils/trpc";
 import "client-only";
 
@@ -20,6 +24,9 @@ type Step =
 
 interface PageEditorState {
 	isDirty: boolean;
+	iframe: HTMLIFrameElement | null;
+	iframeOrigin: string;
+
 	isValid: boolean;
 	setIsValid: (isValid: boolean) => void;
 
@@ -39,8 +46,12 @@ interface PageEditorState {
 }
 export const usePageEditor = create<PageEditorState>((set) => ({
 	isDirty: false,
+
 	isValid: true,
 	setIsValid: (isValid) => set({ isValid }),
+
+	iframe: null,
+	iframeOrigin: "",
 
 	originalComponents: [],
 	components: [],
@@ -98,26 +109,37 @@ export const usePageEditor = create<PageEditorState>((set) => ({
 		}),
 	save: (mutation, pageId) =>
 		set((state) => {
-			mutation.mutate({
-				pageId,
-				addedComponents: state.components
-					.filter((comp) => comp.diff === "added")
-					.map((comp) => ({
-						pageId,
-						definition: comp.definition,
-						order: comp.order,
-						fields: comp.fields.map((field) => ({
-							data: field.data,
-							definitionId: field.definitionId,
+			mutation.mutate(
+				{
+					pageId,
+					addedComponents: state.components
+						.filter((comp) => comp.diff === "added")
+						.map((comp) => ({
+							pageId,
+							definition: comp.definition,
+							order: comp.order,
+							fields: comp.fields.map((field) => ({
+								data: field.data,
+								definitionId: field.definitionId,
+							})),
 						})),
-					})),
-				editedComponents: state.components.filter(
-					(comp) => comp.diff === "edited" || comp.diff === "reordered",
-				),
-				deletedComponentIds: state.components
-					.filter((comp) => comp.diff === "deleted")
-					.map((comp) => comp.id),
-			});
+					editedComponents: state.components.filter(
+						(comp) => comp.diff === "edited" || comp.diff === "reordered",
+					),
+					deletedComponentIds: state.components
+						.filter((comp) => comp.diff === "deleted")
+						.map((comp) => comp.id),
+				},
+				{
+					onSuccess: () => {
+						state.iframe!.contentWindow!.postMessage(
+							{ name: "update" } as IframeMessage,
+							state.iframeOrigin,
+						);
+					},
+				},
+			);
+
 			return state;
 		}),
 }));

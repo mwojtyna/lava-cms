@@ -1,5 +1,5 @@
 import { ArrowUturnLeftIcon } from "@heroicons/react/24/outline";
-import React, { forwardRef, useCallback, useEffect, useMemo, useRef } from "react";
+import React, { forwardRef, useCallback, useEffect, useMemo } from "react";
 import { FormProvider, useForm, type SubmitHandler, type FieldErrors } from "react-hook-form";
 import type { ComponentFieldTypeType } from "@/prisma/generated/zod";
 import {
@@ -18,7 +18,6 @@ import { usePageEditor, type ComponentUI } from "@/src/data/stores/pageEditor";
 import { cn } from "@/src/utils/styling";
 
 type Input = Record<string, string>; // fieldIndex (order): data
-const DEBOUNCE_TIME = 200;
 
 export function ComponentEditor(props: { component: ComponentUI }) {
 	const { originalComponents, components, setComponents, setIsValid } = usePageEditor();
@@ -33,7 +32,7 @@ export function ComponentEditor(props: { component: ComponentUI }) {
 	);
 
 	const form = useForm<Input>({
-		defaultValues: component.fields.reduce<Input>((acc, field) => {
+		values: component.fields.reduce<Input>((acc, field) => {
 			acc[field.order] = field.data;
 			return acc;
 		}, {}),
@@ -80,38 +79,19 @@ export function ComponentEditor(props: { component: ComponentUI }) {
 		[components, props.component.id, setComponents],
 	);
 
-	const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 	useEffect(() => {
 		// Trigger validation on mount, fixes Ctrl+S after first change not saving
 		void form.trigger();
 
 		const { unsubscribe } = form.watch(() => {
-			if (timeoutRef.current !== null) {
-				clearTimeout(timeoutRef.current);
-			}
-			timeoutRef.current = setTimeout(() => {
+			setIsValid(form.formState.isValid);
+			if (form.formState.isValid && !form.formState.isValidating) {
 				void form.handleSubmit(onSubmit)();
-				setIsValid(form.formState.isValid);
-			}, DEBOUNCE_TIME);
+			}
 		});
 
-		return () => {
-			unsubscribe();
-			if (timeoutRef.current !== null) {
-				clearTimeout(timeoutRef.current);
-			}
-		};
+		return unsubscribe;
 	}, [form, onSubmit, setIsValid]);
-
-	// Update fields when global reset button pressed
-	useEffect(() => {
-		form.reset(
-			component.fields.reduce<Input>((acc, field) => {
-				acc[field.order] = field.data;
-				return acc;
-			}, {}),
-		);
-	}, [component, form]);
 
 	return props.component.fields.length > 0 ? (
 		<FormProvider {...form}>

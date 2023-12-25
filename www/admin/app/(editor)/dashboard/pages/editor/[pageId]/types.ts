@@ -6,3 +6,6 @@ export type IframeMessage =
 	| {
 			name: "init";
 	  }
+	| {
+			name: "update";
+	  };
