@@ -7,7 +7,7 @@ import {
 	ArrowTopRightOnSquareIcon,
 	PencilSquareIcon,
 } from "@heroicons/react/24/outline";
-import { useElementSize } from "@mantine/hooks";
+import { useElementSize, useViewportSize } from "@mantine/hooks";
 import { IconMinusVertical } from "@tabler/icons-react";
 import { Resizable } from "re-resizable";
 import * as React from "react";
@@ -17,6 +17,7 @@ import { Card } from "@/src/components/ui/server";
 import { usePageEditor } from "@/src/data/stores/pageEditor";
 import { useSearchParams } from "@/src/hooks";
 import { cn } from "@/src/utils/styling";
+import { MIN_WIDTH as INSPECTOR_MIN_WIDTH } from "./Inspector";
 
 const MIN_WIDTH = 250;
 const HANDLES_WIDTH = 45;
@@ -25,6 +26,7 @@ export function PagePreview(props: { baseUrl: string; pageUrl: string }) {
 	const iframeRef = React.useRef<HTMLIFrameElement>(null);
 	const [remountIframe, setRemountIframe] = React.useState(false);
 
+	const { width: windowWidth } = useViewportSize();
 	const [width, setWidth] = React.useState(MIN_WIDTH * 3);
 	const [preferredWidth, setPreferredWidth] = React.useState(width);
 	const { ref: wrapperRef, width: wrapperWidth } = useElementSize();
@@ -52,26 +54,31 @@ export function PagePreview(props: { baseUrl: string; pageUrl: string }) {
 		});
 	}, [initIframeBridge, props.baseUrl]);
 
-	// Set initial width to fill up the available space
 	React.useEffect(() => {
-		if (!initialWidthSet.current && maxWidth > 0) {
-			setWidth(maxWidth);
-			setPreferredWidth(maxWidth);
-			initialWidthSet.current = true;
-		}
-	}, [maxWidth]);
-	// Update iframe's width when inspector makes it smaller while it resizes
-	// also update preferred width to resize iframe to it when there's enough space
-	React.useEffect(() => {
+		// Ignore when widths are not set yet
 		if (maxWidth > 0) {
+			// Set initial width to fill up the available space
+			if (!initialWidthSet.current) {
+				setWidth(maxWidth);
+				setPreferredWidth(maxWidth);
+				initialWidthSet.current = true;
+			}
+			// Update width when inspector makes it smaller while it resizes
 			if (width > maxWidth) {
 				setWidth(maxWidth);
 			}
+			// Fill up available space when possible
 			if (width < maxWidth && width < preferredWidth) {
-				setWidth(preferredWidth);
+				setWidth(
+					Math.min(preferredWidth, windowWidth - INSPECTOR_MIN_WIDTH - HANDLES_WIDTH),
+				);
+			}
+			// Update width when window is resized
+			if (width > windowWidth) {
+				setWidth(windowWidth - INSPECTOR_MIN_WIDTH - HANDLES_WIDTH);
 			}
 		}
-	}, [maxWidth, preferredWidth, width]);
+	}, [maxWidth, preferredWidth, width, windowWidth]);
 
 	function navigate(url: string) {
 		// Only store pathname to prevent overriding the iframe origin set in Connection Settings

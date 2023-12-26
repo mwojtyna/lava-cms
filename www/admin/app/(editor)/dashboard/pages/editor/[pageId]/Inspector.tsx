@@ -16,7 +16,7 @@ import { ComponentEditor } from "./ComponentEditor";
 import { Components } from "./Components";
 import { AddComponentDialog } from "./dialogs/AddComponentDialog";
 
-const MIN_WIDTH = 250;
+export const MIN_WIDTH = 250;
 const DEFAULT_WIDTH = MIN_WIDTH * 1.5;
 
 interface Props {
