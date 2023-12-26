@@ -1,9 +1,9 @@
 ---
 interface Props {
 	cms: {
-		Text: string;
+		text: string;
 		nr: number;
-		Toggled: boolean;
+		toggled: boolean;
 	};
 }
 
@@ -11,6 +11,6 @@ const { cms } = Astro.props;
 ---
 
 <div>
-	<button>{cms.Text} {cms.nr}</button>
-	<input type="checkbox" checked={cms.Toggled} />
+	<button>{cms.text} {cms.nr}</button>
+	<input type="checkbox" checked={cms.toggled} />
 </div>

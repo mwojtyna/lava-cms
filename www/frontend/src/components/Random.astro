@@ -1,14 +1,14 @@
 ---
 interface Props {
 	cms: {
-		"Random value": string;
+		random_value: string;
 	};
 }
 
 const { cms } = Astro.props;
 ---
 
-<p>{cms["Random value"]}</p>
+<p>{cms.random_value}</p>
 
 <style>
 	p {
