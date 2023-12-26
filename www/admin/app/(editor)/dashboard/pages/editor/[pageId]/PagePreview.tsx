@@ -20,14 +20,14 @@ import { cn } from "@/src/utils/styling";
 
 const MIN_WIDTH = 250;
 const HANDLES_WIDTH = 45;
-const DEFAULT_WIDTH = MIN_WIDTH * 3;
 
 export function PagePreview(props: { baseUrl: string; pageUrl: string }) {
 	const iframeRef = React.useRef<HTMLIFrameElement>(null);
 	const [remountIframe, setRemountIframe] = React.useState(false);
 
-	const [width, setWidth] = React.useState(DEFAULT_WIDTH);
+	const [width, setWidth] = React.useState(MIN_WIDTH * 3);
 	const { ref: wrapperRef, width: maxWidth } = useElementSize();
+	const initialWidthSet = React.useRef(false);
 
 	const [url, setUrl] = React.useState(props.baseUrl + props.pageUrl);
 	const { setSearchParams } = useSearchParams({
@@ -49,6 +49,20 @@ export function PagePreview(props: { baseUrl: string; pageUrl: string }) {
 			iframeOrigin: new URL(props.baseUrl).origin,
 		});
 	}, [initIframeBridge, props.baseUrl]);
+
+	// Set initial width to fill up the available space
+	React.useEffect(() => {
+		if (!initialWidthSet.current && maxWidth > 0) {
+			setWidth(maxWidth - HANDLES_WIDTH);
+			initialWidthSet.current = true;
+		}
+	}, [maxWidth]);
+	// Update iframe's width when inspector makes it smaller while resizing
+	React.useEffect(() => {
+		if (maxWidth > 0 && width > maxWidth - HANDLES_WIDTH) {
+			setWidth(maxWidth - HANDLES_WIDTH);
+		}
+	}, [maxWidth, width]);
 
 	function navigate(url: string) {
 		// Only store pathname to prevent overriding the iframe origin set in Connection Settings
