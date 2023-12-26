@@ -69,7 +69,7 @@ export function PagePreview(props: { baseUrl: string; pageUrl: string }) {
 				handleComponent={{
 					left: (
 						<IconMinusVertical
-							width={64}
+							size={64}
 							className="relative right-[38px] h-full text-muted-foreground transition-colors hover:text-foreground/90 active:text-foreground/90"
 							aria-label="Left resize handle"
 						/>

@@ -132,7 +132,7 @@ export function Inspector(props: Props) {
 				enable={{ left: true }}
 				handleComponent={{
 					left: (
-						<div className="mx-auto h-full w-px bg-border transition-colors group-hover:bg-brand group-active:bg-brand" />
+						<div className="mx-auto h-full w-px bg-border transition-colors group-hover:w-[3px] group-hover:bg-brand group-active:w-[3px] group-active:bg-brand" />
 					),
 				}}
 				handleClasses={{
