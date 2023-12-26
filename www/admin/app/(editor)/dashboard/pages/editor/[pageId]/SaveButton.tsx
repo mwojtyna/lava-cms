@@ -12,14 +12,14 @@ export function SaveButton(props: { pageId: string }) {
 
 	return (
 		<Button
-			className="flex-row-reverse"
+			className="flex-row-reverse max-sm:p-3"
 			icon={<ArrowDownTrayIcon className="w-5" />}
 			disabled={!isDirty}
 			loading={mutation.isLoading}
 			onClick={() => save(mutation, props.pageId)}
 			aria-keyshortcuts="Control+S"
 		>
-			Save
+			<span className="max-sm:hidden">Save</span>
 		</Button>
 	);
 }
