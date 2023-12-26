@@ -26,7 +26,9 @@ export function PagePreview(props: { baseUrl: string; pageUrl: string }) {
 	const [remountIframe, setRemountIframe] = React.useState(false);
 
 	const [width, setWidth] = React.useState(MIN_WIDTH * 3);
-	const { ref: wrapperRef, width: maxWidth } = useElementSize();
+	const [preferredWidth, setPreferredWidth] = React.useState(width);
+	const { ref: wrapperRef, width: wrapperWidth } = useElementSize();
+	const maxWidth = wrapperWidth - HANDLES_WIDTH;
 	const initialWidthSet = React.useRef(false);
 
 	const [url, setUrl] = React.useState(props.baseUrl + props.pageUrl);
@@ -53,16 +55,23 @@ export function PagePreview(props: { baseUrl: string; pageUrl: string }) {
 	// Set initial width to fill up the available space
 	React.useEffect(() => {
 		if (!initialWidthSet.current && maxWidth > 0) {
-			setWidth(maxWidth - HANDLES_WIDTH);
+			setWidth(maxWidth);
+			setPreferredWidth(maxWidth);
 			initialWidthSet.current = true;
 		}
 	}, [maxWidth]);
-	// Update iframe's width when inspector makes it smaller while resizing
+	// Update iframe's width when inspector makes it smaller while it resizes
+	// also update preferred width to resize iframe to it when there's enough space
 	React.useEffect(() => {
-		if (maxWidth > 0 && width > maxWidth - HANDLES_WIDTH) {
-			setWidth(maxWidth - HANDLES_WIDTH);
+		if (maxWidth > 0) {
+			if (width > maxWidth) {
+				setWidth(maxWidth);
+			}
+			if (width < maxWidth && width < preferredWidth) {
+				setWidth(preferredWidth);
+			}
 		}
-	}, [maxWidth, width]);
+	}, [maxWidth, preferredWidth, width]);
 
 	function navigate(url: string) {
 		// Only store pathname to prevent overriding the iframe origin set in Connection Settings
@@ -77,7 +86,7 @@ export function PagePreview(props: { baseUrl: string; pageUrl: string }) {
 			<Resizable
 				className="mx-auto flex"
 				minWidth={MIN_WIDTH}
-				maxWidth={maxWidth - HANDLES_WIDTH}
+				maxWidth={maxWidth}
 				size={{ width, height: "100%" }}
 				enable={{ left: true, right: true }}
 				handleComponent={{
@@ -97,7 +106,10 @@ export function PagePreview(props: { baseUrl: string; pageUrl: string }) {
 					),
 				}}
 				resizeRatio={2}
-				onResizeStop={(_, __, ___, delta) => setWidth(width + delta.width)}
+				onResizeStop={(_, __, ___, delta) => {
+					setWidth(width + delta.width);
+					setPreferredWidth(width + delta.width);
+				}}
 			>
 				<Card className="my-4 flex-1 gap-0 overflow-auto !p-0">
 					<div className="flex items-center gap-2 p-2 md:p-2">
