@@ -7,28 +7,26 @@ import {
 	ArrowTopRightOnSquareIcon,
 	PencilSquareIcon,
 } from "@heroicons/react/24/outline";
-import { useElementSize, useLocalStorage } from "@mantine/hooks";
+import { useElementSize } from "@mantine/hooks";
 import { IconMinusVertical } from "@tabler/icons-react";
 import { Resizable } from "re-resizable";
 import * as React from "react";
 import { EditableText } from "@/src/components/EditableText";
-import { ActionIcon, Tooltip, TooltipContent, TooltipTrigger } from "@/src/components/ui/client";
+import { ActionIcon } from "@/src/components/ui/client";
 import { Card } from "@/src/components/ui/server";
 import { usePageEditor } from "@/src/data/stores/pageEditor";
 import { useSearchParams } from "@/src/hooks";
 import { cn } from "@/src/utils/styling";
 
 const MIN_WIDTH = 250;
+const HANDLES_WIDTH = 45;
+const DEFAULT_WIDTH = MIN_WIDTH * 3;
 
 export function PagePreview(props: { baseUrl: string; pageUrl: string }) {
-	const resizableRef = React.useRef<Resizable>(null);
 	const iframeRef = React.useRef<HTMLIFrameElement>(null);
 	const [remountIframe, setRemountIframe] = React.useState(false);
 
-	const [width, setWidth] = useLocalStorage({
-		key: "page-preview-width",
-		defaultValue: MIN_WIDTH * 2,
-	});
+	const [width, setWidth] = React.useState(DEFAULT_WIDTH);
 	const { ref: wrapperRef, width: maxWidth } = useElementSize();
 
 	const [url, setUrl] = React.useState(props.baseUrl + props.pageUrl);
@@ -39,18 +37,18 @@ export function PagePreview(props: { baseUrl: string; pageUrl: string }) {
 		},
 	});
 
-	// Fix script not being initialized sometimes
-	const initIframeScript = React.useCallback(() => {
+	// Fix bridge not being initialized sometimes
+	const initIframeBridge = React.useCallback(() => {
 		const origin = new URL(props.baseUrl).origin;
 		iframeRef.current?.contentWindow?.postMessage({ name: "init" } as IframeMessage, origin);
 	}, [props.baseUrl]);
 	React.useEffect(() => {
-		initIframeScript();
+		initIframeBridge();
 		usePageEditor.setState({
 			iframe: iframeRef.current,
 			iframeOrigin: new URL(props.baseUrl).origin,
 		});
-	}, [initIframeScript, props.baseUrl]);
+	}, [initIframeBridge, props.baseUrl]);
 
 	function navigate(url: string) {
 		// Only store pathname to prevent overriding the iframe origin set in Connection Settings
@@ -61,12 +59,11 @@ export function PagePreview(props: { baseUrl: string; pageUrl: string }) {
 	}
 
 	return (
-		<div ref={wrapperRef} className="h-full">
+		<div ref={wrapperRef}>
 			<Resizable
-				ref={resizableRef}
 				className="mx-auto flex"
 				minWidth={MIN_WIDTH}
-				maxWidth={maxWidth - 45} // Account for the handles
+				maxWidth={maxWidth - HANDLES_WIDTH}
 				size={{ width, height: "100%" }}
 				enable={{ left: true, right: true }}
 				handleComponent={{
@@ -88,45 +85,39 @@ export function PagePreview(props: { baseUrl: string; pageUrl: string }) {
 				resizeRatio={2}
 				onResizeStop={(_, __, ___, delta) => setWidth(width + delta.width)}
 			>
-				<Card className="m-4 mx-0 h-auto flex-1 gap-0 overflow-hidden p-0 md:m-4 md:mx-0 md:p-0">
+				<Card className="my-4 flex-1 gap-0 overflow-auto !p-0">
 					<div className="flex items-center gap-2 p-2 md:p-2">
-						<div className="flex">
-							<ActionIcon
-								onClick={() => {
-									if (iframeRef.current) {
-										iframeRef.current.src = url;
-									}
-								}}
-								tooltip="Refresh"
-							>
-								<ArrowPathIcon className="w-5" />
-							</ActionIcon>
-						</div>
+						<ActionIcon
+							onClick={() => {
+								if (iframeRef.current) {
+									iframeRef.current.src = url;
+								}
+							}}
+							tooltip="Refresh"
+						>
+							<ArrowPathIcon className="w-5" />
+						</ActionIcon>
 
 						<Url baseUrl={props.baseUrl} url={url} onUrlChanged={navigate} />
-
 						{url !== props.baseUrl + props.pageUrl && (
-							<Tooltip>
-								<TooltipTrigger
-									onClick={() => navigate(props.baseUrl + props.pageUrl)}
-								>
-									<ExclamationTriangleIcon className="mt-1 w-6 cursor-help text-yellow-500" />
-								</TooltipTrigger>
-								<TooltipContent>
-									The previewed page&apos;s URL differs from the URL of the page
-									that you&apos;re editing. Click to reset.
-								</TooltipContent>
-							</Tooltip>
-						)}
-						<Tooltip>
 							<ActionIcon
-								className="ml-auto"
-								onClick={() => window.open(url)}
-								tooltip="Open in new tab"
+								variant={"simple"}
+								onClick={() => navigate(props.baseUrl + props.pageUrl)}
+								tooltip={
+									"The previewed page's URL differs from the URL of the page that you're editing. Click to reset."
+								}
 							>
-								<ArrowTopRightOnSquareIcon className="w-5" />
+								<ExclamationTriangleIcon className="mt-1 w-6 cursor-help text-yellow-500" />
 							</ActionIcon>
-						</Tooltip>
+						)}
+
+						<ActionIcon
+							className="ml-auto"
+							onClick={() => window.open(url)}
+							tooltip="Open in new tab"
+						>
+							<ArrowTopRightOnSquareIcon className="w-5" />
+						</ActionIcon>
 					</div>
 
 					<iframe
@@ -135,7 +126,7 @@ export function PagePreview(props: { baseUrl: string; pageUrl: string }) {
 						className="h-full"
 						title="Page preview"
 						src={url}
-						onLoad={initIframeScript}
+						onLoad={initIframeBridge}
 						// Allow all
 						sandbox="allow-downloads allow-forms allow-modals allow-orientation-lock allow-pointer-lock allow-popups allow-popups-to-escape-sandbox allow-presentation allow-same-origin allow-scripts allow-storage-access-by-user-activation allow-top-navigation allow-top-navigation-by-user-activation allow-top-navigation-to-custom-protocols"
 						loading="lazy"

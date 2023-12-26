@@ -47,7 +47,7 @@ export default async function Editor({
 
 	return (
 		<div className="flex h-full flex-col">
-			<nav className="flex w-full items-center justify-between border-b border-border p-5 py-3">
+			<nav className="flex w-full items-center justify-between gap-4 border-b border-border p-5 py-3">
 				<Link href={"/dashboard/pages"}>
 					<ActionIcon variant={"outline"} aria-label="Go back to dashboard">
 						<ArrowUturnLeftIcon className="w-5" />
@@ -62,7 +62,7 @@ export default async function Editor({
 				</div>
 			</nav>
 
-			<main className="grid h-full w-full flex-1 grid-cols-1 overflow-auto md:grid-cols-[3fr_22.5rem]">
+			<main className="grid h-full w-full flex-1 grid-cols-[1fr_auto]">
 				<PagePreview baseUrl={baseUrl} pageUrl={pageUrl} />
 				<Inspector page={page} components={components} />
 			</main>

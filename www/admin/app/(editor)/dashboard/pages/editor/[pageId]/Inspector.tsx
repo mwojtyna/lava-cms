@@ -3,6 +3,8 @@
 import type { Component } from "./types";
 import type { Page } from "@prisma/client";
 import { ChevronRightIcon, CubeIcon, DocumentIcon, PlusIcon } from "@heroicons/react/24/outline";
+import { useViewportSize } from "@mantine/hooks";
+import { Resizable } from "re-resizable";
 import { useEffect, useState } from "react";
 import { Button } from "@/src/components/ui/client";
 import { Stepper, TypographyH1, TypographyMuted } from "@/src/components/ui/server";
@@ -14,12 +16,17 @@ import { ComponentEditor } from "./ComponentEditor";
 import { Components } from "./Components";
 import { AddComponentDialog } from "./dialogs/AddComponentDialog";
 
+const MIN_WIDTH = 250;
+const DEFAULT_WIDTH = MIN_WIDTH * 1.5;
+
 interface Props {
 	page: Page;
 	components: Component[];
 }
 export function Inspector(props: Props) {
 	const [openAdd, setOpenAdd] = useState(false);
+	const [width, setWidth] = useState(DEFAULT_WIDTH);
+	const { width: windowWidth } = useViewportSize();
 
 	const { init, components, setComponents, steps, setSteps, isDirty, isValid, save } =
 		usePageEditor();
@@ -76,6 +83,7 @@ export function Inspector(props: Props) {
 	function getComponent(index: number) {
 		return components.find((comp) => comp.order === index)!;
 	}
+
 	function displayStep() {
 		const currentStep = steps.at(-1);
 		switch (currentStep?.name) {
@@ -115,7 +123,29 @@ export function Inspector(props: Props) {
 
 	return (
 		<>
-			<div className="space-y-5 overflow-auto border-l p-4 max-md:hidden">
+			<Resizable
+				// Use flex instead of space-y-5, because Resizable adds a div when resizing which messes up the spacing
+				className="flex flex-col gap-5 overflow-auto p-4 max-md:hidden"
+				minWidth={MIN_WIDTH}
+				maxWidth={windowWidth !== 0 ? windowWidth / 2 : 9999} // `windowWidth` is 0 when SSR
+				size={{ width, height: "100%" }}
+				enable={{ left: true }}
+				handleComponent={{
+					left: (
+						<div className="mx-auto h-full w-px bg-border transition-colors group-hover:bg-brand group-active:bg-brand" />
+					),
+				}}
+				handleClasses={{
+					left: "group",
+				}}
+				handleStyles={{
+					left: {
+						width: 16,
+						left: -8,
+					},
+				}}
+				onResizeStop={(_, __, ___, delta) => setWidth(width + delta.width)}
+			>
 				<header>
 					<TypographyH1 className="text-4xl">{props.page.name}</TypographyH1>
 					<TypographyMuted className="text-base">{props.page.url}</TypographyMuted>
@@ -159,7 +189,7 @@ export function Inspector(props: Props) {
 
 					{displayStep()}
 				</div>
-			</div>
+			</Resizable>
 
 			<AddComponentDialog open={openAdd} setOpen={setOpenAdd} onSubmit={addComponent} />
 		</>
