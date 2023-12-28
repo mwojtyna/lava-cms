@@ -144,12 +144,10 @@ export function PagePreview(props: { baseUrl: string; pageUrl: string }) {
 							</ActionIcon>
 						)}
 
-						<ActionIcon
-							className="ml-auto"
-							onClick={() => window.open(url)}
-							tooltip="Open in new tab"
-						>
-							<ArrowTopRightOnSquareIcon className="w-5" />
+						<ActionIcon className="ml-auto" tooltip="Open in new tab" asChild>
+							<a href={url} target="_blank">
+								<ArrowTopRightOnSquareIcon className="w-5" />
+							</a>
 						</ActionIcon>
 					</div>
 
