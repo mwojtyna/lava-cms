@@ -234,10 +234,18 @@ Field.displayName = "Field";
 
 function ComponentField(props: Omit<FieldProps, "type">) {
 	const [componentUI, setComponentUI] = useState<ComponentUI | null>(null);
+
+	const cmsComponent = useMemo<CmsComponent | null>(() => {
+		try {
+			return JSON.parse(props.value) as CmsComponent;
+		} catch (e) {
+			return null;
+		}
+	}, [props.value]);
+
 	useEffect(() => {
-		async function updateUI() {
-			if (props.value !== "") {
-				const cmsComponent = JSON.parse(props.value) as CmsComponent;
+		void (async () => {
+			if (cmsComponent) {
 				const componentDef = await trpcFetch.components.getComponentDefinition.query({
 					name: cmsComponent.name,
 				});
@@ -263,9 +271,8 @@ function ComponentField(props: Omit<FieldProps, "type">) {
 			} else {
 				setComponentUI(null);
 			}
-		}
-		void updateUI();
-	}, [props.value]);
+		})();
+	}, [cmsComponent]);
 
 	const [dialogOpen, setDialogOpen] = useState(false);
 	async function chooseComponent(id: string) {
@@ -286,20 +293,42 @@ function ComponentField(props: Omit<FieldProps, "type">) {
 
 	return (
 		<>
-			{!componentUI ? (
+			{!cmsComponent ? (
 				<Button variant={"outline"} onClick={() => setDialogOpen(true)}>
 					Choose component
 				</Button>
 			) : (
-				<Component
-					id="0"
-					component={componentUI}
-					onClick={(index) => console.log(index)}
-					onRemove={() => props.onChange("")}
-					onRestore={() => undefined}
-					onUnAdd={() => undefined}
-					onUnRemove={() => undefined}
-				/>
+				<div className={cn(!componentUI && "pointer-events-none select-none opacity-50")}>
+					<Component
+						id="0"
+						noDrag
+						component={
+							// Placeholder data if component definition hasn't been fetched yet
+							componentUI ?? {
+								definition: {
+									name: cmsComponent.name,
+									id: "",
+								},
+								fields: Object.entries(cmsComponent.fields).map(([k, v]) => ({
+									name: k,
+									data: v as string,
+									order: 0,
+									id: "",
+									type: "TEXT",
+									definitionId: "",
+								})),
+								id: "",
+								order: 0,
+								diff: "none",
+							}
+						}
+						onClick={(index) => console.log(index)}
+						onRemove={() => props.onChange("")}
+						onRestore={() => undefined}
+						onUnAdd={() => undefined}
+						onUnRemove={() => undefined}
+					/>
+				</div>
 			)}
 
 			<AddComponentDialog

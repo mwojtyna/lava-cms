@@ -126,6 +126,7 @@ export function Components(props: Props) {
 interface ComponentProps {
 	id: string;
 	component: ComponentUI;
+	noDrag?: boolean;
 	onClick: (index: number) => void;
 	onRestore: () => void;
 	onRemove: () => void;
@@ -163,28 +164,30 @@ export function Component(props: ComponentProps) {
 					props.component.diff !== "reordered" &&
 					`border-l-[3px] ${diffStyle[props.component.diff]}`,
 
-				"flex-row items-center gap-3 shadow-none transition-colors md:p-4",
-
 				props.component.diff !== "deleted" && "cursor-pointer hover:bg-accent/70",
+
+				"flex-row items-center gap-3 shadow-none transition-colors md:p-4",
 			)}
 			onClick={() =>
-				props.component.diff === "deleted"
-					? undefined
-					: props.onClick(props.component.order)
+				props.component.diff !== "deleted"
+					? props.onClick(props.component.order)
+					: undefined
 			}
 			aria-disabled={props.component.diff === "deleted"}
 		>
 			<div className="flex items-center gap-2">
-				<IconGripVertical
-					className={cn(
-						"w-5 cursor-move text-muted-foreground",
-						props.component.diff === "deleted" &&
-							"cursor-auto text-muted-foreground/50",
-					)}
-					onClick={(e) => e.stopPropagation()}
-					{...attributes}
-					{...listeners}
-				/>
+				{!props.noDrag && (
+					<IconGripVertical
+						className={cn(
+							"w-5 cursor-move text-muted-foreground",
+							props.component.diff === "deleted" &&
+								"cursor-auto text-muted-foreground/50",
+						)}
+						onClick={(e) => e.stopPropagation()}
+						{...attributes}
+						{...listeners}
+					/>
+				)}
 				<span className="font-medium">{props.component.definition.name}</span>
 			</div>
 
