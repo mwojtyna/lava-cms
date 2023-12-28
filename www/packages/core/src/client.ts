@@ -1,5 +1,5 @@
 import type { ClientConfigBase } from "./types";
-import type { Page, PublicRouter } from "@lavacms/types";
+import type { CmsPage, PublicRouter } from "@lavacms/types";
 import { createTRPCProxyClient, httpBatchLink, loggerLink } from "@trpc/client";
 import { SuperJSON } from "superjson";
 
@@ -33,7 +33,7 @@ export class ApiClient {
 	 * @param path Path of the page. Recommended to use the [URL API](https://developer.mozilla.org/en-US/docs/Web/API/URL) `pathname` property
 	 * @returns Page name and its components
 	 */
-	public async getPage(path: string): Promise<Page> {
+	public async getPage(path: string): Promise<CmsPage> {
 		const page = await this.connection.getPage.query({ path });
 		if (!page) {
 			throw new Error(`Page with path \`${path}\` not found in CMS`);

@@ -21,15 +21,15 @@ const include = {
 } satisfies Prisma.PageInclude<DefaultArgs>;
 
 // Has to be exported for @lavacms/types
-export interface Page {
+export interface CmsPage {
 	name: string;
-	components: Component[];
+	components: CmsComponent[];
 }
-export interface Component {
+export interface CmsComponent {
 	name: string;
 	fields: Record<string, FieldContent>;
 }
-export type FieldContent = string | number | boolean | object;
+export type FieldContent = string | number | boolean | object | null;
 
 export const getPage = publicProcedure
 	.input(
@@ -37,7 +37,7 @@ export const getPage = publicProcedure
 			path: z.string(),
 		}),
 	)
-	.query(async ({ input }): Promise<Page | null> => {
+	.query(async ({ input }): Promise<CmsPage | null> => {
 		let page = await prisma.page.findFirst({
 			where: {
 				url: input.path,
@@ -70,7 +70,7 @@ export const getPage = publicProcedure
 		} else {
 			const components = page.components.map((component) => ({
 				name: component.definition.name,
-				fields: component.fields.reduce<Record<string, FieldContent>>((acc, field) => {
+				fields: component.fields.reduce<CmsComponent["fields"]>((acc, field) => {
 					let data: FieldContent;
 
 					switch (field.definition.type) {
@@ -87,6 +87,12 @@ export const getPage = publicProcedure
 							break;
 						}
 						case "COMPONENT": {
+							// If component isn't assigned, return null
+							if (field.data === "") {
+								data = null;
+								break;
+							}
+
 							try {
 								data = JSON.parse(field.data) as object;
 							} catch (e) {

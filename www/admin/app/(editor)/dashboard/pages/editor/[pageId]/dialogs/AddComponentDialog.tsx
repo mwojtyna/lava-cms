@@ -21,6 +21,7 @@ interface Props {
 	open: boolean;
 	setOpen: (value: boolean) => void;
 	onSubmit: (id: string) => void;
+	keepOpenOnSubmit?: boolean;
 }
 export function AddComponentDialog(props: Props) {
 	const [groupId, setGroupId] = useState<string | null>(null);
@@ -96,7 +97,10 @@ export function AddComponentDialog(props: Props) {
 										key={item.id}
 										item={item}
 										groupClick={() => openGroup(item.id)}
-										componentClick={() => props.onSubmit(item.id)}
+										componentClick={() => {
+											props.onSubmit(item.id);
+											props.setOpen(false);
+										}}
 										isLast={i === list.length - 1}
 									/>
 								);

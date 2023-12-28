@@ -1,9 +1,11 @@
 ---
+// @ts-expect-error - this is a bug in astro
+import LavaCmsComponent from "@lavacms/astro/LavaCmsComponent.astro";
+
 interface Props {
 	cms: {
 		content: string;
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		author: any;
+		author: object | null;
 	};
 }
 const { cms } = Astro.props;
@@ -11,7 +13,5 @@ const { cms } = Astro.props;
 
 <div>
 	<cite>{cms.content}</cite>
-	<p>
-		{cms.author}
-	</p>
+	{cms.author && <LavaCmsComponent component={cms.author} />}
 </div>

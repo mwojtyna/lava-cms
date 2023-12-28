@@ -57,6 +57,7 @@ export function Inspector(props: Props) {
 
 	async function addComponent(id: string) {
 		const componentDef = await trpcFetch.components.getComponentDefinition.query({ id });
+		const lastComponent = components.at(-1);
 		setComponents([
 			...components,
 			{
@@ -65,7 +66,7 @@ export function Inspector(props: Props) {
 					id: componentDef.id,
 					name: componentDef.name,
 				},
-				order: components.length,
+				order: lastComponent ? lastComponent.order + 1 : 0,
 				fields: componentDef.field_definitions.map((fieldDef, i) => ({
 					id: i.toString(),
 					name: fieldDef.name,
@@ -77,7 +78,6 @@ export function Inspector(props: Props) {
 				diff: "added",
 			},
 		]);
-		setOpenAdd(false);
 	}
 
 	function getComponent(index: number) {
@@ -151,7 +151,7 @@ export function Inspector(props: Props) {
 					<TypographyMuted className="text-base">{props.page.url}</TypographyMuted>
 				</header>
 
-				<div className="flex flex-col gap-6">
+				<div className="flex flex-col gap-5">
 					{steps.length > 1 && (
 						<Stepper
 							className="overflow-x-auto"

@@ -3,7 +3,6 @@ import type {
 	Component,
 	IframeMessage,
 } from "@/app/(editor)/dashboard/pages/editor/[pageId]/types";
-import type { FieldContent, Component as CmsComponent } from "@/src/trpc/routes/public/getPage";
 import type { trpc } from "@/src/utils/trpc";
 import "client-only";
 

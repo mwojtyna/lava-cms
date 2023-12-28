@@ -1,5 +1,5 @@
 ---
-import type { Component as CmsComponent } from "@lavacms/types";
+import type { CmsComponent } from "@lavacms/types";
 import camelcase from "camelcase";
 import astroComponents from "virtual:lavacms-components";
 import config from "virtual:lavacms-config";
@@ -14,7 +14,7 @@ const { component: cmsComponent } = Astro.props;
 if (!cmsComponent) {
 	throw new Error("No component data provided to `LavaCmsComponent` Astro component");
 }
-if (typeof cmsComponent.name !== "string") {
+if (typeof cmsComponent !== "object") {
 	throw new Error(
 		`The CMS component you passed to \`LavaCmsComponent\` is invalid:\n${JSON.stringify(
 			cmsComponent,

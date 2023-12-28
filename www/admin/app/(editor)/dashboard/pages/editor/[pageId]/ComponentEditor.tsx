@@ -1,5 +1,5 @@
 import { ArrowUturnLeftIcon } from "@heroicons/react/24/outline";
-import React, { forwardRef, useCallback, useEffect, useMemo } from "react";
+import React, { forwardRef, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { FormProvider, useForm, type SubmitHandler, type FieldErrors } from "react-hook-form";
 import type { ComponentFieldTypeType } from "@/prisma/generated/zod";
 import {
@@ -12,10 +12,17 @@ import {
 	Checkbox,
 	FormError,
 	ActionIcon,
+	Button,
 } from "@/src/components/ui/client";
 import { TypographyMuted } from "@/src/components/ui/server";
 import { usePageEditor, type ComponentUI } from "@/src/data/stores/pageEditor";
+import type { CmsComponent as CmsComponent } from "@/src/trpc/routes/public/getPage";
 import { cn } from "@/src/utils/styling";
+import { trpc, trpcFetch } from "@/src/utils/trpc";
+import { Component } from "./Components";
+import { AddComponentDialog } from "./dialogs/AddComponentDialog";
+import type { inferRouterOutputs } from "@trpc/server";
+import type { PrivateRouter } from "@/src/trpc/routes/private/_private";
 
 type Input = Record<string, string>; // fieldIndex (order): data
 
@@ -148,7 +155,7 @@ interface FieldProps extends FormFieldProps<string> {
 }
 const Field = forwardRef<HTMLInputElement | HTMLButtonElement, FieldProps>(
 	({ type: fieldType, edited, onRestore, value, onChange, ...rest }, ref) => {
-		const sharedProps: React.ComponentProps<typeof Input> = {
+		const inputProps: React.ComponentProps<typeof Input> = {
 			inputClassName: cn("transition-colors", edited && "border-b-brand"),
 			rightButton: {
 				iconOn: <ArrowUturnLeftIcon className="w-4" />,
@@ -168,7 +175,7 @@ const Field = forwardRef<HTMLInputElement | HTMLButtonElement, FieldProps>(
 						type="text"
 						value={value}
 						onChange={(e) => onChange(e.currentTarget.value)}
-						{...sharedProps}
+						{...inputProps}
 						{...rest}
 					/>
 				);
@@ -180,7 +187,7 @@ const Field = forwardRef<HTMLInputElement | HTMLButtonElement, FieldProps>(
 						step="any"
 						value={value}
 						onChange={(e) => onChange(e.currentTarget.value)}
-						{...sharedProps}
+						{...inputProps}
 						{...rest}
 					/>
 				);
@@ -210,7 +217,107 @@ const Field = forwardRef<HTMLInputElement | HTMLButtonElement, FieldProps>(
 					</div>
 				);
 			}
+			case "COMPONENT": {
+				return (
+					<ComponentField
+						value={value}
+						onChange={onChange}
+						edited={edited}
+						onRestore={onRestore}
+					/>
+				);
+			}
 		}
 	},
 );
 Field.displayName = "Field";
+
+function ComponentField(props: Omit<FieldProps, "type">) {
+	const [componentUI, setComponentUI] = useState<ComponentUI | null>(null);
+	const [componentDef, setComponentDef] = useState<
+		inferRouterOutputs<PrivateRouter>["components"]["getComponentDefinition"] | null
+	>(null);
+
+	useEffect(() => {
+		async function updateUI() {
+			if (props.value !== "") {
+				const cmsComponent = JSON.parse(props.value) as CmsComponent;
+
+				let definition = componentDef;
+				if (!definition) {
+					definition = await trpcFetch.components.getComponentDefinition.query({
+						name: cmsComponent.name,
+					});
+				}
+
+				setComponentUI({
+					id: "0",
+					order: 0,
+					definition: {
+						id: definition.id,
+						name: definition.name,
+					},
+					fields: definition.field_definitions.map((fieldDef, i) => ({
+						id: i.toString(),
+						definitionId: fieldDef.id,
+						order: fieldDef.order,
+						name: fieldDef.name,
+						type: fieldDef.type,
+						// 4. Populate fields from the parsed JSON
+						data: Object.values(cmsComponent.fields)[i]! as string,
+					})),
+					diff: "none",
+				});
+			} else {
+				setComponentUI(null);
+			}
+		}
+		void updateUI();
+	}, [props.value]);
+
+	const [dialogOpen, setDialogOpen] = useState(false);
+	async function chooseComponent(id: string) {
+		const componentDef = await trpcFetch.components.getComponentDefinition.query({ id });
+		const newValue: CmsComponent = {
+			name: componentDef.name,
+			fields: componentDef.field_definitions.reduce<CmsComponent["fields"]>(
+				(acc, fieldDef) => {
+					acc[fieldDef.name] = "";
+					return acc;
+				},
+				{},
+			),
+		};
+
+		props.onChange(JSON.stringify(newValue));
+		setDialogOpen(false);
+		setComponentDef(componentDef);
+	}
+
+	return (
+		<>
+			{!componentUI ? (
+				<Button variant={"outline"} onClick={() => setDialogOpen(true)}>
+					Choose component
+				</Button>
+			) : (
+				<Component
+					id="0"
+					component={componentUI}
+					onClick={(index) => console.log(index)}
+					onRemove={() => props.onChange("")}
+					onRestore={() => undefined}
+					onUnAdd={() => undefined}
+					onUnRemove={() => undefined}
+				/>
+			)}
+
+			<AddComponentDialog
+				open={dialogOpen}
+				setOpen={setDialogOpen}
+				onSubmit={chooseComponent}
+				keepOpenOnSubmit
+			/>
+		</>
+	);
+}

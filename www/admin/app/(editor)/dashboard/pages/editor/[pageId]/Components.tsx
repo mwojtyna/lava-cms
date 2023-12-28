@@ -31,7 +31,7 @@ interface Props {
 	onComponentClicked: (index: number) => void;
 }
 export function Components(props: Props) {
-	const { components, setComponents } = usePageEditor();
+	const { originalComponents, components, setComponents } = usePageEditor();
 
 	const ids: string[] = useMemo(
 		() => props.components.map((_, i) => i.toString()),
@@ -43,7 +43,6 @@ export function Components(props: Props) {
 			coordinateGetter: sortableKeyboardCoordinates,
 		}),
 	);
-
 	function reorder(e: DragEndEvent) {
 		const { active, over } = e;
 		if (over && active.id !== over.id) {
@@ -68,39 +67,6 @@ export function Components(props: Props) {
 			setComponents(reordered);
 		}
 	}
-
-	return (
-		<DndContext
-			// https://github.com/clauderic/dnd-kit/issues/926#issuecomment-1640115665
-			id={"id"}
-			sensors={sensors}
-			collisionDetection={closestCenter}
-			modifiers={[restrictToParentElement]}
-			onDragEnd={reorder}
-		>
-			<SortableContext items={ids} strategy={verticalListSortingStrategy}>
-				<div className="flex flex-col gap-2">
-					{props.components.map((component, i) => (
-						<Component
-							key={component.id}
-							id={i.toString()}
-							component={component}
-							onClick={props.onComponentClicked}
-						/>
-					))}
-				</div>
-			</SortableContext>
-		</DndContext>
-	);
-}
-
-interface ComponentProps {
-	id: string;
-	component: ComponentUI;
-	onClick: (index: number) => void;
-}
-function Component(props: ComponentProps) {
-	const { components, originalComponents, setComponents } = usePageEditor();
 
 	function restore(component: ComponentUI) {
 		const original = originalComponents.find((comp) => comp.id === component.id)!;
@@ -128,6 +94,45 @@ function Component(props: ComponentProps) {
 		setComponents(components.filter((comp) => comp.id !== component.id));
 	}
 
+	return (
+		<DndContext
+			// https://github.com/clauderic/dnd-kit/issues/926#issuecomment-1640115665
+			id={"id"}
+			sensors={sensors}
+			collisionDetection={closestCenter}
+			modifiers={[restrictToParentElement]}
+			onDragEnd={reorder}
+		>
+			<SortableContext items={ids} strategy={verticalListSortingStrategy}>
+				<div className="flex flex-col gap-2">
+					{props.components.map((component, i) => (
+						<Component
+							key={component.id}
+							id={i.toString()}
+							component={component}
+							onClick={props.onComponentClicked}
+							onRestore={() => restore(component)}
+							onRemove={() => remove(component)}
+							onUnRemove={() => unRemove(component)}
+							onUnAdd={() => unAdd(component)}
+						/>
+					))}
+				</div>
+			</SortableContext>
+		</DndContext>
+	);
+}
+
+interface ComponentProps {
+	id: string;
+	component: ComponentUI;
+	onClick: (index: number) => void;
+	onRestore: () => void;
+	onRemove: () => void;
+	onUnRemove: () => void;
+	onUnAdd: () => void;
+}
+export function Component(props: ComponentProps) {
 	const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
 		id: props.id,
 		// We have no stable unique property to use as id, so we have to disable this
@@ -157,7 +162,9 @@ function Component(props: ComponentProps) {
 				props.component.diff !== "none" &&
 					props.component.diff !== "reordered" &&
 					`border-l-[3px] ${diffStyle[props.component.diff]}`,
+
 				"flex-row items-center gap-3 shadow-none transition-colors md:p-4",
+
 				props.component.diff !== "deleted" && "cursor-pointer hover:bg-accent/70",
 			)}
 			onClick={() =>
@@ -183,10 +190,10 @@ function Component(props: ComponentProps) {
 
 			<Actions
 				diff={props.component.diff}
-				restoreComponent={() => restore(props.component)}
-				deleteComponent={() => remove(props.component)}
-				unDeleteComponent={() => unRemove(props.component)}
-				unAddComponent={() => unAdd(props.component)}
+				restoreComponent={props.onRestore}
+				deleteComponent={props.onRemove}
+				unDeleteComponent={props.onUnRemove}
+				unAddComponent={props.onUnAdd}
 			/>
 		</Card>
 	);

@@ -14,9 +14,10 @@ export default defineConfig({
 			token: CMS_TOKEN,
 			log: import.meta.env.DEV,
 			components: {
+				Author: "./src/components/Author.astro",
 				Button: "./src/components/Button.astro",
-				Random: "./src/components/Random.astro",
 				Quote: "./src/components/Quote.astro",
+				Random: "./src/components/Random.astro",
 			},
 			enableFallbackComponent: true,
 		}),

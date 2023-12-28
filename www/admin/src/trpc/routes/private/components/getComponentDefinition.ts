@@ -5,13 +5,15 @@ import { privateProcedure } from "@/src/trpc";
 export const getComponentDefinition = privateProcedure
 	.input(
 		z.object({
-			id: z.string().cuid(),
+			id: z.string().cuid().optional(),
+			name: z.string().optional(),
 		}),
 	)
 	.query(async ({ input }) => {
 		const componentDef = await prisma.componentDefinition.findUniqueOrThrow({
 			where: {
 				id: input.id,
+				name: input.name,
 			},
 			include: {
 				field_definitions: {
