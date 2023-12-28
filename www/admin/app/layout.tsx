@@ -35,7 +35,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
 		<html lang="en-US">
 			<ZustandProvider colorTheme={colorTheme}>
 				<Body fonts={[regularFont, headerFont]}>
-					<TooltipProvider delayDuration={400}>
+					<TooltipProvider delayDuration={0}>
 						<TrpcProvider>{children}</TrpcProvider>
 					</TooltipProvider>
 

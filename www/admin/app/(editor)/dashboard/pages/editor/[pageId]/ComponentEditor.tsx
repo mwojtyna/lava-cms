@@ -234,30 +234,22 @@ Field.displayName = "Field";
 
 function ComponentField(props: Omit<FieldProps, "type">) {
 	const [componentUI, setComponentUI] = useState<ComponentUI | null>(null);
-	const [componentDef, setComponentDef] = useState<
-		inferRouterOutputs<PrivateRouter>["components"]["getComponentDefinition"] | null
-	>(null);
-
 	useEffect(() => {
 		async function updateUI() {
 			if (props.value !== "") {
 				const cmsComponent = JSON.parse(props.value) as CmsComponent;
-
-				let definition = componentDef;
-				if (!definition) {
-					definition = await trpcFetch.components.getComponentDefinition.query({
-						name: cmsComponent.name,
-					});
-				}
+				const componentDef = await trpcFetch.components.getComponentDefinition.query({
+					name: cmsComponent.name,
+				});
 
 				setComponentUI({
 					id: "0",
 					order: 0,
 					definition: {
-						id: definition.id,
-						name: definition.name,
+						id: componentDef.id,
+						name: componentDef.name,
 					},
-					fields: definition.field_definitions.map((fieldDef, i) => ({
+					fields: componentDef.field_definitions.map((fieldDef, i) => ({
 						id: i.toString(),
 						definitionId: fieldDef.id,
 						order: fieldDef.order,
@@ -288,10 +280,8 @@ function ComponentField(props: Omit<FieldProps, "type">) {
 				{},
 			),
 		};
-
 		props.onChange(JSON.stringify(newValue));
 		setDialogOpen(false);
-		setComponentDef(componentDef);
 	}
 
 	return (
