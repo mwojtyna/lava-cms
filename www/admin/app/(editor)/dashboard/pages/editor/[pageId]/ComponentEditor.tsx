@@ -1,5 +1,5 @@
 import { ArrowUturnLeftIcon } from "@heroicons/react/24/outline";
-import React, { forwardRef, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import React, { forwardRef, useCallback, useEffect, useMemo, useState } from "react";
 import { FormProvider, useForm, type SubmitHandler, type FieldErrors } from "react-hook-form";
 import type { ComponentFieldTypeType } from "@/prisma/generated/zod";
 import {
@@ -16,13 +16,11 @@ import {
 } from "@/src/components/ui/client";
 import { TypographyMuted } from "@/src/components/ui/server";
 import { usePageEditor, type ComponentUI } from "@/src/data/stores/pageEditor";
-import type { CmsComponent as CmsComponent } from "@/src/trpc/routes/public/getPage";
+import type { CmsComponent } from "@/src/trpc/routes/public/getPage";
 import { cn } from "@/src/utils/styling";
-import { trpc, trpcFetch } from "@/src/utils/trpc";
+import { trpcFetch } from "@/src/utils/trpc";
 import { Component } from "./Components";
 import { AddComponentDialog } from "./dialogs/AddComponentDialog";
-import type { inferRouterOutputs } from "@trpc/server";
-import type { PrivateRouter } from "@/src/trpc/routes/private/_private";
 
 type Input = Record<string, string>; // fieldIndex (order): data
 
@@ -148,7 +146,7 @@ export function ComponentEditor(props: { component: ComponentUI }) {
 	);
 }
 
-interface FieldProps extends FormFieldProps<string> {
+export interface FieldProps extends FormFieldProps<string> {
 	type: ComponentUI["fields"][number]["type"];
 	edited: boolean;
 	onRestore: () => void;
@@ -219,7 +217,7 @@ const Field = forwardRef<HTMLInputElement | HTMLButtonElement, FieldProps>(
 			}
 			case "COMPONENT": {
 				return (
-					<ComponentField
+					<NestedComponent
 						value={value}
 						onChange={onChange}
 						edited={edited}
@@ -232,8 +230,8 @@ const Field = forwardRef<HTMLInputElement | HTMLButtonElement, FieldProps>(
 );
 Field.displayName = "Field";
 
-function ComponentField(props: Omit<FieldProps, "type">) {
-	const [componentUI, setComponentUI] = useState<ComponentUI | null>(null);
+export function NestedComponent(props: Omit<FieldProps, "type">) {
+	const { steps, setSteps } = usePageEditor();
 
 	const cmsComponent = useMemo<CmsComponent | null>(() => {
 		try {
@@ -242,37 +240,6 @@ function ComponentField(props: Omit<FieldProps, "type">) {
 			return null;
 		}
 	}, [props.value]);
-
-	useEffect(() => {
-		void (async () => {
-			if (cmsComponent) {
-				const componentDef = await trpcFetch.components.getComponentDefinition.query({
-					name: cmsComponent.name,
-				});
-
-				setComponentUI({
-					id: "0",
-					order: 0,
-					definition: {
-						id: componentDef.id,
-						name: componentDef.name,
-					},
-					fields: componentDef.field_definitions.map((fieldDef, i) => ({
-						id: i.toString(),
-						definitionId: fieldDef.id,
-						order: fieldDef.order,
-						name: fieldDef.name,
-						type: fieldDef.type,
-						// 4. Populate fields from the parsed JSON
-						data: Object.values(cmsComponent.fields)[i]! as string,
-					})),
-					diff: "none",
-				});
-			} else {
-				setComponentUI(null);
-			}
-		})();
-	}, [cmsComponent]);
 
 	const [dialogOpen, setDialogOpen] = useState(false);
 	async function chooseComponent(id: string) {
@@ -298,37 +265,51 @@ function ComponentField(props: Omit<FieldProps, "type">) {
 					Choose component
 				</Button>
 			) : (
-				<div className={cn(!componentUI && "pointer-events-none select-none opacity-50")}>
-					<Component
-						id="0"
-						noDrag
-						component={
-							// Placeholder data if component definition hasn't been fetched yet
-							componentUI ?? {
-								definition: {
-									name: cmsComponent.name,
-									id: "",
-								},
-								fields: Object.entries(cmsComponent.fields).map(([k, v]) => ({
-									name: k,
-									data: v as string,
-									order: 0,
-									id: "",
-									type: "TEXT",
-									definitionId: "",
-								})),
+				<Component
+					id="0"
+					noDrag
+					component={
+						// Placeholder data if component definition hasn't been fetched yet
+						{
+							definition: {
+								name: cmsComponent.name,
 								id: "",
+							},
+							fields: Object.entries(cmsComponent.fields).map(([k, v]) => ({
+								name: k,
+								data: v as string,
 								order: 0,
-								diff: "none",
-							}
+								id: "",
+								type: "TEXT",
+								definitionId: "",
+							})),
+							id: "",
+							order: 0,
+							diff: "none",
 						}
-						onClick={(index) => console.log(index)}
-						onRemove={() => props.onChange("")}
-						onRestore={() => undefined}
-						onUnAdd={() => undefined}
-						onUnRemove={() => undefined}
-					/>
-				</div>
+					}
+					onClick={() =>
+						setSteps([
+							...steps,
+							{
+								name: "edit-nested-component",
+								nestedComponent: {
+									name: cmsComponent.name,
+									fields: Object.entries(cmsComponent.fields).map(([k, v]) => ({
+										name: k,
+										data: v as string,
+										type: "TEXT",
+									})),
+								},
+								onChange: props.onChange,
+							},
+						])
+					}
+					onRemove={() => props.onChange("")}
+					onRestore={() => undefined}
+					onUnAdd={() => undefined}
+					onUnRemove={() => undefined}
+				/>
 			)}
 
 			<AddComponentDialog

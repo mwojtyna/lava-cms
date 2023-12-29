@@ -15,6 +15,7 @@ import { trpc, trpcFetch } from "@/src/utils/trpc";
 import { ComponentEditor } from "./ComponentEditor";
 import { Components } from "./Components";
 import { AddComponentDialog } from "./dialogs/AddComponentDialog";
+import { NestedComponentEditor } from "./NestedComponentEditor";
 
 export const MIN_WIDTH = 250;
 const DEFAULT_WIDTH = MIN_WIDTH * 1.5;
@@ -118,6 +119,14 @@ export function Inspector(props: Props) {
 			case "edit-component": {
 				return <ComponentEditor component={getComponent(currentStep.componentIndex)!} />;
 			}
+			case "edit-nested-component": {
+				return (
+					<NestedComponentEditor
+						nestedComponent={currentStep.nestedComponent}
+						onChange={currentStep.onChange}
+					/>
+				);
+			}
 		}
 	}
 
@@ -154,7 +163,7 @@ export function Inspector(props: Props) {
 				<div className="flex flex-col gap-5">
 					{steps.length > 1 && (
 						<Stepper
-							className="overflow-x-auto"
+							className="flex-wrap"
 							firstIsIcon
 							steps={[
 								<Button
@@ -179,6 +188,8 @@ export function Inspector(props: Props) {
 										<CubeIcon className="w-4" />
 										{step.name === "edit-component" &&
 											getComponent(step.componentIndex)?.definition.name}
+										{step.name === "edit-nested-component" &&
+											step.nestedComponent.name}
 									</Button>
 								)),
 							]}

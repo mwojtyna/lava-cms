@@ -3,12 +3,21 @@ import type {
 	Component,
 	IframeMessage,
 } from "@/app/(editor)/dashboard/pages/editor/[pageId]/types";
+import type { ComponentFieldTypeType } from "@/prisma/generated/zod";
 import type { trpc } from "@/src/utils/trpc";
 import "client-only";
 
 export type Diff = "added" | "edited" | "deleted" | "reordered" | "none";
 export interface ComponentUI extends Component {
 	diff: Diff;
+}
+export interface NestedComponentUI {
+	name: string;
+	fields: Array<{
+		name: string;
+		data: string;
+		type: ComponentFieldTypeType;
+	}>;
 }
 
 type Step =
@@ -17,8 +26,14 @@ type Step =
 	  }
 	| {
 			name: "edit-component";
-			// Don't use id because when adding a new component, the id is not known yet and it leads to errors
+			// Don't use id, because when adding a new component the id is not known yet and it leads to errors
 			componentIndex: number;
+	  }
+	| {
+			name: "edit-nested-component";
+			nestedComponent: NestedComponentUI;
+			/** @param value - `CmsComponent` as JSON  */
+			onChange: (value: string) => void;
 	  };
 
 interface PageEditorState {
