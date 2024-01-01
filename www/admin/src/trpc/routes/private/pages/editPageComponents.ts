@@ -6,6 +6,7 @@ import { componentSchema } from "./types";
 const addedComponentSchema = z.object({
 	frontendId: z.string(),
 	pageId: z.string().cuid(),
+	parentComponentId: z.string().cuid().nullable(),
 	definition: z.object({
 		id: z.string().cuid(),
 		name: z.string(),
@@ -36,6 +37,7 @@ export const editPageComponents = privateProcedure
 				const added = await tx.componentInstance.create({
 					data: {
 						page_id: component.pageId,
+						parent_component_id: component.parentComponentId,
 						definition_id: component.definition.id,
 						order: component.order,
 						fields: {
@@ -59,7 +61,14 @@ export const editPageComponents = privateProcedure
 						fields: {
 							updateMany: component.fields.map((field) => ({
 								where: { id: field.id },
-								data: { data: field.data },
+								data: {
+									data:
+										// If the field data is a reference to a newly created nested component,
+										// replace it with the backend id
+										field.data in addedComponentIds
+											? addedComponentIds[field.data]
+											: field.data,
+								},
 							})),
 						},
 					},
@@ -71,6 +80,17 @@ export const editPageComponents = privateProcedure
 					id: {
 						in: input.deletedComponentIds,
 					},
+				},
+			});
+			// Empty data field if it was an id to a deleted component
+			await tx.componentInstanceField.updateMany({
+				where: {
+					data: {
+						in: input.deletedComponentIds,
+					},
+				},
+				data: {
+					data: "",
 				},
 			});
 		});

@@ -2,6 +2,7 @@
 
 import type { Component } from "./types";
 import type { Page } from "@prisma/client";
+import type { inferRouterOutputs } from "@trpc/server";
 import { ChevronRightIcon, CubeIcon, DocumentIcon, PlusIcon } from "@heroicons/react/24/outline";
 import { useViewportSize } from "@mantine/hooks";
 import { createId } from "@paralleldrive/cuid2";
@@ -9,8 +10,9 @@ import { Resizable } from "re-resizable";
 import { useEffect, useState } from "react";
 import { Button } from "@/src/components/ui/client";
 import { Stepper, TypographyH1, TypographyMuted } from "@/src/components/ui/server";
-import { usePageEditor } from "@/src/data/stores/pageEditor";
+import { usePageEditor, type ComponentUI } from "@/src/data/stores/pageEditor";
 import { useWindowEvent } from "@/src/hooks";
+import type { PrivateRouter } from "@/src/trpc/routes/private/_private";
 import { cn } from "@/src/utils/styling";
 import { trpc, trpcFetch } from "@/src/utils/trpc";
 import { ComponentEditor } from "./ComponentEditor";
@@ -20,23 +22,50 @@ import { AddComponentDialog } from "./dialogs/AddComponentDialog";
 export const MIN_WIDTH = 250;
 const DEFAULT_WIDTH = MIN_WIDTH * 1.5;
 
+// Placeholder component to avoid undefined error when saving and current step's
+// component id hasn't been swapped to backend's id yet
+const COMPONENT_PLACEHOLDER: ComponentUI = {
+	id: "",
+	definition: {
+		id: "",
+		name: "<Missing>",
+	},
+	order: 0,
+	fields: [],
+	pageId: "",
+	parentComponentId: "",
+	diff: "none",
+};
+
 interface Props {
 	page: Page;
-	components: Component[];
+	serverData: inferRouterOutputs<PrivateRouter>["pages"]["getPageComponents"];
 }
 export function Inspector(props: Props) {
 	const [openAdd, setOpenAdd] = useState(false);
 	const [width, setWidth] = useState(DEFAULT_WIDTH);
 	const { width: windowWidth } = useViewportSize();
 
-	const { init, components, setComponents, steps, setSteps, isDirty, isValid, save } =
-		usePageEditor();
+	const {
+		init,
+		components,
+		setComponents,
+		nestedComponents,
+		steps,
+		setSteps,
+		isDirty,
+		isValid,
+		save,
+	} = usePageEditor();
 	const { data } = trpc.pages.getPageComponents.useQuery(
 		{ id: props.page.id },
-		{ initialData: props.components },
+		{ initialData: props.serverData },
 	);
 	useEffect(() => {
-		init(data.map((comp) => ({ ...comp, diff: "none" })));
+		init(
+			data.components.map((comp) => ({ ...comp, diff: "none" })),
+			data.nestedComponents.map((comp) => ({ ...comp, diff: "none" })),
+		);
 	}, [data, init]);
 
 	const saveMutation = trpc.pages.editPageComponents.useMutation();
@@ -75,25 +104,18 @@ export function Inspector(props: Props) {
 					definitionId: fieldDef.id,
 					order: i,
 				})),
+				pageId: props.page.id,
+				parentComponentId: null,
 				diff: "added",
 			},
 		]);
 	}
 
-	function getComponent(id: string) {
-		return (
-			components.find((comp) => comp.id === id) ?? {
-				// Placeholder component to avoid undefined error when saving and current step's component id hasn't been swapped to backend's id yet
-				id: "",
-				definition: {
-					id: "",
-					name: "Loading...",
-				},
-				order: 0,
-				fields: [],
-				diff: "none",
-			}
-		);
+	function getComponent(id: string): ComponentUI {
+		return components.find((comp) => comp.id === id) ?? COMPONENT_PLACEHOLDER;
+	}
+	function getNestedComponent(id: string): ComponentUI {
+		return nestedComponents.find((comp) => comp.id === id) ?? COMPONENT_PLACEHOLDER;
 	}
 
 	function displayStep() {
@@ -107,7 +129,7 @@ export function Inspector(props: Props) {
 							components={
 								components.length > 0
 									? components
-									: props.components.map((comp) => ({
+									: props.serverData.components.map((comp) => ({
 											...comp,
 											diff: "none",
 									  }))
@@ -130,14 +152,13 @@ export function Inspector(props: Props) {
 			case "edit-component": {
 				return <ComponentEditor component={getComponent(currentStep.componentId)} />;
 			}
-			// case "edit-nested-component": {
-			// 	return (
-			// 		<NestedComponentEditor
-			// 			nestedComponent={currentStep.nestedComponent}
-			// 			onChange={currentStep.onChange}
-			// 		/>
-			// 	);
-			// }
+			case "edit-nested-component": {
+				return (
+					<ComponentEditor
+						component={getNestedComponent(currentStep.nestedComponentId)}
+					/>
+				);
+			}
 		}
 	}
 
@@ -198,9 +219,10 @@ export function Inspector(props: Props) {
 									>
 										<CubeIcon className="w-4" />
 										{step.name === "edit-component" &&
-											getComponent(step.componentId)?.definition.name}
-										{/* {step.name === "edit-nested-component" && */}
-										{/* 	step.nestedComponent.name} */}
+											getComponent(step.componentId).definition.name}
+										{step.name === "edit-nested-component" &&
+											getNestedComponent(step.nestedComponentId).definition
+												.name}
 									</Button>
 								)),
 							]}

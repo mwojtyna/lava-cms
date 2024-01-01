@@ -43,7 +43,9 @@ export default async function Editor({
 		);
 	}
 
-	const components = await caller.pages.getPageComponents({ id: params.pageId });
+	const data = await caller.pages.getPageComponents({
+		id: params.pageId,
+	});
 
 	return (
 		<div className="flex h-full flex-col">
@@ -64,7 +66,7 @@ export default async function Editor({
 
 			<main className="grid h-full w-full flex-1 grid-cols-[1fr_auto] overflow-y-auto">
 				<PagePreview baseUrl={baseUrl} pageUrl={pageUrl} />
-				<Inspector page={page} components={components} />
+				<Inspector page={page} serverData={data} />
 			</main>
 		</div>
 	);

@@ -1,4 +1,5 @@
 import { ArrowUturnLeftIcon } from "@heroicons/react/24/outline";
+import { createId } from "@paralleldrive/cuid2";
 import React, { forwardRef, useCallback, useEffect, useMemo, useState } from "react";
 import { FormProvider, useForm, type SubmitHandler, type FieldErrors } from "react-hook-form";
 import type { ComponentFieldTypeType } from "@/prisma/generated/zod";
@@ -17,6 +18,8 @@ import {
 import { TypographyMuted } from "@/src/components/ui/server";
 import { usePageEditor, type ComponentUI } from "@/src/data/stores/pageEditor";
 import { cn } from "@/src/utils/styling";
+import { trpcFetch } from "@/src/utils/trpc";
+import { ComponentCard } from "./Components";
 import { AddComponentDialog } from "./dialogs/AddComponentDialog";
 
 type Input = Record<string, string>; // fieldIndex (order): data
@@ -61,6 +64,7 @@ export function ComponentEditor(props: { component: ComponentUI }) {
 	});
 	const onSubmit: SubmitHandler<Input> = useCallback(
 		(data: Input) => {
+			// TODO: Move out to props
 			const changedComponents: ComponentUI[] = components.map((component) => {
 				if (component.id === props.component.id) {
 					return {
@@ -113,6 +117,7 @@ export function ComponentEditor(props: { component: ComponentUI }) {
 									<FormLabel>{field.name}</FormLabel>
 									<FormControl>
 										<Field
+											component={props.component}
 											edited={
 												originalField
 													? field.data !== originalField.data
@@ -144,12 +149,13 @@ export function ComponentEditor(props: { component: ComponentUI }) {
 }
 
 export interface FieldProps extends FormFieldProps<string> {
+	component: ComponentUI;
 	type: ComponentUI["fields"][number]["type"];
 	edited: boolean;
 	onRestore: () => void;
 }
 const Field = forwardRef<HTMLInputElement | HTMLButtonElement, FieldProps>(
-	({ type: fieldType, edited, onRestore, value, onChange, ...rest }, ref) => {
+	({ type: fieldType, edited, onRestore, value, onChange, component, ...rest }, ref) => {
 		const inputProps: React.ComponentProps<typeof Input> = {
 			inputClassName: cn("transition-colors", edited && "border-b-brand"),
 			rightButton: {
@@ -214,11 +220,12 @@ const Field = forwardRef<HTMLInputElement | HTMLButtonElement, FieldProps>(
 			}
 			case "COMPONENT": {
 				return (
-					<NestedComponent
+					<NestedComponentField
 						value={value}
 						onChange={onChange}
 						edited={edited}
 						onRestore={onRestore}
+						component={component}
 					/>
 				);
 			}
@@ -227,22 +234,108 @@ const Field = forwardRef<HTMLInputElement | HTMLButtonElement, FieldProps>(
 );
 Field.displayName = "Field";
 
-type NestedComponentProps = Omit<FieldProps, "type">;
-export function NestedComponent(props: NestedComponentProps) {
+type NestedComponentFieldProps = Omit<FieldProps, "type">;
+export function NestedComponentField(props: NestedComponentFieldProps) {
 	const [dialogOpen, setDialogOpen] = useState(false);
+	const { steps, setSteps, nestedComponents, setNestedComponents } = usePageEditor();
+
+	const [component, setComponent] = useState<ComponentUI | null>(
+		nestedComponents.find((comp) => comp.id === props.value) ?? null,
+	);
+	useEffect(() => {
+		setComponent(nestedComponents.find((comp) => comp.id === props.value) ?? null);
+	}, [nestedComponents, props.value]);
+	console.log(nestedComponents);
+
+	async function selectComponent(id: string) {
+		const definition = await trpcFetch.components.getComponentDefinition.query({ id });
+		const component: ComponentUI = {
+			id: createId(),
+			definition: {
+				id: definition.id,
+				name: definition.name,
+			},
+			fields: definition.field_definitions.map((fieldDef, i) => ({
+				id: i.toString(),
+				name: fieldDef.name,
+				data: "",
+				definitionId: fieldDef.id,
+				order: fieldDef.order,
+				type: fieldDef.type,
+			})),
+			order: 0,
+			pageId: props.component.pageId,
+			parentComponentId: props.component.id,
+			diff: "added",
+		};
+		setNestedComponents([...nestedComponents, component]);
+		props.onChange(component.id);
+	}
+
+	function remove(component: ComponentUI) {
+		setNestedComponents(
+			nestedComponents.map((c) => {
+				if (c.id === component.id) {
+					return {
+						...c,
+						diff: "deleted",
+					};
+				} else {
+					return c;
+				}
+			}),
+		);
+	}
+	function unRemove(component: ComponentUI) {
+		setNestedComponents(
+			nestedComponents.map((c) => {
+				if (c.id === component.id) {
+					return {
+						...c,
+						diff: "none",
+					};
+				} else {
+					return c;
+				}
+			}),
+		);
+	}
+	function unAdd(component: ComponentUI) {
+		setNestedComponents(nestedComponents.filter((c) => c.id !== component.id));
+	}
 
 	return (
 		<>
-			{true ? (
+			{!component ? (
 				<Button variant={"outline"} onClick={() => setDialogOpen(true)}>
 					Select component
 				</Button>
-			) : null}
+			) : (
+				<ComponentCard
+					dndId="0"
+					noDrag
+					component={{
+						id: component.id,
+						name: component.definition.name,
+						diff: component.diff,
+					}}
+					onClick={() =>
+						setSteps([
+							...steps,
+							{ name: "edit-nested-component", nestedComponentId: component.id },
+						])
+					}
+					onRestore={props.onRestore}
+					onRemove={() => remove(component)}
+					onUnRemove={() => unRemove(component)}
+					onUnAdd={() => unAdd(component)}
+				/>
+			)}
 
 			<AddComponentDialog
 				open={dialogOpen}
 				setOpen={setDialogOpen}
-				onSubmit={(id) => console.log(id)}
+				onSubmit={selectComponent}
 			/>
 		</>
 	);
