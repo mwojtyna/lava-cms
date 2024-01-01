@@ -77,6 +77,12 @@ export function AddComponentDefDialog(props: Props) {
 		);
 	};
 
+	React.useEffect(() => {
+		if (props.open) {
+			form.reset();
+		}
+	}, [form, props.open])
+
 	return (
 		<Dialog open={props.open} onOpenChange={props.setOpen}>
 			<DialogContent className="max-w-md">
