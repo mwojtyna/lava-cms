@@ -144,11 +144,11 @@ export function PagePreview(props: { baseUrl: string; pageUrl: string }) {
 							</ActionIcon>
 						)}
 
-						<ActionIcon className="ml-auto" tooltip="Open in new tab" asChild>
-							<a href={url} target="_blank">
+						<a href={url} target="_blank">
+							<ActionIcon className="ml-auto" tooltip="Open in new tab" asChild>
 								<ArrowTopRightOnSquareIcon className="w-5" />
-							</a>
-						</ActionIcon>
+							</ActionIcon>
+						</a>
 					</div>
 
 					<iframe
@@ -202,8 +202,15 @@ function Url(props: UrlProps) {
 			</div>
 
 			{!editing && (
-				<ActionIcon variant={"simple"} tooltip="Edit">
-					<PencilSquareIcon className="w-5" onClick={() => setEditing(true)} />
+				<ActionIcon
+					variant={"simple"}
+					tooltip="Edit"
+					onClick={() => setEditing(true)}
+					// Fix for small part of button being clickable, but not triggering anything
+					role="button"
+					asChild
+				>
+					<PencilSquareIcon className="w-5 cursor-pointer" />
 				</ActionIcon>
 			)}
 		</div>
