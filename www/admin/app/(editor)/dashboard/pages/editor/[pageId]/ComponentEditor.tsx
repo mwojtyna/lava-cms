@@ -302,6 +302,7 @@ export function NestedComponentField(props: NestedComponentFieldProps) {
 	}
 	function unAdd(component: ComponentUI) {
 		setNestedComponents(nestedComponents.filter((c) => c.id !== component.id));
+		props.onChange("");
 	}
 
 	return (
