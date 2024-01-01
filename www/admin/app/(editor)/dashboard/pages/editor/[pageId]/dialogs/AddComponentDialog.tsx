@@ -48,6 +48,17 @@ export function AddComponentDialog(props: Props) {
 					placeholder="Search this group..."
 					value={search}
 					onChange={(e) => setSearch(e.currentTarget.value)}
+					onKeyDown={(e) => {
+						if (e.key === "Enter") {
+							const item = list?.find((item) =>
+								item.name.toLowerCase().includes(search.toLowerCase()),
+							);
+							if (item) {
+								props.onSubmit(item.id);
+								props.setOpen(false);
+							}
+						}
+					}}
 				/>
 
 				{/* Breadcrumbs */}
