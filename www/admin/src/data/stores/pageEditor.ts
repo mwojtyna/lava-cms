@@ -3,21 +3,12 @@ import type {
 	Component,
 	IframeMessage,
 } from "@/app/(editor)/dashboard/pages/editor/[pageId]/types";
-import type { ComponentFieldTypeType } from "@/prisma/generated/zod";
 import type { trpc } from "@/src/utils/trpc";
 import "client-only";
 
 export type Diff = "added" | "edited" | "deleted" | "reordered" | "none";
 export interface ComponentUI extends Component {
 	diff: Diff;
-}
-export interface NestedComponentUI {
-	name: string;
-	fields: Array<{
-		name: string;
-		data: string;
-		type: ComponentFieldTypeType;
-	}>;
 }
 
 type Step =
@@ -26,14 +17,10 @@ type Step =
 	  }
 	| {
 			name: "edit-component";
-			// Don't use id, because when adding a new component the id is not known yet and it leads to errors
-			componentIndex: number;
+			componentId: string;
 	  }
 	| {
 			name: "edit-nested-component";
-			nestedComponent: NestedComponentUI;
-			/** @param value - `CmsComponent` as JSON  */
-			onChange: (value: string) => void;
 	  };
 
 interface PageEditorState {
@@ -46,6 +33,11 @@ interface PageEditorState {
 
 	originalComponents: ComponentUI[];
 	components: ComponentUI[];
+	setComponents: (components: ComponentUI[]) => void;
+
+	originalNestedComponents: ComponentUI[];
+	nestedComponents: ComponentUI[];
+	setNestedComponents: (components: ComponentUI[]) => void;
 
 	steps: Step[];
 	setSteps: (steps: Step[]) => void;
@@ -56,7 +48,6 @@ interface PageEditorState {
 		mutation: ReturnType<typeof trpc.pages.editPageComponents.useMutation>,
 		pageId: string,
 	) => void;
-	setComponents: (components: ComponentUI[]) => void;
 }
 export const usePageEditor = create<PageEditorState>((set) => ({
 	isDirty: false,
@@ -69,32 +60,37 @@ export const usePageEditor = create<PageEditorState>((set) => ({
 
 	originalComponents: [],
 	components: [],
-	setComponents: (changedComponents) =>
+	setComponents: (newComponents) =>
 		set((state) => {
-			for (const comp of changedComponents) {
-				const original = state.originalComponents.find((c) => c.id === comp.id)!;
-				if (comp.diff === "edited" || comp.diff === "reordered") {
-					if (areSame(original, comp)) {
-						comp.diff = "none";
+			for (const nc of newComponents) {
+				const original = state.originalComponents.find((oc) => oc.id === nc.id)!;
+				if (nc.diff === "edited" || nc.diff === "reordered") {
+					if (areSame(original, nc)) {
+						nc.diff = "none";
 					}
 				}
 			}
 
 			return {
-				components: changedComponents,
-				isDirty:
-					JSON.stringify(state.originalComponents) !== JSON.stringify(changedComponents),
+				components: newComponents,
+				isDirty: JSON.stringify(state.originalComponents) !== JSON.stringify(newComponents),
 			};
 		}),
+
+	originalNestedComponents: [],
+	nestedComponents: [],
+	setNestedComponents: () => false,
 
 	steps: [{ name: "components" }],
 	setSteps: (steps) => set({ steps }),
 
 	init: (components) => {
-		set({
-			originalComponents: components,
-			components: components,
-			isDirty: false,
+		set(() => {
+			return {
+				components,
+				originalComponents: components,
+				isDirty: false,
+			};
 		});
 	},
 	reset: () =>
@@ -105,11 +101,13 @@ export const usePageEditor = create<PageEditorState>((set) => ({
 				const lastStep = steps.at(-1)!;
 				if (lastStep.name === "edit-component") {
 					const original = state.originalComponents.find(
-						(comp) => comp.order === lastStep.componentIndex,
+						(comp) => comp.id === lastStep.componentId,
 					);
 					if (!original) {
 						steps = getLastValidStep(steps.slice(0, -1));
 					}
+				} else if (lastStep.name === "edit-nested-component") {
+					// TODO: Equivalent for nested components
 				}
 
 				return steps;
@@ -117,6 +115,7 @@ export const usePageEditor = create<PageEditorState>((set) => ({
 
 			return {
 				components: state.originalComponents,
+				nestedComponents: state.originalNestedComponents,
 				isDirty: false,
 				steps: getLastValidStep(state.steps),
 			};
@@ -130,6 +129,7 @@ export const usePageEditor = create<PageEditorState>((set) => ({
 						.filter((comp) => comp.diff === "added")
 						.map((comp) => ({
 							pageId,
+							frontendId: comp.id,
 							definition: comp.definition,
 							order: comp.order,
 							fields: comp.fields.map((field) => ({
@@ -145,10 +145,28 @@ export const usePageEditor = create<PageEditorState>((set) => ({
 						.map((comp) => comp.id),
 				},
 				{
-					onSuccess: () => {
+					// `fidToBid` is a map of frontend ids to backend ids
+					onSuccess: (fidToBid) => {
 						state.iframe!.contentWindow!.postMessage(
 							{ name: "update" } as IframeMessage,
 							state.iframeOrigin,
+						);
+
+						// Update ids on steps
+						state.setSteps(
+							state.steps.map((step) => {
+								if (
+									step.name === "edit-component" &&
+									step.componentId in fidToBid
+								) {
+									return {
+										...step,
+										componentId: fidToBid[step.componentId]!,
+									};
+								} else {
+									return step;
+								}
+							}),
 						);
 					},
 				},

@@ -15,6 +15,7 @@ export const pagesRouter = router({
 	checkConflict,
 	deletePage,
 	editPage,
+	/** @returns A map describing the change from frontend id to backend id */
 	editPageComponents,
 	getPageComponents,
 	getAllGroups,

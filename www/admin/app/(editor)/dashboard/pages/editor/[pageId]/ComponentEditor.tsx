@@ -16,10 +16,7 @@ import {
 } from "@/src/components/ui/client";
 import { TypographyMuted } from "@/src/components/ui/server";
 import { usePageEditor, type ComponentUI } from "@/src/data/stores/pageEditor";
-import type { CmsComponent } from "@/src/trpc/routes/public/getPage";
 import { cn } from "@/src/utils/styling";
-import { trpcFetch } from "@/src/utils/trpc";
-import { Component } from "./Components";
 import { AddComponentDialog } from "./dialogs/AddComponentDialog";
 
 type Input = Record<string, string>; // fieldIndex (order): data
@@ -27,23 +24,22 @@ type Input = Record<string, string>; // fieldIndex (order): data
 export function ComponentEditor(props: { component: ComponentUI }) {
 	const { originalComponents, components, setComponents, setIsValid } = usePageEditor();
 
-	const component = useMemo(
-		() => components.find((comp) => comp.id === props.component.id)!,
-		[components, props.component.id],
-	);
 	const originalComponent = useMemo(
 		() => originalComponents.find((comp) => comp.id === props.component.id),
 		[originalComponents, props.component.id],
 	);
 
 	const form = useForm<Input>({
-		values: component.fields.reduce<Input>((acc, field) => {
+		values: props.component.fields.reduce<Input>((acc, field) => {
 			acc[field.order] = field.data;
 			return acc;
 		}, {}),
 		shouldFocusError: false,
 		resolver: (values) => {
 			const errors: FieldErrors = {};
+			if (props.component.fields.length === 0) {
+				return { values, errors };
+			}
 
 			for (const [k, v] of Object.entries(values)) {
 				const type = props.component.fields.find((field) => field.order.toString() === k)!
@@ -88,6 +84,7 @@ export function ComponentEditor(props: { component: ComponentUI }) {
 		// Trigger validation on mount, fixes Ctrl+S after first change not saving
 		void form.trigger();
 
+		// TODO: Optimize
 		const { unsubscribe } = form.watch(() => {
 			setIsValid(form.formState.isValid);
 			if (form.formState.isValid && !form.formState.isValidating) {
@@ -230,93 +227,22 @@ const Field = forwardRef<HTMLInputElement | HTMLButtonElement, FieldProps>(
 );
 Field.displayName = "Field";
 
-export function NestedComponent(props: Omit<FieldProps, "type">) {
-	const { steps, setSteps } = usePageEditor();
-
-	const cmsComponent = useMemo<CmsComponent | null>(() => {
-		try {
-			return JSON.parse(props.value) as CmsComponent;
-		} catch (e) {
-			return null;
-		}
-	}, [props.value]);
-
+type NestedComponentProps = Omit<FieldProps, "type">;
+export function NestedComponent(props: NestedComponentProps) {
 	const [dialogOpen, setDialogOpen] = useState(false);
-	async function chooseComponent(id: string) {
-		const componentDef = await trpcFetch.components.getComponentDefinition.query({ id });
-		const newValue: CmsComponent = {
-			name: componentDef.name,
-			fields: componentDef.field_definitions.reduce<CmsComponent["fields"]>(
-				(acc, fieldDef) => {
-					acc[fieldDef.name] = "";
-					return acc;
-				},
-				{},
-			),
-		};
-		props.onChange(JSON.stringify(newValue));
-		setDialogOpen(false);
-	}
 
 	return (
 		<>
-			{!cmsComponent ? (
+			{true ? (
 				<Button variant={"outline"} onClick={() => setDialogOpen(true)}>
-					Choose component
+					Select component
 				</Button>
-			) : (
-				<Component
-					id="0"
-					noDrag
-					component={
-						// Placeholder data if component definition hasn't been fetched yet
-						{
-							definition: {
-								name: cmsComponent.name,
-								id: "",
-							},
-							fields: Object.entries(cmsComponent.fields).map(([k, v]) => ({
-								name: k,
-								data: v as string,
-								order: 0,
-								id: "",
-								type: "TEXT",
-								definitionId: "",
-							})),
-							id: "",
-							order: 0,
-							diff: "none",
-						}
-					}
-					onClick={() =>
-						setSteps([
-							...steps,
-							{
-								name: "edit-nested-component",
-								nestedComponent: {
-									name: cmsComponent.name,
-									fields: Object.entries(cmsComponent.fields).map(([k, v]) => ({
-										name: k,
-										data: v as string,
-										type: "TEXT",
-									})),
-								},
-								onChange: props.onChange,
-							},
-						])
-					}
-					onRemove={() => props.onChange("")}
-					onRestore={() => undefined}
-					onUnAdd={() => undefined}
-					onUnRemove={() => undefined}
-				/>
-			)}
+			) : null}
 
 			<AddComponentDialog
 				open={dialogOpen}
 				setOpen={setDialogOpen}
-				onSubmit={chooseComponent}
-				keepOpenOnSubmit
+				onSubmit={(id) => console.log(id)}
 			/>
 		</>
 	);

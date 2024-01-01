@@ -4,6 +4,7 @@ import type { Component } from "./types";
 import type { Page } from "@prisma/client";
 import { ChevronRightIcon, CubeIcon, DocumentIcon, PlusIcon } from "@heroicons/react/24/outline";
 import { useViewportSize } from "@mantine/hooks";
+import { createId } from "@paralleldrive/cuid2";
 import { Resizable } from "re-resizable";
 import { useEffect, useState } from "react";
 import { Button } from "@/src/components/ui/client";
@@ -15,7 +16,6 @@ import { trpc, trpcFetch } from "@/src/utils/trpc";
 import { ComponentEditor } from "./ComponentEditor";
 import { Components } from "./Components";
 import { AddComponentDialog } from "./dialogs/AddComponentDialog";
-import { NestedComponentEditor } from "./NestedComponentEditor";
 
 export const MIN_WIDTH = 250;
 const DEFAULT_WIDTH = MIN_WIDTH * 1.5;
@@ -48,7 +48,6 @@ export function Inspector(props: Props) {
 			}
 		}
 	});
-
 	useWindowEvent("beforeunload", (e) => {
 		if (isDirty) {
 			// Display a confirmation dialog
@@ -62,7 +61,7 @@ export function Inspector(props: Props) {
 		setComponents([
 			...components,
 			{
-				id: "",
+				id: createId(),
 				definition: {
 					id: componentDef.id,
 					name: componentDef.name,
@@ -81,8 +80,20 @@ export function Inspector(props: Props) {
 		]);
 	}
 
-	function getComponent(index: number) {
-		return components.find((comp) => comp.order === index)!;
+	function getComponent(id: string) {
+		return (
+			components.find((comp) => comp.id === id) ?? {
+				// Placeholder component to avoid undefined error when saving and current step's component id hasn't been swapped to backend's id yet
+				id: "",
+				definition: {
+					id: "",
+					name: "Loading...",
+				},
+				order: 0,
+				fields: [],
+				diff: "none",
+			}
+		);
 	}
 
 	function displayStep() {
@@ -96,13 +107,13 @@ export function Inspector(props: Props) {
 							components={
 								components.length > 0
 									? components
-									: props.components.map((comp) => ({ ...comp, diff: "none" }))
+									: props.components.map((comp) => ({
+											...comp,
+											diff: "none",
+									  }))
 							}
-							onComponentClicked={(index) =>
-								setSteps([
-									...steps,
-									{ name: "edit-component", componentIndex: index },
-								])
+							onComponentClicked={(id) =>
+								setSteps([...steps, { name: "edit-component", componentId: id }])
 							}
 						/>
 						<Button
@@ -117,16 +128,16 @@ export function Inspector(props: Props) {
 				);
 			}
 			case "edit-component": {
-				return <ComponentEditor component={getComponent(currentStep.componentIndex)!} />;
+				return <ComponentEditor component={getComponent(currentStep.componentId)} />;
 			}
-			case "edit-nested-component": {
-				return (
-					<NestedComponentEditor
-						nestedComponent={currentStep.nestedComponent}
-						onChange={currentStep.onChange}
-					/>
-				);
-			}
+			// case "edit-nested-component": {
+			// 	return (
+			// 		<NestedComponentEditor
+			// 			nestedComponent={currentStep.nestedComponent}
+			// 			onChange={currentStep.onChange}
+			// 		/>
+			// 	);
+			// }
 		}
 	}
 
@@ -187,9 +198,9 @@ export function Inspector(props: Props) {
 									>
 										<CubeIcon className="w-4" />
 										{step.name === "edit-component" &&
-											getComponent(step.componentIndex)?.definition.name}
-										{step.name === "edit-nested-component" &&
-											step.nestedComponent.name}
+											getComponent(step.componentId)?.definition.name}
+										{/* {step.name === "edit-nested-component" && */}
+										{/* 	step.nestedComponent.name} */}
 									</Button>
 								)),
 							]}

@@ -21,7 +21,6 @@ interface Props {
 	open: boolean;
 	setOpen: (value: boolean) => void;
 	onSubmit: (id: string) => void;
-	keepOpenOnSubmit?: boolean;
 }
 export function AddComponentDialog(props: Props) {
 	const [groupId, setGroupId] = useState<string | null>(null);

@@ -108,6 +108,7 @@ model ComponentDefinition {
     group             ComponentDefinitionGroup   @relation(fields: [group_id], references: [id], onDelete: Cascade)
     field_definitions ComponentDefinitionField[]
     instances         ComponentInstance[]
+    NestedComponent   NestedComponent[]
 
     @@index([group_id])
     @@map("component_definition")
@@ -122,6 +123,7 @@ model ComponentDefinitionField {
 
     component_definition ComponentDefinition      @relation(fields: [component_definition_id], references: [id], onDelete: Cascade)
     instances            ComponentInstanceField[]
+    NestedComponentField NestedComponentField[]
 
     @@index([component_definition_id])
     @@map("component_definition_field")
@@ -133,9 +135,10 @@ model ComponentInstance {
     definition_id String
     order         Int
 
-    page       Page                     @relation(fields: [page_id], references: [id])
-    definition ComponentDefinition      @relation(fields: [definition_id], references: [id])
-    fields     ComponentInstanceField[]
+    page             Page                     @relation(fields: [page_id], references: [id])
+    definition       ComponentDefinition      @relation(fields: [definition_id], references: [id])
+    fields           ComponentInstanceField[]
+    nested_component NestedComponent[]
 
     @@index([page_id])
     @@map("component_instance")
@@ -150,11 +153,38 @@ model ComponentInstanceField {
     /// If type is a component, then data is that component's id
     data                String
 
-    component  ComponentInstance        @relation(fields: [component_id], references: [id], onDelete: Cascade)
-    definition ComponentDefinitionField @relation(fields: [field_definition_id], references: [id])
+    component            ComponentInstance        @relation(fields: [component_id], references: [id], onDelete: Cascade)
+    definition           ComponentDefinitionField @relation(fields: [field_definition_id], references: [id])
+    NestedComponentField NestedComponentField[]
 
     @@index([component_id])
     @@map("component_instance_field")
+}
+
+model NestedComponent {
+    id                  String @id @default(cuid())
+    parent_component_id String
+    definition_id       String
+
+    parent_component ComponentInstance   @relation(fields: [parent_component_id], references: [id], onDelete: Cascade)
+    definition       ComponentDefinition @relation(fields: [definition_id], references: [id], onDelete: Cascade)
+
+    @@map("nested_component")
+}
+
+model NestedComponentField {
+    id                  String @id @default(cuid())
+    nested_component_id String
+    field_definition_id String
+    /// If type is a primitive type, then data is a string
+    /// If type is a complex type, then data is a JSON object
+    /// If type is a component, then data is that component's id
+    data                String
+
+    nested_component ComponentInstanceField   @relation(fields: [nested_component_id], references: [id], onDelete: Cascade)
+    field_definition ComponentDefinitionField @relation(fields: [field_definition_id], references: [id])
+
+    @@map("nested_component_field")
 }
 
 enum ComponentFieldType {

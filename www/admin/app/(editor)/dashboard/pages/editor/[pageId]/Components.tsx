@@ -28,10 +28,10 @@ import { cn } from "@/src/utils/styling";
 
 interface Props {
 	components: ComponentUI[];
-	onComponentClicked: (index: number) => void;
+	onComponentClicked: (id: string) => void;
 }
 export function Components(props: Props) {
-	const { originalComponents, components, setComponents } = usePageEditor();
+	const { originalComponents, setComponents } = usePageEditor();
 
 	const ids: string[] = useMemo(
 		() => props.components.map((_, i) => i.toString()),
@@ -50,9 +50,9 @@ export function Components(props: Props) {
 			// changes `components` and `originalComponents` arrays in the page editor store,
 			// but it somehow fucking does. So I have to write this `structuredClone` bullshit to fix it.
 			// Even the fucking browser doesn't understand this clusterfuck and displays completely different
-			// values in the expanded view of a `console.log(components)` entry vs the collapsed view.
+			// values in the expanded view of a console.log() than the collapsed view.
 			const reordered = structuredClone(
-				arrayMove(components, Number(active.id), Number(over.id)),
+				arrayMove(props.components, Number(active.id), Number(over.id)),
 			);
 			for (let i = 0; i < reordered.length; i++) {
 				const item = reordered[i]!;
@@ -64,34 +64,36 @@ export function Components(props: Props) {
 					}
 				}
 			}
+
 			setComponents(reordered);
 		}
 	}
 
 	function restore(component: ComponentUI) {
 		const original = originalComponents.find((comp) => comp.id === component.id)!;
-		const componentsCopy = [...components];
-		componentsCopy.splice(componentsCopy.indexOf(component), 1, original);
-		setComponents(componentsCopy);
+		const newComponents = props.components.toSpliced(
+			props.components.indexOf(component),
+			1,
+			original,
+		);
+		setComponents(newComponents);
 	}
 	function remove(component: ComponentUI) {
-		const componentsCopy = [...components];
-		componentsCopy.splice(componentsCopy.indexOf(component), 1, {
+		const newComponents = props.components.toSpliced(props.components.indexOf(component), 1, {
 			...component,
 			diff: "deleted",
 		});
-		setComponents(componentsCopy);
+		setComponents(newComponents);
 	}
 	function unRemove(component: ComponentUI) {
-		const componentsCopy = [...components];
-		componentsCopy.splice(componentsCopy.indexOf(component), 1, {
+		const newComponents = props.components.toSpliced(props.components.indexOf(component), 1, {
 			...component,
 			diff: "none",
 		});
-		setComponents(componentsCopy);
+		setComponents(newComponents);
 	}
 	function unAdd(component: ComponentUI) {
-		setComponents(components.filter((comp) => comp.id !== component.id));
+		setComponents(props.components.filter((comp) => comp.id !== component.id));
 	}
 
 	return (
@@ -106,10 +108,14 @@ export function Components(props: Props) {
 			<SortableContext items={ids} strategy={verticalListSortingStrategy}>
 				<div className="flex flex-col gap-2">
 					{props.components.map((component, i) => (
-						<Component
+						<ComponentCard
 							key={component.id}
-							id={i.toString()}
-							component={component}
+							dndId={i.toString()} // Has to be the same as `ids` array passed to `SortableContext`
+							component={{
+								id: component.id,
+								name: component.definition.name,
+								diff: component.diff,
+							}}
 							onClick={props.onComponentClicked}
 							onRestore={() => restore(component)}
 							onRemove={() => remove(component)}
@@ -123,19 +129,23 @@ export function Components(props: Props) {
 	);
 }
 
-interface ComponentProps {
-	id: string;
-	component: ComponentUI;
+interface ComponentCardProps {
+	dndId: string;
+	component: {
+		id: string;
+		name: string;
+		diff: Diff;
+	};
 	noDrag?: boolean;
-	onClick: (index: number) => void;
+	onClick: (id: string) => void;
 	onRestore: () => void;
 	onRemove: () => void;
 	onUnRemove: () => void;
 	onUnAdd: () => void;
 }
-export function Component(props: ComponentProps) {
+export function ComponentCard(props: ComponentCardProps) {
 	const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
-		id: props.id,
+		id: props.dndId,
 		// We have no stable unique property to use as id, so we have to disable this
 		// or the list will reshuffle on drop
 		// https://github.com/clauderic/dnd-kit/issues/767#issuecomment-1140556346
@@ -169,9 +179,7 @@ export function Component(props: ComponentProps) {
 				"flex-row items-center gap-3 shadow-none transition-colors md:p-4",
 			)}
 			onClick={() =>
-				props.component.diff !== "deleted"
-					? props.onClick(props.component.order)
-					: undefined
+				props.component.diff !== "deleted" ? props.onClick(props.component.id) : undefined
 			}
 			aria-disabled={props.component.diff === "deleted"}
 		>
@@ -188,14 +196,14 @@ export function Component(props: ComponentProps) {
 						{...listeners}
 					/>
 				)}
-				<span className="font-medium">{props.component.definition.name}</span>
+				<span className="font-medium">{props.component.name}</span>
 			</div>
 
 			<Actions
 				diff={props.component.diff}
 				restoreComponent={props.onRestore}
 				deleteComponent={props.onRemove}
-				unDeleteComponent={props.onUnRemove}
+				unRemoveComponent={props.onUnRemove}
 				unAddComponent={props.onUnAdd}
 			/>
 		</Card>
@@ -206,7 +214,7 @@ interface ActionsProps {
 	diff: Diff;
 	restoreComponent: () => void;
 	deleteComponent: () => void;
-	unDeleteComponent: () => void;
+	unRemoveComponent: () => void;
 	unAddComponent: () => void;
 }
 function Actions(props: ActionsProps) {
@@ -234,7 +242,7 @@ function Actions(props: ActionsProps) {
 				<div className="ml-auto flex items-center justify-center">
 					<ActionIcon
 						variant={"simple"}
-						onClick={(e) => handleClick(e, props.unDeleteComponent)}
+						onClick={(e) => handleClick(e, props.unRemoveComponent)}
 						tooltip="Restore"
 					>
 						<ArrowUturnLeftIcon className="w-5" data-testid="restore-component-btn" />

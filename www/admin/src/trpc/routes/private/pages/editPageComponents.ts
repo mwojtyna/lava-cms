@@ -4,6 +4,7 @@ import { privateProcedure } from "@/src/trpc";
 import { componentSchema } from "./types";
 
 const addedComponentSchema = z.object({
+	frontendId: z.string(),
 	pageId: z.string().cuid(),
 	definition: z.object({
 		id: z.string().cuid(),
@@ -27,47 +28,52 @@ export const editPageComponents = privateProcedure
 			deletedComponentIds: z.array(z.string().cuid()),
 		}),
 	)
-	.mutation(async ({ input }) => {
-		const added = input.addedComponents.map((component) =>
-			prisma.componentInstance.create({
-				data: {
-					page_id: component.pageId,
-					definition_id: component.definition.id,
-					order: component.order,
-					fields: {
-						createMany: {
-							data: component.fields.map((field) => ({
-								data: field.data,
-								field_definition_id: field.definitionId,
+	.mutation(async ({ input }): Promise<Record<string, string>> => {
+		const addedComponentIds: Record<string, string> = {};
+
+		await prisma.$transaction(async (tx) => {
+			for (const component of input.addedComponents) {
+				const added = await tx.componentInstance.create({
+					data: {
+						page_id: component.pageId,
+						definition_id: component.definition.id,
+						order: component.order,
+						fields: {
+							createMany: {
+								data: component.fields.map((field) => ({
+									data: field.data,
+									field_definition_id: field.definitionId,
+								})),
+							},
+						},
+					},
+				});
+				addedComponentIds[component.frontendId] = added.id;
+			}
+
+			for (const component of input.editedComponents) {
+				await tx.componentInstance.update({
+					where: { id: component.id },
+					data: {
+						order: component.order,
+						fields: {
+							updateMany: component.fields.map((field) => ({
+								where: { id: field.id },
+								data: { data: field.data },
 							})),
 						},
 					},
-				},
-			}),
-		);
+				});
+			}
 
-		const edited = input.editedComponents.map((component) =>
-			prisma.componentInstance.update({
-				where: { id: component.id },
-				data: {
-					order: component.order,
-					fields: {
-						update: component.fields.map((field) => ({
-							where: { id: field.id },
-							data: { data: field.data },
-						})),
+			await tx.componentInstance.deleteMany({
+				where: {
+					id: {
+						in: input.deletedComponentIds,
 					},
 				},
-			}),
-		);
-
-		const deleted = prisma.componentInstance.deleteMany({
-			where: {
-				id: {
-					in: input.deletedComponentIds,
-				},
-			},
+			});
 		});
 
-		await prisma.$transaction([...added, ...edited, deleted]);
+		return addedComponentIds;
 	});
