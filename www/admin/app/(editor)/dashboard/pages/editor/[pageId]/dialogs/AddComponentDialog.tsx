@@ -1,7 +1,7 @@
 "use client";
 
 import { ChevronRightIcon, CubeIcon, FolderIcon, HomeIcon } from "@heroicons/react/24/outline";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type { ComponentsTableItem } from "@/app/(dashboard)/dashboard/components/ComponentsTable";
 import {
 	ActionIcon,
@@ -31,6 +31,13 @@ export function AddComponentDialog(props: Props) {
 	});
 	const list = data?.items;
 
+	useEffect(() => {
+		if (props.open) {
+			setGroupId(null);
+			setSearch("");
+		}
+	}, [props.open]);
+
 	function openGroup(id: string | null) {
 		setGroupId(id);
 		void refetch();
@@ -53,9 +60,16 @@ export function AddComponentDialog(props: Props) {
 							const item = list?.find((item) =>
 								item.name.toLowerCase().includes(search.toLowerCase()),
 							);
-							if (item) {
+							if (!item) {
+								return;
+							}
+
+							if (!item.isGroup) {
 								props.onSubmit(item.id);
 								props.setOpen(false);
+							} else {
+								openGroup(item.id);
+								setSearch("");
 							}
 						}
 					}}
