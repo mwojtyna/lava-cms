@@ -1,5 +1,5 @@
-import type { Prisma } from "@prisma/client";
 import type { DefaultArgs } from "@prisma/client/runtime/library";
+import { Prisma } from "@prisma/client";
 import { z } from "zod";
 import { prisma } from "@/prisma/client";
 import { publicProcedure } from "@/src/trpc";
@@ -67,49 +67,68 @@ export const getPage = publicProcedure
 
 		if (!page) {
 			return null;
-		} else {
-			const components = page.components.map((component) => ({
-				name: component.definition.name,
-				fields: component.fields.reduce<CmsComponent["fields"]>((acc, field) => {
-					let data: FieldContent;
-
-					switch (field.definition.type) {
-						case "TEXT": {
-							data = field.data;
-							break;
-						}
-						case "NUMBER": {
-							data = parseFloat(field.data);
-							break;
-						}
-						case "SWITCH": {
-							data = field.data === "true";
-							break;
-						}
-						case "COMPONENT": {
-							// If component isn't assigned, return null
-							if (field.data === "") {
-								data = null;
-								break;
-							}
-
-							try {
-								data = JSON.parse(field.data) as object;
-							} catch (e) {
-								data = `Error parsing '${component.definition.name}' component's '${field.definition.name}' field`;
-							}
-							break;
-						}
-					}
-
-					acc[field.definition.name] = data;
-					return acc;
-				}, {}),
-			}));
-
-			return {
-				name: page.name,
-				components,
-			};
 		}
+
+		const components: CmsComponent[] = await Promise.all(
+			page.components
+				.filter((c) => c.parent_component_id === null)
+				.map(async (component) => ({
+					name: component.definition.name,
+					fields: await getFields(component),
+				})),
+		);
+		return {
+			name: page.name,
+			components,
+		};
 	});
+
+const pageWithInclude = Prisma.validator<Prisma.PageDefaultArgs>()({
+	include,
+});
+type Component = Prisma.PageGetPayload<typeof pageWithInclude>["components"][number];
+function getFields(component: Component): Promise<Record<string, FieldContent>> {
+	return component.fields.reduce<Promise<CmsComponent["fields"]>>(async (acc, field) => {
+		let data: FieldContent;
+
+		switch (field.definition.type) {
+			case "TEXT": {
+				data = field.data;
+				break;
+			}
+			case "NUMBER": {
+				data = parseFloat(field.data);
+				break;
+			}
+			case "SWITCH": {
+				data = field.data === "true";
+				break;
+			}
+			case "COMPONENT": {
+				if (field.data === "") {
+					data = null;
+					break;
+				}
+
+				const nestedComponent = await prisma.componentInstance.findUnique({
+					where: { id: field.data },
+					include: include.components.include,
+				});
+				if (!nestedComponent) {
+					data = `Error getting \`${component.definition.name}\` component's \`${field.definition.name}\` field of type \`Component\`: Component instance id \`${field.data}\` does not exist`;
+					break;
+				}
+				data = {
+					name: nestedComponent.definition.name,
+					fields: await getFields(nestedComponent),
+				} satisfies CmsComponent;
+
+				break;
+			}
+		}
+
+		const accAwaited = await acc;
+		accAwaited[field.definition.name] = data;
+		return accAwaited;
+	}, Promise.resolve({}));
+}

@@ -1,17 +1,20 @@
 ---
 // @ts-expect-error - this is a bug in astro
 import LavaCmsComponent from "@lavacms/astro/LavaCmsComponent.astro";
+import type { CmsComponent } from "@lavacms/astro";
 
 interface Props {
 	cms: {
 		content: string;
-		author: object | null;
+		author: CmsComponent;
 	};
 }
 const { cms } = Astro.props;
 ---
 
-<div>
+<figure>
 	<cite>{cms.content}</cite>
-	{cms.author && <LavaCmsComponent component={cms.author} />}
-</div>
+	<figcaption>
+		{cms.author && <LavaCmsComponent component={cms.author} />}
+	</figcaption>
+</figure>

@@ -3,9 +3,11 @@ interface Props {
 	cms: {
 		name: string;
 		picture_src: string;
+		small: boolean;
 	};
 }
 const { cms } = Astro.props;
 ---
 
-<div>{cms.name}</div>
+<p>{cms.name}</p>
+<img src={cms.picture_src} width={cms.small ? 64 : 256} />
