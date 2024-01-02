@@ -209,7 +209,10 @@ const Field = forwardRef<HTMLInputElement | HTMLButtonElement, FieldProps>(
 				return (
 					<NestedComponentField
 						value={value}
-						onChange={onChange}
+						onChange={(id, nestedComponents) => {
+							onChange(id);
+							usePageEditor.setState({ nestedComponents });
+						}}
 						edited={edited}
 						component={component}
 					/>
@@ -220,7 +223,12 @@ const Field = forwardRef<HTMLInputElement | HTMLButtonElement, FieldProps>(
 );
 Field.displayName = "Field";
 
-type NestedComponentFieldProps = Omit<FieldProps, "type" | "onRestore">;
+interface NestedComponentFieldProps {
+	component: ComponentUI;
+	edited: boolean;
+	value: string;
+	onChange: (id: string, nestedComponents: ComponentUI[]) => void;
+}
 export function NestedComponentField(props: NestedComponentFieldProps) {
 	const [dialogOpen, setDialogOpen] = useState(false);
 	const { steps, setSteps, originalNestedComponents, nestedComponents, setNestedComponents } =
@@ -259,9 +267,9 @@ export function NestedComponentField(props: NestedComponentFieldProps) {
 			parentComponentId: props.component.id,
 			diff: "added",
 		};
-		setNestedComponents([...nestedComponents, component]);
-		props.onChange(component.id);
+		props.onChange(component.id, [...nestedComponents, component]);
 	}
+	// console.log(nestedComponents);
 
 	function remove(component: ComponentUI) {
 		setNestedComponents(
@@ -292,8 +300,10 @@ export function NestedComponentField(props: NestedComponentFieldProps) {
 		);
 	}
 	function unAdd(component: ComponentUI) {
-		setNestedComponents(nestedComponents.filter((c) => c.id !== component.id));
-		props.onChange("");
+		props.onChange(
+			"",
+			nestedComponents.filter((c) => c.id !== component.id),
+		);
 	}
 
 	return (

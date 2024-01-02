@@ -179,6 +179,10 @@ export function Inspector(props: Props) {
 					<ComponentEditor
 						component={getNestedComponent(currentStep.nestedComponentId)}
 						onChange={(data) => {
+							// Don't know why, but when using nestedComponents from usePageEditor hook,
+							// the components are outdated and when ComponentEditor changes nestedComponents,
+							// the changes get overwritten by the code below. So we use the state directly.
+							const nestedComponents = usePageEditor.getState().nestedComponents;
 							const changedComponents: ComponentUI[] = nestedComponents.map(
 								(component) => {
 									if (component.id === currentStep.nestedComponentId) {

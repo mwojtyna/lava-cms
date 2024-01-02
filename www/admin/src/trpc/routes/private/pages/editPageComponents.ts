@@ -6,7 +6,8 @@ import { componentSchema } from "./types";
 const addedComponentSchema = z.object({
 	frontendId: z.string(),
 	pageId: z.string().cuid(),
-	parentComponentId: z.string().cuid().nullable(),
+	// This has to be cuid or cuid2 because it also could be a frontend id, which is cuid2
+	parentComponentId: z.string().cuid2().or(z.string().cuid()).nullable(),
 	definition: z.object({
 		id: z.string().cuid(),
 		name: z.string(),
@@ -33,11 +34,17 @@ export const editPageComponents = privateProcedure
 		const addedComponentIds: Record<string, string> = {};
 
 		await prisma.$transaction(async (tx) => {
+			// Add new components
 			for (const component of input.addedComponents) {
+				let parentComponentId = component.parentComponentId;
+				if (parentComponentId !== null && parentComponentId in addedComponentIds) {
+					parentComponentId = addedComponentIds[parentComponentId]!;
+				}
+
 				const added = await tx.componentInstance.create({
 					data: {
 						page_id: component.pageId,
-						parent_component_id: component.parentComponentId,
+						parent_component_id: parentComponentId,
 						definition_id: component.definition.id,
 						order: component.order,
 						fields: {
@@ -53,6 +60,7 @@ export const editPageComponents = privateProcedure
 				addedComponentIds[component.frontendId] = added.id;
 			}
 
+			// Edit existing components
 			for (const component of input.editedComponents) {
 				await tx.componentInstance.update({
 					where: { id: component.id },
@@ -62,12 +70,7 @@ export const editPageComponents = privateProcedure
 							updateMany: component.fields.map((field) => ({
 								where: { id: field.id },
 								data: {
-									data:
-										// If the field data is a reference to a newly created nested component,
-										// replace it with the backend id
-										field.data in addedComponentIds
-											? addedComponentIds[field.data]
-											: field.data,
+									data: field.data,
 								},
 							})),
 						},
@@ -75,6 +78,7 @@ export const editPageComponents = privateProcedure
 				});
 			}
 
+			// Delete components
 			await tx.componentInstance.deleteMany({
 				where: {
 					id: {
@@ -82,6 +86,20 @@ export const editPageComponents = privateProcedure
 					},
 				},
 			});
+
+			// Correct component data field (if it was a frontend id) to a backend id
+			for (const [k, v] of Object.entries(addedComponentIds)) {
+				await tx.componentInstanceField.updateMany({
+					where: {
+						data: {
+							equals: k,
+						},
+					},
+					data: {
+						data: v,
+					},
+				});
+			}
 			// Empty data field if it was an id to a deleted component
 			await tx.componentInstanceField.updateMany({
 				where: {
