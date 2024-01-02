@@ -1,6 +1,5 @@
 "use client";
 
-import type { Component } from "./types";
 import type { Page } from "@prisma/client";
 import type { inferRouterOutputs } from "@trpc/server";
 import { ChevronRightIcon, CubeIcon, DocumentIcon, PlusIcon } from "@heroicons/react/24/outline";
@@ -51,6 +50,7 @@ export function Inspector(props: Props) {
 		components,
 		setComponents,
 		nestedComponents,
+		setNestedComponents,
 		steps,
 		setSteps,
 		isDirty,
@@ -150,12 +150,56 @@ export function Inspector(props: Props) {
 				);
 			}
 			case "edit-component": {
-				return <ComponentEditor component={getComponent(currentStep.componentId)} />;
+				return (
+					<ComponentEditor
+						component={getComponent(currentStep.componentId)}
+						onChange={(data) => {
+							const changedComponents: ComponentUI[] = components.map((component) => {
+								if (component.id === currentStep.componentId) {
+									return {
+										...component,
+										fields: component.fields.map((field) => ({
+											...field,
+											data: data[field.order]!,
+										})),
+										diff:
+											component.diff === "added" ? component.diff : "edited",
+									};
+								} else {
+									return component;
+								}
+							});
+							setComponents(changedComponents);
+						}}
+					/>
+				);
 			}
 			case "edit-nested-component": {
 				return (
 					<ComponentEditor
 						component={getNestedComponent(currentStep.nestedComponentId)}
+						onChange={(data) => {
+							const changedComponents: ComponentUI[] = nestedComponents.map(
+								(component) => {
+									if (component.id === currentStep.nestedComponentId) {
+										return {
+											...component,
+											fields: component.fields.map((field) => ({
+												...field,
+												data: data[field.order]!,
+											})),
+											diff:
+												component.diff === "added"
+													? component.diff
+													: "edited",
+										};
+									} else {
+										return component;
+									}
+								},
+							);
+							setNestedComponents(changedComponents);
+						}}
 					/>
 				);
 			}

@@ -129,7 +129,12 @@ export const usePageEditor = create<PageEditorState>((set) => ({
 						steps = getLastValidStep(steps.slice(0, -1));
 					}
 				} else if (lastStep.name === "edit-nested-component") {
-					// TODO: Same as above but for nested components
+					const original = state.originalNestedComponents.find(
+						(comp) => comp.id === lastStep.nestedComponentId,
+					);
+					if (!original) {
+						steps = getLastValidStep(steps.slice(0, -1));
+					}
 				}
 				return steps;
 			}
@@ -160,9 +165,9 @@ export const usePageEditor = create<PageEditorState>((set) => ({
 								definitionId: field.definitionId,
 							})),
 						})),
-					editedComponents: state.components.filter(
-						(comp) => comp.diff === "edited" || comp.diff === "reordered",
-					),
+					editedComponents: state.components
+						.concat(state.nestedComponents)
+						.filter((comp) => comp.diff === "edited" || comp.diff === "reordered"),
 					deletedComponentIds: state.components
 						.concat(state.nestedComponents)
 						.filter((comp) => comp.diff === "deleted")

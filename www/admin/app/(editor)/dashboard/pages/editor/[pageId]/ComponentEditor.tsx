@@ -1,7 +1,7 @@
 import { ArrowUturnLeftIcon } from "@heroicons/react/24/outline";
 import { createId } from "@paralleldrive/cuid2";
-import React, { forwardRef, useCallback, useEffect, useMemo, useState } from "react";
-import { FormProvider, useForm, type SubmitHandler, type FieldErrors } from "react-hook-form";
+import React, { forwardRef, useEffect, useMemo, useState } from "react";
+import { FormProvider, useForm, type FieldErrors } from "react-hook-form";
 import type { ComponentFieldTypeType } from "@/prisma/generated/zod";
 import {
 	Input,
@@ -24,12 +24,20 @@ import { AddComponentDialog } from "./dialogs/AddComponentDialog";
 
 type Input = Record<string, string>; // fieldIndex (order): data
 
-export function ComponentEditor(props: { component: ComponentUI }) {
-	const { originalComponents, components, setComponents, setIsValid } = usePageEditor();
+interface ComponentEditorProps {
+	component: ComponentUI;
+	onChange: (data: Input) => void;
+}
+export function ComponentEditor(props: ComponentEditorProps) {
+	const { originalComponents, originalNestedComponents, setIsValid } = usePageEditor();
 
 	const originalComponent = useMemo(
-		() => originalComponents.find((comp) => comp.id === props.component.id),
-		[originalComponents, props.component.id],
+		() =>
+			(props.component.parentComponentId === null
+				? originalComponents
+				: originalNestedComponents
+			).find((comp) => comp.id === props.component.id),
+		[originalComponents, originalNestedComponents, props.component],
 	);
 
 	const form = useForm<Input>({
@@ -62,27 +70,6 @@ export function ComponentEditor(props: { component: ComponentUI }) {
 			};
 		},
 	});
-	const onSubmit: SubmitHandler<Input> = useCallback(
-		(data: Input) => {
-			// TODO: Move out to props
-			const changedComponents: ComponentUI[] = components.map((component) => {
-				if (component.id === props.component.id) {
-					return {
-						...component,
-						fields: component.fields.map((field) => ({
-							...field,
-							data: data[field.order]!,
-						})),
-						diff: component.diff === "added" ? component.diff : "edited",
-					};
-				} else {
-					return component;
-				}
-			});
-			setComponents(changedComponents);
-		},
-		[components, props.component.id, setComponents],
-	);
 
 	useEffect(() => {
 		// Trigger validation on mount, fixes Ctrl+S after first change not saving
@@ -92,12 +79,12 @@ export function ComponentEditor(props: { component: ComponentUI }) {
 		const { unsubscribe } = form.watch(() => {
 			setIsValid(form.formState.isValid);
 			if (form.formState.isValid && !form.formState.isValidating) {
-				void form.handleSubmit(onSubmit)();
+				void form.handleSubmit(props.onChange)();
 			}
 		});
 
 		return unsubscribe;
-	}, [form, onSubmit, setIsValid]);
+	}, [form, props.onChange, setIsValid]);
 
 	return props.component.fields.length > 0 ? (
 		<FormProvider {...form}>
@@ -129,7 +116,7 @@ export function ComponentEditor(props: { component: ComponentUI }) {
 													field.order.toString(),
 													originalField!.data,
 												);
-												void form.handleSubmit(onSubmit)();
+												void form.handleSubmit(props.onChange)();
 												setIsValid(form.formState.isValid);
 											}}
 											{...formField}
@@ -224,7 +211,6 @@ const Field = forwardRef<HTMLInputElement | HTMLButtonElement, FieldProps>(
 						value={value}
 						onChange={onChange}
 						edited={edited}
-						onRestore={onRestore}
 						component={component}
 					/>
 				);
@@ -234,10 +220,11 @@ const Field = forwardRef<HTMLInputElement | HTMLButtonElement, FieldProps>(
 );
 Field.displayName = "Field";
 
-type NestedComponentFieldProps = Omit<FieldProps, "type">;
+type NestedComponentFieldProps = Omit<FieldProps, "type" | "onRestore">;
 export function NestedComponentField(props: NestedComponentFieldProps) {
 	const [dialogOpen, setDialogOpen] = useState(false);
-	const { steps, setSteps, nestedComponents, setNestedComponents } = usePageEditor();
+	const { steps, setSteps, originalNestedComponents, nestedComponents, setNestedComponents } =
+		usePageEditor();
 
 	const [component, setComponent] = useState<ComponentUI | null>(
 		nestedComponents.find((comp) => comp.id === props.value) ?? null,
@@ -245,7 +232,11 @@ export function NestedComponentField(props: NestedComponentFieldProps) {
 	useEffect(() => {
 		setComponent(nestedComponents.find((comp) => comp.id === props.value) ?? null);
 	}, [nestedComponents, props.value]);
-	console.log(nestedComponents);
+
+	const originalComponent = useMemo(
+		() => originalNestedComponents.find((comp) => comp.id === props.value),
+		[originalNestedComponents, props.value],
+	);
 
 	async function selectComponent(id: string) {
 		const definition = await trpcFetch.components.getComponentDefinition.query({ id });
@@ -326,7 +317,17 @@ export function NestedComponentField(props: NestedComponentFieldProps) {
 							{ name: "edit-nested-component", nestedComponentId: component.id },
 						])
 					}
-					onRestore={props.onRestore}
+					onRestore={() =>
+						setNestedComponents(
+							nestedComponents.map((c) => {
+								if (c.id === component.id) {
+									return originalComponent!;
+								} else {
+									return c;
+								}
+							}),
+						)
+					}
 					onRemove={() => remove(component)}
 					onUnRemove={() => unRemove(component)}
 					onUnAdd={() => unAdd(component)}
