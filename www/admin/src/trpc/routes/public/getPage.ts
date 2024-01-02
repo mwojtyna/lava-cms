@@ -79,7 +79,7 @@ export const getPage = publicProcedure
 							break;
 						}
 						case "NUMBER": {
-							data = Number(field.data);
+							data = parseFloat(field.data);
 							break;
 						}
 						case "SWITCH": {
