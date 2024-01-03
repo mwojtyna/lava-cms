@@ -9,7 +9,8 @@ import { Resizable } from "re-resizable";
 import { useEffect, useState } from "react";
 import { Button } from "@/src/components/ui/client";
 import { Stepper, TypographyH1, TypographyMuted } from "@/src/components/ui/server";
-import { usePageEditor, type ComponentUI } from "@/src/data/stores/pageEditor";
+import { usePageEditor } from "@/src/data/stores/pageEditor";
+import { type Step as StepType, type ComponentUI } from "@/src/data/stores/pageEditor";
 import { useWindowEvent } from "@/src/hooks";
 import type { PrivateRouter } from "@/src/trpc/routes/private/_private";
 import { cn } from "@/src/utils/styling";
@@ -50,7 +51,6 @@ export function Inspector(props: Props) {
 		components,
 		setComponents,
 		nestedComponents,
-		setNestedComponents,
 		steps,
 		setSteps,
 		isDirty,
@@ -118,98 +118,6 @@ export function Inspector(props: Props) {
 		return nestedComponents.find((comp) => comp.id === id) ?? COMPONENT_PLACEHOLDER;
 	}
 
-	function displayStep() {
-		const currentStep = steps.at(-1);
-		switch (currentStep?.name) {
-			case "components": {
-				return (
-					<>
-						<Components
-							// Avoid showing no components before hydration
-							components={
-								components.length > 0
-									? components
-									: props.serverData.components.map((comp) => ({
-											...comp,
-											diff: "none",
-									  }))
-							}
-							onComponentClicked={(id) =>
-								setSteps([...steps, { name: "edit-component", componentId: id }])
-							}
-						/>
-						<Button
-							className="w-full"
-							variant={"outline"}
-							icon={<PlusIcon className="w-5" />}
-							onClick={() => setOpenAdd(true)}
-						>
-							Add component
-						</Button>
-					</>
-				);
-			}
-			case "edit-component": {
-				return (
-					<ComponentEditor
-						component={getComponent(currentStep.componentId)}
-						onChange={(data) => {
-							const changedComponents: ComponentUI[] = components.map((component) => {
-								if (component.id === currentStep.componentId) {
-									return {
-										...component,
-										fields: component.fields.map((field) => ({
-											...field,
-											data: data[field.order]!,
-										})),
-										diff:
-											component.diff === "added" ? component.diff : "edited",
-									};
-								} else {
-									return component;
-								}
-							});
-							setComponents(changedComponents);
-						}}
-					/>
-				);
-			}
-			case "edit-nested-component": {
-				return (
-					<ComponentEditor
-						component={getNestedComponent(currentStep.nestedComponentId)}
-						onChange={(data) => {
-							// Don't know why, but when using nestedComponents from usePageEditor hook,
-							// the components are outdated and when ComponentEditor changes nestedComponents,
-							// the changes get overwritten by the code below. So we use the state directly.
-							const nestedComponents = usePageEditor.getState().nestedComponents;
-							const changedComponents: ComponentUI[] = nestedComponents.map(
-								(component) => {
-									if (component.id === currentStep.nestedComponentId) {
-										return {
-											...component,
-											fields: component.fields.map((field) => ({
-												...field,
-												data: data[field.order]!,
-											})),
-											diff:
-												component.diff === "added"
-													? component.diff
-													: "edited",
-										};
-									} else {
-										return component;
-									}
-								},
-							);
-							setNestedComponents(changedComponents);
-						}}
-					/>
-				);
-			}
-		}
-	}
-
 	return (
 		<>
 			<Resizable
@@ -240,50 +148,158 @@ export function Inspector(props: Props) {
 					<TypographyMuted className="text-base">{props.page.url}</TypographyMuted>
 				</header>
 
-				<div className="flex flex-col gap-5">
-					{steps.length > 1 && (
-						<Stepper
-							className="flex-wrap"
-							firstIsIcon
-							steps={[
+				{steps.length > 1 && (
+					<Stepper
+						className="flex-wrap"
+						firstIsIcon
+						steps={[
+							<Button
+								key={0}
+								variant={"link"}
+								className="gap-1 font-normal text-muted-foreground"
+								onClick={() => setSteps([{ name: "components" }])}
+							>
+								<DocumentIcon className="w-4" />
+								{props.page.name}
+							</Button>,
+							...steps.slice(1).map((step, i) => (
 								<Button
-									key={0}
+									key={i + 1}
 									variant={"link"}
-									className="gap-1 font-normal text-muted-foreground"
-									onClick={() => setSteps([{ name: "components" }])}
+									className={cn(
+										"gap-1 whitespace-nowrap font-normal",
+										i + 1 < steps.length - 1 && "text-muted-foreground",
+									)}
+									onClick={() => setSteps(steps.slice(0, i + 2))}
 								>
-									<DocumentIcon className="w-4" />
-									{props.page.name}
-								</Button>,
-								...steps.slice(1).map((step, i) => (
-									<Button
-										key={i + 1}
-										variant={"link"}
-										className={cn(
-											"gap-1 whitespace-nowrap font-normal",
-											i + 1 < steps.length - 1 && "text-muted-foreground",
-										)}
-										onClick={() => setSteps(steps.slice(0, i + 2))}
-									>
-										<CubeIcon className="w-4" />
-										{step.name === "edit-component" &&
-											getComponent(step.componentId).definition.name}
-										{step.name === "edit-nested-component" &&
-											getNestedComponent(step.nestedComponentId).definition
-												.name}
-									</Button>
-								)),
-							]}
-							currentStep={steps.length}
-							separator={<ChevronRightIcon className="w-4" />}
-						/>
-					)}
+									<CubeIcon className="w-4" />
+									{step.name === "edit-component" &&
+										getComponent(step.componentId).definition.name}
+									{step.name === "edit-nested-component" &&
+										getNestedComponent(step.nestedComponentId).definition.name}
+								</Button>
+							)),
+						]}
+						currentStep={steps.length}
+						separator={<ChevronRightIcon className="w-4" />}
+					/>
+				)}
 
-					{displayStep()}
-				</div>
+				<Step
+					step={steps.at(-1)!}
+					// Avoid showing no components before hydration
+					components={
+						components.length > 0
+							? components
+							: props.serverData.components.map((c) => ({
+									...c,
+									diff: "none",
+							  }))
+					}
+					openAddComponentDialog={() => setOpenAdd(true)}
+					getComponent={getComponent}
+					getNestedComponent={getNestedComponent}
+				/>
 			</Resizable>
 
 			<AddComponentDialog open={openAdd} setOpen={setOpenAdd} onSubmit={addComponent} />
 		</>
 	);
+}
+
+interface StepProps {
+	step: StepType;
+	components: ComponentUI[];
+	getComponent: (id: string) => ComponentUI;
+	getNestedComponent: (id: string) => ComponentUI;
+	openAddComponentDialog: () => void;
+}
+function Step(props: StepProps) {
+	const { steps, setSteps, setComponents, setNestedComponents } = usePageEditor();
+
+	// Typescript is stupid and doesn't properly narrow the type of `props.step` in the switch statement
+	const step = props.step;
+	switch (step.name) {
+		case "components": {
+			return (
+				<div className="flex flex-col gap-5">
+					<Components
+						components={props.components}
+						onComponentClicked={(id) =>
+							setSteps([...steps, { name: "edit-component", componentId: id }])
+						}
+					/>
+					<Button
+						className="w-full"
+						variant={"outline"}
+						icon={<PlusIcon className="w-5" />}
+						onClick={props.openAddComponentDialog}
+					>
+						Add component
+					</Button>
+				</div>
+			);
+		}
+		case "edit-component": {
+			return (
+				<ComponentEditor
+					component={props.getComponent(step.componentId)}
+					onChange={(data) => {
+						const changedComponents: ComponentUI[] = props.components.map(
+							(component) => {
+								if (component.id === step.componentId) {
+									return {
+										...component,
+										fields: component.fields.map((field) => ({
+											...field,
+											data: data[field.order]!,
+										})),
+										diff:
+											component.diff === "added" ? component.diff : "edited",
+									};
+								} else {
+									return component;
+								}
+							},
+						);
+						setComponents(changedComponents);
+					}}
+				/>
+			);
+		}
+		case "edit-nested-component": {
+			return (
+				<ComponentEditor
+					component={props.getNestedComponent(step.nestedComponentId)}
+					onChange={(data) => {
+						// Don't know why, but when using nestedComponents from usePageEditor hook,
+						// the components are outdated and when ComponentEditor changes nestedComponents,
+						// the changes get overwritten by the code below. So we use the state directly.
+						const nestedComponents = usePageEditor.getState().nestedComponents;
+						const changedComponents: ComponentUI[] = nestedComponents.map(
+							(component) => {
+								if (component.id === step.nestedComponentId) {
+									return {
+										...component,
+										fields: component.fields.map((field) => ({
+											...field,
+											data: data[field.order]!,
+										})),
+										diff:
+											component.diff === "added" ||
+											component.diff === "replaced"
+												? component.diff
+												: "edited",
+									};
+								} else {
+									return component;
+								}
+							},
+						);
+						setNestedComponents(changedComponents);
+					}}
+				/>
+			);
+		}
+	}
 }

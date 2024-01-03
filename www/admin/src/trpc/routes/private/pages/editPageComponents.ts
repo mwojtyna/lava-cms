@@ -66,6 +66,8 @@ export const editPageComponents = privateProcedure
 					where: { id: component.id },
 					data: {
 						order: component.order,
+						definition_id: component.definition.id,
+						parent_component_id: component.parentComponentId,
 						fields: {
 							updateMany: component.fields.map((field) => ({
 								where: { id: field.id },

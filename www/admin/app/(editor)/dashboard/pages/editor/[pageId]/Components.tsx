@@ -161,6 +161,7 @@ export function ComponentCard(props: ComponentCardProps) {
 	const diffStyle: Record<Exclude<Diff, "reordered" | "none">, string> = {
 		added: "border-l-green-500",
 		edited: "border-l-brand",
+		replaced: "border-l-brand",
 		deleted: "border-l-red-500",
 	};
 
@@ -224,6 +225,7 @@ function Actions(props: ActionsProps) {
 	}
 
 	switch (props.diff) {
+		case "replaced":
 		case "edited": {
 			return (
 				<div className="ml-auto flex items-center justify-center">

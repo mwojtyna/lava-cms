@@ -106,7 +106,7 @@ export function ComponentEditor(props: ComponentEditorProps) {
 										<Field
 											component={props.component}
 											edited={
-												originalField
+												props.component.diff !== "replaced" && originalField
 													? field.data !== originalField.data
 													: false
 											}
@@ -234,13 +234,10 @@ export function NestedComponentField(props: NestedComponentFieldProps) {
 	const { steps, setSteps, originalNestedComponents, nestedComponents, setNestedComponents } =
 		usePageEditor();
 
-	const [component, setComponent] = useState<ComponentUI | null>(
-		nestedComponents.find((comp) => comp.id === props.value) ?? null,
+	const currentComponent = useMemo(
+		() => nestedComponents.find((comp) => comp.id === props.value),
+		[nestedComponents, props.value],
 	);
-	useEffect(() => {
-		setComponent(nestedComponents.find((comp) => comp.id === props.value) ?? null);
-	}, [nestedComponents, props.value]);
-
 	const originalComponent = useMemo(
 		() => originalNestedComponents.find((comp) => comp.id === props.value),
 		[originalNestedComponents, props.value],
@@ -248,8 +245,9 @@ export function NestedComponentField(props: NestedComponentFieldProps) {
 
 	async function selectComponent(id: string) {
 		const definition = await trpcFetch.components.getComponentDefinition.query({ id });
-		const component: ComponentUI = {
-			id: createId(),
+		const newComponent: ComponentUI = {
+			// When replacing component, keep the id
+			id: currentComponent?.id ?? createId(),
 			definition: {
 				id: definition.id,
 				name: definition.name,
@@ -265,38 +263,31 @@ export function NestedComponentField(props: NestedComponentFieldProps) {
 			order: 0,
 			pageId: props.component.pageId,
 			parentComponentId: props.component.id,
-			diff: "added",
+			diff: currentComponent ? "replaced" : "added",
 		};
-		props.onChange(component.id, [...nestedComponents, component]);
-	}
-	// console.log(nestedComponents);
 
+		props.onChange(
+			newComponent.id,
+			currentComponent
+				? nestedComponents.map((c) => (c.id === currentComponent.id ? newComponent : c))
+				: [...nestedComponents, newComponent],
+		);
+	}
+
+	function restore() {
+		props.onChange(
+			originalComponent!.id,
+			nestedComponents.map((c) => (c.id === originalComponent!.id ? originalComponent! : c)),
+		);
+	}
 	function remove(component: ComponentUI) {
 		setNestedComponents(
-			nestedComponents.map((c) => {
-				if (c.id === component.id) {
-					return {
-						...c,
-						diff: "deleted",
-					};
-				} else {
-					return c;
-				}
-			}),
+			nestedComponents.map((c) => (c.id === component.id ? { ...c, diff: "deleted" } : c)),
 		);
 	}
 	function unRemove(component: ComponentUI) {
 		setNestedComponents(
-			nestedComponents.map((c) => {
-				if (c.id === component.id) {
-					return {
-						...c,
-						diff: "none",
-					};
-				} else {
-					return c;
-				}
-			}),
+			nestedComponents.map((c) => (c.id === component.id ? { ...c, diff: "none" } : c)),
 		);
 	}
 	function unAdd(component: ComponentUI) {
@@ -308,41 +299,33 @@ export function NestedComponentField(props: NestedComponentFieldProps) {
 
 	return (
 		<>
-			{!component ? (
-				<Button variant={"outline"} onClick={() => setDialogOpen(true)}>
-					Select component
-				</Button>
-			) : (
+			{currentComponent && (
 				<ComponentCard
 					dndId="0"
 					noDrag
 					component={{
-						id: component.id,
-						name: component.definition.name,
-						diff: component.diff,
+						id: currentComponent.id,
+						name: currentComponent.definition.name,
+						diff: currentComponent.diff,
 					}}
 					onClick={() =>
 						setSteps([
 							...steps,
-							{ name: "edit-nested-component", nestedComponentId: component.id },
+							{
+								name: "edit-nested-component",
+								nestedComponentId: currentComponent.id,
+							},
 						])
 					}
-					onRestore={() =>
-						setNestedComponents(
-							nestedComponents.map((c) => {
-								if (c.id === component.id) {
-									return originalComponent!;
-								} else {
-									return c;
-								}
-							}),
-						)
-					}
-					onRemove={() => remove(component)}
-					onUnRemove={() => unRemove(component)}
-					onUnAdd={() => unAdd(component)}
+					onRestore={restore}
+					onRemove={() => remove(currentComponent)}
+					onUnRemove={() => unRemove(currentComponent)}
+					onUnAdd={() => unAdd(currentComponent)}
 				/>
 			)}
+			<Button variant={"outline"} onClick={() => setDialogOpen(true)}>
+				{!currentComponent ? "Select" : "Change"} component
+			</Button>
 
 			<AddComponentDialog
 				open={dialogOpen}

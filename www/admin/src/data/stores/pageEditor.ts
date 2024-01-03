@@ -6,12 +6,12 @@ import type {
 import type { trpc } from "@/src/utils/trpc";
 import "client-only";
 
-export type Diff = "added" | "edited" | "deleted" | "reordered" | "none";
+export type Diff = "added" | "edited" | "deleted" | "reordered" | "replaced" | "none";
 export interface ComponentUI extends Component {
 	diff: Diff;
 }
 
-type Step =
+export type Step =
 	| {
 			name: "components";
 	  }
@@ -153,7 +153,7 @@ export const usePageEditor = create<PageEditorState>((set) => ({
 					pageId,
 					addedComponents: state.components
 						.concat(state.nestedComponents)
-						.filter((comp) => comp.diff === "added")
+						.filter((comp) => comp.diff === "added" || comp.diff === "replaced")
 						.map((comp) => ({
 							pageId,
 							parentComponentId: comp.parentComponentId,
@@ -170,7 +170,7 @@ export const usePageEditor = create<PageEditorState>((set) => ({
 						.filter((comp) => comp.diff === "edited" || comp.diff === "reordered"),
 					deletedComponentIds: state.components
 						.concat(state.nestedComponents)
-						.filter((comp) => comp.diff === "deleted")
+						.filter((comp) => comp.diff === "deleted" || comp.diff === "replaced")
 						.map((comp) => comp.id),
 				},
 				{
