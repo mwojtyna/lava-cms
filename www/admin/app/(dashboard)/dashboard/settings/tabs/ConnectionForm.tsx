@@ -134,28 +134,24 @@ function TokenInput(props: { token: string }) {
 			<Input
 				className="font-mono"
 				value={props.token}
-				rightButton={
-					// Only show copy button if clipboard API is available,
-					// but display on server because of hydration issues
-					(typeof window === "undefined" && typeof navigator === "undefined") ||
-					(typeof window !== "undefined" && typeof navigator.clipboard !== "undefined")
-						? {
-								state: copied,
-								setState: null,
-								onClick: async () => {
-									await navigator.clipboard.writeText(props.token);
-									setCopied(true);
-								},
-								iconOn: <CheckIcon className="w-5 text-green-600" />,
-								iconOff: <ClipboardIcon className="w-5" />,
-								tooltip: "Copy to clipboard",
-						  }
-						: undefined
-				}
+				type="password"
 				readOnly
 				aria-label="Token input"
 			/>
 
+			<ActionIcon
+				onClick={async () => {
+					await navigator.clipboard.writeText(props.token);
+					setCopied(true);
+				}}
+				tooltip="Copy to clipboard"
+			>
+				{copied ? (
+					<CheckIcon className="w-5 text-green-600" />
+				) : (
+					<ClipboardIcon className="w-5" />
+				)}
+			</ActionIcon>
 			<ActionIcon
 				onClick={async () => {
 					setCopied(false);

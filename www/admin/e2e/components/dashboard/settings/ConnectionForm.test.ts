@@ -16,7 +16,7 @@ test("copies token into clipboard and changes into check mark", async ({
 }) => {
 	await page.goto("/admin/dashboard/settings/connection");
 
-	const copyButton = page.base.getByTestId(TEST_ID).getByRole("button").first();
+	const copyButton = page.base.getByTestId(TEST_ID).getByRole("button").nth(1);
 	const icon = await copyButton.locator("svg").innerHTML();
 	await copyButton.click();
 
@@ -36,7 +36,7 @@ test("regenerates token", async ({ authedPage: page }) => {
 	const tokenInput = page.base.getByTestId(TEST_ID).locator("input[type='text']").first();
 	const token = await tokenInput.inputValue();
 
-	const regenerateButton = page.base.getByTestId(TEST_ID).getByRole("button").nth(1);
+	const regenerateButton = page.base.getByTestId(TEST_ID).getByRole("button").nth(2);
 	await regenerateButton.click();
 	await page.base.waitForResponse("**/api/private/auth.getToken**");
 
