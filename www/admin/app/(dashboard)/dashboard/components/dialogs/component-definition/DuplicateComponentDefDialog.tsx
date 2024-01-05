@@ -92,7 +92,7 @@ export function DuplicateComponentDefDialog(props: Props) {
 			fields: props.componentDef.fieldDefinitions.map((field) => ({
 				name: field.name,
 				type: field.type,
-				diffs: [],
+				diff: "none",
 			})),
 			// null -> undefined
 			newParentId: props.componentDef.parentGroupId ?? undefined,

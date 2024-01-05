@@ -52,10 +52,10 @@ interface AddFieldDefsProps extends FormFieldProps<FieldDefinitionUI[]> {
 export const AddFieldDefs = React.forwardRef<React.ComponentRef<"div">, AddFieldDefsProps>(
 	(props, ref) => {
 		const form = useForm<FieldDefinitionUI>({
-			resolver: zodResolver(fieldDefinitionUISchema.omit({ id: true, diffs: true })),
+			resolver: zodResolver(fieldDefinitionUISchema.omit({ id: true, diff: true })),
 		});
 		const onSubmit: SubmitHandler<FieldDefinitionUI> = (data) => {
-			props.onChange([...props.value, { ...data, diffs: ["added"] }]);
+			props.onChange([...props.value, { ...data, diff: "added" }]);
 		};
 
 		return (
@@ -147,14 +147,14 @@ export const FieldDefs = React.forwardRef<React.ComponentRef<"div">, FieldDefsPr
 		const fields: FieldDefinitionUI[] = props.value.map((field) => {
 			if (field === before) {
 				// Don't add any diff info in add dialog or when added a field in edit dialog
-				if (props.dialogType === "add" || before.diffs.at(-1) === "added") {
+				if (props.dialogType === "add" || before.diff === "added") {
 					return after;
 				}
 
 				const original = props.originalFields.find((of) => of.id === after.id)!;
 				return after.name === original.name && after.type === original.type
-					? { ...after, diffs: [] }
-					: { ...after, diffs: [...after.diffs, "edited"] };
+					? { ...after, diff: "none" }
+					: { ...after, diff: "edited" };
 			} else {
 				return field;
 			}
@@ -168,7 +168,7 @@ export const FieldDefs = React.forwardRef<React.ComponentRef<"div">, FieldDefsPr
 		if (props.dialogType === "add") {
 			fields = props.value.filter((field) => field !== toDelete);
 		} else if (props.dialogType === "edit") {
-			if (toDelete.diffs.at(-1) === "added") {
+			if (toDelete.diff === "added") {
 				fields = props.value.filter((field) => field !== toDelete);
 			} else {
 				fields = props.value.map((field) => {
@@ -177,7 +177,7 @@ export const FieldDefs = React.forwardRef<React.ComponentRef<"div">, FieldDefsPr
 					}
 					return {
 						...field,
-						diffs: [...toDelete.diffs, "deleted"],
+						diff: "deleted",
 					};
 				});
 			}
@@ -190,7 +190,7 @@ export const FieldDefs = React.forwardRef<React.ComponentRef<"div">, FieldDefsPr
 			field === toUnDelete
 				? {
 						...field,
-						diffs: toUnDelete.diffs.filter((diff) => diff !== "deleted"),
+						diff: "none",
 				  }
 				: field,
 		);
@@ -281,7 +281,7 @@ function FieldDef(props: FieldDefProps) {
 		// or the list will reshuffle on drop
 		// https://github.com/clauderic/dnd-kit/issues/767#issuecomment-1140556346
 		animateLayoutChanges: () => false,
-		disabled: props.anyEditing || props.field.diffs.at(-1) === "deleted",
+		disabled: props.anyEditing || props.field.diff === "deleted",
 	});
 	const style: React.CSSProperties = {
 		transform: CSS.Transform.toString(transform),
@@ -289,13 +289,12 @@ function FieldDef(props: FieldDefProps) {
 		zIndex: isDragging ? 1 : undefined,
 	};
 
-	type DiffType = FieldDefinitionUI["diffs"][number];
-	const diffStyle: Record<DiffType, string> = {
+	type DiffType = FieldDefinitionUI["diff"];
+	const diffStyle: Record<Exclude<DiffType, "none">, string> = {
 		added: "border-l-green-500",
 		edited: "border-l-brand",
 		deleted: "border-l-red-500",
 	};
-	const lastDiff = props.field.diffs.at(-1);
 
 	return (
 		<Card
@@ -303,9 +302,11 @@ function FieldDef(props: FieldDefProps) {
 			style={style}
 			className={cn(
 				"group flex-row gap-4 md:p-3",
-				props.dialogType === "edit" && lastDiff && `border-l-[3px] ${diffStyle[lastDiff]}`,
+				props.dialogType === "edit" &&
+					props.field.diff !== "none" &&
+					`border-l-[3px] ${diffStyle[props.field.diff]}`,
 			)}
-			data-test-diff={props.dialogType === "edit" ? lastDiff : undefined}
+			data-test-diff={props.dialogType === "edit" ? props.field.diff : undefined}
 		>
 			{/* Grip, name, type */}
 			<div className="flex items-center gap-3">
@@ -313,7 +314,7 @@ function FieldDef(props: FieldDefProps) {
 					<IconGripVertical
 						className={cn(
 							"w-5 cursor-move text-muted-foreground",
-							(props.anyEditing || lastDiff === "deleted") &&
+							(props.anyEditing || props.field.diff === "deleted") &&
 								"cursor-auto text-muted-foreground/50",
 						)}
 					/>
@@ -386,15 +387,15 @@ function FieldDef(props: FieldDefProps) {
 				{/* Display undo arrow when edited or deleted a field */}
 				{props.dialogType === "edit" &&
 					!isEditing &&
-					(lastDiff === "edited" || lastDiff === "deleted") && (
+					(props.field.diff === "edited" || props.field.diff === "deleted") && (
 						<ActionIcon
 							variant={"simple"}
 							className="mr-0.5"
 							onClick={() => {
-								lastDiff === "edited"
+								props.field.diff === "edited"
 									? props.onEditSubmit(props.field, {
 											...props.original,
-											diffs: [],
+											diff: "none",
 									  })
 									: props.onUnDelete(props.field);
 							}}
@@ -405,45 +406,16 @@ function FieldDef(props: FieldDefProps) {
 					)}
 
 				{/* Display normal or edit state */}
-				{lastDiff !== "deleted" &&
-					(isEditing ? (
-						<>
-							<ActionIcon
-								variant={"simple"}
-								onClick={form.handleSubmit(onSubmit)}
-								tooltip="Save"
-							>
-								<ArrowRightIcon className="w-5" data-testid="save-field-btn" />
-							</ActionIcon>
-
-							<ActionIcon variant={"simple"} onClick={cancel} tooltip="Cancel">
-								<XMarkIcon className="w-5" data-testid="cancel-field-btn" />
-							</ActionIcon>
-						</>
-					) : (
-						<>
-							<ActionIcon
-								variant={"simple"}
-								className={cn(isEditing && "text-foreground")}
-								onClick={() => {
-									setIsEditing(true);
-									props.onEditToggle(true);
-								}}
-								tooltip="Edit"
-							>
-								<PencilSquareIcon className="w-5" data-testid="edit-field-btn" />
-							</ActionIcon>
-
-							<ActionIcon
-								variant={"simple"}
-								className="text-destructive/75 hover:text-destructive"
-								onClick={() => props.onDelete(props.field)}
-								tooltip="Delete"
-							>
-								<TrashIcon className="w-5" data-testid="delete-field-btn" />
-							</ActionIcon>
-						</>
-					))}
+				{props.field.diff === "none" && (
+					<ActionIcon
+						variant={"simple"}
+						className="text-destructive/75 hover:text-destructive"
+						onClick={() => props.onDelete(props.field)}
+						tooltip="Delete"
+					>
+						<TrashIcon className="w-5" data-testid="delete-field-btn" />
+					</ActionIcon>
+				)}
 			</div>
 		</Card>
 	);

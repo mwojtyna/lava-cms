@@ -50,10 +50,10 @@ export function EditComponentDefDialog(props: Props) {
 	const onSubmit: SubmitHandler<EditComponentDefDialogInputs> = (data) => {
 		const addedFields = data.fields
 			.map((f, i) => ({ ...f, order: i }))
-			.filter((f) => f.diffs.at(-1) === "added");
+			.filter((f) => f.diff === "added");
 
 		const deletedFieldIds = originalFields
-			.filter((of) => data.fields.find((f) => f.id === of.id && f.diffs.at(-1) === "deleted"))
+			.filter((of) => data.fields.find((f) => f.id === of.id && f.diff === "deleted"))
 			.map((of) => of.id);
 
 		const editedFields = data.fields
@@ -66,7 +66,7 @@ export function EditComponentDefDialog(props: Props) {
 			}))
 			.filter((f, fOrder) =>
 				originalFields.find(
-					(of) => f.id === of.id && (f.diffs.at(-1) === "edited" || fOrder !== of.order),
+					(of) => f.id === of.id && (f.diff === "edited" || fOrder !== of.order),
 				),
 			);
 
@@ -112,7 +112,7 @@ export function EditComponentDefDialog(props: Props) {
 							id: of.id,
 							name: of.name,
 							type: of.type,
-							diffs: [],
+							diff: "none",
 						}) satisfies FieldDefinitionUI,
 				),
 			});

@@ -68,7 +68,12 @@ export const fieldDefinitionUISchema = z.object({
 	id: z.string().cuid().optional(),
 	name: z.string().min(1),
 	type: ComponentDefinitionFieldSchema.shape.type,
-	diffs: z.array(z.union([z.literal("added"), z.literal("deleted"), z.literal("edited")])),
+	diff: z.union([
+		z.literal("none"),
+		z.literal("added"),
+		z.literal("deleted"),
+		z.literal("edited"),
+	]),
 });
 export type FieldDefinitionUI = z.infer<typeof fieldDefinitionUISchema>;
 
