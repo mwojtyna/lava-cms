@@ -170,6 +170,7 @@ export const usePageEditor = create<PageEditorState>((set) => ({
 						.filter((comp) => comp.diff === "edited" || comp.diff === "reordered"),
 					deletedComponentIds: state.components
 						.concat(state.nestedComponents)
+						// Replaced components have the same id as the original
 						.filter((comp) => comp.diff === "deleted" || comp.diff === "replaced")
 						.map((comp) => comp.id),
 				},
