@@ -124,7 +124,7 @@ export function EditComponentDefDialog(props: Props) {
 		<Dialog open={props.open} onOpenChange={props.setOpen}>
 			<DialogContent className="max-w-md">
 				<DialogHeader>
-					<DialogTitle>Edit component definition</DialogTitle>
+					<DialogTitle>Edit &quot;{props.componentDef.name}&quot;</DialogTitle>
 				</DialogHeader>
 
 				<FormProvider {...form}>

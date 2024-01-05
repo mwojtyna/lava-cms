@@ -104,7 +104,9 @@ export function DuplicateComponentDefDialog(props: Props) {
 		<Dialog open={props.open} onOpenChange={props.setOpen}>
 			<DialogContent className="max-w-md">
 				<DialogHeader>
-					<DialogTitle>Duplicate component definition</DialogTitle>
+					<DialogTitle>
+						Duplicate component definition &quot;{props.componentDef.name}&quot;
+					</DialogTitle>
 				</DialogHeader>
 
 				<FormProvider {...form}>

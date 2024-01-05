@@ -127,7 +127,7 @@ export function EditGroupDialog(props: EditGroupDialogProps) {
 		<Dialog open={props.open} onOpenChange={props.setOpen}>
 			<DialogContent>
 				<DialogHeader>
-					<DialogTitle>Edit group</DialogTitle>
+					<DialogTitle>Edit &quot;{props.group.name}&quot;</DialogTitle>
 				</DialogHeader>
 
 				<FormProvider {...form}>

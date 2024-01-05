@@ -698,7 +698,7 @@ export function DuplicateDialog(props: EditDialogProps) {
 		<Dialog open={props.open} onOpenChange={props.setOpen}>
 			<DialogContent>
 				<DialogHeader>
-					<DialogTitle>Duplicate page</DialogTitle>
+					<DialogTitle>Duplicate page &quot;{props.page.name}&quot;</DialogTitle>
 				</DialogHeader>
 
 				<FormProvider {...form}>
