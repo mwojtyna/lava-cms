@@ -85,6 +85,7 @@ export const columns: ColumnDef<ComponentsTableItem>[] = [
 	},
 	{
 		accessorKey: "instances",
+		sortingFn: sortingFns.alphanumeric,
 		header: ({ column }) => <DataTableSortableHeader column={column} name="Instances" />,
 		cell: ({ row }) => (row.original.isGroup ? "-" : row.original.instances.length),
 	},
@@ -97,8 +98,8 @@ export const columns: ColumnDef<ComponentsTableItem>[] = [
 	},
 	{
 		accessorKey: "last_updated",
-		header: ({ column }) => <DataTableSortableHeader column={column} name="Last Updated" />,
 		sortingFn: sortingFns.datetime,
+		header: ({ column }) => <DataTableSortableHeader column={column} name="Last Updated" />,
 		accessorFn: (item) =>
 			new Intl.DateTimeFormat("en-GB", dateFormatOptions).format(item.lastUpdate),
 	},

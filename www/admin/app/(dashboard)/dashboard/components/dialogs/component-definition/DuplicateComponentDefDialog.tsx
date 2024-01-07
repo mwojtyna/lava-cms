@@ -39,6 +39,7 @@ interface Props {
 	setOpen: (value: boolean) => void;
 	componentDef: ComponentsTableComponentDef;
 }
+// TODO: Simplify component, remove editing fields
 export function DuplicateComponentDefDialog(props: Props) {
 	const mutation = trpc.components.addComponentDefinition.useMutation();
 	const { fields } = useComponentsTableDialogs();

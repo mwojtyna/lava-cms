@@ -7,7 +7,7 @@ import {
 import * as React from "react";
 
 interface Options {
-	onChanged?: (value: URLSearchParams) => void;
+	onChanged?: (value: ReadonlyURLSearchParams) => void;
 	removeWhenValueIsEmptyString?: boolean;
 }
 
@@ -21,45 +21,43 @@ export function useSearchParams(options?: Options): {
 
 	React.useEffect(
 		() => {
-			options?.onChanged?.(new URLSearchParams(searchParams.toString()));
+			options?.onChanged?.(searchParams);
 		},
-		// If we include callbacks in the dependency array, it will call it infinitely
+		// If we include options in the dependency array, it will call it infinitely
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 		[searchParams],
 	);
 
-	const setSearchParams = React.useCallback(
-		(values: Record<string, unknown>) => {
-			const queryString = createQueryString(values);
-			// If the query string is empty, remove it from the URL
-			if (queryString === "") {
-				router.push(pathname);
-				return;
-			}
-			router.push(`${pathname}?${queryString}`);
+	function setSearchParams(values: Record<string, unknown>) {
+		const queryString = createQueryString(values);
 
-			// Get a new searchParams string by merging the current
-			// searchParams with a provided key/value pair
-			function createQueryString(values: Record<string, unknown>) {
-				const params = new URLSearchParams(searchParams.toString());
+		// If the query string is empty, remove it from the URL
+		if (queryString === "") {
+			router.push(pathname);
+			return;
+		}
+		router.push(`${pathname}?${queryString}`);
 
-				for (const [key, value] of Object.entries(values)) {
-					if (value !== undefined) {
-						if (options?.removeWhenValueIsEmptyString && value === "") {
-							params.delete(key);
-						} else {
-							params.set(key, value as string);
-						}
-					} else {
+		// Get a new searchParams string by merging the current
+		// searchParams with a provided key/value pair
+		function createQueryString(values: Record<string, unknown>) {
+			const params = new URLSearchParams(searchParams.toString());
+
+			for (const [key, value] of Object.entries(values)) {
+				if (value !== undefined) {
+					if (options?.removeWhenValueIsEmptyString && value === "") {
 						params.delete(key);
+					} else {
+						params.set(key, value as string);
 					}
+				} else {
+					params.delete(key);
 				}
-
-				return params.toString();
 			}
-		},
-		[pathname, router, searchParams, options],
-	);
+
+			return params.toString();
+		}
+	}
 
 	return { searchParams, setSearchParams };
 }

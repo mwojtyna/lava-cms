@@ -14,6 +14,24 @@ const logoFont = Poppins({
 	subsets: ["latin"],
 });
 
+export function NavMenu() {
+	return (
+		<NavMenuWrapper>
+			<Menu className="h-screen max-md:hidden" />
+			<MenuMobile className="md:hidden" />
+
+			<SheetContent
+				side={"left"}
+				className="w-full p-0 sm:w-96"
+				returnFocus={false}
+				breakpoint="md:hidden"
+			>
+				<Menu className="h-full" />
+			</SheetContent>
+		</NavMenuWrapper>
+	);
+}
+
 async function Menu({ className }: { className?: string }) {
 	const version = (await import("@/package.json")).version;
 
@@ -44,7 +62,6 @@ async function Menu({ className }: { className?: string }) {
 		</nav>
 	);
 }
-
 function MenuMobile({ className }: { className?: string }) {
 	return (
 		<nav
@@ -71,23 +88,5 @@ function MenuMobile({ className }: { className?: string }) {
 			</div>
 			<UserMenu small />
 		</nav>
-	);
-}
-
-export function NavMenu() {
-	return (
-		<NavMenuWrapper>
-			<Menu className="h-screen max-md:hidden" />
-			<MenuMobile className="md:hidden" />
-
-			<SheetContent
-				side={"left"}
-				className="w-full p-0 sm:w-96"
-				returnFocus={false}
-				breakpoint="md:hidden"
-			>
-				<Menu className="h-full" />
-			</SheetContent>
-		</NavMenuWrapper>
 	);
 }

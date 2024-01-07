@@ -9,6 +9,7 @@ import {
 	type SortingState,
 	useReactTable,
 	type ColumnDef,
+	functionalUpdate,
 } from "@tanstack/react-table";
 import { setCookie } from "cookies-next";
 import * as React from "react";
@@ -63,23 +64,10 @@ export function useDataTable<T>(options: Options<T>) {
 		onChanged: (searchParams) => {
 			setPagination((pagination) => ({
 				...pagination,
-				pageIndex: parseInt(searchParams.get("pageIndex") ?? "0"),
+				pageIndex: Number(searchParams.get("pageIndex") ?? "0"),
 			}));
 		},
 	});
-
-	React.useEffect(() => {
-		setSearchParams({
-			pageIndex: pagination.pageIndex === 0 ? undefined : pagination.pageIndex,
-		} satisfies TableSearchParams);
-	}, [pagination.pageIndex, setSearchParams]);
-	React.useEffect(() => {
-		setCookie(
-			options.cookie.name,
-			JSON.stringify({ ...sorting[0], pageSize: pagination.pageSize } as TableCookie),
-			permanentCookieOptions,
-		);
-	}, [options.cookie, pagination, sorting]);
 
 	const table = useReactTable({
 		data: options.data,
@@ -90,17 +78,27 @@ export function useDataTable<T>(options: Options<T>) {
 		getPaginationRowModel: getPaginationRowModel(),
 		autoResetPageIndex: false,
 		onColumnFiltersChange: setColumnFilters,
-		onSortingChange: (value) => {
-			setSorting(value);
+		onSortingChange: (updater) => {
+			const newSorting = functionalUpdate(updater, sorting);
+			setSorting(newSorting);
 			setCookie(
 				options.cookie.name,
-				// @ts-expect-error `value` type is weird
-				// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-				JSON.stringify({ ...value()[0], pageSize: pagination.pageSize } as TableCookie),
+				JSON.stringify({ pageSize: pagination.pageSize, ...newSorting[0] } as TableCookie),
 				permanentCookieOptions,
 			);
 		},
-		onPaginationChange: setPagination,
+		onPaginationChange: (updater) => {
+			const newPagination = functionalUpdate(updater, pagination);
+			setPagination(newPagination);
+			setSearchParams({
+				pageIndex: newPagination.pageIndex === 0 ? undefined : newPagination.pageIndex,
+			} satisfies TableSearchParams);
+			setCookie(
+				options.cookie.name,
+				JSON.stringify({ ...sorting[0], pageSize: newPagination.pageSize } as TableCookie),
+				permanentCookieOptions,
+			);
+		},
 		state: {
 			columnFilters,
 			sorting,
