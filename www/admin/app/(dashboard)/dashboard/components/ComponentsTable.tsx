@@ -70,7 +70,10 @@ export function ComponentsTable(props: Props) {
 					itemIcon={<CubeIcon className="w-5" />}
 					onAddItem={() => {
 						setOpenAddComponentDef(true);
-						dialogs.setFields([]);
+						useComponentsTableDialogs.setState({
+							fields: [],
+							originalFields: [],
+						});
 					}}
 					onAddGroup={() => setOpenAddGroup(true)}
 				/>

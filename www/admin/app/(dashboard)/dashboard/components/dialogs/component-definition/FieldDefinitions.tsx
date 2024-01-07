@@ -1,3 +1,4 @@
+import type { DialogType } from "./ComponentDefSteps";
 import {
 	DndContext,
 	closestCenter,
@@ -147,7 +148,7 @@ export function AddFieldDefs() {
 }
 
 interface FieldDefsProps {
-	dialogType: "add" | "edit";
+	dialogType: DialogType;
 }
 export const FieldDefs = React.forwardRef<React.ComponentRef<"div">, FieldDefsProps>((props, _) => {
 	const { fields, setFields } = useComponentsTableDialogs();
