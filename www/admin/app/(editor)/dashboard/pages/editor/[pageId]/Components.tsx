@@ -56,8 +56,7 @@ export function Components(props: Props) {
 			);
 			for (let i = 0; i < reordered.length; i++) {
 				const item = reordered[i]!;
-				const isDifferent = item.order !== i;
-				if (isDifferent) {
+				if (item.order !== i) {
 					item.order = i;
 					if (item.diff === "none") {
 						item.diff = "reordered";

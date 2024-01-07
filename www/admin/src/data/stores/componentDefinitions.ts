@@ -11,6 +11,7 @@ interface ComponentsTableDialogsState {
 	item: ComponentsTableItem | null;
 	setItem: (item: ComponentsTableItem) => void;
 
+	isDirty: boolean;
 	fields: FieldDefinitionUI[];
 	originalFields: FieldDefinitionUI[];
 	setFields: (fields: FieldDefinitionUI[]) => void;
@@ -25,25 +26,43 @@ export const useComponentsTableDialogs = create<ComponentsTableDialogsState>((se
 	item: null,
 	setItem: (item) =>
 		set(() => {
-			const fieldDefinitions: FieldDefinitionUI[] = item.isGroup
-				? []
-				: item.fieldDefinitions.map((fd) => ({
+			const fieldDefinitions: FieldDefinitionUI[] = !item.isGroup
+				? item.fieldDefinitions.map((fd) => ({
 						id: fd.id,
 						name: fd.name,
 						type: fd.type,
+						order: fd.order,
 						diff: "none",
-				  }));
+				  }))
+				: [];
 
 			return {
 				item,
 				fields: fieldDefinitions,
 				originalFields: fieldDefinitions,
+				isDirty: false,
 			};
 		}),
 
+	isDirty: false,
 	fields: [],
 	originalFields: [],
-	setFields: (fields) => set(() => ({ fields })),
+	setFields: (fields) =>
+		set((state) => {
+			for (const field of fields) {
+				if (field.diff === "edited" || field.diff === "reordered") {
+					const original = state.originalFields.find((of) => of.id === field.id)!;
+					if (areSame(original, field)) {
+						field.diff = "none";
+					}
+				}
+			}
+
+			return {
+				fields,
+				isDirty: JSON.stringify(state.originalFields) !== JSON.stringify(fields),
+			};
+		}),
 
 	editComponentDefDialog: {
 		isOpen: false,
@@ -72,3 +91,9 @@ export const useComponentsTableDialogs = create<ComponentsTableDialogsState>((se
 			set((state) => ({ deleteDialog: { ...state.deleteDialog, isOpen } })),
 	},
 }));
+
+function areSame(original: FieldDefinitionUI, current: FieldDefinitionUI) {
+	const a = { ...original, diff: undefined };
+	const b = { ...current, diff: undefined };
+	return JSON.stringify(a) === JSON.stringify(b);
+}

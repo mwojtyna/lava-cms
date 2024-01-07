@@ -141,22 +141,20 @@ export const FieldDefs = React.forwardRef<React.ComponentRef<"div">, FieldDefsPr
 	function reorder(e: DragEndEvent) {
 		const { active, over } = e;
 		if (over && active.id !== over.id) {
-			const activeId = Number(active.id);
-			const overId = Number(over.id);
-
-			let newFields = structuredClone(fields);
-
-			const activeField = newFields[activeId]!;
-			const overField = newFields[overId]!;
-			if (activeField.diff === "none") {
-				activeField.diff = "reordered";
+			const reordered = structuredClone(
+				arrayMove(fields, Number(active.id), Number(over.id)),
+			);
+			for (let i = 0; i < reordered.length; i++) {
+				const item = reordered[i]!;
+				if (item.order !== i) {
+					item.order = i;
+					if (item.diff === "none") {
+						item.diff = "reordered";
+					}
+				}
 			}
-			if (overField.diff === "none") {
-				overField.diff = "reordered";
-			}
 
-			newFields = arrayMove(newFields, activeId, overId);
-			setFields(newFields);
+			setFields(reordered);
 		}
 	}
 

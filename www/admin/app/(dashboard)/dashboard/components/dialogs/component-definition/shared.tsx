@@ -66,8 +66,9 @@ FieldTypePicker.displayName = "FieldTypePicker";
 
 export const fieldDefinitionUISchema = z.object({
 	id: z.string().cuid(),
-	name: z.string().min(1),
+	name: z.string().min(1, { message: " " }),
 	type: ComponentDefinitionFieldSchema.shape.type,
+	order: z.number(),
 	diff: z.union([
 		z.literal("none"),
 		z.literal("added"),

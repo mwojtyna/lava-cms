@@ -6,11 +6,6 @@ import { useForm, type SubmitHandler } from "react-hook-form";
 import { z } from "zod";
 import {
 	Button,
-	Dialog,
-	DialogContent,
-	DialogFooter,
-	DialogHeader,
-	DialogTitle,
 	FormControl,
 	FormError,
 	FormField,
@@ -18,9 +13,15 @@ import {
 	FormLabel,
 	FormProvider,
 	Input,
+	Sheet,
+	SheetContent,
+	SheetFooter,
+	SheetHeader,
+	SheetTitle,
 } from "@/src/components/ui/client";
 import { TypographyMuted } from "@/src/components/ui/server";
 import { useComponentsTableDialogs } from "@/src/data/stores/componentDefinitions";
+import { useWindowEvent } from "@/src/hooks";
 import { trpc } from "@/src/utils/trpc";
 import { AddFieldDefs, FieldDefs } from "./FieldDefinitions";
 import { type FieldDefinitionUI, ComponentDefinitionNameError } from "./shared";
@@ -61,25 +62,38 @@ export function EditComponentDefDialog(props: Props) {
 		]);
 	}, [props.componentDef]);
 
+	const [isDirty, setIsDirty] = React.useState(false);
 	const lastStep = steps.at(-1)!;
+
 	switch (lastStep.name) {
 		case "component-definition": {
+			function handleSetOpen(value: boolean) {
+				if (!isDirty) {
+					props.setOpen(value);
+				} else if (confirm("Are you sure you want to discard your changes?")) {
+					props.setOpen(value);
+				}
+			}
+
 			return (
-				<Dialog open={props.open} onOpenChange={props.setOpen}>
+				<Sheet open={props.open} onOpenChange={handleSetOpen}>
 					<ComponentDefStep
 						step={lastStep}
 						setSteps={setSteps}
 						open={props.open}
-						setOpen={props.setOpen}
+						setOpen={handleSetOpen}
+						onSubmit={() => props.setOpen(false)}
+						isDirty={isDirty}
+						setIsDirty={setIsDirty}
 					/>
-				</Dialog>
+				</Sheet>
 			);
 		}
 		case "field-definition": {
 			return (
-				<Dialog open={props.open} onOpenChange={props.setOpen}>
+				<Sheet open={props.open} onOpenChange={props.setOpen}>
 					chuj
-				</Dialog>
+				</Sheet>
 			);
 		}
 	}
@@ -88,16 +102,27 @@ export function EditComponentDefDialog(props: Props) {
 interface ComponentDefStepProps {
 	step: Extract<Step, { name: "component-definition" }>;
 	setSteps: React.Dispatch<React.SetStateAction<Step[]>>;
+
 	open: boolean;
 	setOpen: (value: boolean) => void;
+	onSubmit: () => void;
+
+	isDirty: boolean;
+	setIsDirty: (value: boolean) => void;
 }
 function ComponentDefStep(props: ComponentDefStepProps) {
 	const mutation = trpc.components.editComponentDefinition.useMutation();
-	const { originalFields, fields } = useComponentsTableDialogs();
+	const { originalFields, fields, isDirty: fieldsDirty } = useComponentsTableDialogs();
 
 	const form = useForm<EditComponentDefDialogInputs>({
 		resolver: zodResolver(editComponentDefDialogInputsSchema),
 	});
+
+	React.useEffect(() => {
+		props.setIsDirty(form.formState.isDirty || fieldsDirty);
+	}, [fieldsDirty, form.formState.isDirty, props]);
+	const canSubmit = form.formState.isValid && props.isDirty;
+
 	const onSubmit: SubmitHandler<EditComponentDefDialogInputs> = (data) => {
 		const addedFields = fields
 			.map((f, i) => ({ ...f, order: i }))
@@ -127,7 +152,7 @@ function ComponentDefStep(props: ComponentDefStepProps) {
 				editedFields,
 			},
 			{
-				onSuccess: () => props.setOpen(false),
+				onSuccess: () => props.onSubmit(),
 				// Can't extract the whole handler to a shared function
 				// because the type of `err` is impossible to specify
 				onError: (err) => {
@@ -155,11 +180,26 @@ function ComponentDefStep(props: ComponentDefStepProps) {
 		}
 	}, [form, props.open, props.step.componentDef.name]);
 
+	useWindowEvent("keydown", (e) => {
+		if ((e.ctrlKey || e.metaKey) && e.key === "s") {
+			e.preventDefault();
+			if (canSubmit) {
+				void form.handleSubmit(onSubmit)();
+			}
+		}
+	});
+	useWindowEvent("beforeunload", (e) => {
+		if (props.open && canSubmit) {
+			// Display a confirmation dialog
+			e.preventDefault();
+		}
+	});
+
 	return (
-		<DialogContent className="max-w-md">
-			<DialogHeader>
-				<DialogTitle>Edit &quot;{props.step.componentDef.name}&quot;</DialogTitle>
-			</DialogHeader>
+		<SheetContent className="max-w-md">
+			<SheetHeader>
+				<SheetTitle>Edit &quot;{props.step.componentDef.name}&quot;</SheetTitle>
+			</SheetHeader>
 
 			<FormProvider {...form}>
 				<form className="flex flex-col gap-4" onSubmit={form.handleSubmit(onSubmit)}>
@@ -186,17 +226,18 @@ function ComponentDefStep(props: ComponentDefStepProps) {
 
 					<FieldDefs dialogType="edit" />
 
-					<DialogFooter>
+					<SheetFooter>
 						<Button
 							type="submit"
 							loading={mutation.isLoading}
+							disabled={!canSubmit}
 							icon={<PencilSquareIcon className="w-5" />}
 						>
 							Edit
 						</Button>
-					</DialogFooter>
+					</SheetFooter>
 				</form>
 			</FormProvider>
-		</DialogContent>
+		</SheetContent>
 	);
 }
