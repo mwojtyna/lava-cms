@@ -52,8 +52,16 @@ export function EditComponentDefDialog(props: Props) {
 			componentDef: props.componentDef,
 		},
 	]);
-	const lastStep = steps.at(-1)!;
+	React.useEffect(() => {
+		setSteps([
+			{
+				name: "component-definition",
+				componentDef: props.componentDef,
+			},
+		]);
+	}, [props.componentDef]);
 
+	const lastStep = steps.at(-1)!;
 	switch (lastStep.name) {
 		case "component-definition": {
 			return (
@@ -145,8 +153,7 @@ function ComponentDefStep(props: ComponentDefStepProps) {
 		if (props.open) {
 			form.reset({ compName: props.step.componentDef.name });
 		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [props.open]);
+	}, [form, props.open, props.step.componentDef.name]);
 
 	return (
 		<DialogContent className="max-w-md">

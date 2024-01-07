@@ -131,12 +131,12 @@ function ComponentsTableActions({ item }: { item: ComponentsTableItem }) {
 				<DropdownMenuContent>
 					<DropdownMenuItem
 						onClick={() => {
+							dialogs.setItem(item);
 							if (item.isGroup) {
 								dialogs.editGroupDialog.setIsOpen(true);
 							} else {
 								dialogs.editComponentDefDialog.setIsOpen(true);
 							}
-							dialogs.setItem(item);
 						}}
 					>
 						<PencilSquareIcon className="w-4" />

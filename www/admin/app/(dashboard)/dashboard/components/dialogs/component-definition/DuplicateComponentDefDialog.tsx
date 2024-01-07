@@ -20,21 +20,16 @@ import {
 	DialogTitle,
 } from "@/src/components/ui/client";
 import { TypographyMuted } from "@/src/components/ui/server";
+import { useComponentsTableDialogs } from "@/src/data/stores/componentDefinitions";
 import { trpc } from "@/src/utils/trpc";
 import { AddFieldDefs, FieldDefs } from "./FieldDefinitions";
-import {
-	ComponentDefinitionNameError,
-	fieldDefinitionUISchema,
-	groupsToComboboxEntries,
-} from "./shared";
+import { ComponentDefinitionNameError, groupsToComboboxEntries } from "./shared";
 
 const duplicateComponentDefDialogInputsSchema = z.object({
 	// This is named `compName` instead of `name` because `name` is already used
 	// in the `FieldDefinitionUI` type and errors are duplicated.
 	// Also it's easier to change this name than the other one
 	compName: z.string().min(1, { message: " " }),
-	// Omitting id because it's not available when adding a new component definition
-	fields: z.array(fieldDefinitionUISchema.omit({ id: true })),
 	newParentId: z.string().cuid(),
 });
 type DuplicateComponentDefDialogInputs = z.infer<typeof duplicateComponentDefDialogInputsSchema>;
@@ -46,6 +41,7 @@ interface Props {
 }
 export function DuplicateComponentDefDialog(props: Props) {
 	const mutation = trpc.components.addComponentDefinition.useMutation();
+	const { fields } = useComponentsTableDialogs();
 
 	const allGroups = trpc.components.getAllGroups.useQuery(undefined, {
 		enabled: props.open,
@@ -59,7 +55,7 @@ export function DuplicateComponentDefDialog(props: Props) {
 		mutation.mutate(
 			{
 				name: data.compName,
-				fields: data.fields,
+				fields: fields,
 				groupId: data.newParentId,
 			},
 			{
@@ -88,11 +84,6 @@ export function DuplicateComponentDefDialog(props: Props) {
 	React.useEffect(() => {
 		form.reset({
 			compName: props.componentDef.name,
-			fields: props.componentDef.fieldDefinitions.map((field) => ({
-				name: field.name,
-				type: field.type,
-				diff: "none",
-			})),
 			// null -> undefined
 			newParentId: props.componentDef.parentGroupId ?? undefined,
 		});
@@ -130,17 +121,7 @@ export function DuplicateComponentDefDialog(props: Props) {
 							<AddFieldDefs />
 						</FormItem>
 
-						<FormField
-							control={form.control}
-							name="fields"
-							render={({ field }) => (
-								<FormItem className="max-h-[50vh] overflow-auto">
-									<FormControl>
-										<FieldDefs dialogType="add" {...field} />
-									</FormControl>
-								</FormItem>
-							)}
-						/>
+						<FieldDefs dialogType="add" />
 
 						<FormField
 							control={form.control}
