@@ -20,7 +20,7 @@ import { ArrowUturnLeftIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { IconGripVertical } from "@tabler/icons-react";
 import * as React from "react";
-import { useForm, type SubmitHandler } from "react-hook-form";
+import { useForm, type SubmitHandler, FormProvider } from "react-hook-form";
 import {
 	FormField,
 	FormItem,
@@ -28,6 +28,7 @@ import {
 	Input,
 	Button,
 	ActionIcon,
+	FormError,
 } from "@/src/components/ui/client";
 import { Card, TypographyMuted } from "@/src/components/ui/server";
 import { useComponentsTableDialogs } from "@/src/data/stores/componentDefinitions";
@@ -49,53 +50,78 @@ export function AddFieldDefs() {
 		setFields([...fields, { ...data, diff: "added" }]);
 	};
 
+	// Don't know why, but we also need to check if there are any errors
+	// otherwise the button is enabled even if it shouldn't be
+	const isValid = form.formState.isValid && Object.keys(form.formState.errors).length === 0;
+
+	// Custom resolver doesn't work
+	const watched = form.watch();
+	React.useEffect(() => {
+		if (fields.find((field) => field.name === watched.name)) {
+			form.setError("name", {
+				message: `Field '${watched.name}' already exists`,
+			});
+		}
+		if (!fields.find((field) => field.name === watched.name)) {
+			form.clearErrors("name");
+		}
+	}, [fields, form, watched.name]);
+
 	return (
-		<div className="flex gap-2" data-testid="add-field-definition">
-			<div className="grid grid-cols-2">
-				<FormField
-					control={form.control}
-					name="name"
-					render={({ field }) => (
-						<FormItem>
-							<FormControl>
-								<Input
-									inputClassName="rounded-r-none"
-									placeholder="Name"
-									onKeyDown={async (e) => {
-										if (e.key === "Enter") {
-											e.preventDefault();
-											await form.handleSubmit(onSubmit)();
-										}
-									}}
-									aria-required
-									{...field}
-								/>
-							</FormControl>
-						</FormItem>
-					)}
-				/>
+		<FormProvider {...form}>
+			<div className="flex gap-2" data-testid="add-field-definition">
+				<div className="grid grid-cols-2">
+					<FormField
+						control={form.control}
+						name="name"
+						render={({ field }) => (
+							<FormItem>
+								<FormControl>
+									<Input
+										inputClassName="rounded-r-none"
+										placeholder="Name"
+										onKeyDown={(e) => {
+											if (e.key === "Enter") {
+												e.preventDefault();
+												if (isValid) {
+													void form.handleSubmit(onSubmit)();
+												}
+											}
+										}}
+										aria-required
+										{...field}
+									/>
+								</FormControl>
+								<FormError className="whitespace-nowrap" />
+							</FormItem>
+						)}
+					/>
 
-				<FormField
-					control={form.control}
-					name="type"
-					render={({ field }) => (
-						<FormItem>
-							<FormControl>
-								<FieldTypePicker className="rounded-l-none border-l-0" {...field} />
-							</FormControl>
-						</FormItem>
-					)}
-				/>
+					<FormField
+						control={form.control}
+						name="type"
+						render={({ field }) => (
+							<FormItem>
+								<FormControl>
+									<FieldTypePicker
+										className="rounded-l-none border-l-0"
+										{...field}
+									/>
+								</FormControl>
+							</FormItem>
+						)}
+					/>
+				</div>
+
+				<Button
+					variant={"secondary"}
+					disabled={!isValid}
+					onClick={form.handleSubmit(onSubmit)}
+				>
+					Add
+				</Button>
 			</div>
-
-			<Button
-				variant={"secondary"}
-				disabled={!form.formState.isValid}
-				onClick={() => onSubmit(form.getValues())}
-			>
-				Add
-			</Button>
-		</div>
+		</FormProvider>
 	);
 }
 
@@ -143,15 +169,9 @@ export const FieldDefs = React.forwardRef<React.ComponentRef<"div">, FieldDefsPr
 			if (toDelete.diff === "added") {
 				newFields = fields.filter((field) => field !== toDelete);
 			} else {
-				newFields = fields.map((field) => {
-					if (field !== toDelete) {
-						return field;
-					}
-					return {
-						...field,
-						diff: "deleted",
-					};
-				});
+				newFields = fields.map((field) =>
+					field !== toDelete ? field : { ...field, diff: "deleted" },
+				);
 			}
 		}
 

@@ -159,7 +159,7 @@ const FormError = React.forwardRef<
 		</span>
 	);
 });
-FormError.displayName = "FormMessage";
+FormError.displayName = "FormError";
 
 export {
 	useFormField,
