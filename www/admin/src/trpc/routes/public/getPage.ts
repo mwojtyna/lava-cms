@@ -125,6 +125,11 @@ function getFields(component: Component): Promise<Record<string, FieldContent>> 
 
 				break;
 			}
+			case "ARRAY": {
+				// TODO: Implement
+				data = "Array not implemented";
+				break;
+			}
 		}
 
 		const accAwaited = await acc;

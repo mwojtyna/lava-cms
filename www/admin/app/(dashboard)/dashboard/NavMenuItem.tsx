@@ -16,7 +16,7 @@ interface Props {
 }
 export function NavMenuItem({ routes, route, small }: Props) {
 	const matchedRoute = getRoute(usePathname(), routes);
-	const { setOpen } = useNavMenu();
+	const { setIsOpen: setOpen } = useNavMenu();
 
 	return (
 		<Tooltip>

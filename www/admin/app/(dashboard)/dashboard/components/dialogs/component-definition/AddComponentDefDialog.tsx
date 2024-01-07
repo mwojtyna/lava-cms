@@ -20,17 +20,16 @@ import {
 	Input,
 } from "@/src/components/ui/client";
 import { TypographyMuted } from "@/src/components/ui/server";
+import { useComponentsTableDialogs } from "@/src/data/stores/componentDefinitions";
 import { trpc } from "@/src/utils/trpc";
 import { AddFieldDefs, FieldDefs } from "./FieldDefinitions";
-import { ComponentDefinitionNameError, fieldDefinitionUISchema } from "./shared";
+import { ComponentDefinitionNameError } from "./shared";
 
 const addComponentDefDialogInputsSchema = z.object({
 	// This is named `compName` instead of `name` because `name` is already used
 	// in the `FieldDefinitionUI` type and errors are duplicated.
 	// Also it's easier to change this name than the other one
 	compName: z.string().trim().min(1, { message: "Name cannot be empty" }),
-	// Omitting id because it's not available when adding a new component definition
-	fields: z.array(fieldDefinitionUISchema.omit({ id: true })),
 });
 type AddComponentDefDialogInputs = z.infer<typeof addComponentDefDialogInputsSchema>;
 
@@ -41,17 +40,16 @@ interface Props {
 }
 export function AddComponentDefDialog(props: Props) {
 	const mutation = trpc.components.addComponentDefinition.useMutation();
-	const [anyEditing, setAnyEditing] = React.useState(false);
+	const { fields } = useComponentsTableDialogs();
 
 	const form = useForm<AddComponentDefDialogInputs>({
 		resolver: zodResolver(addComponentDefDialogInputsSchema),
-		defaultValues: { fields: [] },
 	});
 	const onSubmit: SubmitHandler<AddComponentDefDialogInputs> = (data) => {
 		mutation.mutate(
 			{
 				name: data.compName,
-				fields: data.fields,
+				fields,
 				groupId: props.group.id,
 			},
 			{
@@ -81,7 +79,8 @@ export function AddComponentDefDialog(props: Props) {
 		if (props.open) {
 			form.reset();
 		}
-	}, [form, props.open])
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [props.open]);
 
 	return (
 		<Dialog open={props.open} onOpenChange={props.setOpen}>
@@ -107,41 +106,16 @@ export function AddComponentDefDialog(props: Props) {
 								</FormItem>
 							)}
 						/>
-						<FormField
-							control={form.control}
-							name="fields"
-							render={({ field }) => (
-								<FormItem>
-									<FormLabel>Fields</FormLabel>
-									<FormControl>
-										<AddFieldDefs anyEditing={anyEditing} {...field} />
-									</FormControl>
-									<FormError />
-								</FormItem>
-							)}
-						/>
+						<FormItem>
+							<FormLabel>Fields</FormLabel>
+							<AddFieldDefs />
+						</FormItem>
 
-						<FormField
-							control={form.control}
-							name="fields"
-							render={({ field }) => (
-								<FormItem className="max-h-[50vh] overflow-auto">
-									<FormControl>
-										<FieldDefs
-											dialogType="add"
-											anyEditing={anyEditing}
-											setAnyEditing={setAnyEditing}
-											{...field}
-										/>
-									</FormControl>
-								</FormItem>
-							)}
-						/>
+						<FieldDefs dialogType="add" />
 
 						<DialogFooter>
 							<Button
 								type="submit"
-								disabled={anyEditing}
 								loading={mutation.isLoading}
 								icon={<CubeIcon className="w-5" />}
 							>

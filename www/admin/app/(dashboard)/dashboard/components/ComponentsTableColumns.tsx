@@ -23,14 +23,8 @@ import {
 	DropdownMenuItem,
 	DropdownMenuTrigger,
 } from "@/src/components/ui/client";
-import { useComponentDefEditDialog } from "@/src/data/stores/componentDefinitions";
+import { useComponentsTableDialogs } from "@/src/data/stores/componentDefinitions";
 import { BulkDeleteDialog, BulkMoveDialog } from "./dialogs/BulkDialogs";
-import {
-	EditComponentDefDialog,
-	DuplicateComponentDefDialog,
-} from "./dialogs/component-definition";
-import { EditGroupDialog } from "./dialogs/GroupDialogs";
-import { DeleteDialog, MoveDialog } from "./dialogs/SharedDialogs";
 
 export const columns: ColumnDef<ComponentsTableItem>[] = [
 	{
@@ -77,12 +71,11 @@ export const columns: ColumnDef<ComponentsTableItem>[] = [
 					<Button
 						variant={"link"}
 						className="font-normal"
-						onClick={() =>
-							useComponentDefEditDialog.setState({
-								id: row.original.id,
-								open: true,
-							})
-						}
+						onClick={() => {
+							const state = useComponentsTableDialogs.getState();
+							state.editComponentDefDialog.setIsOpen(true);
+							state.setItem(row.original);
+						}}
 					>
 						{row.original.name}
 					</Button>
@@ -124,20 +117,7 @@ export const columns: ColumnDef<ComponentsTableItem>[] = [
 ];
 
 function ComponentsTableActions({ item }: { item: ComponentsTableItem }) {
-	const [openEditDef, setOpenEditDef] = React.useState(false);
-	const [openEditGroup, setOpenEditGroup] = React.useState(false);
-	const [openMove, setOpenMove] = React.useState(false);
-	const [openDuplicate, setOpenDuplicate] = React.useState(false);
-	const [openDelete, setOpenDelete] = React.useState(false);
-
-	React.useEffect(() => {
-		const unsub = useComponentDefEditDialog.subscribe((state) => {
-			if (state.id === item.id) {
-				setOpenEditDef(state.open);
-			}
-		});
-		return unsub;
-	}, [item.id]);
+	const dialogs = useComponentsTableDialogs();
 
 	return (
 		<>
@@ -152,23 +132,34 @@ function ComponentsTableActions({ item }: { item: ComponentsTableItem }) {
 					<DropdownMenuItem
 						onClick={() => {
 							if (item.isGroup) {
-								setOpenEditGroup(true);
+								dialogs.editGroupDialog.setIsOpen(true);
 							} else {
-								setOpenEditDef(true);
+								dialogs.editComponentDefDialog.setIsOpen(true);
 							}
+							dialogs.setItem(item);
 						}}
 					>
 						<PencilSquareIcon className="w-4" />
 						<span>Edit</span>
 					</DropdownMenuItem>
 
-					<DropdownMenuItem onClick={() => setOpenMove(true)}>
+					<DropdownMenuItem
+						onClick={() => {
+							dialogs.moveDialog.setIsOpen(true);
+							dialogs.setItem(item);
+						}}
+					>
 						<FolderArrowDownIcon className="w-4" />
 						<span>Move</span>
 					</DropdownMenuItem>
 
 					{!item.isGroup && (
-						<DropdownMenuItem onClick={() => setOpenDuplicate(true)}>
+						<DropdownMenuItem
+							onClick={() => {
+								dialogs.duplicateDialog.setIsOpen(true);
+								dialogs.setItem(item);
+							}}
+						>
 							<DocumentDuplicateIcon className="w-4" />
 							<span>Duplicate</span>
 						</DropdownMenuItem>
@@ -176,33 +167,16 @@ function ComponentsTableActions({ item }: { item: ComponentsTableItem }) {
 
 					<DropdownMenuItem
 						className="text-destructive"
-						onClick={() => setOpenDelete(true)}
+						onClick={() => {
+							dialogs.deleteDialog.setIsOpen(true);
+							dialogs.setItem(item);
+						}}
 					>
 						<TrashIcon className="w-4" />
 						<span>Delete</span>
 					</DropdownMenuItem>
 				</DropdownMenuContent>
 			</DropdownMenu>
-
-			{item.isGroup ? (
-				<EditGroupDialog group={item} open={openEditGroup} setOpen={setOpenEditGroup} />
-			) : (
-				<EditComponentDefDialog
-					componentDef={item}
-					open={openEditDef}
-					setOpen={setOpenEditDef}
-				/>
-			)}
-
-			<MoveDialog item={item} open={openMove} setOpen={setOpenMove} />
-			{!item.isGroup && (
-				<DuplicateComponentDefDialog
-					componentDef={item}
-					open={openDuplicate}
-					setOpen={setOpenDuplicate}
-				/>
-			)}
-			<DeleteDialog item={item} open={openDelete} setOpen={setOpenDelete} />
 		</>
 	);
 }

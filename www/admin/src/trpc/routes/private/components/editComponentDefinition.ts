@@ -49,12 +49,22 @@ export const editComponentDefinition = privateProcedure
 				name: input.newName,
 				group_id: input.newGroupId,
 				field_definitions: {
-					create: input.addedFields,
-					update: input.editedFields?.map((field) => ({
+					createMany: {
+						data: input.addedFields ?? [],
+					},
+					updateMany: input.editedFields?.map((field) => ({
 						where: { id: field.id },
-						data: field,
+						data: {
+							name: field.name,
+							type: field.type,
+							order: field.order,
+						},
 					})),
-					delete: input.deletedFieldIds?.map((id) => ({ id })),
+					deleteMany: {
+						id: {
+							in: input.deletedFieldIds,
+						},
+					},
 				},
 				last_update: new Date(),
 			},

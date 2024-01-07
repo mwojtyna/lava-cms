@@ -5,11 +5,11 @@ import "client-only";
 
 interface MenuState {
 	isOpen: boolean;
-	setOpen: (value: boolean) => void;
+	setIsOpen: (value: boolean) => void;
 }
 export const useNavMenu = create<MenuState>((set) => ({
 	isOpen: false,
-	setOpen: (value) => set(() => ({ isOpen: value })),
+	setIsOpen: (value) => set(() => ({ isOpen: value })),
 }));
 
 interface ColorThemeState {

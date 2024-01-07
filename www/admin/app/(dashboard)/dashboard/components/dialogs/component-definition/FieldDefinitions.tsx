@@ -1,4 +1,3 @@
-import type { ComponentDefinitionField } from "@prisma/client";
 import {
 	DndContext,
 	closestCenter,
@@ -17,13 +16,7 @@ import {
 	useSortable,
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import {
-	ArrowRightIcon,
-	ArrowUturnLeftIcon,
-	PencilSquareIcon,
-	TrashIcon,
-	XMarkIcon,
-} from "@heroicons/react/24/outline";
+import { ArrowUturnLeftIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { IconGripVertical } from "@tabler/icons-react";
 import * as React from "react";
@@ -35,9 +28,9 @@ import {
 	Input,
 	Button,
 	ActionIcon,
-	type FormFieldProps,
 } from "@/src/components/ui/client";
 import { Card, TypographyMuted } from "@/src/components/ui/server";
+import { useComponentsTableDialogs } from "@/src/data/stores/componentDefinitions";
 import { cn } from "@/src/utils/styling";
 import {
 	FieldTypePicker,
@@ -46,90 +39,74 @@ import {
 	type FieldDefinitionUI,
 } from "./shared";
 
-interface AddFieldDefsProps extends FormFieldProps<FieldDefinitionUI[]> {
-	anyEditing: boolean;
-}
-export const AddFieldDefs = React.forwardRef<React.ComponentRef<"div">, AddFieldDefsProps>(
-	(props, ref) => {
-		const form = useForm<FieldDefinitionUI>({
-			resolver: zodResolver(fieldDefinitionUISchema.omit({ id: true, diff: true })),
-		});
-		const onSubmit: SubmitHandler<FieldDefinitionUI> = (data) => {
-			props.onChange([...props.value, { ...data, diff: "added" }]);
-		};
+export const AddFieldDefs = React.forwardRef<React.ComponentRef<"div">>((_, ref) => {
+	const { fields, setFields } = useComponentsTableDialogs();
 
-		return (
-			<div ref={ref} className="flex gap-2" data-testid="add-field-definition">
-				<div className="grid grid-cols-2">
-					<FormField
-						control={form.control}
-						name="name"
-						render={({ field }) => (
-							<FormItem>
-								<FormControl>
-									<Input
-										inputClassName="rounded-r-none"
-										placeholder="Name"
-										onKeyDown={async (e) => {
-											if (e.key === "Enter") {
-												e.preventDefault();
-												await form.handleSubmit(onSubmit)();
-											}
-										}}
-										aria-required
-										{...field}
-									/>
-								</FormControl>
-							</FormItem>
-						)}
-					/>
+	const form = useForm<FieldDefinitionUI>({
+		resolver: zodResolver(fieldDefinitionUISchema.omit({ id: true, diff: true })),
+	});
+	const onSubmit: SubmitHandler<FieldDefinitionUI> = (data) => {
+		setFields([...fields, { ...data, diff: "added" }]);
+	};
 
-					<FormField
-						control={form.control}
-						name="type"
-						render={({ field }) => (
-							<FormItem>
-								<FormControl>
-									<FieldTypePicker
-										className="rounded-l-none border-l-0"
-										{...field}
-									/>
-								</FormControl>
-							</FormItem>
-						)}
-					/>
-				</div>
+	return (
+		<div ref={ref} className="flex gap-2" data-testid="add-field-definition">
+			<div className="grid grid-cols-2">
+				<FormField
+					control={form.control}
+					name="name"
+					render={({ field }) => (
+						<FormItem>
+							<FormControl>
+								<Input
+									inputClassName="rounded-r-none"
+									placeholder="Name"
+									onKeyDown={async (e) => {
+										if (e.key === "Enter") {
+											e.preventDefault();
+											await form.handleSubmit(onSubmit)();
+										}
+									}}
+									aria-required
+									{...field}
+								/>
+							</FormControl>
+						</FormItem>
+					)}
+				/>
 
-				<Button
-					variant={"secondary"}
-					disabled={!form.formState.isValid || props.anyEditing}
-					onClick={() => onSubmit(form.getValues())}
-				>
-					Add
-				</Button>
+				<FormField
+					control={form.control}
+					name="type"
+					render={({ field }) => (
+						<FormItem>
+							<FormControl>
+								<FieldTypePicker className="rounded-l-none border-l-0" {...field} />
+							</FormControl>
+						</FormItem>
+					)}
+				/>
 			</div>
-		);
-	},
-);
+
+			<Button
+				variant={"secondary"}
+				disabled={!form.formState.isValid}
+				onClick={() => onSubmit(form.getValues())}
+			>
+				Add
+			</Button>
+		</div>
+	);
+});
 AddFieldDefs.displayName = "AddFieldDefs";
 
-type FieldDefsProps = FormFieldProps<FieldDefinitionUI[]> & {
-	anyEditing: boolean;
-	setAnyEditing: (value: boolean) => void;
-} & (
-		| {
-				dialogType: "add";
-		  }
-		| {
-				dialogType: "edit";
-				originalFields: ComponentDefinitionField[];
-		  }
-	);
+interface FieldDefsProps {
+	dialogType: "add" | "edit";
+}
 export const FieldDefs = React.forwardRef<React.ComponentRef<"div">, FieldDefsProps>((props, _) => {
-	const ids: string[] = React.useMemo(
-		() => props.value.map((_, i) => i.toString()),
-		[props.value],
-	);
+	const { fields, setFields } = useComponentsTableDialogs();
+
+	const ids: string[] = React.useMemo(() => fields.map((_, i) => i.toString()), [fields]);
 	const sensors = useSensors(
 		useSensor(PointerSensor),
 		useSensor(KeyboardSensor, {
@@ -139,39 +116,27 @@ export const FieldDefs = React.forwardRef<React.ComponentRef<"div">, FieldDefsPr
 	function reorder(e: DragEndEvent) {
 		const { active, over } = e;
 		if (over && active.id !== over.id) {
-			props.onChange(arrayMove(props.value, Number(active.id), Number(over.id)));
+			const activeId = Number(active.id);
+			const overId = Number(over.id);
+
+			let newFields = structuredClone(fields);
+			newFields[activeId]!.diff = "reordered";
+			newFields[overId]!.diff = "reordered";
+			newFields = arrayMove(newFields, activeId, overId);
+			setFields(newFields);
 		}
 	}
 
-	function onEditSubmit(before: FieldDefinitionUI, after: FieldDefinitionUI) {
-		const fields: FieldDefinitionUI[] = props.value.map((field) => {
-			if (field === before) {
-				// Don't add any diff info in add dialog or when added a field in edit dialog
-				if (props.dialogType === "add" || before.diff === "added") {
-					return after;
-				}
-
-				const original = props.originalFields.find((of) => of.id === after.id)!;
-				return after.name === original.name && after.type === original.type
-					? { ...after, diff: "none" }
-					: { ...after, diff: "edited" };
-			} else {
-				return field;
-			}
-		});
-		props.onChange(fields);
-		props.setAnyEditing(false);
-	}
 	function onDelete(toDelete: FieldDefinitionUI) {
-		let fields: FieldDefinitionUI[] = [];
+		let newFields: FieldDefinitionUI[] = [];
 
 		if (props.dialogType === "add") {
-			fields = props.value.filter((field) => field !== toDelete);
+			newFields = fields.filter((field) => field !== toDelete);
 		} else if (props.dialogType === "edit") {
 			if (toDelete.diff === "added") {
-				fields = props.value.filter((field) => field !== toDelete);
+				newFields = fields.filter((field) => field !== toDelete);
 			} else {
-				fields = props.value.map((field) => {
+				newFields = fields.map((field) => {
 					if (field !== toDelete) {
 						return field;
 					}
@@ -183,10 +148,10 @@ export const FieldDefs = React.forwardRef<React.ComponentRef<"div">, FieldDefsPr
 			}
 		}
 
-		props.onChange(fields);
+		setFields(newFields);
 	}
 	function onUnDelete(toUnDelete: FieldDefinitionUI) {
-		const fields: FieldDefinitionUI[] = props.value.map((field) =>
+		const newFields: FieldDefinitionUI[] = fields.map((field) =>
 			field === toUnDelete
 				? {
 						...field,
@@ -194,10 +159,10 @@ export const FieldDefs = React.forwardRef<React.ComponentRef<"div">, FieldDefsPr
 				  }
 				: field,
 		);
-		props.onChange(fields);
+		setFields(newFields);
 	}
 
-	return props.value.length > 0 ? (
+	return fields.length > 0 ? (
 		<div className="flex flex-col gap-2" data-testid="component-fields">
 			<DndContext
 				sensors={sensors}
@@ -206,28 +171,23 @@ export const FieldDefs = React.forwardRef<React.ComponentRef<"div">, FieldDefsPr
 				onDragEnd={reorder}
 			>
 				<SortableContext items={ids} strategy={verticalListSortingStrategy}>
-					{props.value.map((field, i) => {
+					{fields.map((field, i) => {
 						const sharedProps: Omit<
-							// Extract the props that are shared between the two types
 							Extract<FieldDefProps, { dialogType: "add" }>,
 							"dialogType"
 						> = {
-							id: i.toString(),
+							dndId: i.toString(),
 							field,
-							anyEditing: props.anyEditing,
-							onEditToggle: (value) => props.setAnyEditing(value),
-							onEditSubmit,
 							onDelete,
 						};
 
 						return props.dialogType === "add" ? (
-							<FieldDef key={i} dialogType={props.dialogType} {...sharedProps} />
+							<FieldDefCard key={i} dialogType={"add"} {...sharedProps} />
 						) : (
-							<FieldDef
+							<FieldDefCard
 								key={i}
-								dialogType={props.dialogType}
+								dialogType={"edit"}
 								{...sharedProps}
-								original={props.originalFields.find((of) => of.id === field.id)!}
 								onUnDelete={onUnDelete}
 							/>
 						);
@@ -242,12 +202,8 @@ export const FieldDefs = React.forwardRef<React.ComponentRef<"div">, FieldDefsPr
 FieldDefs.displayName = "FieldDefs";
 
 type FieldDefProps = {
-	id: string;
+	dndId: string;
 	field: FieldDefinitionUI;
-	anyEditing: boolean;
-
-	onEditToggle: (value: boolean) => void;
-	onEditSubmit: (beforeEdit: FieldDefinitionUI, afterEdit: FieldDefinitionUI) => void;
 	onDelete: (toDelete: FieldDefinitionUI) => void;
 } & (
 	| {
@@ -255,33 +211,17 @@ type FieldDefProps = {
 	  }
 	| {
 			dialogType: "edit";
-			original: ComponentDefinitionField;
 			onUnDelete: (toUnDelete: FieldDefinitionUI) => void;
 	  }
 );
-function FieldDef(props: FieldDefProps) {
-	const [isEditing, setIsEditing] = React.useState(false);
-	const form = useForm<FieldDefinitionUI>({
-		// Must set `values` instead of `defaultValues` because after reordering, the old values were kept
-		values: props.field,
-	});
-	const onSubmit: SubmitHandler<FieldDefinitionUI> = (data) => {
-		props.onEditSubmit(props.field, data);
-		setIsEditing(false);
-	};
-	function cancel() {
-		setIsEditing(false);
-		props.onEditToggle(false);
-		form.reset();
-	}
-
+function FieldDefCard(props: FieldDefProps) {
 	const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
-		id: props.id,
+		id: props.dndId,
 		// We have no stable unique property to use as id, so we have to disable this
 		// or the list will reshuffle on drop
 		// https://github.com/clauderic/dnd-kit/issues/767#issuecomment-1140556346
 		animateLayoutChanges: () => false,
-		disabled: props.anyEditing || props.field.diff === "deleted",
+		disabled: props.field.diff === "deleted",
 	});
 	const style: React.CSSProperties = {
 		transform: CSS.Transform.toString(transform),
@@ -290,7 +230,7 @@ function FieldDef(props: FieldDefProps) {
 	};
 
 	type DiffType = FieldDefinitionUI["diff"];
-	const diffStyle: Record<Exclude<DiffType, "none">, string> = {
+	const diffStyle: Record<Exclude<DiffType, "none" | "reordered">, string> = {
 		added: "border-l-green-500",
 		edited: "border-l-brand",
 		deleted: "border-l-red-500",
@@ -304,7 +244,9 @@ function FieldDef(props: FieldDefProps) {
 				"group flex-row gap-4 md:p-3",
 				props.dialogType === "edit" &&
 					props.field.diff !== "none" &&
+					props.field.diff !== "reordered" &&
 					`border-l-[3px] ${diffStyle[props.field.diff]}`,
+				props.field.diff !== "deleted" && "cursor-pointer hover:bg-accent/70",
 			)}
 			data-test-diff={props.dialogType === "edit" ? props.field.diff : undefined}
 		>
@@ -314,99 +256,33 @@ function FieldDef(props: FieldDefProps) {
 					<IconGripVertical
 						className={cn(
 							"w-5 cursor-move text-muted-foreground",
-							(props.anyEditing || props.field.diff === "deleted") &&
+							props.field.diff === "deleted" &&
 								"cursor-auto text-muted-foreground/50",
 						)}
 					/>
 				</div>
 
-				{isEditing ? (
-					<FormField
-						control={form.control}
-						name="name"
-						render={({ field }) => (
-							<FormItem>
-								<FormControl>
-									<Input
-										inputClassName="-ml-1 px-1 py-0 h-fit text-base text-left rounded-sm max-w-[150px]"
-										onKeyDown={async (e) => {
-											if (e.key === "Escape") {
-												e.preventDefault();
-												cancel();
-											} else if (e.key === "Enter") {
-												e.preventDefault();
-												await form.handleSubmit(onSubmit)();
-											}
-										}}
-										autoFocus
-										{...field}
-									/>
-								</FormControl>
-							</FormItem>
-						)}
-					/>
-				) : (
-					<span className="max-w-[17ch] overflow-auto whitespace-nowrap font-medium">
-						{props.field.name}
-					</span>
-				)}
+				<span className="max-w-[17ch] overflow-auto whitespace-nowrap font-medium">
+					{props.field.name}
+				</span>
 
-				{isEditing ? (
-					<FormField
-						control={form.control}
-						name="type"
-						render={({ field }) => (
-							<FormItem>
-								<FormControl>
-									<FieldTypePicker
-										className="h-fit rounded-sm px-1 py-0.5 [&>svg]:ml-0"
-										onKeyDown={(e) => {
-											if (e.key === "Escape") {
-												e.preventDefault();
-												cancel();
-											}
-										}}
-										{...field}
-									/>
-								</FormControl>
-							</FormItem>
-						)}
-					/>
-				) : (
-					<span className="text-sm">{fieldTypeMap[props.field.type]}</span>
-				)}
+				<span className="text-sm">{fieldTypeMap[props.field.type]}</span>
 			</div>
 
 			{/* Actions */}
-			<div
-				className={cn(
-					"ml-auto flex items-center gap-2 text-sm transition-opacity",
-					!isEditing && props.anyEditing && "pointer-events-none opacity-0",
+			<div className={cn("ml-auto flex items-center gap-2 text-sm transition-opacity")}>
+				{props.dialogType === "edit" && props.field.diff === "deleted" && (
+					<ActionIcon
+						variant={"simple"}
+						className="mr-0.5"
+						onClick={() => props.onUnDelete(props.field)}
+						tooltip="Restore"
+					>
+						<ArrowUturnLeftIcon className="w-5" data-testid="restore-field-btn" />
+					</ActionIcon>
 				)}
-			>
-				{/* Display undo arrow when edited or deleted a field */}
-				{props.dialogType === "edit" &&
-					!isEditing &&
-					(props.field.diff === "edited" || props.field.diff === "deleted") && (
-						<ActionIcon
-							variant={"simple"}
-							className="mr-0.5"
-							onClick={() => {
-								props.field.diff === "edited"
-									? props.onEditSubmit(props.field, {
-											...props.original,
-											diff: "none",
-									  })
-									: props.onUnDelete(props.field);
-							}}
-							tooltip="Restore"
-						>
-							<ArrowUturnLeftIcon className="w-5" data-testid="restore-field-btn" />
-						</ActionIcon>
-					)}
 
-				{/* Display normal or edit state */}
-				{props.field.diff === "none" && (
+				{(props.field.diff === "none" || props.field.diff === "reordered") && (
 					<ActionIcon
 						variant={"simple"}
 						className="text-destructive/75 hover:text-destructive"

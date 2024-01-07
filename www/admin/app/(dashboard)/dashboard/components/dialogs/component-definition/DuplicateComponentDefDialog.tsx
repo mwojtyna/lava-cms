@@ -46,7 +46,6 @@ interface Props {
 }
 export function DuplicateComponentDefDialog(props: Props) {
 	const mutation = trpc.components.addComponentDefinition.useMutation();
-	const [anyEditing, setAnyEditing] = React.useState(false);
 
 	const allGroups = trpc.components.getAllGroups.useQuery(undefined, {
 		enabled: props.open,
@@ -126,19 +125,10 @@ export function DuplicateComponentDefDialog(props: Props) {
 								</FormItem>
 							)}
 						/>
-						<FormField
-							control={form.control}
-							name="fields"
-							render={({ field }) => (
-								<FormItem>
-									<FormLabel>Fields</FormLabel>
-									<FormControl>
-										<AddFieldDefs anyEditing={anyEditing} {...field} />
-									</FormControl>
-									<FormError />
-								</FormItem>
-							)}
-						/>
+						<FormItem>
+							<FormLabel>Fields</FormLabel>
+							<AddFieldDefs />
+						</FormItem>
 
 						<FormField
 							control={form.control}
@@ -146,12 +136,7 @@ export function DuplicateComponentDefDialog(props: Props) {
 							render={({ field }) => (
 								<FormItem className="max-h-[50vh] overflow-auto">
 									<FormControl>
-										<FieldDefs
-											dialogType="add"
-											anyEditing={anyEditing}
-											setAnyEditing={setAnyEditing}
-											{...field}
-										/>
+										<FieldDefs dialogType="add" {...field} />
 									</FormControl>
 								</FormItem>
 							)}

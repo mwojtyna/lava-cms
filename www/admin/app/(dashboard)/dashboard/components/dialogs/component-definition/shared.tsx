@@ -65,7 +65,7 @@ export const FieldTypePicker = React.forwardRef<
 FieldTypePicker.displayName = "FieldTypePicker";
 
 export const fieldDefinitionUISchema = z.object({
-	id: z.string().cuid().optional(),
+	id: z.string().cuid(),
 	name: z.string().min(1),
 	type: ComponentDefinitionFieldSchema.shape.type,
 	diff: z.union([
@@ -73,6 +73,7 @@ export const fieldDefinitionUISchema = z.object({
 		z.literal("added"),
 		z.literal("deleted"),
 		z.literal("edited"),
+		z.literal("reordered"),
 	]),
 });
 export type FieldDefinitionUI = z.infer<typeof fieldDefinitionUISchema>;

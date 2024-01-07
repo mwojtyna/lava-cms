@@ -9,14 +9,20 @@ import {
 	DataTableBreadcrumbs,
 	DataTablePagination,
 } from "@/src/components";
+import { useComponentsTableDialogs } from "@/src/data/stores/componentDefinitions";
 import { useDataTable, type TableSearchParams } from "@/src/hooks";
 import type { PrivateRouter } from "@/src/trpc/routes/private/_private";
 import type { Item } from "@/src/trpc/routes/private/components/getGroup";
 import type { TableCookie } from "@/src/utils/cookies";
 import { trpc } from "@/src/utils/trpc";
 import { columns } from "./ComponentsTableColumns";
-import { AddComponentDefDialog } from "./dialogs/component-definition";
-import { AddGroupDialog } from "./dialogs/GroupDialogs";
+import {
+	AddComponentDefDialog,
+	DuplicateComponentDefDialog,
+	EditComponentDefDialog,
+} from "./dialogs/component-definition";
+import { AddGroupDialog, EditGroupDialog } from "./dialogs/GroupDialogs";
+import { MoveDialog, DeleteDialog } from "./dialogs/SharedDialogs";
 
 export type ComponentsTableItem = Item;
 export type ComponentsTableComponentDef = Omit<
@@ -53,6 +59,7 @@ export function ComponentsTable(props: Props) {
 
 	const [openAddComponentDef, setOpenAddComponentDef] = React.useState(false);
 	const [openAddGroup, setOpenAddGroup] = React.useState(false);
+	const dialogs = useComponentsTableDialogs();
 
 	return (
 		<>
@@ -61,7 +68,10 @@ export function ComponentsTable(props: Props) {
 					searchElement={searchElement}
 					itemName="definition"
 					itemIcon={<CubeIcon className="w-5" />}
-					onAddItem={() => setOpenAddComponentDef(true)}
+					onAddItem={() => {
+						setOpenAddComponentDef(true);
+						dialogs.setFields([]);
+					}}
 					onAddGroup={() => setOpenAddGroup(true)}
 				/>
 
@@ -83,6 +93,44 @@ export function ComponentsTable(props: Props) {
 				open={openAddGroup}
 				setOpen={setOpenAddGroup}
 			/>
+
+			{dialogs.item && !dialogs.item.isGroup && (
+				<>
+					<EditComponentDefDialog
+						componentDef={dialogs.item}
+						open={dialogs.editComponentDefDialog.isOpen}
+						setOpen={dialogs.editComponentDefDialog.setIsOpen}
+					/>
+					<DuplicateComponentDefDialog
+						componentDef={dialogs.item}
+						open={dialogs.duplicateDialog.isOpen}
+						setOpen={dialogs.duplicateDialog.setIsOpen}
+					/>
+				</>
+			)}
+
+			{dialogs.item && dialogs.item.isGroup && (
+				<EditGroupDialog
+					group={dialogs.item}
+					open={dialogs.editGroupDialog.isOpen}
+					setOpen={dialogs.editGroupDialog.setIsOpen}
+				/>
+			)}
+
+			{dialogs.item && (
+				<>
+					<MoveDialog
+						item={dialogs.item}
+						open={dialogs.moveDialog.isOpen}
+						setOpen={dialogs.moveDialog.setIsOpen}
+					/>
+					<DeleteDialog
+						item={dialogs.item}
+						open={dialogs.deleteDialog.isOpen}
+						setOpen={dialogs.deleteDialog.setIsOpen}
+					/>
+				</>
+			)}
 		</>
 	);
 }

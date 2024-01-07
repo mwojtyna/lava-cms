@@ -8,7 +8,7 @@ import { useNavMenu } from "@/src/data/stores/dashboard";
 import { cn } from "@/src/utils/styling";
 
 export function NavMenuLogo({ version, font }: { version: string; font: NextFont }) {
-	const { setOpen } = useNavMenu();
+	const { setIsOpen: setOpen } = useNavMenu();
 
 	return (
 		<Link
