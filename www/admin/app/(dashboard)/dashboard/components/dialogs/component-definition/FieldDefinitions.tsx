@@ -39,7 +39,7 @@ import {
 	type FieldDefinitionUI,
 } from "./shared";
 
-export const AddFieldDefs = React.forwardRef<React.ComponentRef<"div">>((_, ref) => {
+export function AddFieldDefs() {
 	const { fields, setFields } = useComponentsTableDialogs();
 
 	const form = useForm<FieldDefinitionUI>({
@@ -50,7 +50,7 @@ export const AddFieldDefs = React.forwardRef<React.ComponentRef<"div">>((_, ref)
 	};
 
 	return (
-		<div ref={ref} className="flex gap-2" data-testid="add-field-definition">
+		<div className="flex gap-2" data-testid="add-field-definition">
 			<div className="grid grid-cols-2">
 				<FormField
 					control={form.control}
@@ -97,8 +97,7 @@ export const AddFieldDefs = React.forwardRef<React.ComponentRef<"div">>((_, ref)
 			</Button>
 		</div>
 	);
-});
-AddFieldDefs.displayName = "AddFieldDefs";
+}
 
 interface FieldDefsProps {
 	dialogType: "add" | "edit";
@@ -120,8 +119,16 @@ export const FieldDefs = React.forwardRef<React.ComponentRef<"div">, FieldDefsPr
 			const overId = Number(over.id);
 
 			let newFields = structuredClone(fields);
-			newFields[activeId]!.diff = "reordered";
-			newFields[overId]!.diff = "reordered";
+
+			const activeField = newFields[activeId]!;
+			const overField = newFields[overId]!;
+			if (activeField.diff === "none") {
+				activeField.diff = "reordered";
+			}
+			if (overField.diff === "none") {
+				overField.diff = "reordered";
+			}
+
 			newFields = arrayMove(newFields, activeId, overId);
 			setFields(newFields);
 		}
@@ -282,7 +289,7 @@ function FieldDefCard(props: FieldDefProps) {
 					</ActionIcon>
 				)}
 
-				{(props.field.diff === "none" || props.field.diff === "reordered") && (
+				{props.field.diff !== "edited" && props.field.diff !== "deleted" && (
 					<ActionIcon
 						variant={"simple"}
 						className="text-destructive/75 hover:text-destructive"
