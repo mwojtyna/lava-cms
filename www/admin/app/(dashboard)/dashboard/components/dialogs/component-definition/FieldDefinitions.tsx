@@ -18,9 +18,12 @@ import {
 import { CSS } from "@dnd-kit/utilities";
 import { ArrowUturnLeftIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { createId } from "@paralleldrive/cuid2";
 import { IconGripVertical } from "@tabler/icons-react";
 import * as React from "react";
 import { useForm, type SubmitHandler, FormProvider } from "react-hook-form";
+import { z } from "zod";
+import { ComponentFieldTypeSchema } from "@/prisma/generated/zod";
 import {
 	FormField,
 	FormItem,
@@ -33,39 +36,57 @@ import {
 import { Card, TypographyMuted } from "@/src/components/ui/server";
 import { useComponentsTableDialogs } from "@/src/data/stores/componentDefinitions";
 import { cn } from "@/src/utils/styling";
-import {
-	FieldTypePicker,
-	fieldDefinitionUISchema,
-	fieldTypeMap,
-	type FieldDefinitionUI,
-} from "./shared";
+import { FieldTypePicker, fieldTypeMap, type FieldDefinitionUI } from "./shared";
+
+const addFieldDefsSchema = z.object({
+	name: z.string().min(1, { message: " " }),
+	type: ComponentFieldTypeSchema,
+});
+type AddFieldDefsInputs = z.infer<typeof addFieldDefsSchema>;
 
 export function AddFieldDefs() {
 	const { fields, setFields } = useComponentsTableDialogs();
 
-	const form = useForm<FieldDefinitionUI>({
-		resolver: zodResolver(fieldDefinitionUISchema.omit({ id: true, diff: true })),
+	const form = useForm<AddFieldDefsInputs>({
+		resolver: async (values, context, options) => {
+			const zod = await zodResolver(addFieldDefsSchema)(values, context, options);
+			if (fields.find((field) => field.name === values.name)) {
+				return {
+					...zod,
+					errors: {
+						...zod.errors,
+						name: {
+							type: "manual",
+							message: `Field '${values.name}' already exists`,
+						},
+					},
+				};
+			} else {
+				return zod;
+			}
+		},
+		defaultValues: {
+			type: "TEXT",
+		},
+		mode: "onChange",
 	});
-	const onSubmit: SubmitHandler<FieldDefinitionUI> = (data) => {
-		setFields([...fields, { ...data, diff: "added" }]);
+	const onSubmit: SubmitHandler<AddFieldDefsInputs> = (data) => {
+		setFields([
+			...fields,
+			{
+				id: createId(),
+				name: data.name,
+				type: data.type,
+				order: fields.length,
+				diff: "added",
+			},
+		]);
+		form.resetField("name");
 	};
 
 	// Don't know why, but we also need to check if there are any errors
 	// otherwise the button is enabled even if it shouldn't be
 	const isValid = form.formState.isValid && Object.keys(form.formState.errors).length === 0;
-
-	// Custom resolver doesn't work
-	const watched = form.watch();
-	React.useEffect(() => {
-		if (fields.find((field) => field.name === watched.name)) {
-			form.setError("name", {
-				message: `Field '${watched.name}' already exists`,
-			});
-		}
-		if (!fields.find((field) => field.name === watched.name)) {
-			form.clearErrors("name");
-		}
-	}, [fields, form, watched.name]);
 
 	return (
 		<FormProvider {...form}>

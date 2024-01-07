@@ -116,6 +116,7 @@ function ComponentDefStep(props: ComponentDefStepProps) {
 
 	const form = useForm<EditComponentDefDialogInputs>({
 		resolver: zodResolver(editComponentDefDialogInputsSchema),
+		mode: "onChange",
 	});
 
 	React.useEffect(() => {

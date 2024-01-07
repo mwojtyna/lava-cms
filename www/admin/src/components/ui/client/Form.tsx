@@ -140,7 +140,7 @@ const FormError = React.forwardRef<
 >(({ className, children, ...props }, ref) => {
 	const { error, formMessageId } = useFormField();
 
-	// Check if error.message.trim is a function because if passing a React component, it isn't
+	// Check if error.message.trim is a function because it isn't if passing a React component
 	if (
 		error === undefined ||
 		(error.message && typeof error.message.trim === "function" && error.message.trim() === "")

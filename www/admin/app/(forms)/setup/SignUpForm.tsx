@@ -52,7 +52,7 @@ export function SignUpForm() {
 	const signUpMutation = trpc.auth.signUp.useMutation();
 	const signInMutation = trpc.auth.signIn.useMutation();
 
-	const form = useForm<Inputs>({ mode: "onSubmit", resolver: zodResolver(inputSchema) });
+	const form = useForm<Inputs>({ resolver: zodResolver(inputSchema) });
 	const onSubmit: SubmitHandler<Inputs> = async (data) => {
 		await signUpMutation.mutateAsync({
 			name: data.name,
