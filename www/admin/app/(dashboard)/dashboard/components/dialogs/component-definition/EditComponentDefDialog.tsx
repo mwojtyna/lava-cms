@@ -197,7 +197,7 @@ function ComponentDefStep(props: ComponentDefStepProps) {
 	});
 
 	return (
-		<SheetContent className="max-w-md">
+		<SheetContent className="w-screen sm:max-w-md">
 			<SheetHeader>
 				<SheetTitle>Edit &quot;{props.step.componentDef.name}&quot;</SheetTitle>
 			</SheetHeader>
