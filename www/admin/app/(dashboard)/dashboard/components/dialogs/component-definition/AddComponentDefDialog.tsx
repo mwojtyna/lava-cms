@@ -26,10 +26,10 @@ import { AddFieldDefs, FieldDefs } from "./FieldDefinitions";
 import { ComponentDefinitionNameError } from "./shared";
 
 const addComponentDefDialogInputsSchema = z.object({
-	// This is named `compName` instead of `name` because `name` is already used
+	// This is named `name` instead of `name` because `name` is already used
 	// in the `FieldDefinitionUI` type and errors are duplicated.
 	// Also it's easier to change this name than the other one
-	compName: z.string().trim().min(1, { message: "Name cannot be empty" }),
+	name: z.string().trim().min(1, { message: "Name cannot be empty" }),
 });
 type AddComponentDefDialogInputs = z.infer<typeof addComponentDefDialogInputsSchema>;
 
@@ -38,6 +38,7 @@ interface Props {
 	setOpen: (value: boolean) => void;
 	group: ComponentDefinitionGroup;
 }
+// TODO: Make component same as EditComponentDefDialog
 export function AddComponentDefDialog(props: Props) {
 	const mutation = trpc.components.addComponentDefinition.useMutation();
 	const { fields } = useComponentsTableDialogs();
@@ -48,7 +49,7 @@ export function AddComponentDefDialog(props: Props) {
 	const onSubmit: SubmitHandler<AddComponentDefDialogInputs> = (data) => {
 		mutation.mutate(
 			{
-				name: data.compName,
+				name: data.name,
 				fields,
 				groupId: props.group.id,
 			},
@@ -63,10 +64,10 @@ export function AddComponentDefDialog(props: Props) {
 							id: string;
 						};
 
-						form.setError("compName", {
+						form.setError("name", {
 							type: "manual",
 							message: (
-								<ComponentDefinitionNameError name={data.compName} group={group} />
+								<ComponentDefinitionNameError name={data.name} group={group} />
 							) as unknown as string,
 						});
 					}
@@ -93,7 +94,7 @@ export function AddComponentDefDialog(props: Props) {
 					<form className="flex flex-col gap-4" onSubmit={form.handleSubmit(onSubmit)}>
 						<FormField
 							control={form.control}
-							name="compName"
+							name="name"
 							render={({ field }) => (
 								<FormItem>
 									<FormLabel>

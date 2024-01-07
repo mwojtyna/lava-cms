@@ -26,10 +26,10 @@ import { AddFieldDefs, FieldDefs } from "./FieldDefinitions";
 import { ComponentDefinitionNameError, groupsToComboboxEntries } from "./shared";
 
 const duplicateComponentDefDialogInputsSchema = z.object({
-	// This is named `compName` instead of `name` because `name` is already used
+	// This is named `name` instead of `name` because `name` is already used
 	// in the `FieldDefinitionUI` type and errors are duplicated.
 	// Also it's easier to change this name than the other one
-	compName: z.string().min(1, { message: " " }),
+	name: z.string().min(1, { message: " " }),
 	newParentId: z.string().cuid(),
 });
 type DuplicateComponentDefDialogInputs = z.infer<typeof duplicateComponentDefDialogInputsSchema>;
@@ -55,7 +55,7 @@ export function DuplicateComponentDefDialog(props: Props) {
 	const onSubmit: SubmitHandler<DuplicateComponentDefDialogInputs> = (data) => {
 		mutation.mutate(
 			{
-				name: data.compName,
+				name: data.name,
 				fields: fields,
 				groupId: data.newParentId,
 			},
@@ -70,10 +70,10 @@ export function DuplicateComponentDefDialog(props: Props) {
 							id: string;
 						};
 
-						form.setError("compName", {
+						form.setError("name", {
 							type: "manual",
 							message: (
-								<ComponentDefinitionNameError name={data.compName} group={group} />
+								<ComponentDefinitionNameError name={data.name} group={group} />
 							) as unknown as string,
 						});
 					}
@@ -84,7 +84,7 @@ export function DuplicateComponentDefDialog(props: Props) {
 
 	React.useEffect(() => {
 		form.reset({
-			compName: props.componentDef.name,
+			name: props.componentDef.name,
 			// null -> undefined
 			newParentId: props.componentDef.parentGroupId ?? undefined,
 		});
@@ -104,7 +104,7 @@ export function DuplicateComponentDefDialog(props: Props) {
 					<form className="flex flex-col gap-4" onSubmit={form.handleSubmit(onSubmit)}>
 						<FormField
 							control={form.control}
-							name="compName"
+							name="name"
 							render={({ field }) => (
 								<FormItem>
 									<FormLabel>

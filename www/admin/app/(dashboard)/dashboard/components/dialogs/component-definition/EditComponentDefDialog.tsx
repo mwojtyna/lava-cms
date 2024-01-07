@@ -27,7 +27,7 @@ import { AddFieldDefs, FieldDefs } from "./FieldDefinitions";
 import { type FieldDefinitionUI, ComponentDefinitionNameError } from "./shared";
 
 const editComponentDefDialogInputsSchema = z.object({
-	compName: z.string().min(1, { message: " " }),
+	name: z.string().min(1, { message: " " }),
 });
 type EditComponentDefDialogInputs = z.infer<typeof editComponentDefDialogInputsSchema>;
 
@@ -146,7 +146,7 @@ function ComponentDefStep(props: ComponentDefStepProps) {
 		mutation.mutate(
 			{
 				id: props.step.componentDef.id,
-				newName: data.compName,
+				newName: data.name,
 				newGroupId: props.step.componentDef.parentGroupId!,
 				addedFields,
 				deletedFieldIds,
@@ -163,10 +163,10 @@ function ComponentDefStep(props: ComponentDefStepProps) {
 							id: string;
 						};
 
-						form.setError("compName", {
+						form.setError("name", {
 							type: "manual",
 							message: (
-								<ComponentDefinitionNameError name={data.compName} group={group} />
+								<ComponentDefinitionNameError name={data.name} group={group} />
 							) as unknown as string,
 						});
 					}
@@ -177,7 +177,7 @@ function ComponentDefStep(props: ComponentDefStepProps) {
 
 	React.useEffect(() => {
 		if (props.open) {
-			form.reset({ compName: props.step.componentDef.name });
+			form.reset({ name: props.step.componentDef.name });
 		}
 	}, [form, props.open, props.step.componentDef.name]);
 
@@ -206,7 +206,7 @@ function ComponentDefStep(props: ComponentDefStepProps) {
 				<form className="flex flex-col gap-4" onSubmit={form.handleSubmit(onSubmit)}>
 					<FormField
 						control={form.control}
-						name="compName"
+						name="name"
 						render={({ field }) => (
 							<FormItem>
 								<FormLabel>

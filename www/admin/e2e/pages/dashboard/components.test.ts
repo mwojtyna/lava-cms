@@ -208,17 +208,11 @@ test.describe("component definition", () => {
 		const dialog = await fillAddCompDefDialog(page.base, existingComp.name, [
 			{ name: "Label", type: "TEXT" },
 		]);
-		await expect(dialog.locator("input[name='compName']")).toHaveAttribute(
-			"aria-invalid",
-			"true",
-		);
+		await expect(dialog.locator("input[name='name']")).toHaveAttribute("aria-invalid", "true");
 		await expect(dialog.locator("strong")).toHaveText(existingComp.name);
 
 		await fillAddCompDefDialog(page.base, "  ");
-		await expect(dialog.locator("input[name='compName']")).toHaveAttribute(
-			"aria-invalid",
-			"true",
-		);
+		await expect(dialog.locator("input[name='name']")).toHaveAttribute("aria-invalid", "true");
 
 		await fillAddCompDefDialog(page.base, "Test 2");
 		await dialog.waitFor({ state: "hidden" });
@@ -289,7 +283,7 @@ test.describe("component definition", () => {
 		await selectAction(page.base, 0, "Edit");
 		await checkFieldDefs(page.base, originalComp.field_definitions);
 
-		await dialog.locator("input[name='compName']").fill("Edited name");
+		await dialog.locator("input[name='name']").fill("Edited name");
 		const fieldDef = await editFieldDef(page.base, 0, "Switch", "SWITCH");
 		await expect(fieldDef).toHaveAttribute("data-test-diff", "edited");
 		await dialog.locator("button[type='submit']").click();
@@ -338,16 +332,13 @@ test.describe("component definition", () => {
 		await page.goto(URL);
 		await selectAction(page.base, 1, "Edit");
 		const dialog = page.base.getByRole("dialog");
-		await dialog.locator("input[name='compName']").fill(existingComp.name);
+		await dialog.locator("input[name='name']").fill(existingComp.name);
 		await dialog.locator("button[type='submit']").click();
 
-		await expect(dialog.locator("input[name='compName']")).toHaveAttribute(
-			"aria-invalid",
-			"true",
-		);
+		await expect(dialog.locator("input[name='name']")).toHaveAttribute("aria-invalid", "true");
 		await expect(dialog.locator("strong")).toHaveText(existingComp.name);
 
-		await dialog.locator("input[name='compName']").fill(comp.name);
+		await dialog.locator("input[name='name']").fill(comp.name);
 		await dialog.locator("button[type='submit']").click();
 		await dialog.waitFor({ state: "hidden" });
 
@@ -417,10 +408,7 @@ test.describe("component definition", () => {
 			{ name: "Label", type: "TEXT" },
 		]);
 		await expect(getFieldDef(page.base, 0)).not.toHaveAttribute("data-test-diff", "added");
-		await expect(dialog.locator("input[name='compName']")).toHaveAttribute(
-			"aria-invalid",
-			"true",
-		);
+		await expect(dialog.locator("input[name='name']")).toHaveAttribute("aria-invalid", "true");
 		await expect(dialog.locator("strong")).toHaveText(existingComp.name);
 
 		await fillAddCompDefDialog(page.base, "Test 2", undefined, false);
