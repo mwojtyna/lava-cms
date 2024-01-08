@@ -1,4 +1,5 @@
 import type { ComponentsTableComponentDef } from "../../ComponentsTable";
+import { PencilSquareIcon } from "@heroicons/react/24/outline";
 import * as React from "react";
 import { Sheet } from "@/src/components/ui/client";
 import { ComponentDefStep, type Step } from "./ComponentDefSteps";
@@ -48,6 +49,11 @@ export function EditComponentDefDialog(props: Props) {
 						isDirty={isDirty}
 						setIsDirty={setIsDirty}
 						dialogType="edit"
+						title={`Edit "${lastStep.componentDef.name}"`}
+						submitButton={{
+							text: "Edit",
+							icon: <PencilSquareIcon className="w-5" />,
+						}}
 					/>
 				</Sheet>
 			);

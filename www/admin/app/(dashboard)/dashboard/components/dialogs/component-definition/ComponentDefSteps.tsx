@@ -1,5 +1,4 @@
 import type { ComponentsTableComponentDef } from "../../ComponentsTable";
-import { PencilSquareIcon, CubeIcon } from "@heroicons/react/24/outline";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useWindowEvent } from "@mantine/hooks";
 import React from "react";
@@ -51,6 +50,11 @@ interface ComponentDefStepProps {
 	setIsDirty: (value: boolean) => void;
 
 	dialogType: DialogType;
+	title: string;
+	submitButton: {
+		text: string;
+		icon: React.ReactNode;
+	};
 }
 export function ComponentDefStep(props: ComponentDefStepProps) {
 	const editMutation = trpc.components.editComponentDefinition.useMutation();
@@ -65,7 +69,7 @@ export function ComponentDefStep(props: ComponentDefStepProps) {
 	React.useEffect(() => {
 		props.setIsDirty(form.formState.isDirty || fieldsDirty);
 	}, [fieldsDirty, form.formState.isDirty, props]);
-	const canSubmit = form.formState.isValid && props.isDirty;
+	const canSubmit = form.formState.isValid && props.dialogType === "edit" ? props.isDirty : true;
 
 	const onSubmit: SubmitHandler<ComponentDefDialogInputs> = (data) => {
 		const addedFields = fields
@@ -172,11 +176,7 @@ export function ComponentDefStep(props: ComponentDefStepProps) {
 	return (
 		<SheetContent className="w-screen sm:max-w-md">
 			<SheetHeader>
-				<SheetTitle>
-					{props.dialogType === "edit"
-						? `Edit "${props.step.componentDef.name}"`
-						: "Add component definition"}
-				</SheetTitle>
+				<SheetTitle>{props.title}</SheetTitle>
 			</SheetHeader>
 
 			<FormProvider {...form}>
@@ -209,15 +209,9 @@ export function ComponentDefStep(props: ComponentDefStepProps) {
 							type="submit"
 							loading={editMutation.isLoading || addMutation.isLoading}
 							disabled={!canSubmit}
-							icon={
-								props.dialogType === "edit" ? (
-									<PencilSquareIcon className="w-5" />
-								) : (
-									<CubeIcon className="w-5" />
-								)
-							}
+							icon={props.submitButton.icon}
 						>
-							{props.dialogType === "edit" ? "Edit" : "Add"}
+							{props.submitButton.text}
 						</Button>
 					</SheetFooter>
 				</form>

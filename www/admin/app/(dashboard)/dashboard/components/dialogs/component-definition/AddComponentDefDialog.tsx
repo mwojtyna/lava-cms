@@ -3,6 +3,7 @@ import type { ComponentDefinitionGroup } from "@prisma/client";
 import * as React from "react";
 import { Sheet } from "@/src/components/ui/client";
 import { ComponentDefStep, type Step } from "./ComponentDefSteps";
+import { CubeIcon } from "@heroicons/react/24/outline";
 
 interface Props {
 	open: boolean;
@@ -61,6 +62,11 @@ export function AddComponentDefDialog(props: Props) {
 						isDirty={isDirty}
 						setIsDirty={setIsDirty}
 						dialogType="add"
+						title="Add component definition"
+						submitButton={{
+							text: "Add",
+							icon: <CubeIcon className="w-5" />,
+						}}
 					/>
 				</Sheet>
 			);
