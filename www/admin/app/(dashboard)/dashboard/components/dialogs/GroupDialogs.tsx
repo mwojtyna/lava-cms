@@ -1,8 +1,10 @@
 import type { ComponentsTableGroup } from "../ComponentsTable";
 import type { ComponentDefinitionGroup } from "@prisma/client";
 import { FolderIcon, PencilSquareIcon } from "@heroicons/react/24/outline";
+import { zodResolver } from "@hookform/resolvers/zod";
 import * as React from "react";
 import { FormProvider, useForm, type SubmitHandler } from "react-hook-form";
+import { z } from "zod";
 import {
 	Button,
 	Dialog,
@@ -24,22 +26,21 @@ interface Props {
 	setOpen: (value: boolean) => void;
 }
 
+const addGroupDialogSchema = z.object({
+	name: z.string().min(1, { message: " " }),
+});
+type AddGroupDialogInputs = z.infer<typeof addGroupDialogSchema>;
+
 interface AddGroupDialogProps extends Props {
 	group: ComponentDefinitionGroup;
-}
-interface AddGroupDialogInputs {
-	name: string;
 }
 export function AddGroupDialog(props: AddGroupDialogProps) {
 	const mutation = trpc.components.addGroup.useMutation();
 
-	const form = useForm<AddGroupDialogInputs>();
+	const form = useForm<AddGroupDialogInputs>({
+		resolver: zodResolver(addGroupDialogSchema),
+	});
 	const onSubmit: SubmitHandler<AddGroupDialogInputs> = (data) => {
-		if (data.name.trim() === "") {
-			form.setError("name", { message: "Name cannot be empty" });
-			return;
-		}
-
 		mutation.mutate(
 			{
 				name: data.name,
@@ -92,16 +93,20 @@ export function AddGroupDialog(props: AddGroupDialogProps) {
 	);
 }
 
+const editGroupDialogSchema = z.object({
+	name: z.string().min(1, { message: " " }),
+});
+type EditGroupDialogInputs = z.infer<typeof editGroupDialogSchema>;
+
 interface EditGroupDialogProps extends Props {
 	group: ComponentsTableGroup;
-}
-interface EditGroupDialogInputs {
-	name: string;
 }
 export function EditGroupDialog(props: EditGroupDialogProps) {
 	const mutation = trpc.components.editGroup.useMutation();
 
-	const form = useForm<EditGroupDialogInputs>();
+	const form = useForm<EditGroupDialogInputs>({
+		resolver: zodResolver(editGroupDialogSchema),
+	});
 	const onSubmit: SubmitHandler<EditGroupDialogInputs> = (data) => {
 		mutation.mutate(
 			{

@@ -1,9 +1,9 @@
 import type { ComponentsTableComponentDef } from "../../ComponentsTable";
 import type { ComponentDefinitionGroup } from "@prisma/client";
+import { CubeIcon } from "@heroicons/react/24/outline";
 import * as React from "react";
 import { Sheet } from "@/src/components/ui/client";
 import { ComponentDefStep, type Step } from "./ComponentDefSteps";
-import { CubeIcon } from "@heroicons/react/24/outline";
 
 interface Props {
 	open: boolean;
