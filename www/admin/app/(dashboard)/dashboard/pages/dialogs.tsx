@@ -615,44 +615,21 @@ export function AddDialog(props: AddDialogProps) {
 	);
 }
 
-const duplicateDialogSchema = editDialogSchema.extend({
-	newParentId: z.string().min(1).cuid(),
-});
-type DuplicateDialogInputs = z.infer<typeof duplicateDialogSchema>;
-
 export function DuplicateDialog(props: EditDialogProps) {
-	const allGroups = trpc.pages.getAllGroups.useQuery(undefined, {
-		enabled: props.open,
-	}).data;
-	const groups = React.useMemo(
-		() =>
-			allGroups?.map(
-				(group) =>
-					({
-						id: group.id,
-						name: group.name,
-						extraInfo: group.url === "" ? "/" : group.url,
-					}) satisfies ItemParent,
-			),
-		[allGroups],
-	);
-
 	const mutation = trpc.pages.addPage.useMutation();
 	const [preferences, setPreferences] = usePagePreferences(props.page.id);
 	const [slugLocked, setSlugLocked] = React.useState(false);
 
-	const form = useForm<DuplicateDialogInputs>({
-		resolver: zodResolver(duplicateDialogSchema),
+	const form = useForm<EditDialogInputs>({
+		resolver: zodResolver(editDialogSchema),
 	});
-	const onSubmit: SubmitHandler<DuplicateDialogInputs> = (data) => {
-		const newParent = allGroups!.find((group) => group.id === data.newParentId)!;
-		const url = newParent.url + data.slug;
-
+	const onSubmit: SubmitHandler<EditDialogInputs> = (data) => {
+		const newUrl = editUrl(props.page.url, data.slug);
 		mutation.mutate(
 			{
 				name: data.name,
-				url,
-				parentId: data.newParentId,
+				url: newUrl,
+				parentId: props.page.parent_id!,
 				isGroup: false,
 			},
 			{
@@ -707,19 +684,6 @@ export function DuplicateDialog(props: EditDialogProps) {
 							form={form}
 							slugLocked={slugLocked}
 							setSlugLocked={setSlugLocked}
-						/>
-						<FormField
-							control={form.control}
-							name="newParentId"
-							render={({ field }) => (
-								<FormItem>
-									<FormLabel>Group</FormLabel>
-									<FormControl>
-										<NewParentSelect parents={groups ?? []} {...field} />
-									</FormControl>
-									<FormError />
-								</FormItem>
-							)}
 						/>
 
 						<DialogFooter>
