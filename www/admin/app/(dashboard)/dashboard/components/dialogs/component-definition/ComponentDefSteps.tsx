@@ -1,6 +1,5 @@
 import type { ComponentsTableComponentDef } from "../../ComponentsTable";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useWindowEvent } from "@mantine/hooks";
 import React from "react";
 import { useForm, type SubmitHandler, FormProvider } from "react-hook-form";
 import { z } from "zod";
@@ -19,6 +18,7 @@ import {
 } from "@/src/components/ui/client";
 import { TypographyMuted } from "@/src/components/ui/server";
 import { useComponentsTableDialogs } from "@/src/data/stores/componentDefinitions";
+import { useWindowEvent } from "@/src/hooks";
 import { trpc } from "@/src/utils/trpc";
 import { AddFieldDefs, FieldDefs } from "./FieldDefinitions";
 import { ComponentDefinitionNameError, type FieldDefinitionUI } from "./shared";
