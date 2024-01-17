@@ -70,11 +70,12 @@ export function groupsToComboboxEntries(
 interface FieldTypePickerProps extends FormFieldProps<ComponentFieldTypeType> {
 	className?: string;
 	onKeyDown?: (e: React.KeyboardEvent<HTMLButtonElement>) => void;
+	placeholder?: string;
 }
 export const FieldTypePicker = React.forwardRef<
 	React.ComponentRef<typeof Combobox>,
 	FieldTypePickerProps
->(({ value, onChange, className, ...props }, ref) => {
+>(({ value, onChange, className, placeholder, ...props }, ref) => {
 	const fieldTypes = React.useMemo(
 		() =>
 			Object.values(ComponentFieldType).map((type) => {
@@ -98,7 +99,7 @@ export const FieldTypePicker = React.forwardRef<
 				className: "w-[165px]",
 				placeholder: "Search types...",
 			}}
-			placeholder="Type"
+			placeholder={placeholder}
 			value={value}
 			onChange={onChange}
 			{...props}

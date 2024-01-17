@@ -22,7 +22,7 @@ import { trpcFetch } from "@/src/utils/trpc";
 import { ComponentCard } from "./Components";
 import { AddComponentDialog } from "./dialogs/AddComponentDialog";
 
-type Input = Record<string, string>; // fieldIndex (order): data
+type Input = Record<string, string>; // fieldId: data
 
 interface ComponentEditorProps {
 	component: ComponentUI;

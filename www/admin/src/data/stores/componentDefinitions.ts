@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import type { ComponentsTableItem } from "@/app/(dashboard)/dashboard/components/ComponentsTable";
-import "client-only";
 import type { FieldDefinitionUI } from "@/app/(dashboard)/dashboard/components/dialogs/component-definition/shared";
+import "client-only";
 
 interface DialogState {
 	isOpen: boolean;

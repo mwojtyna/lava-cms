@@ -127,6 +127,7 @@ export function AddFieldDefs() {
 								<FormControl>
 									<FieldTypePicker
 										className="rounded-l-none border-l-0"
+										placeholder="Type"
 										{...field}
 									/>
 								</FormControl>
@@ -149,6 +150,7 @@ export function AddFieldDefs() {
 
 interface FieldDefsProps {
 	dialogType: DialogType;
+	onFieldClick: (field: FieldDefinitionUI) => void;
 }
 export const FieldDefs = React.forwardRef<React.ComponentRef<"div">, FieldDefsProps>((props, _) => {
 	const { fields, setFields } = useComponentsTableDialogs();
@@ -225,6 +227,7 @@ export const FieldDefs = React.forwardRef<React.ComponentRef<"div">, FieldDefsPr
 						> = {
 							dndId: i.toString(),
 							field,
+							onClick: () => props.onFieldClick(field),
 							onDelete,
 						};
 
@@ -251,6 +254,7 @@ FieldDefs.displayName = "FieldDefs";
 type FieldDefProps = {
 	dndId: string;
 	field: FieldDefinitionUI;
+	onClick: () => void;
 	onDelete: (toDelete: FieldDefinitionUI) => void;
 } & (
 	| {
@@ -283,6 +287,11 @@ function FieldDefCard(props: FieldDefProps) {
 		deleted: "border-l-red-500",
 	};
 
+	function handleClick(e: React.MouseEvent<HTMLButtonElement, MouseEvent>, cb: () => void) {
+		e.stopPropagation();
+		cb();
+	}
+
 	return (
 		<Card
 			ref={setNodeRef}
@@ -295,6 +304,7 @@ function FieldDefCard(props: FieldDefProps) {
 					`border-l-[3px] ${diffStyle[props.field.diff]}`,
 				props.field.diff !== "deleted" && "cursor-pointer hover:bg-accent/70",
 			)}
+			onClick={props.onClick}
 			data-test-diff={props.dialogType === "edit" ? props.field.diff : undefined}
 		>
 			{/* Grip, name, type */}
@@ -322,7 +332,7 @@ function FieldDefCard(props: FieldDefProps) {
 					<ActionIcon
 						variant={"simple"}
 						className="mr-0.5"
-						onClick={() => props.onUnDelete(props.field)}
+						onClick={(e) => handleClick(e, () => props.onUnDelete(props.field))}
 						tooltip="Restore"
 					>
 						<ArrowUturnLeftIcon className="w-5" data-testid="restore-field-btn" />
@@ -333,7 +343,7 @@ function FieldDefCard(props: FieldDefProps) {
 					<ActionIcon
 						variant={"simple"}
 						className="text-destructive/75 hover:text-destructive"
-						onClick={() => props.onDelete(props.field)}
+						onClick={(e) => handleClick(e, () => props.onDelete(props.field))}
 						tooltip="Delete"
 					>
 						<TrashIcon className="w-5" data-testid="delete-field-btn" />

@@ -64,7 +64,7 @@ export default async function Editor({
 				</div>
 			</nav>
 
-			<main className="grid h-full w-full flex-1 grid-cols-[1fr_auto] overflow-y-hidden">
+			<main className="grid h-full w-full flex-1 grid-cols-[1fr_auto] overflow-hidden">
 				<PagePreview baseUrl={baseUrl} pageUrl={pageUrl} />
 				<Inspector page={page} serverData={data} />
 			</main>

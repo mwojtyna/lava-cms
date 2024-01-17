@@ -649,7 +649,7 @@ export function DuplicateDialog(props: EditDialogProps) {
 							message: (
 								<>
 									An item with path{" "}
-									<strong className="whitespace-nowrap">{url}</strong> already
+									<strong className="whitespace-nowrap">{newUrl}</strong> already
 									exists.
 								</>
 							) as unknown as string,
@@ -665,7 +665,6 @@ export function DuplicateDialog(props: EditDialogProps) {
 			form.reset({
 				name: props.page.name,
 				slug: getSlugFromUrl(props.page.url),
-				newParentId: props.page.parent_id!,
 			});
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps

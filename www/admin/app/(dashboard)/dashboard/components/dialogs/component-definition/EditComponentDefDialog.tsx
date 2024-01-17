@@ -1,8 +1,8 @@
 import type { ComponentsTableComponentDef } from "../../ComponentsTable";
 import { PencilSquareIcon } from "@heroicons/react/24/outline";
 import * as React from "react";
-import { Sheet } from "@/src/components/ui/client";
-import { ComponentDefStep, type Step } from "./ComponentDefSteps";
+import { Sheet, SheetContent } from "@/src/components/ui/client";
+import { ComponentDefStep, FieldDefStep, type Step } from "./ComponentDefSteps";
 
 interface Props {
 	open: boolean;
@@ -17,29 +17,31 @@ export function EditComponentDefDialog(props: Props) {
 		},
 	]);
 	React.useEffect(() => {
-		setSteps([
-			{
-				name: "component-definition",
-				componentDef: props.componentDef,
-			},
-		]);
-	}, [props.componentDef]);
+		if (props.open) {
+			setSteps([
+				{
+					name: "component-definition",
+					componentDef: props.componentDef,
+				},
+			]);
+		}
+	}, [props.componentDef, props.open]);
 
 	const [isDirty, setIsDirty] = React.useState(false);
 	const lastStep = steps.at(-1)!;
 
-	switch (lastStep.name) {
-		case "component-definition": {
-			function handleSetOpen(value: boolean) {
-				if (!isDirty) {
-					props.setOpen(value);
-				} else if (confirm("Are you sure you want to discard your changes?")) {
-					props.setOpen(value);
-				}
-			}
+	function handleSetOpen(value: boolean) {
+		if (!isDirty) {
+			props.setOpen(value);
+		} else if (confirm("Are you sure you want to discard your changes?")) {
+			props.setOpen(value);
+		}
+	}
 
-			return (
-				<Sheet open={props.open} onOpenChange={handleSetOpen}>
+	function displayStep() {
+		switch (lastStep.name) {
+			case "component-definition": {
+				return (
 					<ComponentDefStep
 						step={lastStep}
 						setSteps={setSteps}
@@ -55,15 +57,17 @@ export function EditComponentDefDialog(props: Props) {
 							icon: <PencilSquareIcon className="w-5" />,
 						}}
 					/>
-				</Sheet>
-			);
-		}
-		case "field-definition": {
-			return (
-				<Sheet open={props.open} onOpenChange={props.setOpen}>
-					chuj
-				</Sheet>
-			);
+				);
+			}
+			case "field-definition": {
+				return <FieldDefStep step={lastStep} setSteps={setSteps} />;
+			}
 		}
 	}
+
+	return (
+		<Sheet open={props.open} onOpenChange={handleSetOpen}>
+			<SheetContent className="w-screen sm:max-w-md">{displayStep()}</SheetContent>
+		</Sheet>
+	);
 }
