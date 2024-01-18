@@ -145,14 +145,6 @@ export function ComponentDefEditor(props: ComponentDefEditorProps) {
 		}
 	}, [form, props.open, props.step.componentDef.name]);
 
-	useWindowEvent("keydown", (e) => {
-		if ((e.ctrlKey || e.metaKey) && e.key === "s") {
-			e.preventDefault();
-			if (canSubmit) {
-				void form.handleSubmit(onSubmit)();
-			}
-		}
-	});
 	useWindowEvent("beforeunload", (e) => {
 		if (props.open && canSubmit) {
 			// Display a confirmation dialog
