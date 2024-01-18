@@ -26,6 +26,7 @@ interface ComboboxProps extends Omit<React.ComponentPropsWithoutRef<typeof Butto
 	data: ComboboxData;
 	contentProps?: React.ComponentPropsWithoutRef<typeof PopoverContent>;
 	notFoundContent: React.ReactNode;
+	deselectable?: boolean;
 
 	// react-hook-form props
 	value?: string;
@@ -35,7 +36,17 @@ interface ComboboxProps extends Omit<React.ComponentPropsWithoutRef<typeof Butto
 }
 const Combobox = React.forwardRef<React.ComponentRef<typeof Button>, ComboboxProps>(
 	(
-		{ data, className, contentProps, placeholder, notFoundContent, value, onChange, ...props },
+		{
+			data,
+			className,
+			contentProps,
+			placeholder,
+			notFoundContent,
+			deselectable,
+			value,
+			onChange,
+			...props
+		},
 		ref,
 	) => {
 		const [open, setOpen] = React.useState(false);
@@ -92,7 +103,13 @@ const Combobox = React.forwardRef<React.ComponentRef<typeof Button>, ComboboxPro
 											// We don't use the provided value from onSelect because it's automatically
 											// inferred from the textContent of <CommandItem> and not the value prop
 											// for some stupid reason
-											onChange?.(item.value === value ? "" : item.value);
+											onChange?.(
+												deselectable
+													? item.value === value
+														? ""
+														: item.value
+													: item.value,
+											);
 											setOpen(false);
 										}}
 									>

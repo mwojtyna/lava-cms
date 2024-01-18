@@ -38,6 +38,7 @@ export const NewParentSelect = forwardRef<ComponentRef<typeof Combobox>, NewPare
 						filterValue: group.name,
 					})) ?? []
 				}
+				deselectable
 				aria-required
 				{...props}
 			/>
