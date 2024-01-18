@@ -1,7 +1,5 @@
-import type { ComponentsTableComponentDef } from "../../ComponentsTable";
-import { ArrowLeftIcon } from "@heroicons/react/16/solid";
 import { zodResolver } from "@hookform/resolvers/zod";
-import React, { useCallback, useEffect } from "react";
+import React from "react";
 import { useForm, type SubmitHandler, FormProvider } from "react-hook-form";
 import { z } from "zod";
 import {
@@ -15,36 +13,19 @@ import {
 	FormError,
 	SheetFooter,
 	Button,
-	ActionIcon,
 } from "@/src/components/ui/client";
 import { TypographyMuted } from "@/src/components/ui/server";
 import { useComponentsTableDialogs } from "@/src/data/stores/componentDefinitions";
 import { useWindowEvent } from "@/src/hooks";
 import { trpc } from "@/src/utils/trpc";
 import { AddFieldDefs, FieldDefs } from "./FieldDefinitions";
-import {
-	ComponentDefinitionNameError,
-	fieldDefinitionUISchema,
-	type FieldDefinitionUI,
-	FieldTypePicker,
-} from "./shared";
-
-export type DialogType = "add" | "edit";
-export type Step =
-	| {
-			name: "component-definition";
-			componentDef: ComponentsTableComponentDef;
-	  }
-	| {
-			name: "field-definition";
-			fieldDef: FieldDefinitionUI;
-	  };
+import { ComponentDefinitionNameError, type DialogType, type Step } from "./shared";
 
 const componentDefDialogInputsSchema = z.object({
 	name: z.string().min(1, { message: " " }),
 });
 type ComponentDefDialogInputs = z.infer<typeof componentDefDialogInputsSchema>;
-interface ComponentDefStepProps {
+interface ComponentDefEditorProps {
 	step: Extract<Step, { name: "component-definition" }>;
 	setSteps: React.Dispatch<React.SetStateAction<Step[]>>;
 
@@ -62,7 +43,7 @@ interface ComponentDefStepProps {
 		icon: React.ReactNode;
 	};
 }
-export function ComponentDefStep(props: ComponentDefStepProps) {
+export function ComponentDefEditor(props: ComponentDefEditorProps) {
 	const editMutation = trpc.components.editComponentDefinition.useMutation();
 	const addMutation = trpc.components.addComponentDefinition.useMutation();
 	const { originalFields, fields, isDirty: fieldsDirty } = useComponentsTableDialogs();
@@ -228,111 +209,6 @@ export function ComponentDefStep(props: ComponentDefStepProps) {
 							{props.submitButton.text}
 						</Button>
 					</SheetFooter>
-				</form>
-			</FormProvider>
-		</>
-	);
-}
-
-const fieldDefDialogSchema = fieldDefinitionUISchema.pick({ name: true, type: true });
-type Inputs = z.infer<typeof fieldDefDialogSchema>;
-
-interface FieldDefStepProps {
-	step: Extract<Step, { name: "field-definition" }>;
-	setSteps: React.Dispatch<React.SetStateAction<Step[]>>;
-
-	onSubmit: () => void;
-	isDirty: boolean;
-	setIsDirty: (value: boolean) => void;
-
-	title: string;
-}
-export function FieldDefStep(props: FieldDefStepProps) {
-	const { fields, setFields } = useComponentsTableDialogs();
-
-	const form = useForm<Inputs>({
-		resolver: zodResolver(fieldDefDialogSchema),
-		defaultValues: {
-			name: props.step.fieldDef.name,
-			type: props.step.fieldDef.type,
-		},
-	});
-	const onSubmit: SubmitHandler<Inputs> = useCallback(
-		(data) => {
-			setFields(
-				fields.map((f) =>
-					f.id === props.step.fieldDef.id
-						? {
-								id: f.id,
-								// Don't ever move this, order matters when checking for equality with original fields
-								...data,
-								order: f.order,
-								diff: "edited",
-						  }
-						: f,
-				),
-			);
-		},
-		[fields, props.step.fieldDef.id, setFields],
-	);
-
-	useEffect(() => {
-		// Trigger validation on mount, fixes Ctrl+S after first change not saving
-		void form.trigger();
-
-		// TODO: Optimize
-		const { unsubscribe } = form.watch(() => {
-			// setIsValid(form.formState.isValid);
-			if (form.formState.isValid && !form.formState.isValidating) {
-				void form.handleSubmit(onSubmit)();
-			}
-		});
-
-		return unsubscribe;
-	}, [form, onSubmit]);
-
-	return (
-		<>
-			<SheetHeader>
-				<SheetTitle className="flex gap-2">
-					<ActionIcon
-						variant={"simple"}
-						onClick={() => props.setSteps((steps) => steps.slice(0, steps.length - 1))}
-					>
-						<ArrowLeftIcon className="w-6" />
-					</ActionIcon>
-					Edit &quot;{props.step.fieldDef.name}&quot;
-				</SheetTitle>
-			</SheetHeader>
-
-			<FormProvider {...form}>
-				<form className="flex flex-col gap-4" onSubmit={form.handleSubmit(onSubmit)}>
-					<FormField
-						control={form.control}
-						name="name"
-						render={({ field }) => (
-							<FormItem>
-								<FormLabel>Name</FormLabel>
-								<FormControl>
-									<Input {...field} />
-								</FormControl>
-								<FormError />
-							</FormItem>
-						)}
-					/>
-
-					<FormField
-						control={form.control}
-						name="type"
-						render={({ field }) => (
-							<FormItem>
-								<FormLabel>Type</FormLabel>
-								<FormControl>
-									<FieldTypePicker {...field} />
-								</FormControl>
-							</FormItem>
-						)}
-					/>
 				</form>
 			</FormProvider>
 		</>

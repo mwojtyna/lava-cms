@@ -1,8 +1,10 @@
+import type { Step } from "./shared";
 import type { ComponentsTableComponentDef } from "../../ComponentsTable";
 import { PencilSquareIcon } from "@heroicons/react/24/outline";
 import * as React from "react";
 import { Sheet, SheetContent } from "@/src/components/ui/client";
-import { ComponentDefStep, FieldDefStep, type Step } from "./ComponentDefSteps";
+import { ComponentDefEditor } from "./ComponentDefEditor";
+import { FieldDefEditor } from "./FieldDefEditor";
 
 interface Props {
 	open: boolean;
@@ -42,7 +44,7 @@ export function EditComponentDefDialog(props: Props) {
 		switch (lastStep.name) {
 			case "component-definition": {
 				return (
-					<ComponentDefStep
+					<ComponentDefEditor
 						step={lastStep}
 						setSteps={setSteps}
 						open={props.open}
@@ -60,7 +62,15 @@ export function EditComponentDefDialog(props: Props) {
 				);
 			}
 			case "field-definition": {
-				return <FieldDefStep step={lastStep} setSteps={setSteps} />;
+				return (
+					<FieldDefEditor
+						step={lastStep}
+						setSteps={setSteps}
+						isDirty={isDirty}
+						setIsDirty={setIsDirty}
+						dialogType="edit"
+					/>
+				);
 			}
 		}
 	}

@@ -1,4 +1,3 @@
-import type { DialogType } from "./ComponentDefSteps";
 import {
 	DndContext,
 	closestCenter,
@@ -37,7 +36,7 @@ import {
 import { Card, TypographyMuted } from "@/src/components/ui/server";
 import { useComponentsTableDialogs } from "@/src/data/stores/componentDefinitions";
 import { cn } from "@/src/utils/styling";
-import { FieldTypePicker, fieldTypeMap, type FieldDefinitionUI } from "./shared";
+import { FieldTypePicker, fieldTypeMap, type FieldDefinitionUI, type DialogType } from "./shared";
 
 const addFieldDefsSchema = z.object({
 	name: z.string().min(1, { message: " " }),
@@ -153,7 +152,7 @@ interface FieldDefsProps {
 	onFieldClick: (field: FieldDefinitionUI) => void;
 }
 export const FieldDefs = React.forwardRef<React.ComponentRef<"div">, FieldDefsProps>((props, _) => {
-	const { fields, setFields } = useComponentsTableDialogs();
+	const { fields, setFields, originalFields } = useComponentsTableDialogs();
 
 	const ids: string[] = React.useMemo(() => fields.map((_, i) => i.toString()), [fields]);
 	const sensors = useSensors(
@@ -182,6 +181,11 @@ export const FieldDefs = React.forwardRef<React.ComponentRef<"div">, FieldDefsPr
 		}
 	}
 
+	function onRestore(toRestore: FieldDefinitionUI) {
+		const original = originalFields.find((field) => field.id === toRestore.id)!;
+		const newFields = fields.map((field) => (field.id === toRestore.id ? original : field));
+		setFields(newFields);
+	}
 	function onDelete(toDelete: FieldDefinitionUI) {
 		let newFields: FieldDefinitionUI[] = [];
 
@@ -220,28 +224,18 @@ export const FieldDefs = React.forwardRef<React.ComponentRef<"div">, FieldDefsPr
 				onDragEnd={reorder}
 			>
 				<SortableContext items={ids} strategy={verticalListSortingStrategy}>
-					{fields.map((field, i) => {
-						const sharedProps: Omit<
-							Extract<FieldDefProps, { dialogType: "add" }>,
-							"dialogType"
-						> = {
-							dndId: i.toString(),
-							field,
-							onClick: () => props.onFieldClick(field),
-							onDelete,
-						};
-
-						return props.dialogType === "add" ? (
-							<FieldDefCard key={i} dialogType={"add"} {...sharedProps} />
-						) : (
-							<FieldDefCard
-								key={i}
-								dialogType={"edit"}
-								{...sharedProps}
-								onUnDelete={onUnDelete}
-							/>
-						);
-					})}
+					{fields.map((field, i) => (
+						<FieldDefCard
+							key={i}
+							dndId={i.toString()}
+							field={field}
+							dialogType={props.dialogType}
+							onClick={() => props.onFieldClick(field)}
+							onDelete={() => onDelete(field)}
+							onRestore={() => onRestore(field)}
+							onUnDelete={() => onUnDelete(field)}
+						/>
+					))}
 				</SortableContext>
 			</DndContext>
 		</div>
@@ -254,17 +248,12 @@ FieldDefs.displayName = "FieldDefs";
 type FieldDefProps = {
 	dndId: string;
 	field: FieldDefinitionUI;
+	dialogType: DialogType;
 	onClick: () => void;
-	onDelete: (toDelete: FieldDefinitionUI) => void;
-} & (
-	| {
-			dialogType: "add";
-	  }
-	| {
-			dialogType: "edit";
-			onUnDelete: (toUnDelete: FieldDefinitionUI) => void;
-	  }
-);
+	onDelete: () => void;
+	onRestore: () => void;
+	onUnDelete: () => void;
+};
 function FieldDefCard(props: FieldDefProps) {
 	const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
 		id: props.dndId,
@@ -286,11 +275,6 @@ function FieldDefCard(props: FieldDefProps) {
 		edited: "border-l-brand",
 		deleted: "border-l-red-500",
 	};
-
-	function handleClick(e: React.MouseEvent<HTMLButtonElement, MouseEvent>, cb: () => void) {
-		e.stopPropagation();
-		cb();
-	}
 
 	return (
 		<Card
@@ -326,30 +310,77 @@ function FieldDefCard(props: FieldDefProps) {
 				<span className="text-sm">{fieldTypeMap[props.field.type]}</span>
 			</div>
 
-			{/* Actions */}
-			<div className={cn("ml-auto flex items-center gap-2 text-sm transition-opacity")}>
-				{props.dialogType === "edit" && props.field.diff === "deleted" && (
+			<div className="ml-auto flex items-center gap-2 text-sm transition-opacity">
+				<Actions
+					dialogType={props.dialogType}
+					diff={props.field.diff}
+					onDelete={props.onDelete}
+					onRestore={props.onRestore}
+					onUnDelete={props.onUnDelete}
+				/>
+			</div>
+		</Card>
+	);
+}
+
+interface ActionsProps {
+	diff: FieldDefinitionUI["diff"];
+
+	dialogType: DialogType;
+	onRestore: () => void;
+	onDelete: () => void;
+	onUnDelete: () => void;
+}
+function Actions(props: ActionsProps) {
+	function handleClick(e: React.MouseEvent<HTMLButtonElement, MouseEvent>, cb: () => void) {
+		e.stopPropagation();
+		cb();
+	}
+
+	const DefaultActions = () => (
+		<ActionIcon
+			variant={"simple"}
+			className="text-destructive/75 hover:text-destructive"
+			onClick={(e) => handleClick(e, props.onDelete)}
+			tooltip="Delete"
+		>
+			<TrashIcon className="w-5" data-testid="delete-field-btn" />
+		</ActionIcon>
+	);
+
+	if (props.dialogType === "edit") {
+		switch (props.diff) {
+			case "edited": {
+				return (
 					<ActionIcon
 						variant={"simple"}
 						className="mr-0.5"
-						onClick={(e) => handleClick(e, () => props.onUnDelete(props.field))}
+						onClick={(e) => handleClick(e, props.onRestore)}
 						tooltip="Restore"
 					>
 						<ArrowUturnLeftIcon className="w-5" data-testid="restore-field-btn" />
 					</ActionIcon>
-				)}
-
-				{props.field.diff !== "edited" && props.field.diff !== "deleted" && (
+				);
+			}
+			case "deleted": {
+				return (
 					<ActionIcon
 						variant={"simple"}
-						className="text-destructive/75 hover:text-destructive"
-						onClick={(e) => handleClick(e, () => props.onDelete(props.field))}
-						tooltip="Delete"
+						className="mr-0.5"
+						onClick={(e) => handleClick(e, props.onUnDelete)}
+						tooltip="Restore"
 					>
-						<TrashIcon className="w-5" data-testid="delete-field-btn" />
+						<ArrowUturnLeftIcon className="w-5" data-testid="restore-field-btn" />
 					</ActionIcon>
-				)}
-			</div>
-		</Card>
-	);
+				);
+			}
+
+			case "reordered":
+			case "none": {
+				return <DefaultActions />;
+			}
+		}
+	} else if (props.dialogType === "add") {
+		return <DefaultActions />;
+	}
 }

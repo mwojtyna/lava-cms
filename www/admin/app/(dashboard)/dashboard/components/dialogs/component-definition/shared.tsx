@@ -1,3 +1,4 @@
+import type { ComponentsTableComponentDef } from "../../ComponentsTable";
 import type { inferRouterOutputs } from "@trpc/server";
 import { ArrowTopRightOnSquareIcon, FolderIcon } from "@heroicons/react/24/outline";
 import { ComponentFieldType } from "@prisma/client";
@@ -38,6 +39,17 @@ export const fieldTypeMap: Record<string, string> = Object.values(ComponentField
 	},
 	{} as Record<string, string>,
 );
+
+export type DialogType = "add" | "edit";
+export type Step =
+	| {
+			name: "component-definition";
+			componentDef: ComponentsTableComponentDef;
+	  }
+	| {
+			name: "field-definition";
+			fieldDef: FieldDefinitionUI;
+	  };
 
 // ---------------- FUNCTIONS ----------------
 export function groupsToComboboxEntries(
