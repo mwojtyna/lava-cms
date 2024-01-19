@@ -3,9 +3,10 @@ import type { ComponentsTableComponentDef } from "../../ComponentsTable";
 import { DocumentDuplicateIcon } from "@heroicons/react/24/outline";
 import * as React from "react";
 import { Sheet, SheetContent } from "@/src/components/ui/client";
+import { useComponentsTableDialogs } from "@/src/data/stores/componentDefinitions";
+import { cn } from "@/src/utils/styling";
 import { ComponentDefEditor } from "./ComponentDefEditor";
 import { FieldDefEditor } from "./FieldDefEditor";
-import { cn } from "@/src/utils/styling";
 
 interface Props {
 	open: boolean;
@@ -28,9 +29,9 @@ export function DuplicateComponentDefDialog(props: Props) {
 		]);
 	}, [props.componentDef]);
 
+	const { fieldsDirty } = useComponentsTableDialogs();
 	const [isDirtyCompDef, setIsDirtyCompDef] = React.useState(false);
-	const [isDirtyFieldDefs, setIsDirtyFieldDefs] = React.useState(false);
-	const anyDirty = isDirtyCompDef || isDirtyFieldDefs;
+	const anyDirty = isDirtyCompDef || fieldsDirty;
 
 	function handleSetOpen(value: boolean) {
 		if (!anyDirty) {
@@ -62,15 +63,7 @@ export function DuplicateComponentDefDialog(props: Props) {
 				);
 			}
 			case "field-definition": {
-				return (
-					<FieldDefEditor
-						step={step}
-						setSteps={setSteps}
-						isDirty={anyDirty}
-						setIsDirty={setIsDirtyFieldDefs}
-						dialogType="add"
-					/>
-				);
+				return <FieldDefEditor step={step} setSteps={setSteps} dialogType="add" />;
 			}
 		}
 	}

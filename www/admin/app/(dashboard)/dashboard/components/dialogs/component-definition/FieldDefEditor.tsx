@@ -26,12 +26,10 @@ type Inputs = z.infer<typeof fieldDefDialogSchema>;
 interface FieldDefEditorProps {
 	step: Extract<Step, { name: "field-definition" }>;
 	setSteps: React.Dispatch<React.SetStateAction<Step[]>>;
-	isDirty: boolean;
-	setIsDirty: (value: boolean) => void;
 	dialogType: DialogType;
 }
 export function FieldDefEditor(props: FieldDefEditorProps) {
-	const { fields, setFields, originalFields, isDirty: fieldsDirty } = useComponentsTableDialogs();
+	const { fields, setFields, originalFields } = useComponentsTableDialogs();
 	// Can be undefined if the field was just added in an 'add' type dialog
 	const originalField = useMemo(
 		() => originalFields.find((f) => f.id === props.step.fieldDef.id),
@@ -65,9 +63,6 @@ export function FieldDefEditor(props: FieldDefEditorProps) {
 	);
 
 	useEffect(() => {
-		props.setIsDirty(fieldsDirty);
-	}, [fieldsDirty, props]);
-	useEffect(() => {
 		// Trigger validation on mount, fixes Ctrl+S after first change not saving
 		void form.trigger();
 
@@ -81,13 +76,6 @@ export function FieldDefEditor(props: FieldDefEditorProps) {
 
 		return unsubscribe;
 	}, [form, onSubmit]);
-
-	useWindowEvent("beforeunload", (e) => {
-		if (props.isDirty) {
-			// Display a confirmation dialog
-			e.preventDefault();
-		}
-	});
 
 	function getInputProps(
 		edited: boolean,

@@ -2,9 +2,9 @@ import type { Step } from "./shared";
 import type { ComponentsTableComponentDef } from "../../ComponentsTable";
 import type { ComponentDefinitionGroup } from "@prisma/client";
 import { CubeIcon } from "@heroicons/react/24/outline";
-import { Slot } from "@radix-ui/react-slot";
 import * as React from "react";
 import { Sheet, SheetContent } from "@/src/components/ui/client";
+import { useComponentsTableDialogs } from "@/src/data/stores/componentDefinitions";
 import { cn } from "@/src/utils/styling";
 import { ComponentDefEditor } from "./ComponentDefEditor";
 import { FieldDefEditor } from "./FieldDefEditor";
@@ -42,9 +42,9 @@ export function AddComponentDefDialog(props: Props) {
 		]);
 	}, [EMPTY_COMPONENT_DEF, props.group.id]);
 
+	const { fieldsDirty } = useComponentsTableDialogs();
 	const [isDirtyCompDef, setIsDirtyCompDef] = React.useState(false);
-	const [isDirtyFieldDefs, setIsDirtyFieldDefs] = React.useState(false);
-	const anyDirty = isDirtyCompDef || isDirtyFieldDefs;
+	const anyDirty = isDirtyCompDef || fieldsDirty;
 
 	function handleSetOpen(value: boolean) {
 		if (!anyDirty) {
@@ -76,15 +76,7 @@ export function AddComponentDefDialog(props: Props) {
 				);
 			}
 			case "field-definition": {
-				return (
-					<FieldDefEditor
-						step={step}
-						setSteps={setSteps}
-						isDirty={anyDirty}
-						setIsDirty={setIsDirtyFieldDefs}
-						dialogType="add"
-					/>
-				);
+				return <FieldDefEditor step={step} setSteps={setSteps} dialogType="add" />;
 			}
 		}
 	}

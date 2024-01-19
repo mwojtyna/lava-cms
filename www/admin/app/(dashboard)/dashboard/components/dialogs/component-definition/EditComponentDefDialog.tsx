@@ -3,6 +3,7 @@ import type { ComponentsTableComponentDef } from "../../ComponentsTable";
 import { PencilSquareIcon } from "@heroicons/react/24/outline";
 import * as React from "react";
 import { Sheet, SheetContent } from "@/src/components/ui/client";
+import { useComponentsTableDialogs } from "@/src/data/stores/componentDefinitions";
 import { cn } from "@/src/utils/styling";
 import { ComponentDefEditor } from "./ComponentDefEditor";
 import { FieldDefEditor } from "./FieldDefEditor";
@@ -30,9 +31,9 @@ export function EditComponentDefDialog(props: Props) {
 		}
 	}, [props.componentDef, props.open]);
 
+	const { fieldsDirty } = useComponentsTableDialogs();
 	const [isDirtyCompDef, setIsDirtyCompDef] = React.useState(false);
-	const [isDirtyFieldDefs, setIsDirtyFieldDefs] = React.useState(false);
-	const anyDirty = isDirtyCompDef || isDirtyFieldDefs;
+	const anyDirty = isDirtyCompDef || fieldsDirty;
 
 	function handleSetOpen(value: boolean) {
 		if (!anyDirty) {
@@ -64,15 +65,7 @@ export function EditComponentDefDialog(props: Props) {
 				);
 			}
 			case "field-definition": {
-				return (
-					<FieldDefEditor
-						step={step}
-						setSteps={setSteps}
-						isDirty={anyDirty}
-						setIsDirty={setIsDirtyFieldDefs}
-						dialogType="edit"
-					/>
-				);
+				return <FieldDefEditor step={step} setSteps={setSteps} dialogType="edit" />;
 			}
 		}
 	}

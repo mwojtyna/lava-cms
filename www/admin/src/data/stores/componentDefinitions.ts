@@ -11,7 +11,7 @@ interface ComponentsTableDialogsState {
 	item: ComponentsTableItem | null;
 	setItem: (item: ComponentsTableItem) => void;
 
-	isDirty: boolean;
+	fieldsDirty: boolean;
 	fields: FieldDefinitionUI[];
 	originalFields: FieldDefinitionUI[];
 	setFields: (fields: FieldDefinitionUI[]) => void;
@@ -40,11 +40,11 @@ export const useComponentsTableDialogs = create<ComponentsTableDialogsState>((se
 				item,
 				fields: fieldDefinitions,
 				originalFields: fieldDefinitions,
-				isDirty: false,
+				fieldsDirty: false,
 			};
 		}),
 
-	isDirty: false,
+	fieldsDirty: false,
 	fields: [],
 	originalFields: [],
 	setFields: (fields) =>
@@ -60,7 +60,7 @@ export const useComponentsTableDialogs = create<ComponentsTableDialogsState>((se
 
 			return {
 				fields,
-				isDirty: JSON.stringify(state.originalFields) !== JSON.stringify(fields),
+				fieldsDirty: JSON.stringify(state.originalFields) !== JSON.stringify(fields),
 			};
 		}),
 
