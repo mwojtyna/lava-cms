@@ -5,6 +5,7 @@ import * as React from "react";
 import { Sheet, SheetContent } from "@/src/components/ui/client";
 import { ComponentDefEditor } from "./ComponentDefEditor";
 import { FieldDefEditor } from "./FieldDefEditor";
+import { cn } from "@/src/utils/styling";
 
 interface Props {
 	open: boolean;
@@ -27,31 +28,32 @@ export function DuplicateComponentDefDialog(props: Props) {
 		]);
 	}, [props.componentDef]);
 
-	const [isDirty, setIsDirty] = React.useState(false);
-	const lastStep = steps.at(-1)!;
+	const [isDirtyCompDef, setIsDirtyCompDef] = React.useState(false);
+	const [isDirtyFieldDefs, setIsDirtyFieldDefs] = React.useState(false);
+	const anyDirty = isDirtyCompDef || isDirtyFieldDefs;
 
 	function handleSetOpen(value: boolean) {
-		if (!isDirty) {
+		if (!anyDirty) {
 			props.setOpen(value);
 		} else if (confirm("Are you sure you want to discard your changes?")) {
 			props.setOpen(value);
 		}
 	}
 
-	function displayStep() {
-		switch (lastStep.name) {
+	function displayStep(step: Step) {
+		switch (step.name) {
 			case "component-definition": {
 				return (
 					<ComponentDefEditor
-						step={lastStep}
+						step={step}
 						setSteps={setSteps}
 						open={props.open}
 						setOpen={handleSetOpen}
 						onSubmit={() => props.setOpen(false)}
-						isDirty={isDirty}
-						setIsDirty={setIsDirty}
+						isDirty={anyDirty}
+						setIsDirty={setIsDirtyCompDef}
 						dialogType="add"
-						title={`Duplicate "${lastStep.componentDef.name}"`}
+						title={`Duplicate "${step.componentDef.name}"`}
 						submitButton={{
 							text: "Duplicate",
 							icon: <DocumentDuplicateIcon className="w-5" />,
@@ -62,10 +64,10 @@ export function DuplicateComponentDefDialog(props: Props) {
 			case "field-definition": {
 				return (
 					<FieldDefEditor
-						step={lastStep}
+						step={step}
 						setSteps={setSteps}
-						isDirty={isDirty}
-						setIsDirty={setIsDirty}
+						isDirty={anyDirty}
+						setIsDirty={setIsDirtyFieldDefs}
 						dialogType="add"
 					/>
 				);
@@ -75,7 +77,16 @@ export function DuplicateComponentDefDialog(props: Props) {
 
 	return (
 		<Sheet open={props.open} onOpenChange={handleSetOpen}>
-			<SheetContent className="w-screen sm:max-w-md">{displayStep()}</SheetContent>
+			<SheetContent className="w-screen sm:max-w-md">
+				{steps.map((step, i) => (
+					<div
+						key={i}
+						className={cn("flex flex-col gap-4", i < steps.length - 1 && "hidden")}
+					>
+						{displayStep(step)}
+					</div>
+				))}
+			</SheetContent>
 		</Sheet>
 	);
 }

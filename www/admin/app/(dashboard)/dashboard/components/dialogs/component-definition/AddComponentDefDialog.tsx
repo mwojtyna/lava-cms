@@ -2,8 +2,10 @@ import type { Step } from "./shared";
 import type { ComponentsTableComponentDef } from "../../ComponentsTable";
 import type { ComponentDefinitionGroup } from "@prisma/client";
 import { CubeIcon } from "@heroicons/react/24/outline";
+import { Slot } from "@radix-ui/react-slot";
 import * as React from "react";
 import { Sheet, SheetContent } from "@/src/components/ui/client";
+import { cn } from "@/src/utils/styling";
 import { ComponentDefEditor } from "./ComponentDefEditor";
 import { FieldDefEditor } from "./FieldDefEditor";
 
@@ -40,29 +42,30 @@ export function AddComponentDefDialog(props: Props) {
 		]);
 	}, [EMPTY_COMPONENT_DEF, props.group.id]);
 
-	const [isDirty, setIsDirty] = React.useState(false);
-	const lastStep = steps.at(-1)!;
+	const [isDirtyCompDef, setIsDirtyCompDef] = React.useState(false);
+	const [isDirtyFieldDefs, setIsDirtyFieldDefs] = React.useState(false);
+	const anyDirty = isDirtyCompDef || isDirtyFieldDefs;
 
 	function handleSetOpen(value: boolean) {
-		if (!isDirty) {
+		if (!anyDirty) {
 			props.setOpen(value);
 		} else if (confirm("Are you sure you want to discard your changes?")) {
 			props.setOpen(value);
 		}
 	}
 
-	function displayStep() {
-		switch (lastStep.name) {
+	function displayStep(step: Step) {
+		switch (step.name) {
 			case "component-definition": {
 				return (
 					<ComponentDefEditor
-						step={lastStep}
+						step={step}
 						setSteps={setSteps}
 						open={props.open}
 						setOpen={handleSetOpen}
 						onSubmit={() => props.setOpen(false)}
-						isDirty={isDirty}
-						setIsDirty={setIsDirty}
+						isDirty={anyDirty}
+						setIsDirty={setIsDirtyCompDef}
 						dialogType="add"
 						title="Add component definition"
 						submitButton={{
@@ -75,10 +78,10 @@ export function AddComponentDefDialog(props: Props) {
 			case "field-definition": {
 				return (
 					<FieldDefEditor
-						step={lastStep}
+						step={step}
 						setSteps={setSteps}
-						isDirty={isDirty}
-						setIsDirty={setIsDirty}
+						isDirty={anyDirty}
+						setIsDirty={setIsDirtyFieldDefs}
 						dialogType="add"
 					/>
 				);
@@ -88,7 +91,16 @@ export function AddComponentDefDialog(props: Props) {
 
 	return (
 		<Sheet open={props.open} onOpenChange={handleSetOpen}>
-			<SheetContent className="w-screen sm:max-w-md">{displayStep()}</SheetContent>
+			<SheetContent className="w-screen sm:max-w-md">
+				{steps.map((step, i) => (
+					<div
+						key={i}
+						className={cn("flex flex-col gap-4", i < steps.length - 1 && "hidden")}
+					>
+						{displayStep(step)}
+					</div>
+				))}
+			</SheetContent>
 		</Sheet>
 	);
 }

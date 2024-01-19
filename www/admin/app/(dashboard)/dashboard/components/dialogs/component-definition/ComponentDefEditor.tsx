@@ -46,7 +46,7 @@ interface ComponentDefEditorProps {
 export function ComponentDefEditor(props: ComponentDefEditorProps) {
 	const editMutation = trpc.components.editComponentDefinition.useMutation();
 	const addMutation = trpc.components.addComponentDefinition.useMutation();
-	const { originalFields, fields, isDirty: fieldsDirty } = useComponentsTableDialogs();
+	const { originalFields, fields } = useComponentsTableDialogs();
 
 	const form = useForm<ComponentDefDialogInputs>({
 		resolver: zodResolver(componentDefDialogInputsSchema),
@@ -54,8 +54,8 @@ export function ComponentDefEditor(props: ComponentDefEditorProps) {
 	});
 
 	React.useEffect(() => {
-		props.setIsDirty(form.formState.isDirty || fieldsDirty);
-	}, [fieldsDirty, form.formState.isDirty, props]);
+		props.setIsDirty(form.formState.isDirty);
+	}, [form.formState.isDirty, props]);
 	const canSubmit = form.formState.isValid && props.dialogType === "edit" ? props.isDirty : true;
 
 	const onSubmit: SubmitHandler<ComponentDefDialogInputs> = (data) => {

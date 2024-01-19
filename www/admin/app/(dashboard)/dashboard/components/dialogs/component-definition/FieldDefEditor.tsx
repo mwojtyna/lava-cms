@@ -65,8 +65,8 @@ export function FieldDefEditor(props: FieldDefEditorProps) {
 	);
 
 	useEffect(() => {
-		props.setIsDirty(form.formState.isDirty || fieldsDirty);
-	}, [fieldsDirty, form.formState.isDirty, props]);
+		props.setIsDirty(fieldsDirty);
+	}, [fieldsDirty, props]);
 	useEffect(() => {
 		// Trigger validation on mount, fixes Ctrl+S after first change not saving
 		void form.trigger();
