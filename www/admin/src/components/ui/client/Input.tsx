@@ -1,6 +1,6 @@
 "use client";
 
-import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline";
+import { ArrowUturnLeftIcon, EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline";
 import { type VariantProps, cva } from "class-variance-authority";
 import * as React from "react";
 import { cn } from "@/src/utils/styling";
@@ -21,6 +21,23 @@ const inputVariants = cva(
 		},
 	},
 );
+
+function getRestorableInputProps(
+	edited: boolean,
+	restore: () => void,
+): React.ComponentProps<typeof Input> {
+	return {
+		inputClassName: cn("transition-colors", edited && "border-b-brand"),
+		rightButton: {
+			iconOn: <ArrowUturnLeftIcon className="w-4" />,
+			iconOff: null,
+			tooltip: "Restore",
+			onClick: restore,
+			state: edited,
+			setState: null,
+		},
+	};
+}
 
 interface InputProps
 	extends Omit<React.InputHTMLAttributes<HTMLInputElement>, "children" | "size">,
@@ -104,4 +121,4 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
 );
 Input.displayName = "Input";
 
-export { Input };
+export { Input, getRestorableInputProps };

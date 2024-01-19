@@ -1,6 +1,10 @@
 import type { ComponentsTableComponentDef } from "../../ComponentsTable";
 import type { inferRouterOutputs } from "@trpc/server";
-import { ArrowTopRightOnSquareIcon, FolderIcon } from "@heroicons/react/24/outline";
+import {
+	ArrowTopRightOnSquareIcon,
+	ArrowUturnLeftIcon,
+	FolderIcon,
+} from "@heroicons/react/24/outline";
 import { ComponentFieldType } from "@prisma/client";
 import Link from "next/link";
 import * as React from "react";
@@ -10,7 +14,8 @@ import {
 	type ComponentFieldTypeType,
 } from "@/prisma/generated/zod";
 import { Combobox, type ComboboxData, type ItemParent } from "@/src/components";
-import { Button, type FormFieldProps } from "@/src/components/ui/client";
+import { Button } from "@/src/components/ui/client";
+import type { Input, FormFieldProps } from "@/src/components/ui/client";
 import type { PrivateRouter } from "@/src/trpc/routes/private/_private";
 import { cn } from "@/src/utils/styling";
 

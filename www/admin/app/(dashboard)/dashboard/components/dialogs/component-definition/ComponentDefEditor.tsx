@@ -13,6 +13,7 @@ import {
 	FormError,
 	SheetFooter,
 	Button,
+	getRestorableInputProps,
 } from "@/src/components/ui/client";
 import { TypographyMuted } from "@/src/components/ui/server";
 import { useComponentsTableDialogs } from "@/src/data/stores/componentDefinitions";
@@ -163,14 +164,21 @@ export function ComponentDefEditor(props: ComponentDefEditorProps) {
 					<FormField
 						control={form.control}
 						name="name"
-						render={({ field }) => (
+						render={({ field, fieldState }) => (
 							<FormItem>
 								<FormLabel>
 									Name&nbsp;
 									<TypographyMuted>(unique)</TypographyMuted>
 								</FormLabel>
 								<FormControl>
-									<Input {...field} aria-required />
+									<Input
+										{...field}
+										{...(props.dialogType === "edit" &&
+											getRestorableInputProps(fieldState.isDirty, () =>
+												form.resetField("name"),
+											))}
+										aria-required
+									/>
 								</FormControl>
 								<FormError />
 							</FormItem>

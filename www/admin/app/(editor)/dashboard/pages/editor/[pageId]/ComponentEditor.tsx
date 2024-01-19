@@ -5,6 +5,7 @@ import { FormProvider, useForm, type FieldErrors } from "react-hook-form";
 import type { ComponentFieldTypeType } from "@/prisma/generated/zod";
 import {
 	Input,
+	getRestorableInputProps,
 	type FormFieldProps,
 	FormField,
 	FormItem,
@@ -143,17 +144,7 @@ export interface FieldProps extends FormFieldProps<string> {
 }
 const Field = forwardRef<HTMLInputElement | HTMLButtonElement, FieldProps>(
 	({ type: fieldType, edited, onRestore, value, onChange, component, ...rest }, ref) => {
-		const inputProps: React.ComponentProps<typeof Input> = {
-			inputClassName: cn("transition-colors", edited && "border-b-brand"),
-			rightButton: {
-				iconOn: <ArrowUturnLeftIcon className="w-4" />,
-				iconOff: null,
-				tooltip: "Restore",
-				onClick: onRestore,
-				state: edited,
-				setState: null,
-			},
-		};
+		const inputProps = getRestorableInputProps(edited, onRestore);
 
 		switch (fieldType) {
 			case "TEXT": {
