@@ -1,8 +1,8 @@
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import { prisma } from "@/prisma/client";
-import { ComponentDefinitionFieldSchema } from "@/prisma/generated/zod";
 import { privateProcedure } from "@/src/trpc";
+import { fieldSchema } from "./types";
 
 export const editComponentDefinition = privateProcedure
 	.input(
@@ -10,12 +10,8 @@ export const editComponentDefinition = privateProcedure
 			id: z.string().cuid(),
 			newName: z.string().optional(),
 			newGroupId: z.string().cuid().optional(),
-			addedFields: z
-				.array(ComponentDefinitionFieldSchema.pick({ name: true, type: true, order: true }))
-				.optional(),
-			editedFields: z
-				.array(ComponentDefinitionFieldSchema.omit({ component_definition_id: true }))
-				.optional(),
+			addedFields: z.array(fieldSchema).optional(),
+			editedFields: z.array(fieldSchema.extend({ id: z.string().cuid() })).optional(),
 			deletedFieldIds: z.array(z.string().cuid()).optional(),
 		}),
 	)
@@ -57,6 +53,7 @@ export const editComponentDefinition = privateProcedure
 						data: {
 							name: field.name,
 							type: field.type,
+							array_item_type: field.array_item_type,
 							order: field.order,
 						},
 					})),

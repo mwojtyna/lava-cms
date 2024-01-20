@@ -12,7 +12,7 @@ import {
 import { useComponentsTableDialogs } from "@/src/data/stores/componentDefinitions";
 import { useDataTable, type TableSearchParams } from "@/src/hooks";
 import type { PrivateRouter } from "@/src/trpc/routes/private/_private";
-import type { Item } from "@/src/trpc/routes/private/components/getGroup";
+import type { GroupItem } from "@/src/trpc/routes/private/components/types";
 import type { TableCookie } from "@/src/utils/cookies";
 import { trpc } from "@/src/utils/trpc";
 import { columns } from "./ComponentsTableColumns";
@@ -24,7 +24,7 @@ import {
 import { AddGroupDialog, EditGroupDialog } from "./dialogs/GroupDialogs";
 import { MoveDialog, DeleteDialog } from "./dialogs/SharedDialogs";
 
-export type ComponentsTableItem = Item;
+export type ComponentsTableItem = GroupItem;
 export type ComponentsTableComponentDef = Omit<
 	Extract<ComponentsTableItem, { isGroup: false }>,
 	"isGroup"

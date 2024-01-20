@@ -1,8 +1,5 @@
-import type {
-	ComponentDefinitionField,
-	ComponentDefinitionGroup,
-	ComponentInstance,
-} from "@prisma/client";
+import type { GroupItem } from "./types";
+import type { ComponentDefinitionGroup } from "@prisma/client";
 import type { DefaultArgs } from "@prisma/client/runtime/library";
 import { Prisma } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
@@ -11,22 +8,6 @@ import { z } from "zod";
 import { prisma } from "@/prisma/client";
 import type { Breadcrumb } from "@/src/components/DataTable";
 import { privateProcedure } from "@/src/trpc";
-
-export type Item = {
-	id: string;
-	name: string;
-	parentGroupId: string | null;
-	lastUpdate: Date;
-} & (
-	| {
-			isGroup: false;
-			instances: ComponentInstance[];
-			fieldDefinitions: ComponentDefinitionField[];
-	  }
-	| {
-			isGroup: true;
-	  }
-);
 
 const include = {
 	groups: {
@@ -66,7 +47,7 @@ export const getGroup = privateProcedure
 			input,
 		}): Promise<{
 			group: ComponentDefinitionGroup;
-			items: Item[];
+			items: GroupItem[];
 			breadcrumbs: Breadcrumb[];
 		}> => {
 			// Get root group if no input is provided
@@ -121,8 +102,8 @@ export const getGroup = privateProcedure
 		},
 	);
 
-function groupItems(group: GroupWithIncludes): Item[] {
-	const groups: Item[] = group.groups
+function groupItems(group: GroupWithIncludes): GroupItem[] {
+	const groups: GroupItem[] = group.groups
 		.toSorted((a, b) => natsort()(a.name, b.name))
 		.map((group) => ({
 			id: group.id,
@@ -131,7 +112,7 @@ function groupItems(group: GroupWithIncludes): Item[] {
 			lastUpdate: group.last_update,
 			isGroup: true,
 		}));
-	const componentDefinitions: Item[] = group.component_definitions
+	const componentDefinitions: GroupItem[] = group.component_definitions
 		.toSorted((a, b) => natsort()(a.name, b.name))
 		.map((component, i) => ({
 			id: component.id,

@@ -4,6 +4,7 @@ import { ArrowUturnLeftIcon, ArrowLeftIcon } from "@heroicons/react/24/outline";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMemo, useCallback, useEffect } from "react";
 import { useForm, type SubmitHandler, FormProvider } from "react-hook-form";
+import { getRestorableComboboxProps } from "@/src/components";
 import {
 	Input,
 	SheetHeader,
@@ -14,12 +15,17 @@ import {
 	FormLabel,
 	FormControl,
 	FormError,
+	getRestorableInputProps,
 } from "@/src/components/ui/client";
 import { useComponentsTableDialogs } from "@/src/data/stores/componentDefinitions";
 import { cn } from "@/src/utils/styling";
 import { fieldDefinitionUISchema, FieldTypePicker } from "./shared";
 
-const fieldDefDialogSchema = fieldDefinitionUISchema.pick({ name: true, type: true });
+const fieldDefDialogSchema = fieldDefinitionUISchema.pick({
+	name: true,
+	type: true,
+	arrayItemType: true,
+});
 type Inputs = z.infer<typeof fieldDefDialogSchema>;
 
 interface FieldDefEditorProps {
@@ -40,6 +46,7 @@ export function FieldDefEditor(props: FieldDefEditorProps) {
 		defaultValues: {
 			name: props.step.fieldDef.name,
 			type: props.step.fieldDef.type,
+			arrayItemType: props.step.fieldDef.arrayItemType ?? "TEXT",
 		},
 	});
 	const onSubmit: SubmitHandler<Inputs> = useCallback(
@@ -76,30 +83,6 @@ export function FieldDefEditor(props: FieldDefEditorProps) {
 		return unsubscribe;
 	}, [form, onSubmit]);
 
-	function getInputProps(
-		edited: boolean,
-		restore: () => void,
-	): React.ComponentProps<typeof Input> {
-		if (props.dialogType === "edit") {
-			return {
-				inputClassName: cn("transition-colors", edited && "border-b-brand"),
-				rightButton: {
-					iconOn: <ArrowUturnLeftIcon className="w-4" />,
-					iconOff: null,
-					tooltip: "Restore",
-					onClick: () => {
-						restore();
-						void form.handleSubmit(onSubmit)();
-					},
-					state: edited,
-					setState: null,
-				},
-			};
-		} else {
-			return {};
-		}
-	}
-
 	return (
 		<>
 			<SheetHeader>
@@ -126,7 +109,7 @@ export function FieldDefEditor(props: FieldDefEditorProps) {
 									<Input
 										{...formField}
 										{...(props.dialogType !== "add" &&
-											getInputProps(
+											getRestorableInputProps(
 												originalField!.name !== formField.value,
 												() => form.setValue("name", originalField!.name),
 											))}
@@ -140,37 +123,70 @@ export function FieldDefEditor(props: FieldDefEditorProps) {
 					<FormField
 						control={form.control}
 						name="type"
-						render={({ field: formField }) => (
-							<FormItem>
-								<FormLabel>Type</FormLabel>
-								<FormControl>
-									<div className="flex gap-3">
-										<FieldTypePicker
-											className={cn(
-												"w-full",
-												props.dialogType === "edit" &&
-													originalField!.type !== formField.value &&
-													"ring-2 ring-brand ring-offset-2 ring-offset-black",
-											)}
-											{...formField}
-										/>
-										{props.dialogType === "edit" &&
-											originalField!.type !== formField.value && (
-												<ActionIcon
-													variant={"simple"}
-													onClick={() => {
-														form.setValue("type", originalField!.type);
-														void form.handleSubmit(onSubmit)();
-													}}
-												>
-													<ArrowUturnLeftIcon className="w-5" />
-												</ActionIcon>
-											)}
-									</div>
-								</FormControl>
-							</FormItem>
-						)}
+						render={({ field: formField }) => {
+							const restorable = getRestorableComboboxProps(
+								props.dialogType === "edit" &&
+									originalField!.type !== formField.value,
+								() => {
+									form.setValue("type", originalField!.type);
+									void form.handleSubmit(onSubmit)();
+								},
+							);
+
+							return (
+								<FormItem>
+									<FormLabel>Type</FormLabel>
+									<FormControl>
+										<div className="flex gap-3">
+											<FieldTypePicker
+												className={cn("w-full", restorable.className)}
+												{...formField}
+											/>
+											{restorable.restoreButton}
+										</div>
+									</FormControl>
+								</FormItem>
+							);
+						}}
 					/>
+
+					{form.getValues().type === "ARRAY" && (
+						<FormField
+							control={form.control}
+							name="arrayItemType"
+							render={({ field: formField }) => {
+								const restorable = getRestorableComboboxProps(
+									props.dialogType === "edit" &&
+										!!originalField!.arrayItemType &&
+										originalField!.arrayItemType !== formField.value,
+									() => {
+										form.setValue(
+											"arrayItemType",
+											originalField!.arrayItemType,
+										);
+										void form.handleSubmit(onSubmit)();
+									},
+								);
+
+								return (
+									<FormItem>
+										<FormLabel>Array item type</FormLabel>
+										<FormControl>
+											<div className="flex gap-3">
+												<FieldTypePicker
+													className={cn("w-full", restorable.className)}
+													isArrayItemType
+													{...formField}
+													value={formField.value!}
+												/>
+												{restorable.restoreButton}
+											</div>
+										</FormControl>
+									</FormItem>
+								);
+							}}
+						/>
+					)}
 				</form>
 			</FormProvider>
 		</>

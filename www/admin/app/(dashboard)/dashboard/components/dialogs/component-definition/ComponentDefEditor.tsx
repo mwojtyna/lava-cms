@@ -1,3 +1,4 @@
+import type { inferRouterInputs } from "@trpc/server";
 import { zodResolver } from "@hookform/resolvers/zod";
 import React from "react";
 import { useForm, type SubmitHandler, FormProvider } from "react-hook-form";
@@ -18,6 +19,7 @@ import {
 import { TypographyMuted } from "@/src/components/ui/server";
 import { useComponentsTableDialogs } from "@/src/data/stores/componentDefinitions";
 import { useWindowEvent } from "@/src/hooks";
+import type { PrivateRouter } from "@/src/trpc/routes/private/_private";
 import { trpc } from "@/src/utils/trpc";
 import { AddFieldDefs, FieldDefs } from "./FieldDefinitions";
 import { ComponentDefinitionNameError, type DialogType, type Step } from "./shared";
@@ -60,22 +62,32 @@ export function ComponentDefEditor(props: ComponentDefEditorProps) {
 	const canSubmit = form.formState.isValid && props.dialogType === "edit" ? props.isDirty : true;
 
 	const onSubmit: SubmitHandler<ComponentDefDialogInputs> = (data) => {
-		const addedFields = fields
+		type Inputs = inferRouterInputs<PrivateRouter>["components"]["editComponentDefinition"];
+		type AddedField = NonNullable<Inputs["addedFields"]>[number];
+		type EditedField = NonNullable<Inputs["editedFields"]>[number];
+
+		const addedFields: AddedField[] = fields
 			.map((f, i) => ({ ...f, order: i }))
 			.filter((f) => f.diff === "added");
 
-		const deletedFieldIds = fields.filter((f) => f.diff === "deleted").map((f) => f.id);
+		const deletedFieldIds: string[] = fields
+			.filter((f) => f.diff === "deleted")
+			.map((f) => f.id);
 
-		const editedFields = fields
-			.map((ef, i) => ({
-				...ef,
-				id: ef.id,
-				order: i,
-			}))
+		const editedFields: EditedField[] = fields
 			.filter((f) =>
 				originalFields.find(
 					(of) => f.id === of.id && (f.diff === "edited" || f.diff === "reordered"),
 				),
+			)
+			.map(
+				(ef, i) =>
+					({
+						...ef,
+						id: ef.id,
+						order: i,
+						array_item_type: ef.arrayItemType,
+					}) satisfies EditedField,
 			);
 
 		if (props.dialogType === "edit") {

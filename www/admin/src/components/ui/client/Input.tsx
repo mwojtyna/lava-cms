@@ -22,22 +22,20 @@ const inputVariants = cva(
 	},
 );
 
-function getRestorableInputProps(
+const getRestorableInputProps = (
 	edited: boolean,
 	restore: () => void,
-): React.ComponentProps<typeof Input> {
-	return {
-		inputClassName: cn("transition-colors", edited && "border-b-brand"),
-		rightButton: {
-			iconOn: <ArrowUturnLeftIcon className="w-4" />,
-			iconOff: null,
-			tooltip: "Restore",
-			onClick: restore,
-			state: edited,
-			setState: null,
-		},
-	};
-}
+): React.ComponentProps<typeof Input> => ({
+	inputClassName: cn("transition-colors", edited && "border-b-brand"),
+	rightButton: {
+		iconOn: <ArrowUturnLeftIcon className="w-4" />,
+		iconOff: null,
+		tooltip: "Restore",
+		onClick: restore,
+		state: edited,
+		setState: null,
+	},
+});
 
 interface InputProps
 	extends Omit<React.InputHTMLAttributes<HTMLInputElement>, "children" | "size">,

@@ -117,6 +117,7 @@ model ComponentDefinitionField {
     id                      String             @id @default(cuid())
     name                    String
     type                    ComponentFieldType
+    array_item_type         ArrayItemType?
     order                   Int
     component_definition_id String
 
@@ -171,4 +172,13 @@ enum ComponentFieldType {
     ARRAY
 
     @@map("component_field_type")
+}
+
+enum ArrayItemType {
+    TEXT
+    NUMBER
+    SWITCH
+    COMPONENT
+
+    @@map("array_item_type")
 }

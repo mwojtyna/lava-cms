@@ -1,15 +1,15 @@
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import { prisma } from "@/prisma/client";
-import { ComponentDefinitionFieldSchema } from "@/prisma/generated/zod";
 import { privateProcedure } from "@/src/trpc";
+import { fieldSchema } from "./types";
 
 export const addComponentDefinition = privateProcedure
 	.input(
 		z.object({
 			name: z.string(),
 			groupId: z.string().cuid(),
-			fields: z.array(ComponentDefinitionFieldSchema.pick({ name: true, type: true })),
+			fields: z.array(fieldSchema),
 		}),
 	)
 	.mutation(async ({ input }) => {

@@ -31,6 +31,7 @@ export const useComponentsTableDialogs = create<ComponentsTableDialogsState>((se
 						id: fd.id,
 						name: fd.name,
 						type: fd.type,
+						arrayItemType: fd.array_item_type,
 						order: fd.order,
 						diff: "none",
 				  }))

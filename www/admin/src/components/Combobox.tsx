@@ -1,8 +1,9 @@
 "use client";
 
-import { CheckIcon, ChevronUpDownIcon } from "@heroicons/react/20/solid";
+import { ArrowUturnLeftIcon, CheckIcon, ChevronUpDownIcon } from "@heroicons/react/20/solid";
 import * as React from "react";
 import {
+	ActionIcon,
 	Button,
 	Command,
 	CommandEmpty,
@@ -15,6 +16,15 @@ import {
 	PopoverTrigger,
 } from "@/src/components/ui/client";
 import { cn } from "@/src/utils/styling";
+
+const getRestorableComboboxProps = (edited: boolean, restore: () => void) => ({
+	className: cn(edited && "ring-2 ring-brand ring-offset-2 ring-offset-black"),
+	restoreButton: edited ? (
+		<ActionIcon variant={"simple"} onClick={restore}>
+			<ArrowUturnLeftIcon className="w-5" />
+		</ActionIcon>
+	) : null,
+});
 
 type ComboboxData = Array<{
 	value: string;
@@ -135,4 +145,4 @@ const Combobox = React.forwardRef<React.ComponentRef<typeof Button>, ComboboxPro
 );
 Combobox.displayName = "Combobox";
 
-export { Combobox, type ComboboxData };
+export { Combobox, type ComboboxData, getRestorableComboboxProps };

@@ -1,11 +1,7 @@
 import type { ComponentsTableComponentDef } from "../../ComponentsTable";
 import type { inferRouterOutputs } from "@trpc/server";
-import {
-	ArrowTopRightOnSquareIcon,
-	ArrowUturnLeftIcon,
-	FolderIcon,
-} from "@heroicons/react/24/outline";
-import { ComponentFieldType } from "@prisma/client";
+import { ArrowTopRightOnSquareIcon, FolderIcon } from "@heroicons/react/24/outline";
+import { ArrayItemType, ComponentFieldType } from "@prisma/client";
 import Link from "next/link";
 import * as React from "react";
 import { z } from "zod";
@@ -15,7 +11,7 @@ import {
 } from "@/prisma/generated/zod";
 import { Combobox, type ComboboxData, type ItemParent } from "@/src/components";
 import { Button } from "@/src/components/ui/client";
-import type { Input, FormFieldProps } from "@/src/components/ui/client";
+import type { FormFieldProps } from "@/src/components/ui/client";
 import type { PrivateRouter } from "@/src/trpc/routes/private/_private";
 import { cn } from "@/src/utils/styling";
 
@@ -24,6 +20,7 @@ export const fieldDefinitionUISchema = z.object({
 	id: z.string().cuid(),
 	name: z.string().min(1, { message: " " }),
 	type: ComponentDefinitionFieldSchema.shape.type,
+	arrayItemType: ComponentDefinitionFieldSchema.shape.array_item_type,
 	order: z.number(),
 	diff: z.union([
 		z.literal("none"),
@@ -39,7 +36,6 @@ export const fieldTypeMap: Record<string, string> = Object.values(ComponentField
 	(acc, type) => {
 		const label = type.charAt(0).toUpperCase() + type.slice(1).toLowerCase();
 		acc[type] = label;
-
 		return acc;
 	},
 	{} as Record<string, string>,
@@ -88,22 +84,21 @@ interface FieldTypePickerProps extends FormFieldProps<ComponentFieldTypeType> {
 	className?: string;
 	onKeyDown?: (e: React.KeyboardEvent<HTMLButtonElement>) => void;
 	placeholder?: string;
+	isArrayItemType?: boolean;
 }
 export const FieldTypePicker = React.forwardRef<
 	React.ComponentRef<typeof Combobox>,
 	FieldTypePickerProps
->(({ value, onChange, className, placeholder, ...props }, ref) => {
+>(({ value, onChange, className, placeholder, isArrayItemType, ...props }, ref) => {
 	const fieldTypes = React.useMemo(
 		() =>
-			Object.values(ComponentFieldType).map((type) => {
-				return {
-					value: type,
-					label: fieldTypeMap[type]!,
-					description: "",
-					filterValue: fieldTypeMap[type]!,
-				};
-			}) satisfies ComboboxData,
-		[],
+			Object.values(isArrayItemType ? ArrayItemType : ComponentFieldType).map((type) => ({
+				value: type,
+				label: fieldTypeMap[type]!,
+				description: "",
+				filterValue: fieldTypeMap[type]!,
+			})),
+		[isArrayItemType],
 	);
 
 	return (
