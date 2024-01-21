@@ -281,14 +281,16 @@ function FieldDefCard(props: FieldDefProps) {
 			ref={setNodeRef}
 			style={style}
 			className={cn(
-				"group flex-row gap-4 md:p-3",
 				props.dialogType === "edit" &&
 					props.field.diff !== "none" &&
 					props.field.diff !== "reordered" &&
 					`border-l-[3px] ${diffStyle[props.field.diff]}`,
+
 				props.field.diff !== "deleted" && "cursor-pointer hover:bg-accent/70",
+
+				"group flex-row gap-4 md:p-3",
 			)}
-			onClick={props.onClick}
+			onClick={() => (props.field.diff !== "deleted" ? props.onClick() : undefined)}
 			data-test-diff={props.dialogType === "edit" ? props.field.diff : undefined}
 		>
 			{/* Grip, name, type */}
@@ -375,6 +377,7 @@ function Actions(props: ActionsProps) {
 				);
 			}
 
+			case "added":
 			case "reordered":
 			case "none": {
 				return <DefaultActions />;

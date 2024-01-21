@@ -1,12 +1,23 @@
-import type { Step } from "./shared";
 import type { ComponentsTableComponentDef } from "../../ComponentsTable";
+import type { inferRouterInputs } from "@trpc/server";
 import { PencilSquareIcon } from "@heroicons/react/24/outline";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useHotkeys } from "@mantine/hooks";
 import * as React from "react";
-import { Sheet, SheetContent } from "@/src/components/ui/client";
+import { useForm, type SubmitHandler, FormProvider } from "react-hook-form";
+import { Button, Sheet, SheetContent, SheetFooter } from "@/src/components/ui/client";
 import { useComponentsTableDialogs } from "@/src/data/stores/componentDefinitions";
+import { useWindowEvent } from "@/src/hooks";
+import type { PrivateRouter } from "@/src/trpc/routes/private/_private";
 import { cn } from "@/src/utils/styling";
-import { ComponentDefEditor } from "./ComponentDefEditor";
+import { trpc, trpcFetch } from "@/src/utils/trpc";
+import {
+	ComponentDefEditor,
+	componentDefEditorInputsSchema,
+	type ComponentDefEditorInputs,
+} from "./ComponentDefEditor";
 import { FieldDefEditor } from "./FieldDefEditor";
+import { ComponentDefinitionNameError, type Step } from "./shared";
 
 interface Props {
 	open: boolean;
@@ -20,8 +31,109 @@ export function EditComponentDefDialog(props: Props) {
 			componentDef: props.componentDef,
 		},
 	]);
+
+	const { setItem, fields, originalFields, fieldsDirty } = useComponentsTableDialogs();
+	const editMutation = trpc.components.editComponentDefinition.useMutation();
+
+	const form = useForm<ComponentDefEditorInputs>({
+		resolver: zodResolver(componentDefEditorInputsSchema),
+		mode: "onChange",
+	});
+	const onSubmit: SubmitHandler<ComponentDefEditorInputs> = (data) => {
+		type Inputs = inferRouterInputs<PrivateRouter>["components"]["editComponentDefinition"];
+		type AddedField = NonNullable<Inputs["addedFields"]>[number];
+		type EditedField = NonNullable<Inputs["editedFields"]>[number];
+
+		const addedFields: AddedField[] = fields
+			.map((f, i) => ({ ...f, order: i }))
+			.filter((f) => f.diff === "added");
+
+		const deletedFieldIds: string[] = fields
+			.filter((f) => f.diff === "deleted")
+			.map((f) => f.id);
+
+		const editedFields: EditedField[] = fields
+			.map(
+				(ef, i) =>
+					({
+						...ef,
+						id: ef.id,
+						order: i,
+						array_item_type: ef.arrayItemType,
+					}) satisfies EditedField,
+			)
+			.filter((f) =>
+				originalFields.find(
+					(of) => f.id === of.id && (f.diff === "edited" || f.diff === "reordered"),
+				),
+			);
+
+		editMutation.mutate(
+			{
+				id: props.componentDef.id,
+				newName: data.name,
+				addedFields,
+				deletedFieldIds,
+				editedFields,
+			},
+			{
+				onSuccess: async (fidToBid) => {
+					setSteps((steps) =>
+						steps.map((step) =>
+							step.name === "field-definition"
+								? {
+										...step,
+										fieldDef: {
+											...step.fieldDef,
+											id: fidToBid[step.fieldDef.id]!,
+										},
+								  }
+								: step,
+						),
+					);
+
+					const updated = await trpcFetch.components.getComponentDefinition.query({
+						id: props.componentDef.id,
+					});
+					setItem({
+						id: updated.id,
+						name: updated.name,
+						instances: props.componentDef.instances,
+						fieldDefinitions: updated.field_definitions,
+						lastUpdate: updated.last_update,
+						parentGroupId: updated.group_id,
+						isGroup: false,
+					});
+					form.reset({ name: updated.name });
+				},
+				// Can't extract the whole handler to a shared function
+				// because the type of `err` is impossible to specify
+				onError: (err) => {
+					if (err.data?.code === "CONFLICT") {
+						const group = JSON.parse(err.message) as {
+							name: string;
+							id: string;
+						};
+
+						form.setError("name", {
+							type: "manual",
+							message: (
+								<ComponentDefinitionNameError name={data.name} group={group} />
+							) as unknown as string,
+						});
+					}
+				},
+			},
+		);
+	};
+
+	const anyDirty = form.formState.isDirty || fieldsDirty;
+	const canSubmit = props.open && form.formState.isValid && anyDirty;
+
+	// Reset when dialog is opened
 	React.useEffect(() => {
 		if (props.open) {
+			form.reset({ name: props.componentDef.name });
 			setSteps([
 				{
 					name: "component-definition",
@@ -29,11 +141,27 @@ export function EditComponentDefDialog(props: Props) {
 				},
 			]);
 		}
-	}, [props.componentDef, props.open]);
-
-	const { fieldsDirty } = useComponentsTableDialogs();
-	const [isDirtyCompDef, setIsDirtyCompDef] = React.useState(false);
-	const anyDirty = isDirtyCompDef || fieldsDirty;
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [props.open]);
+	useHotkeys(
+		[
+			[
+				"ctrl+s",
+				() => {
+					if (canSubmit) {
+						void form.handleSubmit(onSubmit)();
+					}
+				},
+			],
+		],
+		[],
+	);
+	useWindowEvent("beforeunload", (e) => {
+		if (props.open && canSubmit) {
+			// Display a confirmation dialog
+			e.preventDefault();
+		}
+	});
 
 	function handleSetOpen(value: boolean) {
 		if (!anyDirty) {
@@ -53,14 +181,8 @@ export function EditComponentDefDialog(props: Props) {
 						open={props.open}
 						setOpen={handleSetOpen}
 						onSubmit={() => props.setOpen(false)}
-						isDirty={anyDirty}
-						setIsDirty={setIsDirtyCompDef}
 						dialogType="edit"
 						title={`Edit "${step.componentDef.name}"`}
-						submitButton={{
-							text: "Edit",
-							icon: <PencilSquareIcon className="w-5" />,
-						}}
 					/>
 				);
 			}
@@ -73,14 +195,32 @@ export function EditComponentDefDialog(props: Props) {
 	return (
 		<Sheet open={props.open} onOpenChange={handleSetOpen}>
 			<SheetContent className="w-screen sm:max-w-md">
-				{steps.map((step, i) => (
-					<div
-						key={i}
-						className={cn("flex flex-col gap-4", i < steps.length - 1 && "hidden")}
-					>
-						{displayStep(step)}
-					</div>
-				))}
+				<FormProvider {...form}>
+					<form className="flex flex-col gap-4" onSubmit={form.handleSubmit(onSubmit)}>
+						{steps.map((step, i) => (
+							<div
+								key={i}
+								className={cn(
+									"flex flex-col gap-4",
+									i < steps.length - 1 && "hidden",
+								)}
+							>
+								{displayStep(step)}
+							</div>
+						))}
+
+						<SheetFooter>
+							<Button
+								type="submit"
+								loading={editMutation.isLoading}
+								disabled={!canSubmit}
+								icon={<PencilSquareIcon className="w-5" />}
+							>
+								Save
+							</Button>
+						</SheetFooter>
+					</form>
+				</FormProvider>
 			</SheetContent>
 		</Sheet>
 	);

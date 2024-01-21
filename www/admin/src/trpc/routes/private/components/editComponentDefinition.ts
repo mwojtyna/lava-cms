@@ -10,12 +10,14 @@ export const editComponentDefinition = privateProcedure
 			id: z.string().cuid(),
 			newName: z.string().optional(),
 			newGroupId: z.string().cuid().optional(),
-			addedFields: z.array(fieldSchema).optional(),
+			addedFields: z.array(fieldSchema.extend({ id: z.string().cuid2() })).optional(),
 			editedFields: z.array(fieldSchema.extend({ id: z.string().cuid() })).optional(),
 			deletedFieldIds: z.array(z.string().cuid()).optional(),
 		}),
 	)
-	.mutation(async ({ input }) => {
+	.mutation(async ({ input }): Promise<Record<string, string>> => {
+		const addedCompDefIds: Record<string, string> = {};
+
 		// If editing, not moving the component definition
 		if (input.newName) {
 			const alreadyExists = await prisma.componentDefinition.findUnique({
@@ -39,15 +41,29 @@ export const editComponentDefinition = privateProcedure
 			}
 		}
 
+		if (input.addedFields) {
+			await prisma.$transaction(async (tx) => {
+				for (const addedField of input.addedFields!) {
+					const added = await tx.componentDefinitionField.create({
+						data: {
+							name: addedField.name,
+							type: addedField.type,
+							array_item_type: addedField.array_item_type,
+							order: addedField.order,
+							component_definition_id: input.id,
+						},
+					});
+					addedCompDefIds[addedField.id] = added.id;
+				}
+			});
+		}
+
 		await prisma.componentDefinition.update({
 			where: { id: input.id },
 			data: {
 				name: input.newName,
 				group_id: input.newGroupId,
 				field_definitions: {
-					createMany: {
-						data: input.addedFields ?? [],
-					},
 					updateMany: input.editedFields?.map((field) => ({
 						where: { id: field.id },
 						data: {
@@ -66,4 +82,6 @@ export const editComponentDefinition = privateProcedure
 				last_update: new Date(),
 			},
 		});
+
+		return addedCompDefIds;
 	});

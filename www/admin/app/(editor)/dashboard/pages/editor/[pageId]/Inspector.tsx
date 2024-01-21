@@ -3,7 +3,7 @@
 import type { Page } from "@prisma/client";
 import type { inferRouterOutputs } from "@trpc/server";
 import { ChevronRightIcon, CubeIcon, DocumentIcon, PlusIcon } from "@heroicons/react/24/outline";
-import { useViewportSize } from "@mantine/hooks";
+import { useHotkeys, useViewportSize } from "@mantine/hooks";
 import { createId } from "@paralleldrive/cuid2";
 import { Resizable } from "re-resizable";
 import { useEffect, useState } from "react";
@@ -69,14 +69,19 @@ export function Inspector(props: Props) {
 	}, [data, init]);
 
 	const saveMutation = trpc.pages.editPageComponents.useMutation();
-	useWindowEvent("keydown", (e) => {
-		if ((e.ctrlKey || e.metaKey) && e.key === "s") {
-			e.preventDefault();
-			if (isDirty && isValid) {
-				save(saveMutation, props.page.id);
-			}
-		}
-	});
+	useHotkeys(
+		[
+			[
+				"ctrl+s",
+				() => {
+					if (isDirty && isValid) {
+						save(saveMutation, props.page.id);
+					}
+				},
+			],
+		],
+		[],
+	);
 	useWindowEvent("beforeunload", (e) => {
 		if (isDirty) {
 			// Display a confirmation dialog

@@ -98,49 +98,84 @@ export function FieldDefEditor(props: FieldDefEditorProps) {
 			</SheetHeader>
 
 			<FormProvider {...form}>
-				<form className="flex flex-col gap-4" onSubmit={form.handleSubmit(onSubmit)}>
-					<FormField
-						control={form.control}
-						name="name"
-						render={({ field: formField }) => (
-							<FormItem>
-								<FormLabel>Name</FormLabel>
-								<FormControl>
-									<Input
-										{...formField}
-										{...(props.dialogType !== "add" &&
-											getRestorableInputProps(
-												originalField!.name !== formField.value,
-												() => form.setValue("name", originalField!.name),
-											))}
-									/>
-								</FormControl>
-								<FormError />
-							</FormItem>
-						)}
-					/>
+				<FormField
+					control={form.control}
+					name="name"
+					render={({ field: formField }) => (
+						<FormItem>
+							<FormLabel>Name</FormLabel>
+							<FormControl>
+								<Input
+									{...formField}
+									{...(props.dialogType === "edit" &&
+										getRestorableInputProps(
+											!!originalField &&
+												originalField.name !== formField.value,
+											() => form.setValue("name", originalField!.name),
+										))}
+								/>
+							</FormControl>
+							<FormError />
+						</FormItem>
+					)}
+				/>
 
+				<FormField
+					control={form.control}
+					name="type"
+					render={({ field: formField }) => {
+						const restorable = getRestorableComboboxProps(
+							props.dialogType === "edit" &&
+								!!originalField &&
+								originalField.type !== formField.value,
+							() => {
+								form.setValue("type", originalField!.type);
+								void form.handleSubmit(onSubmit)();
+							},
+						);
+
+						return (
+							<FormItem>
+								<FormLabel>Type</FormLabel>
+								<FormControl>
+									<div className="flex gap-3">
+										<FieldTypePicker
+											className={cn("w-full", restorable.className)}
+											{...formField}
+										/>
+										{restorable.restoreButton}
+									</div>
+								</FormControl>
+							</FormItem>
+						);
+					}}
+				/>
+
+				{form.getValues().type === "ARRAY" && (
 					<FormField
 						control={form.control}
-						name="type"
+						name="arrayItemType"
 						render={({ field: formField }) => {
 							const restorable = getRestorableComboboxProps(
 								props.dialogType === "edit" &&
-									originalField!.type !== formField.value,
+									!!originalField?.arrayItemType &&
+									originalField.arrayItemType !== formField.value,
 								() => {
-									form.setValue("type", originalField!.type);
+									form.setValue("arrayItemType", originalField!.arrayItemType);
 									void form.handleSubmit(onSubmit)();
 								},
 							);
 
 							return (
 								<FormItem>
-									<FormLabel>Type</FormLabel>
+									<FormLabel>Array item type</FormLabel>
 									<FormControl>
 										<div className="flex gap-3">
 											<FieldTypePicker
 												className={cn("w-full", restorable.className)}
+												isArrayItemType
 												{...formField}
+												value={formField.value!}
 											/>
 											{restorable.restoreButton}
 										</div>
@@ -149,45 +184,7 @@ export function FieldDefEditor(props: FieldDefEditorProps) {
 							);
 						}}
 					/>
-
-					{form.getValues().type === "ARRAY" && (
-						<FormField
-							control={form.control}
-							name="arrayItemType"
-							render={({ field: formField }) => {
-								const restorable = getRestorableComboboxProps(
-									props.dialogType === "edit" &&
-										!!originalField!.arrayItemType &&
-										originalField!.arrayItemType !== formField.value,
-									() => {
-										form.setValue(
-											"arrayItemType",
-											originalField!.arrayItemType,
-										);
-										void form.handleSubmit(onSubmit)();
-									},
-								);
-
-								return (
-									<FormItem>
-										<FormLabel>Array item type</FormLabel>
-										<FormControl>
-											<div className="flex gap-3">
-												<FieldTypePicker
-													className={cn("w-full", restorable.className)}
-													isArrayItemType
-													{...formField}
-													value={formField.value!}
-												/>
-												{restorable.restoreButton}
-											</div>
-										</FormControl>
-									</FormItem>
-								);
-							}}
-						/>
-					)}
-				</form>
+				)}
 			</FormProvider>
 		</>
 	);

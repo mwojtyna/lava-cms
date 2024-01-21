@@ -205,11 +205,8 @@ export const usePageEditor = create<PageEditorState>((set) => ({
 										}
 										break;
 									}
-									default: {
-										return step;
-									}
 								}
-								// Don't know why this is needed but typescript complains otherwise
+								// Can't use in default case because typescript is dumb
 								return step;
 							}),
 						);
