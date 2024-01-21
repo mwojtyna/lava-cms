@@ -85,7 +85,7 @@ export function EditComponentDefDialog(props: Props) {
 										...step,
 										fieldDef: {
 											...step.fieldDef,
-											id: fidToBid[step.fieldDef.id]!,
+											id: fidToBid[step.fieldDef.id] ?? step.fieldDef.id,
 										},
 								  }
 								: step,
@@ -104,7 +104,7 @@ export function EditComponentDefDialog(props: Props) {
 						parentGroupId: updated.group_id,
 						isGroup: false,
 					});
-					form.reset(form.getValues);
+					form.reset(form.getValues());
 				},
 				// Can't extract the whole handler to a shared function
 				// because the type of `err` is impossible to specify
