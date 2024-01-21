@@ -56,7 +56,10 @@ export function ConnectionForm(props: { token: string; connectionSettings: Input
 	});
 	const onSubmit: SubmitHandler<Inputs> = (data) => {
 		mutation.mutate(data, {
-			onSuccess: () => toast({ title: "Success", description: "Connection settings saved." }),
+			onSuccess: () => {
+				toast({ title: "Success", description: "Connection settings saved." });
+				form.reset(form.getValues());
+			},
 			onError: (err) => {
 				toastError({
 					title: "Error",
@@ -114,7 +117,12 @@ export function ConnectionForm(props: { token: string; connectionSettings: Input
 							)}
 						/>
 
-						<Button type="submit" className="ml-auto" loading={mutation.isLoading}>
+						<Button
+							type="submit"
+							className="ml-auto"
+							disabled={!form.formState.isDirty}
+							loading={mutation.isLoading}
+						>
 							Save
 						</Button>
 					</form>

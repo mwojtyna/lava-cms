@@ -48,7 +48,10 @@ export function SeoForm({ serverData }: { serverData: Inputs }) {
 	});
 	const onSubmit: SubmitHandler<Inputs> = (data) => {
 		mutation.mutate(data, {
-			onSuccess: () => toast({ title: "Success", description: "SEO settings saved." }),
+			onSuccess: () => {
+				toast({ title: "Success", description: "SEO settings saved." });
+				form.reset(form.getValues());
+			},
 			onError: (err) => {
 				if (err.data?.code === "BAD_REQUEST") {
 					form.setError("language", {});
@@ -137,7 +140,12 @@ export function SeoForm({ serverData }: { serverData: Inputs }) {
 							)}
 						/>
 
-						<Button type="submit" className="ml-auto" loading={mutation.isLoading}>
+						<Button
+							type="submit"
+							className="ml-auto"
+							disabled={!form.formState.isDirty}
+							loading={mutation.isLoading}
+						>
 							Save
 						</Button>
 					</form>
