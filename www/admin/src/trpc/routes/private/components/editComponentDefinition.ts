@@ -41,9 +41,9 @@ export const editComponentDefinition = privateProcedure
 			}
 		}
 
-		if (input.addedFields) {
-			await prisma.$transaction(async (tx) => {
-				for (const addedField of input.addedFields!) {
+		await prisma.$transaction(async (tx) => {
+			if (input.addedFields) {
+				for (const addedField of input.addedFields) {
 					const added = await tx.componentDefinitionField.create({
 						data: {
 							name: addedField.name,
@@ -55,32 +55,32 @@ export const editComponentDefinition = privateProcedure
 					});
 					addedCompDefIds[addedField.id] = added.id;
 				}
-			});
-		}
+			}
 
-		await prisma.componentDefinition.update({
-			where: { id: input.id },
-			data: {
-				name: input.newName,
-				group_id: input.newGroupId,
-				field_definitions: {
-					updateMany: input.editedFields?.map((field) => ({
-						where: { id: field.id },
-						data: {
-							name: field.name,
-							type: field.type,
-							array_item_type: field.array_item_type,
-							order: field.order,
-						},
-					})),
-					deleteMany: {
-						id: {
-							in: input.deletedFieldIds,
+			await tx.componentDefinition.update({
+				where: { id: input.id },
+				data: {
+					name: input.newName,
+					group_id: input.newGroupId,
+					field_definitions: {
+						updateMany: input.editedFields?.map((field) => ({
+							where: { id: field.id },
+							data: {
+								name: field.name,
+								type: field.type,
+								array_item_type: field.array_item_type,
+								order: field.order,
+							},
+						})),
+						deleteMany: {
+							id: {
+								in: input.deletedFieldIds,
+							},
 						},
 					},
+					last_update: new Date(),
 				},
-				last_update: new Date(),
-			},
+			});
 		});
 
 		return addedCompDefIds;
