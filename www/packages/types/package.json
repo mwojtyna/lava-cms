@@ -20,7 +20,7 @@
 		"prepublishOnly": "npm run lint && npm run build"
 	},
 	"devDependencies": {
-		"@prisma/client": "^5.7.0",
+		"@prisma/client": "^5.8.1",
 		"@trpc/server": "^10.44.1",
 		"superjson": "^2.2.1"
 	}
