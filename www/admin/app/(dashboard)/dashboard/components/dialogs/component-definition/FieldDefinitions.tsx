@@ -50,7 +50,7 @@ export function AddFieldDefs() {
 	const form = useForm<AddFieldDefsInputs>({
 		resolver: async (values, context, options) => {
 			const zod = await zodResolver(addFieldDefsSchema)(values, context, options);
-			if (fields.find((field) => field.name === values.name)) {
+			if (fields.find((field) => field.diff !== "deleted" && field.name === values.name)) {
 				return {
 					...zod,
 					errors: {
