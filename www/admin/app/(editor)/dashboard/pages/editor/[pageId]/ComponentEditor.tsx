@@ -1,4 +1,4 @@
-import { ArrowUturnLeftIcon } from "@heroicons/react/24/outline";
+import { ArrowPathRoundedSquareIcon, ArrowUturnLeftIcon } from "@heroicons/react/24/outline";
 import { createId } from "@paralleldrive/cuid2";
 import React, { forwardRef, useEffect, useMemo, useState } from "react";
 import { FormProvider, useForm, type FieldErrors } from "react-hook-form";
@@ -209,6 +209,10 @@ const Field = forwardRef<HTMLInputElement | HTMLButtonElement, FieldProps>(
 					/>
 				);
 			}
+			case "ARRAY": {
+				// TODO: Implement
+				return "<Array editor>";
+			}
 		}
 	},
 );
@@ -291,32 +295,52 @@ export function NestedComponentField(props: NestedComponentFieldProps) {
 	return (
 		<>
 			{currentComponent && (
-				<ComponentCard
-					dndId="0"
-					noDrag
-					component={{
-						id: currentComponent.id,
-						name: currentComponent.definition.name,
-						diff: currentComponent.diff,
-					}}
-					onClick={() =>
-						setSteps([
-							...steps,
-							{
-								name: "edit-nested-component",
-								nestedComponentId: currentComponent.id,
-							},
-						])
-					}
-					onRestore={restore}
-					onRemove={() => remove(currentComponent)}
-					onUnRemove={() => unRemove(currentComponent)}
-					onUnAdd={() => unAdd(currentComponent)}
-				/>
+				<div className="grid grid-flow-col grid-cols-[1fr_auto] gap-2">
+					<ComponentCard
+						dndId="0"
+						noDrag
+						component={{
+							id: currentComponent.id,
+							name: currentComponent.definition.name,
+							diff: currentComponent.diff,
+						}}
+						onClick={() =>
+							setSteps([
+								...steps,
+								{
+									name: "edit-nested-component",
+									nestedComponentId: currentComponent.id,
+								},
+							])
+						}
+						extraActions={
+							currentComponent.diff !== "added" &&
+							currentComponent.diff !== "deleted" && (
+								<ActionIcon
+									className="mx-1"
+									variant={"simple"}
+									tooltip="Change"
+									onClick={(e) => {
+										e.stopPropagation();
+										setDialogOpen(true);
+									}}
+								>
+									<ArrowPathRoundedSquareIcon className="w-5" />
+								</ActionIcon>
+							)
+						}
+						onRestore={restore}
+						onRemove={() => remove(currentComponent)}
+						onUnRemove={() => unRemove(currentComponent)}
+						onUnAdd={() => unAdd(currentComponent)}
+					/>
+				</div>
 			)}
-			<Button variant={"outline"} onClick={() => setDialogOpen(true)}>
-				{!currentComponent ? "Select" : "Change"} component
-			</Button>
+			{!currentComponent && (
+				<Button variant={"outline"} onClick={() => setDialogOpen(true)}>
+					Select component
+				</Button>
+			)}
 
 			<AddComponentDialog
 				open={dialogOpen}

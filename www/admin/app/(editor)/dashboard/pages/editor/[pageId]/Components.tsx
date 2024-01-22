@@ -136,6 +136,8 @@ interface ComponentCardProps {
 		diff: Diff;
 	};
 	noDrag?: boolean;
+	extraActions?: React.ReactNode;
+
 	onClick: (id: string) => void;
 	onRestore: () => void;
 	onRemove: () => void;
@@ -199,13 +201,16 @@ export function ComponentCard(props: ComponentCardProps) {
 				<span className="font-medium">{props.component.name}</span>
 			</div>
 
-			<Actions
-				diff={props.component.diff}
-				restoreComponent={props.onRestore}
-				deleteComponent={props.onRemove}
-				unRemoveComponent={props.onUnRemove}
-				unAddComponent={props.onUnAdd}
-			/>
+			<div className="ml-auto flex items-center justify-center gap-1">
+				{props.extraActions}
+				<Actions
+					diff={props.component.diff}
+					restoreComponent={props.onRestore}
+					deleteComponent={props.onRemove}
+					unRemoveComponent={props.onUnRemove}
+					unAddComponent={props.onUnAdd}
+				/>
+			</div>
 		</Card>
 	);
 }
@@ -227,28 +232,24 @@ function Actions(props: ActionsProps) {
 		case "replaced":
 		case "edited": {
 			return (
-				<div className="ml-auto flex items-center justify-center">
-					<ActionIcon
-						variant={"simple"}
-						onClick={(e) => handleClick(e, props.restoreComponent)}
-						tooltip="Restore"
-					>
-						<ArrowUturnLeftIcon className="w-5" data-testid="restore-component-btn" />
-					</ActionIcon>
-				</div>
+				<ActionIcon
+					variant={"simple"}
+					onClick={(e) => handleClick(e, props.restoreComponent)}
+					tooltip="Restore"
+				>
+					<ArrowUturnLeftIcon className="w-5" data-testid="restore-component-btn" />
+				</ActionIcon>
 			);
 		}
 		case "deleted": {
 			return (
-				<div className="ml-auto flex items-center justify-center">
-					<ActionIcon
-						variant={"simple"}
-						onClick={(e) => handleClick(e, props.unRemoveComponent)}
-						tooltip="Restore"
-					>
-						<ArrowUturnLeftIcon className="w-5" data-testid="restore-component-btn" />
-					</ActionIcon>
-				</div>
+				<ActionIcon
+					variant={"simple"}
+					onClick={(e) => handleClick(e, props.unRemoveComponent)}
+					tooltip="Restore"
+				>
+					<ArrowUturnLeftIcon className="w-5" data-testid="restore-component-btn" />
+				</ActionIcon>
 			);
 		}
 
@@ -256,25 +257,21 @@ function Actions(props: ActionsProps) {
 		case "reordered":
 		case "none": {
 			return (
-				<div className="ml-auto flex items-center justify-center">
-					<ActionIcon
-						variant={"simple"}
-						onClick={(e) =>
-							handleClick(
-								e,
-								props.diff === "added"
-									? props.unAddComponent
-									: props.deleteComponent,
-							)
-						}
-						tooltip="Delete"
-					>
-						<TrashIcon
-							className="w-5 text-destructive/75 hover:text-destructive"
-							data-testid="delete-component-btn"
-						/>
-					</ActionIcon>
-				</div>
+				<ActionIcon
+					variant={"simple"}
+					onClick={(e) =>
+						handleClick(
+							e,
+							props.diff === "added" ? props.unAddComponent : props.deleteComponent,
+						)
+					}
+					tooltip="Delete"
+				>
+					<TrashIcon
+						className="w-5 text-destructive/75 hover:text-destructive"
+						data-testid="delete-component-btn"
+					/>
+				</ActionIcon>
 			);
 		}
 	}
