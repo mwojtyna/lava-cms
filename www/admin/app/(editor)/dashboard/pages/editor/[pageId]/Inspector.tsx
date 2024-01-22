@@ -72,7 +72,7 @@ export function Inspector(props: Props) {
 	useHotkeys(
 		[
 			[
-				"ctrl+s",
+				"mod+s",
 				() => {
 					if (isDirty && isValid) {
 						save(saveMutation, props.page.id);

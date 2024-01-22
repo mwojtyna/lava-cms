@@ -148,7 +148,7 @@ export function EditComponentDefDialog(props: Props) {
 	useHotkeys(
 		[
 			[
-				"ctrl+s",
+				"mod+s",
 				() => {
 					if (canSubmit) {
 						void form.handleSubmit(onSubmit)();
