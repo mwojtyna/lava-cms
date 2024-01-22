@@ -77,6 +77,7 @@ export function EditComponentDefDialog(props: Props) {
 				editedFields,
 			},
 			{
+				// `fidToBid` is a map of frontend ids to backend ids
 				onSuccess: async (fidToBid) => {
 					setSteps((steps) =>
 						steps.map((step) =>

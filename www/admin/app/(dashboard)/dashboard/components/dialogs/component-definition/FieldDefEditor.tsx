@@ -59,13 +59,13 @@ export function FieldDefEditor(props: FieldDefEditorProps) {
 								// Don't ever move this, order matters when checking for equality with original fields
 								...data,
 								order: f.order,
-								diff: "edited",
+								diff: props.step.fieldDef.diff !== "added" ? "edited" : "added",
 						  }
 						: f,
 				),
 			);
 		},
-		[fields, props.step.fieldDef.id, setFields],
+		[fields, props.step, setFields],
 	);
 
 	useEffect(() => {
