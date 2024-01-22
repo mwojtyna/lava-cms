@@ -6,6 +6,7 @@ import { useHotkeys } from "@mantine/hooks";
 import * as React from "react";
 import { useForm, type SubmitHandler, FormProvider } from "react-hook-form";
 import { Button, Sheet, SheetContent, SheetFooter } from "@/src/components/ui/client";
+import { TypographyMuted } from "@/src/components/ui/server";
 import { useComponentsTableDialogs } from "@/src/data/stores/componentDefinitions";
 import { useWindowEvent } from "@/src/hooks";
 import type { PrivateRouter } from "@/src/trpc/routes/private/_private";
@@ -210,7 +211,8 @@ export function EditComponentDefDialog(props: Props) {
 							</div>
 						))}
 
-						<SheetFooter>
+						<SheetFooter className="items-center gap-2">
+							<TypographyMuted>Ctrl+S</TypographyMuted>
 							<Button
 								type="submit"
 								loading={editMutation.isLoading}

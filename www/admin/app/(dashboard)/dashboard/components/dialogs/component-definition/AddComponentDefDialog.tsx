@@ -94,19 +94,6 @@ export function AddComponentDefDialog(props: Props) {
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [props.open]);
-	useHotkeys(
-		[
-			[
-				"ctrl+s",
-				() => {
-					if (canSubmit) {
-						void form.handleSubmit(onSubmit)();
-					}
-				},
-			],
-		],
-		[],
-	);
 	useWindowEvent("beforeunload", (e) => {
 		if (props.open && canSubmit) {
 			// Display a confirmation dialog
