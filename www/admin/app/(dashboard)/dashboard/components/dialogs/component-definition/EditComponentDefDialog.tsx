@@ -2,7 +2,7 @@ import type { ComponentsTableComponentDef } from "../../ComponentsTable";
 import type { inferRouterInputs } from "@trpc/server";
 import { PencilSquareIcon } from "@heroicons/react/24/outline";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useHotkeys } from "@mantine/hooks";
+import { useHotkeys, useOs } from "@mantine/hooks";
 import * as React from "react";
 import { useForm, type SubmitHandler, FormProvider } from "react-hook-form";
 import { Button, Sheet, SheetContent, SheetFooter } from "@/src/components/ui/client";
@@ -164,6 +164,7 @@ export function EditComponentDefDialog(props: Props) {
 			e.preventDefault();
 		}
 	});
+	const os = useOs();
 
 	function handleSetOpen(value: boolean) {
 		if (!anyDirty) {
@@ -212,8 +213,13 @@ export function EditComponentDefDialog(props: Props) {
 						))}
 
 						<SheetFooter className="items-center gap-2">
-							<TypographyMuted>Ctrl+S</TypographyMuted>
+							{os !== "android" && os !== "ios" && (
+								<TypographyMuted>
+									{os === "macos" ? "Cmd" : "Ctrl"}+S
+								</TypographyMuted>
+							)}
 							<Button
+								className="max-sm:w-full"
 								type="submit"
 								loading={editMutation.isLoading}
 								disabled={!canSubmit}

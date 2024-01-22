@@ -15,6 +15,7 @@ export const router = t.router;
 
 export const privateAuth = t.middleware(async (opts) => {
 	if (context.headers().has("Referer")) {
+		// "Origin" header is sometimes null
 		const origin = new URL(context.headers().get("Referer")!).host;
 		if (env.VERCEL_URL !== origin) {
 			throw new TRPCError({

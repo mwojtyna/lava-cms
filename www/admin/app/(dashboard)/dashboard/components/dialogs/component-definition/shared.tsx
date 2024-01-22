@@ -9,7 +9,7 @@ import {
 	ComponentDefinitionFieldSchema,
 	type ComponentFieldTypeType,
 } from "@/prisma/generated/zod";
-import { Combobox, type ComboboxData, type ItemParent } from "@/src/components";
+import { Combobox, type ItemParent } from "@/src/components";
 import { Button } from "@/src/components/ui/client";
 import type { FormFieldProps } from "@/src/components/ui/client";
 import type { PrivateRouter } from "@/src/trpc/routes/private/_private";
@@ -32,14 +32,13 @@ export const fieldDefinitionUISchema = z.object({
 });
 export type FieldDefinitionUI = z.infer<typeof fieldDefinitionUISchema>;
 
-export const fieldTypeMap: Record<string, string> = Object.values(ComponentFieldType).reduce(
-	(acc, type) => {
-		const label = type.charAt(0).toUpperCase() + type.slice(1).toLowerCase();
-		acc[type] = label;
-		return acc;
-	},
-	{} as Record<string, string>,
-);
+export const fieldTypeMap: Record<string, string> = Object.values(ComponentFieldType).reduce<
+	Record<string, string>
+>((acc, type) => {
+	const label = type.charAt(0).toUpperCase() + type.slice(1).toLowerCase();
+	acc[type] = label;
+	return acc;
+}, {});
 
 export type DialogType = "add" | "edit";
 export type Step =
