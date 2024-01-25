@@ -146,22 +146,32 @@ model ComponentInstance {
 }
 
 model ComponentInstanceField {
-    id                  String  @id @default(cuid())
+    id                  String @id @default(cuid())
     component_id        String
     field_definition_id String
-    parent_field_id     String?
     /// If type is a primitive type, then data is a string
-    /// If type is a complex type, then data is a JSON object
+    /// If type is an array, then data empty, and array items reference this field in their `parent_field_id`
     /// If type is a component, then data is that component's id
     data                String
 
-    component    ComponentInstance        @relation(fields: [component_id], references: [id], onDelete: Cascade)
-    definition   ComponentDefinitionField @relation(fields: [field_definition_id], references: [id])
-    parent_field ComponentInstanceField?  @relation("component_instance_field", fields: [parent_field_id], references: [id], onDelete: Cascade)
-    child_fields ComponentInstanceField[] @relation("component_instance_field")
+    component   ComponentInstance        @relation(fields: [component_id], references: [id], onDelete: Cascade)
+    definition  ComponentDefinitionField @relation(fields: [field_definition_id], references: [id])
+    array_items ArrayItem[]
 
     @@index([component_id])
     @@map("component_instance_field")
+}
+
+model ArrayItem {
+    id              String @id @default(cuid())
+    data            String
+    order           Int
+    parent_field_id String
+
+    parent_field ComponentInstanceField @relation(fields: [parent_field_id], references: [id], onDelete: Cascade)
+
+    @@index([parent_field_id])
+    @@map("array_item")
 }
 
 enum ComponentFieldType {
@@ -169,6 +179,7 @@ enum ComponentFieldType {
     NUMBER
     SWITCH
     COMPONENT
+    /// TODO: Rename to COLLECTION
     ARRAY
 
     @@map("component_field_type")

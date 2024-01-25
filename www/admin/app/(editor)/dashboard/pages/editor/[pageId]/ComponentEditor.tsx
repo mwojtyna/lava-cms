@@ -1,8 +1,7 @@
-import { ArrowPathRoundedSquareIcon, ArrowUturnLeftIcon } from "@heroicons/react/24/outline";
-import { createId } from "@paralleldrive/cuid2";
-import React, { forwardRef, useEffect, useMemo, useState } from "react";
+import type { ComponentFieldType } from "@prisma/client";
+import { ArrowUturnLeftIcon } from "@heroicons/react/24/outline";
+import React, { forwardRef, useEffect, useMemo } from "react";
 import { FormProvider, useForm, type FieldErrors } from "react-hook-form";
-import type { ComponentFieldTypeType } from "@/prisma/generated/zod";
 import {
 	Input,
 	getRestorableInputProps,
@@ -14,14 +13,11 @@ import {
 	Checkbox,
 	FormError,
 	ActionIcon,
-	Button,
 } from "@/src/components/ui/client";
 import { TypographyMuted } from "@/src/components/ui/server";
-import { usePageEditor, type ComponentUI } from "@/src/data/stores/pageEditor";
+import { usePageEditor, type ComponentUI, type FieldUI } from "@/src/data/stores/pageEditor";
 import { cn } from "@/src/utils/styling";
-import { trpcFetch } from "@/src/utils/trpc";
-import { ComponentCard } from "./Components";
-import { AddComponentDialog } from "./dialogs/AddComponentDialog";
+import { ArrayField, NestedComponentField } from "./Fields";
 
 type Input = Record<string, string>; // fieldId: data
 
@@ -54,8 +50,9 @@ export function ComponentEditor(props: ComponentEditorProps) {
 			}
 
 			for (const [k, v] of Object.entries(values)) {
+				// Use field order as a key, because id isn't known when component was just added
 				const type = props.component.fields.find((field) => field.order.toString() === k)!
-					.type as ComponentFieldTypeType;
+					.type as ComponentFieldType;
 
 				if (type === "NUMBER" && isNaN(Number(v))) {
 					errors[k] = {
@@ -111,7 +108,7 @@ export function ComponentEditor(props: ComponentEditorProps) {
 													? field.data !== originalField.data
 													: false
 											}
-											type={field.type}
+											field={field}
 											onRestore={() => {
 												form.setValue(
 													field.order.toString(),
@@ -138,15 +135,15 @@ export function ComponentEditor(props: ComponentEditorProps) {
 
 export interface FieldProps extends FormFieldProps<string> {
 	component: ComponentUI;
-	type: ComponentUI["fields"][number]["type"];
+	field: Pick<FieldUI, "id" | "type" | "arrayItemType">;
 	edited: boolean;
 	onRestore: () => void;
 }
-const Field = forwardRef<HTMLInputElement | HTMLButtonElement, FieldProps>(
-	({ type: fieldType, edited, onRestore, value, onChange, component, ...rest }, ref) => {
+export const Field = forwardRef<HTMLInputElement | HTMLButtonElement, FieldProps>(
+	({ component, field, edited, onRestore, value, onChange, ...rest }, ref) => {
 		const inputProps = getRestorableInputProps(edited, onRestore);
 
-		switch (fieldType) {
+		switch (field.type) {
 			case "TEXT": {
 				return (
 					<Input
@@ -210,143 +207,9 @@ const Field = forwardRef<HTMLInputElement | HTMLButtonElement, FieldProps>(
 				);
 			}
 			case "ARRAY": {
-				// TODO: Implement
-				return "<Array editor>";
+				return <ArrayField parentField={field} component={component} />;
 			}
 		}
 	},
 );
 Field.displayName = "Field";
-
-interface NestedComponentFieldProps {
-	component: ComponentUI;
-	edited: boolean;
-	value: string;
-	onChange: (id: string, nestedComponents: ComponentUI[]) => void;
-}
-export function NestedComponentField(props: NestedComponentFieldProps) {
-	const [dialogOpen, setDialogOpen] = useState(false);
-	const { steps, setSteps, originalNestedComponents, nestedComponents, setNestedComponents } =
-		usePageEditor();
-
-	const currentComponent = useMemo(
-		() => nestedComponents.find((comp) => comp.id === props.value),
-		[nestedComponents, props.value],
-	);
-	const originalComponent = useMemo(
-		() => originalNestedComponents.find((comp) => comp.id === props.value),
-		[originalNestedComponents, props.value],
-	);
-
-	async function selectComponent(id: string) {
-		const definition = await trpcFetch.components.getComponentDefinition.query({ id });
-		const newComponent: ComponentUI = {
-			// When replacing component, keep the id
-			id: currentComponent?.id ?? createId(),
-			definition: {
-				id: definition.id,
-				name: definition.name,
-			},
-			fields: definition.field_definitions.map((fieldDef, i) => ({
-				id: i.toString(),
-				name: fieldDef.name,
-				data: "",
-				definitionId: fieldDef.id,
-				order: fieldDef.order,
-				type: fieldDef.type,
-			})),
-			order: 0,
-			pageId: props.component.pageId,
-			parentComponentId: props.component.id,
-			diff: currentComponent ? "replaced" : "added",
-		};
-
-		props.onChange(
-			newComponent.id,
-			currentComponent
-				? nestedComponents.map((c) => (c.id === currentComponent.id ? newComponent : c))
-				: [...nestedComponents, newComponent],
-		);
-	}
-
-	function restore() {
-		props.onChange(
-			originalComponent!.id,
-			nestedComponents.map((c) => (c.id === originalComponent!.id ? originalComponent! : c)),
-		);
-	}
-	function remove(component: ComponentUI) {
-		setNestedComponents(
-			nestedComponents.map((c) => (c.id === component.id ? { ...c, diff: "deleted" } : c)),
-		);
-	}
-	function unRemove(component: ComponentUI) {
-		setNestedComponents(
-			nestedComponents.map((c) => (c.id === component.id ? { ...c, diff: "none" } : c)),
-		);
-	}
-	function unAdd(component: ComponentUI) {
-		props.onChange(
-			"",
-			nestedComponents.filter((c) => c.id !== component.id),
-		);
-	}
-
-	return (
-		<>
-			{currentComponent && (
-				<div className="grid grid-flow-col grid-cols-[1fr_auto] gap-2">
-					<ComponentCard
-						dndId="0"
-						noDrag
-						component={{
-							id: currentComponent.id,
-							name: currentComponent.definition.name,
-							diff: currentComponent.diff,
-						}}
-						onClick={() =>
-							setSteps([
-								...steps,
-								{
-									name: "edit-nested-component",
-									nestedComponentId: currentComponent.id,
-								},
-							])
-						}
-						extraActions={
-							currentComponent.diff !== "added" &&
-							currentComponent.diff !== "deleted" && (
-								<ActionIcon
-									className="mx-1"
-									variant={"simple"}
-									tooltip="Change"
-									onClick={(e) => {
-										e.stopPropagation();
-										setDialogOpen(true);
-									}}
-								>
-									<ArrowPathRoundedSquareIcon className="w-5" />
-								</ActionIcon>
-							)
-						}
-						onRestore={restore}
-						onRemove={() => remove(currentComponent)}
-						onUnRemove={() => unRemove(currentComponent)}
-						onUnAdd={() => unAdd(currentComponent)}
-					/>
-				</div>
-			)}
-			{!currentComponent && (
-				<Button variant={"outline"} onClick={() => setDialogOpen(true)}>
-					Select component
-				</Button>
-			)}
-
-			<AddComponentDialog
-				open={dialogOpen}
-				setOpen={setDialogOpen}
-				onSubmit={selectComponent}
-			/>
-		</>
-	);
-}

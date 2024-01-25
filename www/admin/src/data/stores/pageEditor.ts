@@ -3,12 +3,18 @@ import type {
 	Component,
 	IframeMessage,
 } from "@/app/(editor)/dashboard/pages/editor/[pageId]/types";
+import type { ArrayItem } from "@/src/trpc/routes/private/pages/types";
 import type { trpc } from "@/src/utils/trpc";
 import "client-only";
 
 export type Diff = "added" | "edited" | "deleted" | "reordered" | "replaced" | "none";
+
 export interface ComponentUI extends Component {
 	diff: Diff;
+}
+export type FieldUI = ComponentUI["fields"][number];
+export interface ArrayItemUI extends ArrayItem {
+	diff: Exclude<Diff, "replaced">;
 }
 
 export type Step =
@@ -40,10 +46,18 @@ interface PageEditorState {
 	nestedComponents: ComponentUI[];
 	setNestedComponents: (components: ComponentUI[]) => void;
 
+	originalArrayItems: ArrayItemUI[];
+	arrayItems: ArrayItemUI[];
+	setArrayItems: (arrayItems: ArrayItemUI[]) => void;
+
 	steps: Step[];
 	setSteps: (steps: Step[]) => void;
 
-	init: (components: ComponentUI[], nestedComponents: ComponentUI[]) => void;
+	init: (
+		components: ComponentUI[],
+		nestedComponents: ComponentUI[],
+		arrayItems: ArrayItemUI[],
+	) => void;
 	reset: () => void;
 	save: (
 		mutation: ReturnType<typeof trpc.pages.editPageComponents.useMutation>,
@@ -77,7 +91,8 @@ export const usePageEditor = create<PageEditorState>((set) => ({
 				isDirty:
 					JSON.stringify(state.originalComponents) !== JSON.stringify(newComponents) ||
 					JSON.stringify(state.originalNestedComponents) !==
-						JSON.stringify(state.nestedComponents),
+						JSON.stringify(state.nestedComponents) ||
+					JSON.stringify(state.originalArrayItems) !== JSON.stringify(state.arrayItems),
 			};
 		}),
 
@@ -97,21 +112,50 @@ export const usePageEditor = create<PageEditorState>((set) => ({
 			return {
 				nestedComponents: newNestedComponents,
 				isDirty:
+					JSON.stringify(state.originalComponents) !== JSON.stringify(state.components) ||
 					JSON.stringify(state.originalNestedComponents) !==
 						JSON.stringify(newNestedComponents) ||
-					JSON.stringify(state.originalComponents) !== JSON.stringify(state.components),
+					JSON.stringify(state.originalArrayItems) !== JSON.stringify(state.arrayItems),
+			};
+		}),
+
+	originalArrayItems: [],
+	arrayItems: [],
+	setArrayItems: (newArrayItems) =>
+		set((state) => {
+			for (const ai of newArrayItems) {
+				if (ai.diff === "edited") {
+					const original = state.originalArrayItems.find((oc) => oc.id === ai.id)!;
+					if (areSame(original, ai)) {
+						ai.diff = "none";
+					}
+				}
+			}
+
+			return {
+				arrayItems: newArrayItems,
+				isDirty:
+					JSON.stringify(state.originalComponents) !== JSON.stringify(state.components) ||
+					JSON.stringify(state.originalNestedComponents) !==
+						JSON.stringify(state.nestedComponents) ||
+					JSON.stringify(state.originalArrayItems) !== JSON.stringify(newArrayItems),
 			};
 		}),
 
 	steps: [{ name: "components" }],
 	setSteps: (steps) => set({ steps }),
 
-	init: (components, nestedComponents) => {
+	init: (components, nestedComponents, arrayItems) => {
 		set({
 			components,
 			originalComponents: components,
+
 			nestedComponents,
 			originalNestedComponents: nestedComponents,
+
+			arrayItems,
+			originalArrayItems: arrayItems,
+
 			isDirty: false,
 		});
 	},
@@ -142,6 +186,7 @@ export const usePageEditor = create<PageEditorState>((set) => ({
 			return {
 				components: state.originalComponents,
 				nestedComponents: state.originalNestedComponents,
+				arrayItems: state.originalArrayItems,
 				isDirty: false,
 				steps: getLastValidStep(state.steps),
 			};
@@ -161,6 +206,7 @@ export const usePageEditor = create<PageEditorState>((set) => ({
 							definition: comp.definition,
 							order: comp.order,
 							fields: comp.fields.map((field) => ({
+								frontendId: field.id,
 								data: field.data,
 								definitionId: field.definitionId,
 							})),
@@ -173,6 +219,19 @@ export const usePageEditor = create<PageEditorState>((set) => ({
 						// Replaced components have the same id as the original
 						.filter((comp) => comp.diff === "deleted" || comp.diff === "replaced")
 						.map((comp) => comp.id),
+
+					addedArrayItems: state.arrayItems
+						.filter((item) => item.diff === "added")
+						.map((item) => ({
+							frontendId: item.id,
+							data: item.data,
+							parentFieldId: item.parentFieldId,
+							order: item.order,
+						})),
+					editedArrayItems: state.arrayItems.filter((item) => item.diff === "edited"),
+					deletedArrayItemIds: state.arrayItems
+						.filter((item) => item.diff === "deleted")
+						.map((item) => item.id),
 				},
 				{
 					// `fidToBid` is a map of frontend ids to backend ids
@@ -218,7 +277,7 @@ export const usePageEditor = create<PageEditorState>((set) => ({
 		}),
 }));
 
-function areSame(original: ComponentUI, current: ComponentUI) {
+function areSame<T extends { diff: Diff }>(original: T, current: T) {
 	const a = { ...original, diff: undefined };
 	const b = { ...current, diff: undefined };
 	return JSON.stringify(a) === JSON.stringify(b);

@@ -1,4 +1,4 @@
-import type { Component } from "./types";
+import type { ArrayItem, Component } from "./types";
 import { z } from "zod";
 import { prisma } from "@/prisma/client";
 import { privateProcedure } from "@/src/trpc";
@@ -10,7 +10,13 @@ export const getPageComponents = privateProcedure
 		}),
 	)
 	.query(
-		async ({ input }): Promise<{ components: Component[]; nestedComponents: Component[] }> => {
+		async ({
+			input,
+		}): Promise<{
+			components: Component[];
+			nestedComponents: Component[];
+			arrayItems: ArrayItem[];
+		}> => {
 			const page = await prisma.page.findFirstOrThrow({
 				where: {
 					id: input.id,
@@ -38,11 +44,12 @@ export const getPageComponents = privateProcedure
 			});
 
 			const components: Component[] = page.components.map((component) => {
-				const fields = component.fields.map((field) => ({
+				const fields: Component["fields"] = component.fields.map((field) => ({
 					id: field.id,
 					name: field.definition.name,
 					data: field.data,
 					type: field.definition.type,
+					arrayItemType: field.definition.array_item_type,
 					definitionId: field.definition.id,
 					order: field.definition.order,
 				}));
@@ -60,9 +67,17 @@ export const getPageComponents = privateProcedure
 				};
 			});
 
+			const arrayItems = await prisma.arrayItem.findMany();
+
 			return {
 				components: components.filter((c) => c.parentComponentId === null),
 				nestedComponents: components.filter((c) => c.parentComponentId !== null),
+				arrayItems: arrayItems.map((item) => ({
+					id: item.id,
+					data: item.data,
+					order: item.order,
+					parentFieldId: item.parent_field_id,
+				})),
 			};
 		},
 	);

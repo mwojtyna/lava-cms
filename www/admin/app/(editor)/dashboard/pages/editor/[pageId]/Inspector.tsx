@@ -65,6 +65,7 @@ export function Inspector(props: Props) {
 		init(
 			data.components.map((comp) => ({ ...comp, diff: "none" })),
 			data.nestedComponents.map((comp) => ({ ...comp, diff: "none" })),
+			data.arrayItems.map((item) => ({ ...item, diff: "none" })),
 		);
 	}, [data, init]);
 
@@ -102,9 +103,10 @@ export function Inspector(props: Props) {
 				},
 				order: lastComponent ? lastComponent.order + 1 : 0,
 				fields: componentDef.field_definitions.map((fieldDef, i) => ({
-					id: i.toString(),
+					id: createId(),
 					name: fieldDef.name,
 					type: fieldDef.type,
+					arrayItemType: fieldDef.array_item_type,
 					data: fieldDef.type === "SWITCH" ? "false" : "",
 					definitionId: fieldDef.id,
 					order: i,
@@ -257,7 +259,7 @@ function Step(props: StepProps) {
 										...component,
 										fields: component.fields.map((field) => ({
 											...field,
-											data: data[field.order]!,
+											data: data[field.order.toString()]!,
 										})),
 										diff:
 											component.diff === "added" ? component.diff : "edited",
@@ -288,7 +290,7 @@ function Step(props: StepProps) {
 										...component,
 										fields: component.fields.map((field) => ({
 											...field,
-											data: data[field.order]!,
+											data: data[field.order.toString()]!,
 										})),
 										diff:
 											component.diff === "added" ||

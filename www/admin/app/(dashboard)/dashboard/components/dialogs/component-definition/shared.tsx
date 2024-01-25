@@ -5,10 +5,7 @@ import { ArrayItemType, ComponentFieldType } from "@prisma/client";
 import Link from "next/link";
 import * as React from "react";
 import { z } from "zod";
-import {
-	ComponentDefinitionFieldSchema,
-	type ComponentFieldTypeType,
-} from "@/prisma/generated/zod";
+import { ComponentDefinitionFieldSchema } from "@/prisma/generated/zod";
 import { Combobox, type ItemParent } from "@/src/components";
 import { Button } from "@/src/components/ui/client";
 import type { FormFieldProps } from "@/src/components/ui/client";
@@ -79,7 +76,7 @@ export function groupsToComboboxEntries(
 }
 
 // ---------------- COMPONENTS ----------------
-interface FieldTypePickerProps extends FormFieldProps<ComponentFieldTypeType> {
+interface FieldTypePickerProps extends FormFieldProps<ComponentFieldType> {
 	className?: string;
 	onKeyDown?: (e: React.KeyboardEvent<HTMLButtonElement>) => void;
 	placeholder?: string;

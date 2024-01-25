@@ -183,6 +183,7 @@ export function ComponentCard(props: ComponentCardProps) {
 			onClick={() =>
 				props.component.diff !== "deleted" ? props.onClick(props.component.id) : undefined
 			}
+			role="button"
 			aria-disabled={props.component.diff === "deleted"}
 		>
 			<div className="flex items-center gap-2">

@@ -2,11 +2,11 @@ import type { ComponentsTableComponentDef } from "../../ComponentsTable";
 import type { ComponentDefinitionGroup } from "@prisma/client";
 import { CubeIcon } from "@heroicons/react/24/outline";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useHotkeys, useWindowEvent } from "@mantine/hooks";
 import * as React from "react";
 import { useForm, type SubmitHandler, FormProvider } from "react-hook-form";
 import { Button, Sheet, SheetContent, SheetFooter } from "@/src/components/ui/client";
 import { useComponentsTableDialogs } from "@/src/data/stores/componentDefinitions";
+import { useWindowEvent } from "@/src/hooks";
 import { cn } from "@/src/utils/styling";
 import { trpc } from "@/src/utils/trpc";
 import {
