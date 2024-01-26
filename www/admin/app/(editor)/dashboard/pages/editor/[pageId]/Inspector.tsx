@@ -259,7 +259,7 @@ function Step(props: StepProps) {
 										...component,
 										fields: component.fields.map((field) => ({
 											...field,
-											data: data[field.order.toString()]!,
+											data: data[field.id]!,
 										})),
 										diff:
 											component.diff === "added" ? component.diff : "edited",
@@ -290,7 +290,7 @@ function Step(props: StepProps) {
 										...component,
 										fields: component.fields.map((field) => ({
 											...field,
-											data: data[field.order.toString()]!,
+											data: data[field.id]!,
 										})),
 										diff:
 											component.diff === "added" ||

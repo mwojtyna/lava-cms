@@ -39,7 +39,7 @@ export function ComponentEditor(props: ComponentEditorProps) {
 
 	const form = useForm<Input>({
 		values: props.component.fields.reduce<Input>((acc, field) => {
-			acc[field.order] = field.data;
+			acc[field.id] = field.data;
 			return acc;
 		}, {}),
 		shouldFocusError: false,
@@ -51,7 +51,7 @@ export function ComponentEditor(props: ComponentEditorProps) {
 
 			for (const [k, v] of Object.entries(values)) {
 				// Use field order as a key, because id isn't known when component was just added
-				const type = props.component.fields.find((field) => field.order.toString() === k)!
+				const type = props.component.fields.find((field) => field.id === k)!
 					.type as ComponentFieldType;
 
 				if (type === "NUMBER" && isNaN(Number(v))) {
@@ -94,7 +94,7 @@ export function ComponentEditor(props: ComponentEditorProps) {
 						<FormField
 							key={field.id}
 							control={form.control}
-							name={field.order.toString()}
+							name={field.id}
 							render={({ field: formField }) => (
 								<FormItem
 									className={cn(field.type === "SWITCH" && "flex-row", "gap-3")}
@@ -110,10 +110,7 @@ export function ComponentEditor(props: ComponentEditorProps) {
 											}
 											field={field}
 											onRestore={() => {
-												form.setValue(
-													field.order.toString(),
-													originalField!.data,
-												);
+												form.setValue(field.id, originalField!.data);
 												void form.handleSubmit(props.onChange)();
 												setIsValid(form.formState.isValid);
 											}}
