@@ -228,7 +228,9 @@ export const usePageEditor = create<PageEditorState>((set) => ({
 							parentFieldId: item.parentFieldId,
 							order: item.order,
 						})),
-					editedArrayItems: state.arrayItems.filter((item) => item.diff === "edited"),
+					editedArrayItems: state.arrayItems.filter(
+						(item) => item.diff === "edited" || item.diff === "reordered",
+					),
 					deletedArrayItemIds: state.arrayItems
 						.filter((item) => item.diff === "deleted")
 						.map((item) => item.id),

@@ -67,7 +67,11 @@ export const getPageComponents = privateProcedure
 				};
 			});
 
-			const arrayItems = await prisma.arrayItem.findMany();
+			const arrayItems = await prisma.arrayItem.findMany({
+				orderBy: {
+					order: "asc",
+				},
+			});
 
 			return {
 				components: components.filter((c) => c.parentComponentId === null),

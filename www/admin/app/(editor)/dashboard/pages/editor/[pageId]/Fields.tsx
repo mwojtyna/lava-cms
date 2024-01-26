@@ -181,14 +181,42 @@ export function ArrayField(props: ArrayFieldProps) {
 		}),
 	);
 
+	function addArrayItem() {
+		const lastItem = myArrayItems.at(-1);
+		setArrayItems([
+			...arrayItems,
+			{
+				id: createId(),
+				data: "",
+				parentFieldId: props.parentField.id,
+				order: lastItem ? lastItem.order + 1 : 0,
+				diff: "added",
+			},
+		]);
+	}
 	function handleReorder(e: DragEndEvent) {
 		const { over, active } = e;
 		if (over && active.id !== over.id) {
-			const oldIndex = Number(active.id as string);
-			const newIndex = Number(over.id as string);
-			const newValues = arrayMove(myArrayItems, oldIndex, newIndex);
-			// TODO: Add reordering
-			// props.onChange(newValues);
+			const reordered: ArrayItemUI[] = arrayMove(
+				myArrayItems,
+				Number(active.id),
+				Number(over.id),
+			);
+			for (let i = 0; i < reordered.length; i++) {
+				const item = reordered[i]!;
+				if (item.order !== i) {
+					item.order = i;
+					if (item.diff === "none") {
+						item.diff = "reordered";
+					}
+				}
+			}
+
+			setArrayItems(
+				arrayItems
+					.filter((item) => !reordered.find((i) => i.id === item.id))
+					.concat(reordered),
+			);
 		}
 	}
 
@@ -233,18 +261,7 @@ export function ArrayField(props: ArrayFieldProps) {
 				className="w-full"
 				variant={"outline"}
 				icon={<PlusIcon className="w-5" />}
-				onClick={() => {
-					setArrayItems([
-						...arrayItems,
-						{
-							id: createId(),
-							data: "",
-							parentFieldId: props.parentField.id,
-							order: myArrayItems.length,
-							diff: "added",
-						},
-					]);
-				}}
+				onClick={addArrayItem}
 			>
 				Add item
 			</Button>
@@ -314,7 +331,7 @@ function ArrayFieldItem(props: ArrayFieldItemProps) {
 				onChange={handleChange}
 				component={props.component}
 				field={{
-					id: "",
+					id: props.item.id,
 					type: props.parentField.arrayItemType!,
 					arrayItemType: null,
 				}}
