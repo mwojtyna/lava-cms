@@ -108,24 +108,25 @@ export function ComponentEditor(props: ComponentEditorProps) {
 }
 
 export interface FieldProps extends FormFieldProps<string> {
+	className?: string;
 	component: ComponentUI;
 	field: Pick<FieldUI, "id" | "type" | "arrayItemType">;
 	edited: boolean;
 	onRestore: () => void;
 }
 export const Field = forwardRef<HTMLInputElement | HTMLButtonElement, FieldProps>(
-	({ component, field, edited, onRestore, value, onChange, ...rest }, ref) => {
+	({ className, component, field, edited, onRestore, value, onChange }, ref) => {
 		switch (field.type) {
 			case "TEXT": {
 				const inputProps = getRestorableInputProps(edited, onRestore);
 				return (
 					<Input
 						ref={ref as React.RefObject<HTMLInputElement>}
+						className={className}
 						type="text"
 						value={value}
 						onChange={(e) => onChange(e.currentTarget.value)}
 						{...inputProps}
-						{...rest}
 					/>
 				);
 			}
@@ -134,10 +135,10 @@ export const Field = forwardRef<HTMLInputElement | HTMLButtonElement, FieldProps
 				return (
 					<NumberInput
 						getInputRef={ref}
+						className={className}
 						value={value}
 						onChange={(e) => onChange(e.currentTarget.value)}
 						{...numberInputProps}
-						{...rest}
 					/>
 				);
 			}
@@ -151,10 +152,10 @@ export const Field = forwardRef<HTMLInputElement | HTMLButtonElement, FieldProps
 							)}
 						>
 							<Checkbox
+								className={className}
 								ref={ref as React.RefObject<HTMLButtonElement>}
 								checked={value === "true"}
 								onCheckedChange={(checked) => onChange(checked ? "true" : "false")}
-								{...rest}
 							/>
 						</div>
 
@@ -169,6 +170,7 @@ export const Field = forwardRef<HTMLInputElement | HTMLButtonElement, FieldProps
 			case "COMPONENT": {
 				return (
 					<NestedComponentField
+						className={className}
 						value={value}
 						onChange={(id, nestedComponents) => {
 							onChange(id);

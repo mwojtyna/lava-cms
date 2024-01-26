@@ -35,6 +35,7 @@ import { ComponentCard } from "./Components";
 import { AddComponentDialog } from "./dialogs/AddComponentDialog";
 
 interface NestedComponentFieldProps {
+	className?: string;
 	component: ComponentUI;
 	edited: boolean;
 	value: string;
@@ -112,7 +113,9 @@ export function NestedComponentField(props: NestedComponentFieldProps) {
 	return (
 		<>
 			{currentComponent && (
-				<div className="grid grid-flow-col grid-cols-[1fr_auto] gap-2">
+				<div
+					className={cn(props.className, "grid grid-flow-col grid-cols-[1fr_auto] gap-2")}
+				>
 					<ComponentCard
 						dndId="0"
 						noDrag
@@ -344,15 +347,15 @@ function ArrayFieldItem(props: ArrayFieldItemProps) {
 				/>
 			</div>
 
-			<div
-				className={cn(
-					"w-full rounded-md",
-					props.item.diff === "added" && "bg-green-500/10",
-					props.item.diff === "deleted" && "bg-red-500/10",
-				)}
-			>
+			<div className="w-full">
 				{/* TODO: Fix other field types */}
 				<Field
+					className={cn(
+						"rounded-md",
+						props.parentField.arrayItemType === "SWITCH" && "h-5 w-5",
+						props.item.diff === "added" && "bg-green-400/20",
+						props.item.diff === "deleted" && "bg-red-400/20",
+					)}
 					value={props.item.data}
 					onChange={handleChange}
 					component={props.component}
