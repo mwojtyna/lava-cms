@@ -10,6 +10,7 @@ export * from "./DropdownMenu";
 export * from "./Form";
 export * from "./Input";
 export * from "./Label";
+export * from "./NumberInput";
 export * from "./Popover";
 export * from "./Select";
 export * from "./Separator";

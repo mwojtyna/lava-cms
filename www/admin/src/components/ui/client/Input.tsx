@@ -22,10 +22,7 @@ const inputVariants = cva(
 	},
 );
 
-const getRestorableInputProps = (
-	edited: boolean,
-	restore: () => void,
-): React.ComponentProps<typeof Input> => ({
+const getRestorableInputProps = (edited: boolean, restore: () => void): InputProps => ({
 	inputClassName: cn("transition-colors", edited && "border-b-brand"),
 	rightButton: {
 		iconOn: <ArrowUturnLeftIcon className="w-4" />,
@@ -119,4 +116,4 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
 );
 Input.displayName = "Input";
 
-export { Input, getRestorableInputProps };
+export { Input, getRestorableInputProps, inputVariants };

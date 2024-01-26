@@ -1,7 +1,6 @@
-import type { ComponentFieldType } from "@prisma/client";
 import { ArrowUturnLeftIcon } from "@heroicons/react/24/outline";
 import React, { forwardRef, useEffect, useMemo } from "react";
-import { FormProvider, useForm, type FieldErrors } from "react-hook-form";
+import { FormProvider, useForm } from "react-hook-form";
 import {
 	Input,
 	getRestorableInputProps,
@@ -13,6 +12,8 @@ import {
 	Checkbox,
 	FormError,
 	ActionIcon,
+	NumberInput,
+	getRestorableNumberInputProps,
 } from "@/src/components/ui/client";
 import { TypographyMuted } from "@/src/components/ui/server";
 import { usePageEditor, type ComponentUI, type FieldUI } from "@/src/data/stores/pageEditor";
@@ -43,30 +44,6 @@ export function ComponentEditor(props: ComponentEditorProps) {
 			return acc;
 		}, {}),
 		shouldFocusError: false,
-		resolver: (values) => {
-			const errors: FieldErrors = {};
-			if (props.component.fields.length === 0) {
-				return { values, errors };
-			}
-
-			for (const [k, v] of Object.entries(values)) {
-				// Use field order as a key, because id isn't known when component was just added
-				const type = props.component.fields.find((field) => field.id === k)!
-					.type as ComponentFieldType;
-
-				if (type === "NUMBER" && isNaN(Number(v))) {
-					errors[k] = {
-						type: "manual",
-						message: "Not a number",
-					};
-				}
-			}
-
-			return {
-				values,
-				errors,
-			};
-		},
 	});
 
 	useEffect(() => {
@@ -138,10 +115,9 @@ export interface FieldProps extends FormFieldProps<string> {
 }
 export const Field = forwardRef<HTMLInputElement | HTMLButtonElement, FieldProps>(
 	({ component, field, edited, onRestore, value, onChange, ...rest }, ref) => {
-		const inputProps = getRestorableInputProps(edited, onRestore);
-
 		switch (field.type) {
 			case "TEXT": {
+				const inputProps = getRestorableInputProps(edited, onRestore);
 				return (
 					<Input
 						ref={ref as React.RefObject<HTMLInputElement>}
@@ -154,13 +130,13 @@ export const Field = forwardRef<HTMLInputElement | HTMLButtonElement, FieldProps
 				);
 			}
 			case "NUMBER": {
+				const numberInputProps = getRestorableNumberInputProps(edited, onRestore);
 				return (
-					<Input
-						ref={ref as React.RefObject<HTMLInputElement>}
-						step="any"
+					<NumberInput
+						getInputRef={ref}
 						value={value}
 						onChange={(e) => onChange(e.currentTarget.value)}
-						{...inputProps}
+						{...numberInputProps}
 						{...rest}
 					/>
 				);

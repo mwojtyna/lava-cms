@@ -351,6 +351,7 @@ function ArrayFieldItem(props: ArrayFieldItemProps) {
 					props.item.diff === "deleted" && "bg-red-500/10",
 				)}
 			>
+				{/* TODO: Fix other field types */}
 				<Field
 					value={props.item.data}
 					onChange={handleChange}
