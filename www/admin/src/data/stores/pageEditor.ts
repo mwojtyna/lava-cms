@@ -193,6 +193,40 @@ export const usePageEditor = create<PageEditorState>((set) => ({
 		}),
 	save: (mutation, pageId) =>
 		set((state) => {
+			// Fix component order
+			const correctedOrderComponents = state.components
+				.filter((comp) => comp.diff !== "deleted")
+				.map((comp, i) => ({
+					...comp,
+					order: i,
+					diff: comp.order !== i ? "reordered" : comp.diff,
+				}));
+
+			// Fix array item order
+			const groupedByParent: Map<string, ArrayItemUI[]> = new Map<string, ArrayItemUI[]>();
+			for (const item of state.arrayItems) {
+				const items = groupedByParent.get(item.parentFieldId) ?? [];
+				if (item.diff !== "deleted") {
+					items.push(item);
+				}
+				groupedByParent.set(item.parentFieldId, items);
+			}
+			for (const parentId of groupedByParent.keys()) {
+				let i = 0;
+				for (const item of groupedByParent.get(parentId)!) {
+					if (item.order !== i) {
+						item.diff = "reordered";
+						item.order = i;
+					}
+					i++;
+				}
+			}
+
+			const correctedOrderArrayItems: ArrayItemUI[] = [];
+			for (const item of groupedByParent.values()) {
+				correctedOrderArrayItems.push(...item);
+			}
+
 			mutation.mutate(
 				{
 					pageId,
@@ -211,7 +245,7 @@ export const usePageEditor = create<PageEditorState>((set) => ({
 								definitionId: field.definitionId,
 							})),
 						})),
-					editedComponents: state.components
+					editedComponents: correctedOrderComponents
 						.concat(state.nestedComponents)
 						.filter((comp) => comp.diff === "edited" || comp.diff === "reordered"),
 					deletedComponentIds: state.components
@@ -228,7 +262,7 @@ export const usePageEditor = create<PageEditorState>((set) => ({
 							parentFieldId: item.parentFieldId,
 							order: item.order,
 						})),
-					editedArrayItems: state.arrayItems.filter(
+					editedArrayItems: correctedOrderArrayItems.filter(
 						(item) => item.diff === "edited" || item.diff === "reordered",
 					),
 					deletedArrayItemIds: state.arrayItems

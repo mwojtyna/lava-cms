@@ -1,4 +1,5 @@
 import type { ComponentsTableComponentDef } from "../../ComponentsTable";
+import type { inferRouterInputs } from "@trpc/server";
 import { DocumentDuplicateIcon } from "@heroicons/react/24/outline";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as React from "react";
@@ -6,6 +7,7 @@ import { useForm, type SubmitHandler, FormProvider } from "react-hook-form";
 import { Button, Sheet, SheetContent, SheetFooter } from "@/src/components/ui/client";
 import { useComponentsTableDialogs } from "@/src/data/stores/componentDefinitions";
 import { useWindowEvent } from "@/src/hooks";
+import type { PrivateRouter } from "@/src/trpc/routes/private/_private";
 import { cn } from "@/src/utils/styling";
 import { trpc } from "@/src/utils/trpc";
 import {
@@ -37,11 +39,21 @@ export function DuplicateComponentDefDialog(props: Props) {
 		mode: "onChange",
 	});
 	const onSubmit: SubmitHandler<ComponentDefEditorInputs> = (data) => {
+		type Field =
+			inferRouterInputs<PrivateRouter>["components"]["addComponentDefinition"]["fields"][number];
+
 		addMutation.mutate(
 			{
 				name: data.name,
 				groupId: props.componentDef.parentGroupId!,
-				fields: fields.map((f, i) => ({ ...f, order: i })),
+				fields: fields.map(
+					(f, i) =>
+						({
+							...f,
+							order: i,
+							array_item_type: f.arrayItemType,
+						}) satisfies Field,
+				),
 			},
 			{
 				onSuccess: () => props.setOpen(false),

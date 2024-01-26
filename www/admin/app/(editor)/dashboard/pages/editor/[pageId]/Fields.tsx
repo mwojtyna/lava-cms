@@ -297,7 +297,11 @@ function ArrayFieldItem(props: ArrayFieldItemProps) {
 		setArrayItems(
 			arrayItems.map((item) =>
 				item.id === props.item.id
-					? { ...item, data: value, diff: item.diff !== "added" ? "edited" : item.diff }
+					? {
+							...item,
+							data: value,
+							diff: item.diff !== "added" ? "edited" : item.diff,
+					  }
 					: item,
 			),
 		);
