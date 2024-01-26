@@ -154,7 +154,7 @@ interface FieldDefsProps {
 export const FieldDefs = React.forwardRef<React.ComponentRef<"div">, FieldDefsProps>((props, _) => {
 	const { fields, setFields, originalFields } = useComponentsTableDialogs();
 
-	const ids: string[] = React.useMemo(() => fields.map((_, i) => i.toString()), [fields]);
+	const dndIds: string[] = React.useMemo(() => fields.map((_, i) => i.toString()), [fields]);
 	const sensors = useSensors(
 		useSensor(PointerSensor),
 		useSensor(KeyboardSensor, {
@@ -223,7 +223,7 @@ export const FieldDefs = React.forwardRef<React.ComponentRef<"div">, FieldDefsPr
 				modifiers={[restrictToParentElement]}
 				onDragEnd={reorder}
 			>
-				<SortableContext items={ids} strategy={verticalListSortingStrategy}>
+				<SortableContext items={dndIds} strategy={verticalListSortingStrategy}>
 					{fields.map((field, i) => (
 						<FieldDefCard
 							key={i}

@@ -16,13 +16,19 @@ import {
 	arrayMove,
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { ArrowPathRoundedSquareIcon, PlusIcon, TrashIcon } from "@heroicons/react/24/outline";
+import {
+	ArrowPathRoundedSquareIcon,
+	ArrowUturnLeftIcon,
+	PlusIcon,
+	TrashIcon,
+} from "@heroicons/react/24/outline";
 import { createId } from "@paralleldrive/cuid2";
 import { IconGripVertical } from "@tabler/icons-react";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useRef } from "react";
 import { ActionIcon, Button } from "@/src/components/ui/client";
 import { Card } from "@/src/components/ui/server";
 import { type ComponentUI, usePageEditor, type ArrayItemUI } from "@/src/data/stores/pageEditor";
+import { cn } from "@/src/utils/styling";
 import { trpcFetch } from "@/src/utils/trpc";
 import { Field, type FieldProps } from "./ComponentEditor";
 import { ComponentCard } from "./Components";
@@ -167,13 +173,16 @@ interface ArrayFieldProps {
 	component: ComponentUI;
 }
 export function ArrayField(props: ArrayFieldProps) {
-	const { originalArrayItems, arrayItems, setArrayItems } = usePageEditor();
+	const { arrayItems, setArrayItems } = usePageEditor();
 	const myArrayItems = useMemo(
 		() => arrayItems.filter((item) => item.parentFieldId === props.parentField.id),
 		[arrayItems, props.parentField.id],
 	);
 
-	const ids: string[] = useMemo(() => myArrayItems.map((_, i) => i.toString()), [myArrayItems]);
+	const dndIds: string[] = useMemo(
+		() => myArrayItems.map((_, i) => i.toString()),
+		[myArrayItems],
+	);
 	const sensors = useSensors(
 		useSensor(PointerSensor),
 		useSensor(KeyboardSensor, {
@@ -230,28 +239,18 @@ export function ArrayField(props: ArrayFieldProps) {
 				modifiers={[restrictToParentElement]}
 				onDragEnd={handleReorder}
 			>
-				<SortableContext items={ids} strategy={verticalListSortingStrategy}>
+				<SortableContext items={dndIds} strategy={verticalListSortingStrategy}>
 					{myArrayItems.length > 0 && (
 						<div className="flex flex-col gap-2">
-							{myArrayItems.map((item, i) => {
-								const originalArrayItem = originalArrayItems.find(
-									(original) => original.id === item.id,
-								);
-								return (
-									<ArrayFieldItem
-										key={i}
-										dndId={i.toString()}
-										item={item}
-										parentField={props.parentField}
-										component={props.component}
-										edited={
-											originalArrayItem
-												? originalArrayItem.data !== item.data
-												: false
-										}
-									/>
-								);
-							})}
+							{myArrayItems.map((item, i) => (
+								<ArrayFieldItem
+									key={i}
+									dndId={i.toString()}
+									item={item}
+									parentField={props.parentField}
+									component={props.component}
+								/>
+							))}
 						</div>
 					)}
 				</SortableContext>
@@ -274,7 +273,6 @@ interface ArrayFieldItemProps {
 	item: ArrayItemUI;
 	parentField: FieldProps["field"];
 	component: ComponentUI;
-	edited: boolean;
 }
 function ArrayFieldItem(props: ArrayFieldItemProps) {
 	const { originalArrayItems, arrayItems, setArrayItems } = usePageEditor();
@@ -285,12 +283,15 @@ function ArrayFieldItem(props: ArrayFieldItemProps) {
 		// or the list will reshuffle on drop
 		// https://github.com/clauderic/dnd-kit/issues/767#issuecomment-1140556346
 		animateLayoutChanges: () => false,
+		disabled: props.item.diff === "deleted",
 	});
 	const style: React.CSSProperties = {
 		transform: CSS.Translate.toString(transform),
 		transition,
 		zIndex: isDragging ? 1 : undefined,
 	};
+
+	const preDeletedDiff = useRef<ArrayItemUI["diff"]>(props.item.diff);
 
 	function handleChange(value: string) {
 		setArrayItems(
@@ -311,6 +312,7 @@ function ArrayFieldItem(props: ArrayFieldItemProps) {
 		);
 	}
 	function handleDelete() {
+		preDeletedDiff.current = props.item.diff;
 		setArrayItems(
 			props.item.diff === "added"
 				? arrayItems.filter((item) => item.id !== props.item.id)
@@ -319,29 +321,55 @@ function ArrayFieldItem(props: ArrayFieldItemProps) {
 				  ),
 		);
 	}
+	function handleUnDelete() {
+		setArrayItems(
+			arrayItems.map((item) =>
+				item.id === props.item.id ? { ...item, diff: preDeletedDiff.current } : item,
+			),
+		);
+	}
 
 	return (
-		<div ref={setNodeRef} className="flex items-center gap-2" style={style}>
+		<div ref={setNodeRef} className={cn("flex items-center gap-2")} style={style}>
 			<div {...attributes} {...listeners}>
-				<IconGripVertical className="w-5 cursor-move text-muted-foreground" />
+				<IconGripVertical
+					className={cn(
+						"w-5 cursor-move text-muted-foreground",
+						props.item.diff === "deleted" && "cursor-auto text-muted-foreground/50",
+					)}
+				/>
 			</div>
 
-			<Field
-				value={props.item.data}
-				onChange={handleChange}
-				component={props.component}
-				field={{
-					id: props.item.id,
-					type: props.parentField.arrayItemType!,
-					arrayItemType: null,
-				}}
-				edited={props.edited}
-				onRestore={handleRestore}
-			/>
+			<div
+				className={cn(
+					"w-full rounded-md",
+					props.item.diff === "added" && "bg-green-500/10",
+					props.item.diff === "deleted" && "bg-red-500/10",
+				)}
+			>
+				<Field
+					value={props.item.data}
+					onChange={handleChange}
+					component={props.component}
+					field={{
+						id: props.item.id,
+						type: props.parentField.arrayItemType!,
+						arrayItemType: null,
+					}}
+					edited={props.item.diff === "edited"}
+					onRestore={handleRestore}
+				/>
+			</div>
 
-			<ActionIcon variant={"simple"} tooltip="Delete" onClick={handleDelete}>
-				<TrashIcon className="w-5 text-destructive" />
-			</ActionIcon>
+			{props.item.diff !== "deleted" ? (
+				<ActionIcon variant={"simple"} tooltip="Delete" onClick={handleDelete}>
+					<TrashIcon className="w-5 text-destructive" />
+				</ActionIcon>
+			) : (
+				<ActionIcon variant={"simple"} tooltip="Restore" onClick={handleUnDelete}>
+					<ArrowUturnLeftIcon className="w-5" />
+				</ActionIcon>
+			)}
 		</div>
 	);
 }

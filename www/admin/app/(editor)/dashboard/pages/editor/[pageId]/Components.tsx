@@ -33,7 +33,7 @@ interface Props {
 export function Components(props: Props) {
 	const { originalComponents, setComponents } = usePageEditor();
 
-	const ids: string[] = useMemo(
+	const dndIds: string[] = useMemo(
 		() => props.components.map((_, i) => i.toString()),
 		[props.components],
 	);
@@ -104,7 +104,7 @@ export function Components(props: Props) {
 			modifiers={[restrictToParentElement]}
 			onDragEnd={reorder}
 		>
-			<SortableContext items={ids} strategy={verticalListSortingStrategy}>
+			<SortableContext items={dndIds} strategy={verticalListSortingStrategy}>
 				<div className="flex flex-col gap-2">
 					{props.components.map((component, i) => (
 						<ComponentCard
