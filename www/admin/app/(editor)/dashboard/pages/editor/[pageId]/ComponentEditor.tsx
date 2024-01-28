@@ -152,8 +152,8 @@ export const Field = forwardRef<HTMLInputElement | HTMLButtonElement, FieldProps
 							)}
 						>
 							<Checkbox
-								className={className}
 								ref={ref as React.RefObject<HTMLButtonElement>}
+								className={className}
 								checked={value === "true"}
 								onCheckedChange={(checked) => onChange(checked ? "true" : "false")}
 							/>
@@ -172,12 +172,9 @@ export const Field = forwardRef<HTMLInputElement | HTMLButtonElement, FieldProps
 					<NestedComponentField
 						className={className}
 						value={value}
-						onChange={(id, nestedComponents) => {
-							onChange(id);
-							usePageEditor.setState({ nestedComponents });
-						}}
+						onChange={onChange}
 						edited={edited}
-						component={component}
+						parentComponent={component}
 					/>
 				);
 			}

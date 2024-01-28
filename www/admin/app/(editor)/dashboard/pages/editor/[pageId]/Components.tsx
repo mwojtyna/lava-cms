@@ -85,9 +85,10 @@ export function Components(props: Props) {
 		setComponents(newComponents);
 	}
 	function unRemove(component: ComponentUI) {
+		const original = originalComponents.find((comp) => comp.id === component.id)!;
 		const newComponents = props.components.toSpliced(props.components.indexOf(component), 1, {
 			...component,
-			diff: "none",
+			diff: original.order !== component.order ? "reordered" : "none",
 		});
 		setComponents(newComponents);
 	}
@@ -176,7 +177,8 @@ export function ComponentCard(props: ComponentCardProps) {
 					props.component.diff !== "reordered" &&
 					`border-l-[3px] ${diffStyle[props.component.diff]}`,
 
-				props.component.diff !== "deleted" && "cursor-pointer hover:bg-accent/70",
+				props.component.diff !== "deleted" && "hover:bg-accent/70",
+				props.component.diff === "deleted" && "cursor-auto",
 
 				"flex-row items-center gap-3 shadow-none transition-colors md:p-4",
 			)}

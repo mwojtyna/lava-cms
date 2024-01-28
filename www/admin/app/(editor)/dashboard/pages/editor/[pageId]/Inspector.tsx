@@ -279,8 +279,8 @@ function Step(props: StepProps) {
 				<ComponentEditor
 					component={props.getNestedComponent(step.nestedComponentId)}
 					onChange={(data) => {
-						// Don't know why, but when using nestedComponents from usePageEditor hook,
-						// the components are outdated and when ComponentEditor changes nestedComponents,
+						// Don't know why, but when using nestedComponents from the usePageEditor hook,
+						// the components are outdated and when NestedComponentField changes nestedComponents,
 						// the changes get overwritten by the code below. So we use the state directly.
 						const nestedComponents = usePageEditor.getState().nestedComponents;
 						const changedComponents: ComponentUI[] = nestedComponents.map(

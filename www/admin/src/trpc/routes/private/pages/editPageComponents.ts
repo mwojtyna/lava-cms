@@ -142,7 +142,8 @@ export const editPageComponents = privateProcedure
 			// Add new array items
 			await tx.arrayItem.createMany({
 				data: input.addedArrayItems.map((item) => ({
-					data: item.data,
+					data:
+						item.data in addedComponentIds ? addedComponentIds[item.data]! : item.data,
 					order: item.order,
 					parent_field_id:
 						item.parentFieldId in addedFieldIds
@@ -156,7 +157,10 @@ export const editPageComponents = privateProcedure
 				tx.arrayItem.update({
 					where: { id: item.id },
 					data: {
-						data: item.data,
+						data:
+							item.data in addedComponentIds
+								? addedComponentIds[item.data]!
+								: item.data,
 						order: item.order,
 					},
 				}),

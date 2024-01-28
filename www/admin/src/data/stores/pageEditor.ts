@@ -8,14 +8,14 @@ import type { trpc } from "@/src/utils/trpc";
 import "client-only";
 
 export type Diff = "added" | "edited" | "deleted" | "reordered" | "replaced" | "none";
-
 export interface ComponentUI extends Component {
 	diff: Diff;
 }
 export type FieldUI = ComponentUI["fields"][number];
 export interface ArrayItemUI extends ArrayItem {
-	diff: Exclude<Diff, "replaced">;
+	diff: Diff;
 }
+type ArrayItemGroups = Record<string, ArrayItemUI[]>;
 
 export type Step =
 	| {
@@ -46,9 +46,9 @@ interface PageEditorState {
 	nestedComponents: ComponentUI[];
 	setNestedComponents: (components: ComponentUI[]) => void;
 
-	originalArrayItems: ArrayItemUI[];
-	arrayItems: ArrayItemUI[];
-	setArrayItems: (arrayItems: ArrayItemUI[]) => void;
+	originalArrayItems: ArrayItemGroups;
+	arrayItems: ArrayItemGroups;
+	setArrayItems: (parentFieldId: string, arrayItems: ArrayItemUI[]) => void;
 
 	steps: Step[];
 	setSteps: (steps: Step[]) => void;
@@ -119,26 +119,33 @@ export const usePageEditor = create<PageEditorState>((set) => ({
 			};
 		}),
 
-	originalArrayItems: [],
-	arrayItems: [],
-	setArrayItems: (newArrayItems) =>
+	originalArrayItems: {},
+	arrayItems: {},
+	setArrayItems: (parentFieldId, newArrayItems) =>
 		set((state) => {
 			for (const ai of newArrayItems) {
-				if (ai.diff === "edited") {
-					const original = state.originalArrayItems.find((oc) => oc.id === ai.id)!;
+				if (ai.diff === "edited" || ai.diff === "reordered") {
+					const original = state.originalArrayItems[parentFieldId]!.find(
+						(oc) => oc.id === ai.id,
+					)!;
+
 					if (areSame(original, ai)) {
 						ai.diff = "none";
 					}
 				}
 			}
+			const arrayItems = {
+				...state.arrayItems,
+				[parentFieldId]: newArrayItems,
+			};
 
 			return {
-				arrayItems: newArrayItems,
+				arrayItems,
 				isDirty:
 					JSON.stringify(state.originalComponents) !== JSON.stringify(state.components) ||
 					JSON.stringify(state.originalNestedComponents) !==
 						JSON.stringify(state.nestedComponents) ||
-					JSON.stringify(state.originalArrayItems) !== JSON.stringify(newArrayItems),
+					JSON.stringify(state.originalArrayItems) !== JSON.stringify(arrayItems),
 			};
 		}),
 
@@ -146,6 +153,26 @@ export const usePageEditor = create<PageEditorState>((set) => ({
 	setSteps: (steps) => set({ steps }),
 
 	init: (components, nestedComponents, arrayItems) => {
+		// Group array items by parent
+		const arrayItemsGrouped: ArrayItemGroups = {};
+		for (const item of arrayItems) {
+			const items = arrayItemsGrouped[item.parentFieldId] ?? [];
+			if (item.diff !== "deleted") {
+				items.push(item);
+			}
+			arrayItemsGrouped[item.parentFieldId] = items;
+		}
+		for (const parentId of Object.keys(arrayItemsGrouped)) {
+			let i = 0;
+			for (const item of arrayItemsGrouped[parentId]!) {
+				if (item.order !== i) {
+					item.diff = "reordered";
+					item.order = i;
+				}
+				i++;
+			}
+		}
+
 		set({
 			components,
 			originalComponents: components,
@@ -153,8 +180,8 @@ export const usePageEditor = create<PageEditorState>((set) => ({
 			nestedComponents,
 			originalNestedComponents: nestedComponents,
 
-			arrayItems,
-			originalArrayItems: arrayItems,
+			arrayItems: arrayItemsGrouped,
+			originalArrayItems: structuredClone(arrayItemsGrouped),
 
 			isDirty: false,
 		});
@@ -182,11 +209,10 @@ export const usePageEditor = create<PageEditorState>((set) => ({
 				}
 				return steps;
 			}
-
 			return {
 				components: state.originalComponents,
 				nestedComponents: state.originalNestedComponents,
-				arrayItems: state.originalArrayItems,
+				arrayItems: structuredClone(state.originalArrayItems),
 				isDirty: false,
 				steps: getLastValidStep(state.steps),
 			};
@@ -203,17 +229,14 @@ export const usePageEditor = create<PageEditorState>((set) => ({
 				}));
 
 			// Fix array item order
-			const groupedByParent: Map<string, ArrayItemUI[]> = new Map<string, ArrayItemUI[]>();
-			for (const item of state.arrayItems) {
-				const items = groupedByParent.get(item.parentFieldId) ?? [];
-				if (item.diff !== "deleted") {
-					items.push(item);
-				}
-				groupedByParent.set(item.parentFieldId, items);
-			}
-			for (const parentId of groupedByParent.keys()) {
+			const correctedOrderItems: ArrayItemGroups = structuredClone(state.arrayItems);
+			for (const parentId of Object.keys(correctedOrderItems)) {
+				correctedOrderItems[parentId] = correctedOrderItems[parentId]!.filter(
+					(item) => item.diff !== "deleted",
+				);
+
 				let i = 0;
-				for (const item of groupedByParent.get(parentId)!) {
+				for (const item of correctedOrderItems[parentId]!) {
 					if (item.order !== i) {
 						item.diff = "reordered";
 						item.order = i;
@@ -222,10 +245,7 @@ export const usePageEditor = create<PageEditorState>((set) => ({
 				}
 			}
 
-			const correctedOrderArrayItems: ArrayItemUI[] = [];
-			for (const item of groupedByParent.values()) {
-				correctedOrderArrayItems.push(...item);
-			}
+			const flattenedItems = Object.values(state.arrayItems).flat();
 
 			mutation.mutate(
 				{
@@ -254,7 +274,7 @@ export const usePageEditor = create<PageEditorState>((set) => ({
 						.filter((comp) => comp.diff === "deleted" || comp.diff === "replaced")
 						.map((comp) => comp.id),
 
-					addedArrayItems: state.arrayItems
+					addedArrayItems: flattenedItems
 						.filter((item) => item.diff === "added")
 						.map((item) => ({
 							frontendId: item.id,
@@ -262,10 +282,16 @@ export const usePageEditor = create<PageEditorState>((set) => ({
 							parentFieldId: item.parentFieldId,
 							order: item.order,
 						})),
-					editedArrayItems: correctedOrderArrayItems.filter(
-						(item) => item.diff === "edited" || item.diff === "reordered",
-					),
-					deletedArrayItemIds: state.arrayItems
+					editedArrayItems: Object.values(correctedOrderItems)
+						.flat()
+						.filter(
+							(item) =>
+								item.diff === "edited" ||
+								item.diff === "reordered" ||
+								// 'replaced' is for when the item is of type COMPONENT, see ArrayFieldItem handleChange() function
+								item.diff === "replaced",
+						),
+					deletedArrayItemIds: flattenedItems
 						.filter((item) => item.diff === "deleted")
 						.map((item) => item.id),
 				},

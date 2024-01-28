@@ -226,7 +226,7 @@ export const FieldDefs = React.forwardRef<React.ComponentRef<"div">, FieldDefsPr
 				<SortableContext items={dndIds} strategy={verticalListSortingStrategy}>
 					{fields.map((field, i) => (
 						<FieldDefCard
-							key={i}
+							key={field.id}
 							dndId={i.toString()}
 							field={field}
 							dialogType={props.dialogType}

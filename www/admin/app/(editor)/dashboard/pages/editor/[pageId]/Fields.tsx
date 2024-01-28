@@ -35,11 +35,14 @@ import { ComponentCard } from "./Components";
 import { AddComponentDialog } from "./dialogs/AddComponentDialog";
 
 interface NestedComponentFieldProps {
-	className?: string;
-	component: ComponentUI;
-	edited: boolean;
 	value: string;
-	onChange: (id: string, nestedComponents: ComponentUI[]) => void;
+	onChange: (id: string) => void;
+
+	className?: string;
+	parentComponent: ComponentUI;
+	edited: boolean;
+	onRemove?: () => void;
+	onUnRemove?: () => void;
 }
 export function NestedComponentField(props: NestedComponentFieldProps) {
 	const [dialogOpen, setDialogOpen] = useState(false);
@@ -74,13 +77,13 @@ export function NestedComponentField(props: NestedComponentFieldProps) {
 				arrayItemType: fieldDef.array_item_type,
 			})),
 			order: 0,
-			pageId: props.component.pageId,
-			parentComponentId: props.component.id,
+			pageId: props.parentComponent.pageId,
+			parentComponentId: props.parentComponent.id,
 			diff: currentComponent ? "replaced" : "added",
 		};
 
-		props.onChange(
-			newComponent.id,
+		props.onChange(newComponent.id);
+		setNestedComponents(
 			currentComponent
 				? nestedComponents.map((nc) => (nc.id === currentComponent.id ? newComponent : nc))
 				: [...nestedComponents, newComponent],
@@ -88,8 +91,8 @@ export function NestedComponentField(props: NestedComponentFieldProps) {
 	}
 
 	function restore() {
-		props.onChange(
-			originalComponent!.id,
+		props.onChange(originalComponent!.id);
+		setNestedComponents(
 			nestedComponents.map((c) => (c.id === originalComponent!.id ? originalComponent! : c)),
 		);
 	}
@@ -97,25 +100,23 @@ export function NestedComponentField(props: NestedComponentFieldProps) {
 		setNestedComponents(
 			nestedComponents.map((c) => (c.id === component.id ? { ...c, diff: "deleted" } : c)),
 		);
+		props.onRemove?.();
 	}
 	function unRemove(component: ComponentUI) {
 		setNestedComponents(
 			nestedComponents.map((c) => (c.id === component.id ? { ...c, diff: "none" } : c)),
 		);
+		props.onUnRemove?.();
 	}
 	function unAdd(component: ComponentUI) {
-		props.onChange(
-			"",
-			nestedComponents.filter((c) => c.id !== component.id),
-		);
+		props.onChange("");
+		setNestedComponents(nestedComponents.filter((c) => c.id !== component.id));
 	}
 
 	return (
 		<>
 			{currentComponent && (
-				<div
-					className={cn(props.className, "grid grid-flow-col grid-cols-[1fr_auto] gap-2")}
-				>
+				<div className={props.className}>
 					<ComponentCard
 						dndId="0"
 						noDrag
@@ -176,10 +177,14 @@ interface ArrayFieldProps {
 	component: ComponentUI;
 }
 export function ArrayField(props: ArrayFieldProps) {
-	const { arrayItems, setArrayItems } = usePageEditor();
+	const { originalArrayItems, arrayItems, setArrayItems } = usePageEditor();
 	const myArrayItems = useMemo(
-		() => arrayItems.filter((item) => item.parentFieldId === props.parentField.id),
+		() => arrayItems[props.parentField.id] ?? [],
 		[arrayItems, props.parentField.id],
+	);
+	const myOriginalArrayItems = useMemo(
+		() => originalArrayItems[props.parentField.id] ?? [],
+		[originalArrayItems, props.parentField.id],
 	);
 
 	const dndIds: string[] = useMemo(
@@ -193,10 +198,10 @@ export function ArrayField(props: ArrayFieldProps) {
 		}),
 	);
 
-	function addArrayItem() {
+	function addItem() {
 		const lastItem = myArrayItems.at(-1);
-		setArrayItems([
-			...arrayItems,
+		setArrayItems(props.parentField.id, [
+			...myArrayItems,
 			{
 				id: createId(),
 				data: "",
@@ -209,10 +214,8 @@ export function ArrayField(props: ArrayFieldProps) {
 	function handleReorder(e: DragEndEvent) {
 		const { over, active } = e;
 		if (over && active.id !== over.id) {
-			const reordered: ArrayItemUI[] = arrayMove(
-				myArrayItems,
-				Number(active.id),
-				Number(over.id),
+			const reordered: ArrayItemUI[] = structuredClone(
+				arrayMove(myArrayItems, Number(active.id), Number(over.id)),
 			);
 			for (let i = 0; i < reordered.length; i++) {
 				const item = reordered[i]!;
@@ -224,11 +227,7 @@ export function ArrayField(props: ArrayFieldProps) {
 				}
 			}
 
-			setArrayItems(
-				arrayItems
-					.filter((item) => !reordered.find((i) => i.id === item.id))
-					.concat(reordered),
-			);
+			setArrayItems(props.parentField.id, reordered);
 		}
 	}
 
@@ -247,9 +246,11 @@ export function ArrayField(props: ArrayFieldProps) {
 						<div className="flex flex-col gap-2">
 							{myArrayItems.map((item, i) => (
 								<ArrayFieldItem
-									key={i}
+									key={item.id}
 									dndId={i.toString()}
 									item={item}
+									items={myArrayItems}
+									originalItems={myOriginalArrayItems}
 									parentField={props.parentField}
 									component={props.component}
 								/>
@@ -263,7 +264,7 @@ export function ArrayField(props: ArrayFieldProps) {
 				className="w-full"
 				variant={"outline"}
 				icon={<PlusIcon className="w-5" />}
-				onClick={addArrayItem}
+				onClick={addItem}
 			>
 				Add item
 			</Button>
@@ -274,11 +275,13 @@ export function ArrayField(props: ArrayFieldProps) {
 interface ArrayFieldItemProps {
 	dndId: string;
 	item: ArrayItemUI;
+	items: ArrayItemUI[];
+	originalItems: ArrayItemUI[];
 	parentField: FieldProps["field"];
 	component: ComponentUI;
 }
 function ArrayFieldItem(props: ArrayFieldItemProps) {
-	const { originalArrayItems, arrayItems, setArrayItems } = usePageEditor();
+	const { setArrayItems } = usePageEditor();
 
 	const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
 		id: props.dndId,
@@ -298,22 +301,30 @@ function ArrayFieldItem(props: ArrayFieldItemProps) {
 
 	function handleChange(value: string) {
 		setArrayItems(
-			arrayItems.map((item) =>
-				item.id === props.item.id
-					? {
-							...item,
-							data: value,
-							diff: item.diff !== "added" ? "edited" : item.diff,
-					  }
-					: item,
-			),
+			props.parentField.id,
+			props.items.map((item) => {
+				if (item.id === props.item.id) {
+					return {
+						...item,
+						data: value,
+						// Setting to 'replaced' is a hack to force the item to not be reset to 'none',
+						// because a replaced nested component has the same id as the original,
+						// which means the array item will differ only by the diff property,
+						// so it will reset to 'none'.
+						diff: item.diff !== "added" ? "replaced" : item.diff,
+					};
+				} else {
+					return item;
+				}
+			}),
 		);
 	}
 	function handleRestore() {
 		setArrayItems(
-			arrayItems.map((item) =>
+			props.parentField.id,
+			props.items.map((item) =>
 				item.id === props.item.id
-					? originalArrayItems.find((i) => i.id === item.id)!
+					? props.originalItems.find((i) => i.id === item.id)!
 					: item,
 			),
 		);
@@ -321,16 +332,18 @@ function ArrayFieldItem(props: ArrayFieldItemProps) {
 	function handleDelete() {
 		preDeletedDiff.current = props.item.diff;
 		setArrayItems(
+			props.parentField.id,
 			props.item.diff === "added"
-				? arrayItems.filter((item) => item.id !== props.item.id)
-				: arrayItems.map((item) =>
+				? props.items.filter((item) => item.id !== props.item.id)
+				: props.items.map((item) =>
 						item.id === props.item.id ? { ...item, diff: "deleted" } : item,
 				  ),
 		);
 	}
 	function handleUnDelete() {
 		setArrayItems(
-			arrayItems.map((item) =>
+			props.parentField.id,
+			props.items.map((item) =>
 				item.id === props.item.id ? { ...item, diff: preDeletedDiff.current } : item,
 			),
 		);
@@ -348,36 +361,48 @@ function ArrayFieldItem(props: ArrayFieldItemProps) {
 			</div>
 
 			<div className="w-full">
-				{/* TODO: Fix other field types */}
-				<Field
-					className={cn(
-						"rounded-md",
-						props.parentField.arrayItemType === "SWITCH" && "h-5 w-5",
-						props.item.diff === "added" && "bg-green-400/20",
-						props.item.diff === "deleted" && "bg-red-400/20",
-					)}
-					value={props.item.data}
-					onChange={handleChange}
-					component={props.component}
-					field={{
-						id: props.item.id,
-						type: props.parentField.arrayItemType!,
-						arrayItemType: null,
-					}}
-					edited={props.item.diff === "edited"}
-					onRestore={handleRestore}
-				/>
+				{props.parentField.arrayItemType !== "COMPONENT" ? (
+					<Field
+						className={cn(
+							"rounded-md",
+							props.parentField.arrayItemType === "SWITCH" && "h-5 w-5",
+							props.item.diff === "added" && "bg-green-400/20",
+							props.item.diff === "deleted" && "bg-red-400/20",
+						)}
+						component={props.component}
+						field={{
+							id: props.item.id,
+							type: props.parentField.arrayItemType!,
+							arrayItemType: null,
+						}}
+						value={props.item.data}
+						onChange={handleChange}
+						edited={props.item.diff === "replaced"}
+						onRestore={handleRestore}
+					/>
+				) : (
+					// TODO: Open AddComponentDialog when pressing 'Add item'
+					<NestedComponentField
+						value={props.item.data}
+						onChange={handleChange}
+						parentComponent={props.component}
+						edited={props.item.diff === "replaced"}
+						onRemove={handleDelete}
+						onUnRemove={handleUnDelete}
+					/>
+				)}
 			</div>
 
-			{props.item.diff !== "deleted" ? (
-				<ActionIcon variant={"simple"} tooltip="Delete" onClick={handleDelete}>
-					<TrashIcon className="w-5 text-destructive" />
-				</ActionIcon>
-			) : (
-				<ActionIcon variant={"simple"} tooltip="Restore" onClick={handleUnDelete}>
-					<ArrowUturnLeftIcon className="w-5" />
-				</ActionIcon>
-			)}
+			{props.parentField.arrayItemType !== "COMPONENT" &&
+				(props.item.diff !== "deleted" ? (
+					<ActionIcon variant={"simple"} tooltip="Delete" onClick={handleDelete}>
+						<TrashIcon className="w-5 text-destructive" />
+					</ActionIcon>
+				) : (
+					<ActionIcon variant={"simple"} tooltip="Restore" onClick={handleUnDelete}>
+						<ArrowUturnLeftIcon className="w-5" />
+					</ActionIcon>
+				))}
 		</div>
 	);
 }
