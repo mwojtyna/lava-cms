@@ -188,7 +188,8 @@ export function ArrayField(props: ArrayFieldProps) {
 	);
 
 	const dndIds: string[] = useMemo(
-		() => myArrayItems.map((_, i) => i.toString()),
+		// For some reason id cannot be 0, even though it's a string
+		() => myArrayItems.map((_, i) => (i + 1).toString()),
 		[myArrayItems],
 	);
 	const sensors = useSensors(
@@ -215,7 +216,7 @@ export function ArrayField(props: ArrayFieldProps) {
 		const { over, active } = e;
 		if (over && active.id !== over.id) {
 			const reordered: ArrayItemUI[] = structuredClone(
-				arrayMove(myArrayItems, Number(active.id), Number(over.id)),
+				arrayMove(myArrayItems, Number(active.id) - 1, Number(over.id) - 1),
 			);
 			for (let i = 0; i < reordered.length; i++) {
 				const item = reordered[i]!;
@@ -247,7 +248,7 @@ export function ArrayField(props: ArrayFieldProps) {
 							{myArrayItems.map((item, i) => (
 								<ArrayFieldItem
 									key={item.id}
-									dndId={i.toString()}
+									dndId={dndIds[i]!}
 									item={item}
 									items={myArrayItems}
 									originalItems={myOriginalArrayItems}

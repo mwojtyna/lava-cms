@@ -227,7 +227,7 @@ export const FieldDefs = React.forwardRef<React.ComponentRef<"div">, FieldDefsPr
 					{fields.map((field, i) => (
 						<FieldDefCard
 							key={field.id}
-							dndId={i.toString()}
+							dndId={dndIds[i]!}
 							field={field}
 							dialogType={props.dialogType}
 							onClick={() => props.onFieldClick(field)}

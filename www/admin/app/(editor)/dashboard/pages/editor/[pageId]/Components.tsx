@@ -110,7 +110,7 @@ export function Components(props: Props) {
 					{props.components.map((component, i) => (
 						<ComponentCard
 							key={component.id}
-							dndId={i.toString()} // Has to be the same as `ids` array passed to `SortableContext`
+							dndId={dndIds[i]!} // Has to be the same as `ids` array passed to `SortableContext`
 							component={{
 								id: component.id,
 								name: component.definition.name,
