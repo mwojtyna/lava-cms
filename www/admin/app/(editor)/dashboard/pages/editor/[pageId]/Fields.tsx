@@ -29,10 +29,9 @@ import { ActionIcon, Button } from "@/src/components/ui/client";
 import { Card } from "@/src/components/ui/server";
 import { type ComponentUI, usePageEditor, type ArrayItemUI } from "@/src/data/stores/pageEditor";
 import { cn } from "@/src/utils/styling";
-import { trpcFetch } from "@/src/utils/trpc";
 import { Field, type FieldProps } from "./ComponentEditor";
 import { ComponentCard } from "./Components";
-import { AddComponentDialog } from "./dialogs/AddComponentDialog";
+import { AddComponentDialog, createComponentInstance } from "./dialogs/AddComponentDialog";
 
 interface NestedComponentFieldProps {
 	value: string;
@@ -41,6 +40,7 @@ interface NestedComponentFieldProps {
 	className?: string;
 	parentComponent: ComponentUI;
 	edited: boolean;
+	onUnAdd?: () => void;
 	onRemove?: () => void;
 	onUnRemove?: () => void;
 }
@@ -59,28 +59,15 @@ export function NestedComponentField(props: NestedComponentFieldProps) {
 	);
 
 	async function selectComponent(id: string) {
-		const definition = await trpcFetch.components.getComponentDefinition.query({ id });
-		const newComponent: ComponentUI = {
-			// When replacing component, keep the id
-			id: currentComponent?.id ?? createId(),
-			definition: {
-				id: definition.id,
-				name: definition.name,
+		const newComponent = await createComponentInstance(
+			id,
+			{
+				order: 0,
+				parentComponentId: props.parentComponent.id,
+				pageId: props.parentComponent.pageId,
 			},
-			fields: definition.field_definitions.map((fieldDef) => ({
-				id: createId(),
-				name: fieldDef.name,
-				data: "",
-				definitionId: fieldDef.id,
-				order: fieldDef.order,
-				type: fieldDef.type,
-				arrayItemType: fieldDef.array_item_type,
-			})),
-			order: 0,
-			pageId: props.parentComponent.pageId,
-			parentComponentId: props.parentComponent.id,
-			diff: currentComponent ? "replaced" : "added",
-		};
+			currentComponent,
+		);
 
 		props.onChange(newComponent.id);
 		setNestedComponents(
@@ -111,6 +98,7 @@ export function NestedComponentField(props: NestedComponentFieldProps) {
 	function unAdd(component: ComponentUI) {
 		props.onChange("");
 		setNestedComponents(nestedComponents.filter((c) => c.id !== component.id));
+		props.onUnAdd?.();
 	}
 
 	return (
@@ -177,7 +165,8 @@ interface ArrayFieldProps {
 	component: ComponentUI;
 }
 export function ArrayField(props: ArrayFieldProps) {
-	const { originalArrayItems, arrayItems, setArrayItems } = usePageEditor();
+	const { originalArrayItems, arrayItems, setArrayItems, nestedComponents, setNestedComponents } =
+		usePageEditor();
 	const myArrayItems = useMemo(
 		() => arrayItems[props.parentField.id] ?? [],
 		[arrayItems, props.parentField.id],
@@ -186,6 +175,8 @@ export function ArrayField(props: ArrayFieldProps) {
 		() => originalArrayItems[props.parentField.id] ?? [],
 		[originalArrayItems, props.parentField.id],
 	);
+
+	const [dialogOpen, setDialogOpen] = useState(false);
 
 	const dndIds: string[] = useMemo(
 		// For some reason id cannot be 0, even though it's a string
@@ -200,17 +191,21 @@ export function ArrayField(props: ArrayFieldProps) {
 	);
 
 	function addItem() {
-		const lastItem = myArrayItems.at(-1);
-		setArrayItems(props.parentField.id, [
-			...myArrayItems,
-			{
-				id: createId(),
-				data: "",
-				parentFieldId: props.parentField.id,
-				order: lastItem ? lastItem.order + 1 : 0,
-				diff: "added",
-			},
-		]);
+		if (props.parentField.arrayItemType !== "COMPONENT") {
+			const lastItem = myArrayItems.at(-1);
+			setArrayItems(props.parentField.id, [
+				...myArrayItems,
+				{
+					id: createId(),
+					data: "",
+					parentFieldId: props.parentField.id,
+					order: lastItem ? lastItem.order + 1 : 0,
+					diff: "added",
+				},
+			]);
+		} else {
+			setDialogOpen(true);
+		}
 	}
 	function handleReorder(e: DragEndEvent) {
 		const { over, active } = e;
@@ -230,6 +225,27 @@ export function ArrayField(props: ArrayFieldProps) {
 
 			setArrayItems(props.parentField.id, reordered);
 		}
+	}
+
+	async function addComponent(compDefId: string) {
+		const newComponent = await createComponentInstance(compDefId, {
+			order: 0,
+			pageId: props.component.pageId,
+			parentComponentId: props.component.id,
+		});
+		setNestedComponents([...nestedComponents, newComponent]);
+
+		const lastItem = myArrayItems.at(-1);
+		setArrayItems(props.parentField.id, [
+			...myArrayItems,
+			{
+				id: createId(),
+				data: newComponent.id,
+				parentFieldId: props.parentField.id,
+				order: lastItem ? lastItem.order + 1 : 0,
+				diff: "added",
+			},
+		]);
 	}
 
 	return (
@@ -269,6 +285,14 @@ export function ArrayField(props: ArrayFieldProps) {
 			>
 				Add item
 			</Button>
+
+			{props.parentField.arrayItemType === "COMPONENT" && (
+				<AddComponentDialog
+					open={dialogOpen}
+					setOpen={setDialogOpen}
+					onSubmit={addComponent}
+				/>
+			)}
 		</Card>
 	);
 }
@@ -330,7 +354,13 @@ function ArrayFieldItem(props: ArrayFieldItemProps) {
 			),
 		);
 	}
-	function handleDelete() {
+	function handleUnAdd() {
+		setArrayItems(
+			props.parentField.id,
+			props.items.filter((item) => props.item.id !== item.id),
+		);
+	}
+	function handleRemove() {
 		preDeletedDiff.current = props.item.diff;
 		setArrayItems(
 			props.parentField.id,
@@ -341,7 +371,7 @@ function ArrayFieldItem(props: ArrayFieldItemProps) {
 				  ),
 		);
 	}
-	function handleUnDelete() {
+	function handleUnRemove() {
 		setArrayItems(
 			props.parentField.id,
 			props.items.map((item) =>
@@ -382,25 +412,25 @@ function ArrayFieldItem(props: ArrayFieldItemProps) {
 						onRestore={handleRestore}
 					/>
 				) : (
-					// TODO: Open AddComponentDialog when pressing 'Add item'
 					<NestedComponentField
 						value={props.item.data}
 						onChange={handleChange}
 						parentComponent={props.component}
 						edited={props.item.diff === "replaced"}
-						onRemove={handleDelete}
-						onUnRemove={handleUnDelete}
+						onUnAdd={handleUnAdd}
+						onRemove={handleRemove}
+						onUnRemove={handleUnRemove}
 					/>
 				)}
 			</div>
 
 			{props.parentField.arrayItemType !== "COMPONENT" &&
 				(props.item.diff !== "deleted" ? (
-					<ActionIcon variant={"simple"} tooltip="Delete" onClick={handleDelete}>
+					<ActionIcon variant={"simple"} tooltip="Delete" onClick={handleRemove}>
 						<TrashIcon className="w-5 text-destructive" />
 					</ActionIcon>
 				) : (
-					<ActionIcon variant={"simple"} tooltip="Restore" onClick={handleUnDelete}>
+					<ActionIcon variant={"simple"} tooltip="Restore" onClick={handleUnRemove}>
 						<ArrowUturnLeftIcon className="w-5" />
 					</ActionIcon>
 				))}

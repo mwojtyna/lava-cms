@@ -1,6 +1,7 @@
 "use client";
 
 import { ChevronRightIcon, CubeIcon, FolderIcon, HomeIcon } from "@heroicons/react/24/outline";
+import { createId } from "@paralleldrive/cuid2";
 import { useEffect, useState } from "react";
 import type { ComponentsTableItem } from "@/app/(dashboard)/dashboard/components/ComponentsTable";
 import {
@@ -14,8 +15,40 @@ import {
 	Separator,
 } from "@/src/components/ui/client";
 import { Skeleton, Stepper, TypographyMuted } from "@/src/components/ui/server";
+import type { ComponentUI } from "@/src/data/stores/pageEditor";
 import { cn } from "@/src/utils/styling";
-import { trpc } from "@/src/utils/trpc";
+import { trpc, trpcFetch } from "@/src/utils/trpc";
+
+export async function createComponentInstance(
+	definitionId: string,
+	data: Pick<ComponentUI, "pageId" | "parentComponentId" | "order">,
+	currentComponent?: ComponentUI,
+): Promise<ComponentUI> {
+	const definition = await trpcFetch.components.getComponentDefinition.query({
+		id: definitionId,
+	});
+	return {
+		// When replacing component, keep the id
+		id: currentComponent?.id ?? createId(),
+		definition: {
+			id: definition.id,
+			name: definition.name,
+		},
+		fields: definition.field_definitions.map((fieldDef) => ({
+			id: createId(),
+			name: fieldDef.name,
+			data: "",
+			definitionId: fieldDef.id,
+			order: fieldDef.order,
+			type: fieldDef.type,
+			arrayItemType: fieldDef.array_item_type,
+		})),
+		order: data.order,
+		pageId: data.pageId,
+		parentComponentId: data.parentComponentId,
+		diff: currentComponent ? "replaced" : "added",
+	};
+}
 
 interface Props {
 	open: boolean;

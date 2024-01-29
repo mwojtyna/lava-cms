@@ -4,7 +4,6 @@ import type { Page } from "@prisma/client";
 import type { inferRouterOutputs } from "@trpc/server";
 import { ChevronRightIcon, CubeIcon, DocumentIcon, PlusIcon } from "@heroicons/react/24/outline";
 import { useHotkeys, useViewportSize } from "@mantine/hooks";
-import { createId } from "@paralleldrive/cuid2";
 import { Resizable } from "re-resizable";
 import { useEffect, useState } from "react";
 import { Button } from "@/src/components/ui/client";
@@ -14,10 +13,10 @@ import { type Step as StepType, type ComponentUI } from "@/src/data/stores/pageE
 import { useWindowEvent } from "@/src/hooks";
 import type { PrivateRouter } from "@/src/trpc/routes/private/_private";
 import { cn } from "@/src/utils/styling";
-import { trpc, trpcFetch } from "@/src/utils/trpc";
+import { trpc } from "@/src/utils/trpc";
 import { ComponentEditor } from "./ComponentEditor";
 import { Components } from "./Components";
-import { AddComponentDialog } from "./dialogs/AddComponentDialog";
+import { AddComponentDialog, createComponentInstance } from "./dialogs/AddComponentDialog";
 
 export const MIN_WIDTH = 250;
 const DEFAULT_WIDTH = MIN_WIDTH * 1.5;
@@ -91,31 +90,14 @@ export function Inspector(props: Props) {
 	});
 
 	async function addComponent(id: string) {
-		const componentDef = await trpcFetch.components.getComponentDefinition.query({ id });
 		const lastComponent = components.at(-1);
-		setComponents([
-			...components,
-			{
-				id: createId(),
-				definition: {
-					id: componentDef.id,
-					name: componentDef.name,
-				},
-				order: lastComponent ? lastComponent.order + 1 : 0,
-				fields: componentDef.field_definitions.map((fieldDef, i) => ({
-					id: createId(),
-					name: fieldDef.name,
-					type: fieldDef.type,
-					arrayItemType: fieldDef.array_item_type,
-					data: fieldDef.type === "SWITCH" ? "false" : "",
-					definitionId: fieldDef.id,
-					order: i,
-				})),
-				pageId: props.page.id,
-				parentComponentId: null,
-				diff: "added",
-			},
-		]);
+		const newComponent = await createComponentInstance(id, {
+			pageId: props.page.id,
+			parentComponentId: null,
+			order: lastComponent ? lastComponent.order + 1 : 0,
+		});
+
+		setComponents([...components, newComponent]);
 	}
 
 	function getComponent(id: string): ComponentUI {
