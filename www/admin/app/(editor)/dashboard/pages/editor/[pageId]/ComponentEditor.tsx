@@ -18,7 +18,8 @@ import {
 import { TypographyMuted } from "@/src/components/ui/server";
 import { usePageEditor, type ComponentUI, type FieldUI } from "@/src/data/stores/pageEditor";
 import { cn } from "@/src/utils/styling";
-import { ArrayField, NestedComponentField } from "./Fields";
+import { ArrayField } from "./fields/ArrayField";
+import { NestedComponentField } from "./fields/NestedComponentField";
 
 type Input = Record<string, string>; // fieldId: data
 
