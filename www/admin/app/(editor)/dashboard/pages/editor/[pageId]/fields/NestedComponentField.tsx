@@ -12,6 +12,8 @@ interface NestedComponentFieldProps {
 	className?: string;
 	parentComponent: ComponentUI;
 	edited: boolean;
+
+	onRestore?: () => void;
 	onUnAdd?: () => void;
 	onRemove?: () => void;
 	onUnRemove?: () => void;
@@ -54,6 +56,7 @@ export function NestedComponentField(props: NestedComponentFieldProps) {
 		setNestedComponents(
 			nestedComponents.map((c) => (c.id === originalComponent!.id ? originalComponent! : c)),
 		);
+		props.onRestore?.();
 	}
 	function remove(component: ComponentUI) {
 		setNestedComponents(
