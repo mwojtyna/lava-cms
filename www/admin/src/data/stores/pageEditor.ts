@@ -134,10 +134,13 @@ export const usePageEditor = create<PageEditorState>((set) => ({
 					}
 				}
 			}
-			const arrayItems: ArrayItemGroups = {
+			let arrayItems: ArrayItemGroups = {
 				...state.arrayItems,
 				[parentFieldId]: newArrayItems,
 			};
+			if (Object.values(arrayItems).flat().length === 0) {
+				arrayItems = {};
+			}
 
 			return {
 				arrayItems,
