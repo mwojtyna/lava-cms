@@ -10,13 +10,13 @@ export function ResetButton() {
 
 	return (
 		<Button
-			className="flex-row-reverse max-sm:p-3"
+			className="flex-row-reverse max-md:hidden max-sm:p-3"
 			variant={"secondary"}
 			icon={<ArrowPathIcon className="w-5" />}
 			disabled={!isDirty}
 			onClick={reset}
 		>
-			<span className="max-sm:hidden">Reset</span>
+			Reset
 		</Button>
 	);
 }
