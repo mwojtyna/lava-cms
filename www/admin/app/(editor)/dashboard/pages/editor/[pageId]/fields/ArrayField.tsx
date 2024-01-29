@@ -197,14 +197,20 @@ function ArrayFieldItem(props: ArrayFieldItemProps) {
 			props.parentField.id,
 			props.items.map((item) => {
 				if (item.id === props.item.id) {
-					return {
-						...item,
-						data: value,
+					let diff = item.diff;
+					if (item.diff !== "added") {
 						// Setting to 'replaced' is a hack to force the item to not be reset to 'none',
 						// because a replaced nested component has the same id as the original,
 						// which means the array item will differ only by the diff property,
 						// so it will reset to 'none' (if diff is 'edited').
-						diff: item.diff !== "added" ? "replaced" : item.diff,
+						diff =
+							props.parentField.arrayItemType !== "COMPONENT" ? "edited" : "replaced";
+					}
+
+					return {
+						...item,
+						data: value,
+						diff,
 					};
 				} else {
 					return item;
@@ -276,7 +282,7 @@ function ArrayFieldItem(props: ArrayFieldItemProps) {
 						}}
 						value={props.item.data}
 						onChange={handleChange}
-						edited={props.item.diff === "replaced"}
+						edited={props.item.diff === "edited" || props.item.diff === "replaced"}
 						onRestore={handleRestore}
 					/>
 				) : (
@@ -284,7 +290,7 @@ function ArrayFieldItem(props: ArrayFieldItemProps) {
 						value={props.item.data}
 						onChange={handleChange}
 						parentComponent={props.component}
-						edited={props.item.diff === "replaced"}
+						edited={props.item.diff === "edited" || props.item.diff === "replaced"}
 						onRestore={handleRestore}
 						onUnAdd={handleUnAdd}
 						onRemove={handleRemove}
