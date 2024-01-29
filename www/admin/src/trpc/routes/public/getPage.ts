@@ -125,9 +125,9 @@ function getFields(component: Component): Promise<Record<string, FieldContent>> 
 
 				break;
 			}
-			case "ARRAY": {
+			case "COLLECTION": {
 				// TODO: Implement
-				data = "Array not implemented";
+				data = "Collection not implemented";
 				break;
 			}
 		}

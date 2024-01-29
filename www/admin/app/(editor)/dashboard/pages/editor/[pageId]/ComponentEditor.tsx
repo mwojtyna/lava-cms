@@ -179,7 +179,7 @@ export const Field = forwardRef<HTMLInputElement | HTMLButtonElement, FieldProps
 					/>
 				);
 			}
-			case "ARRAY": {
+			case "COLLECTION": {
 				return <ArrayField parentField={field} component={component} />;
 			}
 		}

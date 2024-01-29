@@ -179,8 +179,7 @@ enum ComponentFieldType {
     NUMBER
     SWITCH
     COMPONENT
-    /// TODO: Rename to COLLECTION
-    ARRAY
+    COLLECTION
 
     @@map("component_field_type")
 }

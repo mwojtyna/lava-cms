@@ -46,7 +46,14 @@ export function EditComponentDefDialog(props: Props) {
 		type EditedField = NonNullable<Inputs["editedFields"]>[number];
 
 		const addedFields: AddedField[] = fields
-			.map((f, i) => ({ ...f, order: i }))
+			.map(
+				(f, i) =>
+					({
+						...f,
+						order: i,
+						array_item_type: f.arrayItemType,
+					}) satisfies AddedField,
+			)
 			.filter((f) => f.diff === "added");
 
 		const deletedFieldIds: string[] = fields

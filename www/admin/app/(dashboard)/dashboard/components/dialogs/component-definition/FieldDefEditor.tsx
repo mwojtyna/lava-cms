@@ -57,7 +57,10 @@ export function FieldDefEditor(props: FieldDefEditorProps) {
 						? {
 								id: f.id,
 								// Don't ever move this, order matters when checking for equality with original fields
-								...data,
+								name: data.name,
+								type: data.type,
+								arrayItemType:
+									data.type === "COLLECTION" ? data.arrayItemType : null,
 								order: f.order,
 								diff: props.step.fieldDef.diff !== "added" ? "edited" : "added",
 						  }
@@ -151,7 +154,7 @@ export function FieldDefEditor(props: FieldDefEditorProps) {
 					}}
 				/>
 
-				{form.getValues().type === "ARRAY" && (
+				{form.getValues().type === "COLLECTION" && (
 					<FormField
 						control={form.control}
 						name="arrayItemType"
@@ -168,7 +171,7 @@ export function FieldDefEditor(props: FieldDefEditorProps) {
 
 							return (
 								<FormItem>
-									<FormLabel>Array item type</FormLabel>
+									<FormLabel>Collection item type</FormLabel>
 									<FormControl>
 										<div className="flex gap-3">
 											<FieldTypePicker
