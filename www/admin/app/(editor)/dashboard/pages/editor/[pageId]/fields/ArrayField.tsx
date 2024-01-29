@@ -271,8 +271,8 @@ function ArrayFieldItem(props: ArrayFieldItemProps) {
 						className={cn(
 							"rounded-md",
 							props.parentField.arrayItemType === "SWITCH" && "h-5 w-5",
-							props.item.diff === "added" && "bg-green-400/20",
-							props.item.diff === "deleted" && "bg-red-400/20",
+							props.item.diff === "added" && "bg-green-400/10",
+							props.item.diff === "deleted" && "bg-red-400/10",
 						)}
 						component={props.component}
 						field={{
