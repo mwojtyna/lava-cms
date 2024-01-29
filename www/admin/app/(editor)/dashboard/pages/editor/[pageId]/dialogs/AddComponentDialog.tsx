@@ -37,7 +37,7 @@ export async function createComponentInstance(
 		fields: definition.field_definitions.map((fieldDef) => ({
 			id: createId(),
 			name: fieldDef.name,
-			data: "",
+			data: fieldDef.type === "SWITCH" ? "false" : "",
 			definitionId: fieldDef.id,
 			order: fieldDef.order,
 			type: fieldDef.type,

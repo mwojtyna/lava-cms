@@ -65,7 +65,7 @@ export function ArrayField(props: ArrayFieldProps) {
 				...myArrayItems,
 				{
 					id: createId(),
-					data: "",
+					data: props.parentField.arrayItemType === "SWITCH" ? "false" : "",
 					parentFieldId: props.parentField.id,
 					order: lastItem ? lastItem.order + 1 : 0,
 					diff: "added",
