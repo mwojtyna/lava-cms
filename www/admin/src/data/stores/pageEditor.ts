@@ -165,16 +165,6 @@ export const usePageEditor = create<PageEditorState>((set) => ({
 			}
 			arrayItemsGrouped[item.parentFieldId] = items;
 		}
-		for (const parentId of Object.keys(arrayItemsGrouped)) {
-			let i = 0;
-			for (const item of arrayItemsGrouped[parentId]!) {
-				if (item.order !== i) {
-					item.diff = "reordered";
-					item.order = i;
-				}
-				i++;
-			}
-		}
 
 		set({
 			components,
