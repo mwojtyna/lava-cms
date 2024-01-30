@@ -41,18 +41,18 @@ export function PagePreview(props: { baseUrl: string; pageUrl: string }) {
 		},
 	});
 
-	// Fix bridge not being initialized sometimes
+	// Init bridge when iframe loaded and again when component is mounted
 	const initIframeBridge = React.useCallback(() => {
 		const origin = new URL(props.baseUrl).origin;
 		iframeRef.current?.contentWindow?.postMessage({ name: "init" } as IframeMessage, origin);
-	}, [props.baseUrl]);
-	React.useEffect(() => {
-		initIframeBridge();
 		usePageEditor.setState({
 			iframe: iframeRef.current,
 			iframeOrigin: new URL(props.baseUrl).origin,
 		});
-	}, [initIframeBridge, props.baseUrl]);
+	}, [props.baseUrl]);
+	React.useEffect(() => {
+		initIframeBridge();
+	}, [initIframeBridge, iframeRef, props.baseUrl]);
 
 	React.useEffect(() => {
 		// Ignore when widths are not set yet

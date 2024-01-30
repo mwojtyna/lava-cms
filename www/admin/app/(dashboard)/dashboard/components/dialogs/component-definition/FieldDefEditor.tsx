@@ -82,7 +82,7 @@ export function FieldDefEditor(props: FieldDefEditorProps) {
 				),
 			);
 		},
-		[fields, props.step, setFields],
+		[fields, props, setFields],
 	);
 
 	useEffect(() => {
