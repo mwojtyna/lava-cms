@@ -1,11 +1,5 @@
 import type { Route } from "./shared";
-import {
-	HomeIcon,
-	Cog6ToothIcon,
-	Square2StackIcon,
-	CircleStackIcon,
-	CubeIcon,
-} from "@heroicons/react/24/outline";
+import { HomeIcon, Cog6ToothIcon, Square2StackIcon, CubeIcon } from "@heroicons/react/24/outline";
 import "server-only";
 
 export interface NavMenuRoute extends Route {
@@ -16,7 +10,7 @@ export const navMenuRoutes: NavMenuRoute[] = [
 	{
 		label: "Dashboard",
 		path: "/dashboard",
-		description: "asd",
+		description: "Lorem ipsum",
 		icon: <HomeIcon className="w-5" />,
 	},
 	{
@@ -31,13 +25,6 @@ export const navMenuRoutes: NavMenuRoute[] = [
 		path: "/dashboard/components",
 		description: "Create and manage your component definitions.",
 		icon: <CubeIcon className="w-5" />,
-		hasChildren: true,
-	},
-	{
-		label: "Data",
-		path: "/dashboard/data",
-		description: "data",
-		icon: <CircleStackIcon className="w-5" />,
 		hasChildren: true,
 	},
 	{

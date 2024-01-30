@@ -52,7 +52,7 @@ async function Menu({ className }: { className?: string }) {
 
 							<NavMenuItem routes={navMenuRoutes} route={route} />
 
-							{i === 3 && <Separator />}
+							{i === 2 && <Separator />}
 						</React.Fragment>
 					))}
 				</div>
