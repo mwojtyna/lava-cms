@@ -95,15 +95,12 @@ async function getFields(component: Component): Promise<Record<string, FieldCont
 			name: field.definition.name,
 			data: field.data,
 			type: field.definition.type,
-			arrayItems: field.array_items.map(
-				(ai, i) =>
-					({
-						name: `[Collection item nr ${i}]`,
-						data: ai.data,
-						type: field.definition.array_item_type!,
-						arrayItems: [], // A field within an array item cannot be an array item itself
-					}) satisfies Field,
-			),
+			arrayItems: field.array_items.map((ai, i) => ({
+				name: `[Collection item nr ${i}]`,
+				data: ai.data,
+				type: field.definition.array_item_type!,
+				arrayItems: [], // A field within an array item cannot be an array item itself
+			})),
 		};
 		const parsedField = await getField(generalField, component);
 

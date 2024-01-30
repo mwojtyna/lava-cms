@@ -84,27 +84,24 @@ export function BulkMoveDialog(props: Props) {
 							true,
 						),
 				)
-				.map(
-					(group) =>
-						({
-							id: group.id,
-							name: group.name,
-							extraInfo: (
-								<span className="flex items-center">
-									{group.parent_group_name && (
-										<>
-											in&nbsp;
-											<FolderIcon className="inline w-[14px]" />
-											&nbsp;
-											{group.parent_group_name},&nbsp;
-										</>
-									)}
-									contains {group.children_count.toString()}{" "}
-									{group.children_count === 1 ? "item" : "items"}
-								</span>
-							),
-						}) satisfies ItemParent,
-				),
+				.map<ItemParent>((group) => ({
+					id: group.id,
+					name: group.name,
+					extraInfo: (
+						<span className="flex items-center">
+							{group.parent_group_name && (
+								<>
+									in&nbsp;
+									<FolderIcon className="inline w-[14px]" />
+									&nbsp;
+									{group.parent_group_name},&nbsp;
+								</>
+							)}
+							contains {group.children_count.toString()}{" "}
+							{group.children_count === 1 ? "item" : "items"}
+						</span>
+					),
+				})),
 		[allGroups, props.items],
 	);
 

@@ -58,14 +58,11 @@ export function AddComponentDefDialog(props: Props) {
 			{
 				name: data.name,
 				groupId: props.group.id,
-				fields: fields.map(
-					(f, i) =>
-						({
-							...f,
-							order: i,
-							array_item_type: f.arrayItemType,
-						}) satisfies Field,
-				),
+				fields: fields.map<Field>((f, i) => ({
+					...f,
+					order: i,
+					array_item_type: f.arrayItemType,
+				})),
 			},
 			{
 				onSuccess: () => props.setOpen(false),
