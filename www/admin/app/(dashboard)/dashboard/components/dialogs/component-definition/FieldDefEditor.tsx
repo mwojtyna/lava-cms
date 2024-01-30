@@ -51,6 +51,20 @@ export function FieldDefEditor(props: FieldDefEditorProps) {
 	});
 	const onSubmit: SubmitHandler<Inputs> = useCallback(
 		(data) => {
+			// Update step name
+			props.setSteps((steps) =>
+				steps.map<Step>((step) =>
+					step.name === props.step.name
+						? {
+								...step,
+								fieldDef: {
+									...step.fieldDef,
+									name: data.name,
+								},
+						  }
+						: step,
+				),
+			);
 			setFields(
 				fields.map((f) =>
 					f.id === props.step.fieldDef.id
