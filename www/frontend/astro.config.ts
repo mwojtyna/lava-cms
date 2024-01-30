@@ -18,6 +18,8 @@ export default defineConfig({
 				Button: "./src/components/Button.astro",
 				Quote: "./src/components/Quote.astro",
 				Random: "./src/components/Random.astro",
+				"Array test": "./src/components/Array test.astro",
+				"Array test 2": "./src/components/Array test 2.astro",
 			},
 			enableFallbackComponent: true,
 		}),

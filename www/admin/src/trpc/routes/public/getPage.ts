@@ -1,5 +1,6 @@
+import type { CmsPage, CmsComponent, FieldContent } from "./types";
 import type { DefaultArgs } from "@prisma/client/runtime/library";
-import { Prisma } from "@prisma/client";
+import { type ComponentFieldType, Prisma } from "@prisma/client";
 import { z } from "zod";
 import { prisma } from "@/prisma/client";
 import { publicProcedure } from "@/src/trpc";
@@ -13,23 +14,17 @@ const include = {
 			fields: {
 				include: {
 					definition: true,
+					array_items: {
+						orderBy: {
+							order: "asc",
+						},
+					},
 				},
 			},
 			definition: true,
 		},
 	},
 } satisfies Prisma.PageInclude<DefaultArgs>;
-
-// Has to be exported for @lavacms/types
-export interface CmsPage {
-	name: string;
-	components: CmsComponent[];
-}
-export interface CmsComponent {
-	name: string;
-	fields: Record<string, FieldContent>;
-}
-export type FieldContent = string | number | boolean | object | null;
 
 export const getPage = publicProcedure
 	.input(
@@ -87,53 +82,81 @@ const pageWithInclude = Prisma.validator<Prisma.PageDefaultArgs>()({
 	include,
 });
 type Component = Prisma.PageGetPayload<typeof pageWithInclude>["components"][number];
-function getFields(component: Component): Promise<Record<string, FieldContent>> {
+interface Field {
+	name: string;
+	data: string;
+	type: ComponentFieldType;
+	arrayItems: Field[];
+}
+
+async function getFields(component: Component): Promise<Record<string, FieldContent>> {
 	return component.fields.reduce<Promise<CmsComponent["fields"]>>(async (acc, field) => {
-		let data: FieldContent;
-
-		switch (field.definition.type) {
-			case "TEXT": {
-				data = field.data;
-				break;
-			}
-			case "NUMBER": {
-				data = parseFloat(field.data);
-				break;
-			}
-			case "SWITCH": {
-				data = field.data === "true";
-				break;
-			}
-			case "COMPONENT": {
-				if (field.data === "") {
-					data = null;
-					break;
-				}
-
-				const nestedComponent = await prisma.componentInstance.findUnique({
-					where: { id: field.data },
-					include: include.components.include,
-				});
-				if (!nestedComponent) {
-					data = `Error getting \`${component.definition.name}\` component's \`${field.definition.name}\` field of type \`Component\`: Component instance id \`${field.data}\` does not exist`;
-					break;
-				}
-				data = {
-					name: nestedComponent.definition.name,
-					fields: await getFields(nestedComponent),
-				} satisfies CmsComponent;
-
-				break;
-			}
-			case "COLLECTION": {
-				// TODO: Implement
-				data = "Collection not implemented";
-				break;
-			}
-		}
+		const generalField: Field = {
+			name: field.definition.name,
+			data: field.data,
+			type: field.definition.type,
+			arrayItems: field.array_items.map(
+				(ai, i) =>
+					({
+						name: `[Collection item nr ${i}]`,
+						data: ai.data,
+						type: field.definition.array_item_type!,
+						arrayItems: [], // A field within an array item cannot be an array item itself
+					}) satisfies Field,
+			),
+		};
+		const parsedField = await getField(generalField, component);
 
 		const accAwaited = await acc;
-		accAwaited[field.definition.name] = data;
+		accAwaited[field.definition.name] = parsedField;
 		return accAwaited;
 	}, Promise.resolve({}));
+}
+async function getField(field: Field, parentComponent: Component): Promise<FieldContent> {
+	let data: FieldContent;
+
+	switch (field.type) {
+		case "TEXT": {
+			data = field.data;
+			break;
+		}
+		case "NUMBER": {
+			data = parseFloat(field.data);
+			break;
+		}
+		case "SWITCH": {
+			data = field.data === "true";
+			break;
+		}
+		case "COMPONENT": {
+			if (field.data === "") {
+				data = null;
+				break;
+			}
+
+			const nestedComponent = await prisma.componentInstance.findUnique({
+				where: { id: field.data },
+				include: include.components.include,
+			});
+			if (!nestedComponent) {
+				data = `Error getting \`${parentComponent.definition.name}\` component's \`${field.name}\` field of type \`Component\`: Component instance id \`${field.data}\` does not exist`;
+				break;
+			}
+			data = {
+				name: nestedComponent.definition.name,
+				fields: await getFields(nestedComponent),
+			} satisfies CmsComponent;
+
+			break;
+		}
+		case "COLLECTION": {
+			const arrayFields = await Promise.all(
+				field.arrayItems.map((ai) => getField(ai, parentComponent)),
+			);
+			data = arrayFields;
+			break;
+		}
+	}
+
+	return data;
 }
