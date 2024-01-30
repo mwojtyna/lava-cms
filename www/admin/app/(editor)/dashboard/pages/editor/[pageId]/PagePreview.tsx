@@ -1,22 +1,14 @@
 "use client";
 
 import type { IframeMessage } from "./types";
-import { ExclamationTriangleIcon } from "@heroicons/react/20/solid";
-import {
-	ArrowPathIcon,
-	ArrowTopRightOnSquareIcon,
-	PencilSquareIcon,
-} from "@heroicons/react/24/outline";
+import { ArrowPathIcon, ArrowTopRightOnSquareIcon } from "@heroicons/react/24/outline";
 import { useElementSize, useViewportSize } from "@mantine/hooks";
 import { IconMinusVertical } from "@tabler/icons-react";
 import { Resizable } from "re-resizable";
 import * as React from "react";
-import { EditableText } from "@/src/components/EditableText";
 import { ActionIcon } from "@/src/components/ui/client";
 import { Card } from "@/src/components/ui/server";
 import { usePageEditor } from "@/src/data/stores/pageEditor";
-import { useSearchParams } from "@/src/hooks";
-import { cn } from "@/src/utils/styling";
 import { MIN_WIDTH as INSPECTOR_MIN_WIDTH } from "./Inspector";
 
 const MIN_WIDTH = 250;
@@ -24,7 +16,6 @@ const HANDLES_WIDTH = 45;
 
 export function PagePreview(props: { baseUrl: string; pageUrl: string }) {
 	const iframeRef = React.useRef<HTMLIFrameElement>(null);
-	const [remountIframe, setRemountIframe] = React.useState(false);
 
 	const { width: windowWidth } = useViewportSize();
 	const [width, setWidth] = React.useState(MIN_WIDTH * 3);
@@ -32,14 +23,7 @@ export function PagePreview(props: { baseUrl: string; pageUrl: string }) {
 	const { ref: wrapperRef, width: wrapperWidth } = useElementSize();
 	const maxWidth = wrapperWidth - HANDLES_WIDTH;
 	const initialWidthSet = React.useRef(false);
-
-	const [url, setUrl] = React.useState(props.baseUrl + props.pageUrl);
-	const { setSearchParams } = useSearchParams({
-		onChanged: (searchParams) => {
-			setUrl(props.baseUrl + (searchParams.get("path") ?? ""));
-			setRemountIframe((prev) => !prev);
-		},
-	});
+	const url = React.useMemo(() => props.baseUrl + props.pageUrl, [props.baseUrl, props.pageUrl]);
 
 	// Init bridge when iframe loaded and again when component is mounted
 	const initIframeBridge = React.useCallback(() => {
@@ -79,14 +63,6 @@ export function PagePreview(props: { baseUrl: string; pageUrl: string }) {
 			}
 		}
 	}, [maxWidth, preferredWidth, width, windowWidth]);
-
-	function navigate(url: string) {
-		// Only store pathname to prevent overriding the iframe origin set in Connection Settings
-		const path = url.slice(props.baseUrl.length);
-		setSearchParams({ path });
-		setUrl(url); // Set the URL right away to prevent url lag
-		setRemountIframe((prev) => !prev);
-	}
 
 	return (
 		<div ref={wrapperRef}>
@@ -131,18 +107,7 @@ export function PagePreview(props: { baseUrl: string; pageUrl: string }) {
 							<ArrowPathIcon className="w-5" />
 						</ActionIcon>
 
-						<Url baseUrl={props.baseUrl} url={url} onUrlChanged={navigate} />
-						{url !== props.baseUrl + props.pageUrl && (
-							<ActionIcon
-								variant={"simple"}
-								onClick={() => navigate(props.baseUrl + props.pageUrl)}
-								tooltip={
-									"The previewed page's URL differs from the URL of the page that you're editing. Click to reset."
-								}
-							>
-								<ExclamationTriangleIcon className="mt-1 w-6 cursor-help text-yellow-500" />
-							</ActionIcon>
-						)}
+						<Url baseUrl={props.baseUrl} url={url} />
 
 						<a href={url} target="_blank">
 							<ActionIcon className="ml-auto" tooltip="Open in new tab" asChild>
@@ -152,7 +117,6 @@ export function PagePreview(props: { baseUrl: string; pageUrl: string }) {
 					</div>
 
 					<iframe
-						key={+remountIframe}
 						ref={iframeRef}
 						className="h-full"
 						title="Page preview"
@@ -171,48 +135,20 @@ export function PagePreview(props: { baseUrl: string; pageUrl: string }) {
 interface UrlProps {
 	baseUrl: string;
 	url: string;
-	onUrlChanged: (url: string) => void;
 }
 function Url(props: UrlProps) {
 	const url = new URL(props.url);
-	const baseUrl = new URL(props.baseUrl);
-	const editableUrl = props.url.slice(props.baseUrl.length, props.url.length);
-
-	const [editing, setEditing] = React.useState(false);
 
 	return (
 		<div className="flex w-full gap-2 overflow-hidden">
-			<div className={cn("flex items-center overflow-hidden", editing && "w-full")}>
+			<div className="flex items-center overflow-hidden">
 				<p className="whitespace-nowrap text-muted-foreground">
 					{url.protocol}
 					{"//"}
 					<span className="text-foreground">{url.host}</span>
-					{baseUrl.pathname}
+					{url.pathname}
 				</p>
-				<EditableText
-					inputProps={{ className: "ml-px", "aria-label": "URL input" }}
-					value={editableUrl}
-					editing={editing}
-					setEditing={setEditing}
-					onSubmit={(changed) => props.onUrlChanged(`${props.baseUrl}${changed}`)}
-					hasCustomEditButton
-				>
-					<span className="whitespace-nowrap text-muted-foreground">{editableUrl}</span>
-				</EditableText>
 			</div>
-
-			{!editing && (
-				<ActionIcon
-					variant={"simple"}
-					tooltip="Edit"
-					onClick={() => setEditing(true)}
-					// Fix for small part of button being clickable, but not triggering anything
-					role="button"
-					asChild
-				>
-					<PencilSquareIcon className="w-5 cursor-pointer" />
-				</ActionIcon>
-			)}
 		</div>
 	);
 }
