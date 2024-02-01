@@ -24,24 +24,10 @@ export async function generateMetadata({
 	};
 }
 
-export default async function Editor({
-	params,
-	searchParams,
-}: {
-	params: { pageId: string };
-	searchParams: { path?: string };
-}) {
+export default async function Editor({ params }: { params: { pageId: string } }) {
 	const page = await prisma.page.findUniqueOrThrow({ where: { id: params.pageId } });
 	const { developmentUrl: baseUrl } = await caller.settings.getConnectionSettings();
 	const pageUrl = page.url.slice(1);
-
-	if (searchParams.path === undefined) {
-		const search = new URLSearchParams({ path: pageUrl });
-		redirect(
-			`/dashboard/pages/editor/${params.pageId}?${search.toString()}`,
-			RedirectType.replace,
-		);
-	}
 
 	const data = await caller.pages.getPageComponents({
 		id: params.pageId,
