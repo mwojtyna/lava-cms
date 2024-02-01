@@ -1,15 +1,18 @@
 "use client";
 
-import type { IframeMessage } from "./types";
 import { ArrowPathIcon, ArrowTopRightOnSquareIcon } from "@heroicons/react/24/outline";
 import { useElementSize, useViewportSize } from "@mantine/hooks";
 import { IconMinusVertical } from "@tabler/icons-react";
+import { usePathname, useRouter } from "next/navigation";
 import { Resizable } from "re-resizable";
 import * as React from "react";
 import { ActionIcon } from "@/src/components/ui/client";
 import { Card } from "@/src/components/ui/server";
 import { usePageEditor } from "@/src/data/stores/pageEditor";
+import { useWindowEvent } from "@/src/hooks";
+import { trpcFetch } from "@/src/utils/trpc";
 import { MIN_WIDTH as INSPECTOR_MIN_WIDTH } from "./Inspector";
+import { type IframeMessage } from "./types";
 
 const MIN_WIDTH = 250;
 const HANDLES_WIDTH = 45;
@@ -23,20 +26,52 @@ export function PagePreview(props: { baseUrl: string; pageUrl: string }) {
 	const { ref: wrapperRef, width: wrapperWidth } = useElementSize();
 	const maxWidth = wrapperWidth - HANDLES_WIDTH;
 	const initialWidthSet = React.useRef(false);
-	const url = React.useMemo(() => props.baseUrl + props.pageUrl, [props.baseUrl, props.pageUrl]);
+
+	const url = React.useMemo(
+		() => new URL(props.baseUrl + props.pageUrl),
+		[props.baseUrl, props.pageUrl],
+	);
+	const router = useRouter();
+	const pathname = usePathname();
+	const pageEditor = usePageEditor();
 
 	// Init bridge when iframe loaded and again when component is mounted
 	const initIframeBridge = React.useCallback(() => {
-		const origin = new URL(props.baseUrl).origin;
-		iframeRef.current?.contentWindow?.postMessage({ name: "init" } as IframeMessage, origin);
+		iframeRef.current?.contentWindow?.postMessage(
+			{ name: "init" } as IframeMessage,
+			url.origin,
+		);
 		usePageEditor.setState({
 			iframe: iframeRef.current,
-			iframeOrigin: new URL(props.baseUrl).origin,
+			iframeOrigin: url.origin,
 		});
-	}, [props.baseUrl]);
+	}, [url.origin]);
 	React.useEffect(() => {
 		initIframeBridge();
 	}, [initIframeBridge, iframeRef, props.baseUrl]);
+
+	useWindowEvent("message", async (e) => {
+		const data = e.data as IframeMessage;
+		// Ignore other messages, e.g. from React DevTools
+		if (typeof data.name !== "string") {
+			return;
+		}
+
+		// Update page editor when iframe url changes
+		if (data.name === "urlChanged" && data.url !== url.href) {
+			const page = await trpcFetch.pages.getPageByUrl.query({
+				url: new URL(data.url).pathname,
+			});
+
+			const split = pathname.split("/");
+			split.pop();
+			split.push(page.id);
+			const newUrl = split.join("/");
+
+			router.push(newUrl);
+			pageEditor.setSteps([pageEditor.steps[0]!]); // For some reason the step gets preserved between pages
+		}
+	});
 
 	React.useEffect(() => {
 		// Ignore when widths are not set yet
@@ -99,7 +134,7 @@ export function PagePreview(props: { baseUrl: string; pageUrl: string }) {
 						<ActionIcon
 							onClick={() => {
 								if (iframeRef.current) {
-									iframeRef.current.src = url;
+									iframeRef.current.src = url.href;
 								}
 							}}
 							tooltip="Refresh"
@@ -107,9 +142,9 @@ export function PagePreview(props: { baseUrl: string; pageUrl: string }) {
 							<ArrowPathIcon className="w-5" />
 						</ActionIcon>
 
-						<Url baseUrl={props.baseUrl} url={url} />
+						<Url url={url} />
 
-						<a href={url} target="_blank">
+						<a href={url.href} target="_blank">
 							<ActionIcon className="ml-auto" tooltip="Open in new tab" asChild>
 								<ArrowTopRightOnSquareIcon className="w-5" />
 							</ActionIcon>
@@ -120,11 +155,10 @@ export function PagePreview(props: { baseUrl: string; pageUrl: string }) {
 						ref={iframeRef}
 						className="h-full"
 						title="Page preview"
-						src={url}
+						src={url.href}
 						onLoad={initIframeBridge}
 						// Allow all
 						sandbox="allow-downloads allow-forms allow-modals allow-orientation-lock allow-pointer-lock allow-popups allow-popups-to-escape-sandbox allow-presentation allow-same-origin allow-scripts allow-storage-access-by-user-activation allow-top-navigation allow-top-navigation-by-user-activation allow-top-navigation-to-custom-protocols"
-						loading="lazy"
 					/>
 				</Card>
 			</Resizable>
@@ -132,13 +166,7 @@ export function PagePreview(props: { baseUrl: string; pageUrl: string }) {
 	);
 }
 
-interface UrlProps {
-	baseUrl: string;
-	url: string;
-}
-function Url(props: UrlProps) {
-	const url = new URL(props.url);
-
+function Url({ url }: { url: URL }) {
 	return (
 		<div className="flex w-full gap-2 overflow-hidden">
 			<div className="flex items-center overflow-hidden">

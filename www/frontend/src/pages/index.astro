@@ -9,5 +9,8 @@ const page = await cms.getPage(Astro.url.pathname);
 ---
 
 <Layout>
+	<h1>{page.name} {page.url}</h1>
+
+	<a href="/products">products</a>
 	<LavaCmsComponents components={page.components} />
 </Layout>

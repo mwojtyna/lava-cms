@@ -1,5 +1,6 @@
 export interface CmsPage {
 	name: string;
+	url: string;
 	components: CmsComponent[];
 }
 export interface CmsComponent {

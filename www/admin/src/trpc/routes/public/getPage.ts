@@ -74,6 +74,7 @@ export const getPage = publicProcedure
 		);
 		return {
 			name: page.name,
+			url: page.url.replace(/\/$/, ""),
 			components,
 		};
 	});

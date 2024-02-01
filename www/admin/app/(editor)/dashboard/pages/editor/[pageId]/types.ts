@@ -6,8 +6,9 @@ export type Component =
 
 export type IframeMessage =
 	| {
-			name: "init";
+			name: "init" | "update";
 	  }
 	| {
-			name: "update";
+			name: "urlChanged";
+			url: string;
 	  };

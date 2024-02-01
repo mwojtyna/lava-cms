@@ -1,5 +1,20 @@
 ---
+import { useLavaCms } from "@lavacms/astro";
 import Layout from "@/layouts/Layout.astro";
+
+const cms = useLavaCms();
+const page = await cms.getPage(Astro.url.pathname);
+const products = await cms.getPaths(page.url);
 ---
 
-<Layout>products</Layout>
+<Layout>
+	<p>{page.name}</p>
+	<p>{page.url}</p>
+
+	<figure>
+		<figcaption>products:</figcaption>
+		<ul id="list">
+			{products.map((product) => <li>{product}</li>)}
+		</ul>
+	</figure>
+</Layout>
