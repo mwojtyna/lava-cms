@@ -1,5 +1,6 @@
 import "client-only";
 
+export * from "./useAlertDialog";
 export * from "./usePagePreferences";
 export * from "./useSearchParams";
 export * from "./useDataTable";

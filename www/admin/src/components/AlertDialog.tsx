@@ -1,4 +1,3 @@
-import { TrashIcon } from "@heroicons/react/24/outline";
 import {
 	Dialog,
 	DialogContent,
@@ -9,20 +8,21 @@ import {
 	Button,
 } from "@/src/components/ui/client";
 
-interface Props {
-	icon: React.ReactNode;
+export interface AlertDialogProps {
+	icon?: React.ReactNode;
 	title: React.ReactNode;
 	description: React.ReactNode;
 	yesMessage: string;
 	noMessage: string;
-	loading: boolean;
+	loading?: boolean;
 	onSubmit: () => void;
+	onCancel?: () => void;
 
 	open: boolean;
 	setOpen: (value: boolean) => void;
 }
 
-export function AlertDialog(props: Props) {
+export function AlertDialog(props: AlertDialogProps) {
 	return (
 		<Dialog open={props.open} onOpenChange={props.setOpen}>
 			<DialogContent className="max-w-md" withCloseButton={false}>
@@ -32,14 +32,20 @@ export function AlertDialog(props: Props) {
 				</DialogHeader>
 
 				<DialogFooter>
-					<Button variant={"ghost"} onClick={() => props.setOpen(false)}>
+					<Button
+						variant={"ghost"}
+						onClick={() => {
+							props.onCancel?.();
+							props.setOpen(false);
+						}}
+					>
 						{props.noMessage}
 					</Button>
 					<Button
 						loading={props.loading}
 						type="submit"
 						variant={"destructive"}
-						icon={<TrashIcon className="w-5" />}
+						icon={props.icon}
 						onClick={props.onSubmit}
 					>
 						{props.yesMessage}

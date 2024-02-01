@@ -6,7 +6,7 @@ import * as React from "react";
 import { useForm, type SubmitHandler, FormProvider } from "react-hook-form";
 import { Button, Sheet, SheetContent, SheetFooter } from "@/src/components/ui/client";
 import { useComponentsTableDialogs } from "@/src/data/stores/componentDefinitions";
-import { useWindowEvent } from "@/src/hooks";
+import { useAlertDialog, useWindowEvent } from "@/src/hooks";
 import type { PrivateRouter } from "@/src/trpc/routes/private/_private";
 import { cn } from "@/src/utils/styling";
 import { trpc } from "@/src/utils/trpc";
@@ -77,6 +77,12 @@ export function DuplicateComponentDefDialog(props: Props) {
 
 	const anyDirty = form.formState.isDirty || fieldsDirty;
 	const canSubmit = props.open && form.formState.isValid && anyDirty;
+	const alertDialog = useAlertDialog({
+		title: "Discard changes?",
+		description: "Are you sure you want to discard your changes?",
+		yesMessage: "Discard",
+		noMessage: "Cancel",
+	});
 
 	// Reset when dialog is opened
 	React.useEffect(() => {
@@ -101,8 +107,8 @@ export function DuplicateComponentDefDialog(props: Props) {
 	function handleSetOpen(value: boolean) {
 		if (!anyDirty) {
 			props.setOpen(value);
-		} else if (confirm("Are you sure you want to discard your changes?")) {
-			props.setOpen(value);
+		} else {
+			alertDialog.open(() => props.setOpen(false));
 		}
 	}
 
@@ -128,35 +134,42 @@ export function DuplicateComponentDefDialog(props: Props) {
 	}
 
 	return (
-		<Sheet open={props.open} onOpenChange={handleSetOpen}>
-			<SheetContent className="w-screen sm:max-w-md">
-				<FormProvider {...form}>
-					<form className="flex flex-col gap-4" onSubmit={form.handleSubmit(onSubmit)}>
-						{steps.map((step, i) => (
-							<div
-								key={i}
-								className={cn(
-									"flex flex-col gap-4",
-									i < steps.length - 1 && "hidden",
-								)}
-							>
-								{displayStep(step)}
-							</div>
-						))}
+		<>
+			<Sheet open={props.open} onOpenChange={handleSetOpen}>
+				<SheetContent className="w-screen sm:max-w-md">
+					<FormProvider {...form}>
+						<form
+							className="flex flex-col gap-4"
+							onSubmit={form.handleSubmit(onSubmit)}
+						>
+							{steps.map((step, i) => (
+								<div
+									key={i}
+									className={cn(
+										"flex flex-col gap-4",
+										i < steps.length - 1 && "hidden",
+									)}
+								>
+									{displayStep(step)}
+								</div>
+							))}
 
-						<SheetFooter>
-							<Button
-								type="submit"
-								loading={addMutation.isLoading}
-								disabled={!canSubmit}
-								icon={<DocumentDuplicateIcon className="w-5" />}
-							>
-								Duplicate
-							</Button>
-						</SheetFooter>
-					</form>
-				</FormProvider>
-			</SheetContent>
-		</Sheet>
+							<SheetFooter>
+								<Button
+									type="submit"
+									loading={addMutation.isLoading}
+									disabled={!canSubmit}
+									icon={<DocumentDuplicateIcon className="w-5" />}
+								>
+									Duplicate
+								</Button>
+							</SheetFooter>
+						</form>
+					</FormProvider>
+				</SheetContent>
+			</Sheet>
+
+			<alertDialog.Component />
+		</>
 	);
 }

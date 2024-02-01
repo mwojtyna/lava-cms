@@ -8,7 +8,7 @@ import { useForm, type SubmitHandler, FormProvider } from "react-hook-form";
 import { Button, Sheet, SheetContent, SheetFooter } from "@/src/components/ui/client";
 import { TypographyMuted } from "@/src/components/ui/server";
 import { useComponentsTableDialogs } from "@/src/data/stores/componentDefinitions";
-import { useWindowEvent } from "@/src/hooks";
+import { useAlertDialog, useWindowEvent } from "@/src/hooks";
 import type { PrivateRouter } from "@/src/trpc/routes/private/_private";
 import { cn } from "@/src/utils/styling";
 import { trpc, trpcFetch } from "@/src/utils/trpc";
@@ -138,6 +138,12 @@ export function EditComponentDefDialog(props: Props) {
 
 	const anyDirty = form.formState.isDirty || fieldsDirty;
 	const canSubmit = props.open && form.formState.isValid && anyDirty;
+	const alertDialog = useAlertDialog({
+		title: "Discard changes?",
+		description: "Are you sure you want to discard your changes?",
+		yesMessage: "Discard",
+		noMessage: "Cancel",
+	});
 
 	// Reset when dialog is opened
 	React.useEffect(() => {
@@ -176,8 +182,8 @@ export function EditComponentDefDialog(props: Props) {
 	function handleSetOpen(value: boolean) {
 		if (!anyDirty) {
 			props.setOpen(value);
-		} else if (confirm("Are you sure you want to discard your changes?")) {
-			props.setOpen(value);
+		} else {
+			alertDialog.open(() => props.setOpen(false));
 		}
 	}
 
@@ -203,41 +209,48 @@ export function EditComponentDefDialog(props: Props) {
 	}
 
 	return (
-		<Sheet open={props.open} onOpenChange={handleSetOpen}>
-			<SheetContent className="w-screen sm:max-w-md">
-				<FormProvider {...form}>
-					<form className="flex flex-col gap-4" onSubmit={form.handleSubmit(onSubmit)}>
-						{steps.map((step, i) => (
-							<div
-								key={i}
-								className={cn(
-									"flex flex-col gap-4",
-									i < steps.length - 1 && "hidden",
-								)}
-							>
-								{displayStep(step)}
-							</div>
-						))}
+		<>
+			<Sheet open={props.open} onOpenChange={handleSetOpen}>
+				<SheetContent className="w-screen sm:max-w-md">
+					<FormProvider {...form}>
+						<form
+							className="flex flex-col gap-4"
+							onSubmit={form.handleSubmit(onSubmit)}
+						>
+							{steps.map((step, i) => (
+								<div
+									key={i}
+									className={cn(
+										"flex flex-col gap-4",
+										i < steps.length - 1 && "hidden",
+									)}
+								>
+									{displayStep(step)}
+								</div>
+							))}
 
-						<SheetFooter className="items-center gap-2">
-							{os !== "android" && os !== "ios" && (
-								<TypographyMuted>
-									{os === "macos" ? "Cmd" : "Ctrl"}+S
-								</TypographyMuted>
-							)}
-							<Button
-								className="max-sm:w-full"
-								type="submit"
-								loading={editMutation.isLoading}
-								disabled={!canSubmit}
-								icon={<PencilSquareIcon className="w-5" />}
-							>
-								Save
-							</Button>
-						</SheetFooter>
-					</form>
-				</FormProvider>
-			</SheetContent>
-		</Sheet>
+							<SheetFooter className="items-center gap-2">
+								{os !== "android" && os !== "ios" && (
+									<TypographyMuted>
+										{os === "macos" ? "Cmd" : "Ctrl"}+S
+									</TypographyMuted>
+								)}
+								<Button
+									className="max-sm:w-full"
+									type="submit"
+									loading={editMutation.isLoading}
+									disabled={!canSubmit}
+									icon={<PencilSquareIcon className="w-5" />}
+								>
+									Save
+								</Button>
+							</SheetFooter>
+						</form>
+					</FormProvider>
+				</SheetContent>
+			</Sheet>
+
+			<alertDialog.Component />
+		</>
 	);
 }
