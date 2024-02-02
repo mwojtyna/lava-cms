@@ -32,11 +32,11 @@ export type Step =
 
 interface PageEditorState {
 	isDirty: boolean;
-	iframe: HTMLIFrameElement | null;
-	iframeOrigin: string;
-
 	isValid: boolean;
 	setIsValid: (isValid: boolean) => void;
+
+	iframe: HTMLIFrameElement | null;
+	iframeOrigin: string;
 
 	originalComponents: ComponentUI[];
 	components: ComponentUI[];
@@ -64,9 +64,8 @@ interface PageEditorState {
 		pageId: string,
 	) => void;
 }
-export const usePageEditor = create<PageEditorState>((set) => ({
+const pageEditorStore = create<PageEditorState>((set) => ({
 	isDirty: false,
-
 	isValid: true,
 	setIsValid: (isValid) => set({ isValid }),
 
@@ -337,3 +336,55 @@ function areSame<T extends { diff: Diff }>(original: T, current: T) {
 	const b = { ...current, diff: undefined };
 	return JSON.stringify(a) === JSON.stringify(b);
 }
+
+function usePageEditor() {
+	const isDirty = pageEditorStore((state) => state.isDirty);
+	const isValid = pageEditorStore((state) => state.isValid);
+	const setIsValid = pageEditorStore((state) => state.setIsValid);
+
+	const iframe = pageEditorStore((state) => state.iframe);
+	const iframeOrigin = pageEditorStore((state) => state.iframeOrigin);
+
+	const originalComponents = pageEditorStore((state) => state.originalComponents);
+	const components = pageEditorStore((state) => state.components);
+	const setComponents = pageEditorStore((state) => state.setComponents);
+
+	const originalNestedComponents = pageEditorStore((state) => state.originalNestedComponents);
+	const nestedComponents = pageEditorStore((state) => state.nestedComponents);
+	const setNestedComponents = pageEditorStore((state) => state.setNestedComponents);
+
+	const originalArrayItems = pageEditorStore((state) => state.originalArrayItems);
+	const arrayItems = pageEditorStore((state) => state.arrayItems);
+	const setArrayItems = pageEditorStore((state) => state.setArrayItems);
+
+	const steps = pageEditorStore((state) => state.steps);
+	const setSteps = pageEditorStore((state) => state.setSteps);
+
+	const init = pageEditorStore((state) => state.init);
+	const reset = pageEditorStore((state) => state.reset);
+	const save = pageEditorStore((state) => state.save);
+
+	return {
+		isDirty,
+		isValid,
+		setIsValid,
+		iframe,
+		iframeOrigin,
+		originalComponents,
+		components,
+		setComponents,
+		originalNestedComponents,
+		nestedComponents,
+		setNestedComponents,
+		originalArrayItems,
+		arrayItems,
+		setArrayItems,
+		steps,
+		setSteps,
+		init,
+		reset,
+		save,
+	};
+}
+
+export { usePageEditor, pageEditorStore };

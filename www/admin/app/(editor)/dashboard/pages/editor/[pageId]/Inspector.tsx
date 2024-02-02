@@ -8,7 +8,7 @@ import { Resizable } from "re-resizable";
 import { useEffect, useState } from "react";
 import { Button } from "@/src/components/ui/client";
 import { Stepper, TypographyH1, TypographyMuted } from "@/src/components/ui/server";
-import { usePageEditor } from "@/src/data/stores/pageEditor";
+import { pageEditorStore, usePageEditor } from "@/src/data/stores/pageEditor";
 import { type Step as StepType, type ComponentUI } from "@/src/data/stores/pageEditor";
 import { useWindowEvent } from "@/src/hooks";
 import type { PrivateRouter } from "@/src/trpc/routes/private/_private";
@@ -264,7 +264,7 @@ function Step(props: StepProps) {
 						// Don't know why, but when using nestedComponents from the usePageEditor hook,
 						// the components are outdated and when NestedComponentField changes nestedComponents,
 						// the changes get overwritten by the code below. So we use the state directly.
-						const nestedComponents = usePageEditor.getState().nestedComponents;
+						const nestedComponents = pageEditorStore.getState().nestedComponents;
 						const changedComponents: ComponentUI[] = nestedComponents.map(
 							(component) => {
 								if (component.id === step.nestedComponentId) {

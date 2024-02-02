@@ -9,7 +9,10 @@ import {
 	DataTableBreadcrumbs,
 	DataTablePagination,
 } from "@/src/components";
-import { useComponentsTableDialogs } from "@/src/data/stores/componentDefinitions";
+import {
+	componentsTableDialogsStore,
+	useComponentsTableDialogs,
+} from "@/src/data/stores/componentDefinitions";
 import { useDataTable, type TableSearchParams } from "@/src/hooks";
 import type { PrivateRouter } from "@/src/trpc/routes/private/_private";
 import type { GroupItem } from "@/src/trpc/routes/private/components/types";
@@ -70,7 +73,7 @@ export function ComponentsTable(props: Props) {
 					itemIcon={<CubeIcon className="w-5" />}
 					onAddItem={() => {
 						setOpenAddComponentDef(true);
-						useComponentsTableDialogs.setState({
+						componentsTableDialogsStore.setState({
 							fields: [],
 							originalFields: [],
 						});

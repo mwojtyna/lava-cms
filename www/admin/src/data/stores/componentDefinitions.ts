@@ -22,7 +22,7 @@ interface ComponentsTableDialogsState {
 	duplicateDialog: DialogState;
 	deleteDialog: DialogState;
 }
-export const useComponentsTableDialogs = create<ComponentsTableDialogsState>((set) => ({
+const componentsTableDialogsStore = create<ComponentsTableDialogsState>((set) => ({
 	item: null,
 	setItem: (item) =>
 		set(() => {
@@ -98,3 +98,37 @@ function areSame(original: FieldDefinitionUI, current: FieldDefinitionUI) {
 	const b = { ...current, diff: undefined };
 	return JSON.stringify(a) === JSON.stringify(b);
 }
+
+function useComponentsTableDialogs() {
+	const item = componentsTableDialogsStore((state) => state.item);
+	const setItem = componentsTableDialogsStore((state) => state.setItem);
+
+	const fieldsDirty = componentsTableDialogsStore((state) => state.fieldsDirty);
+	const fields = componentsTableDialogsStore((state) => state.fields);
+	const originalFields = componentsTableDialogsStore((state) => state.originalFields);
+	const setFields = componentsTableDialogsStore((state) => state.setFields);
+
+	const editComponentDefDialog = componentsTableDialogsStore(
+		(state) => state.editComponentDefDialog,
+	);
+	const editGroupDialog = componentsTableDialogsStore((state) => state.editGroupDialog);
+	const moveDialog = componentsTableDialogsStore((state) => state.moveDialog);
+	const duplicateDialog = componentsTableDialogsStore((state) => state.duplicateDialog);
+	const deleteDialog = componentsTableDialogsStore((state) => state.deleteDialog);
+
+	return {
+		item,
+		setItem,
+		fieldsDirty,
+		fields,
+		originalFields,
+		setFields,
+		editComponentDefDialog,
+		editGroupDialog,
+		moveDialog,
+		duplicateDialog,
+		deleteDialog,
+	};
+}
+
+export { componentsTableDialogsStore, useComponentsTableDialogs };

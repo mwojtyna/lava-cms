@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { ArrowUturnLeftIcon } from "@heroicons/react/24/outline";
 import Link from "next/link";
-import { RedirectType, redirect } from "next/navigation";
 import { prisma } from "@/prisma/client";
 import { ActionIcon } from "@/src/components/ui/client";
 import { UserMenu } from "@/src/components/UserMenu";

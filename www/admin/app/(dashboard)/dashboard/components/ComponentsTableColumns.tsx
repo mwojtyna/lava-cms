@@ -23,7 +23,10 @@ import {
 	DropdownMenuItem,
 	DropdownMenuTrigger,
 } from "@/src/components/ui/client";
-import { useComponentsTableDialogs } from "@/src/data/stores/componentDefinitions";
+import {
+	componentsTableDialogsStore,
+	useComponentsTableDialogs,
+} from "@/src/data/stores/componentDefinitions";
 import { BulkDeleteDialog, BulkMoveDialog } from "./dialogs/BulkDialogs";
 
 export const columns: ColumnDef<ComponentsTableItem>[] = [
@@ -72,7 +75,7 @@ export const columns: ColumnDef<ComponentsTableItem>[] = [
 						variant={"link"}
 						className="font-normal"
 						onClick={() => {
-							const state = useComponentsTableDialogs.getState();
+							const state = componentsTableDialogsStore.getState();
 							state.editComponentDefDialog.setIsOpen(true);
 							state.setItem(row.original);
 						}}
