@@ -101,24 +101,26 @@ export function Components(props: Props) {
 			onDragEnd={reorder}
 		>
 			<SortableContext items={dndIds} strategy={verticalListSortingStrategy}>
-				<div className="flex flex-col gap-2">
-					{props.components.map((component, i) => (
-						<ComponentCard
-							key={component.id}
-							dndId={dndIds[i]!} // Has to be the same as `ids` array passed to `SortableContext`
-							component={{
-								id: component.id,
-								name: component.definition.name,
-								diff: component.diff,
-							}}
-							onClick={props.onComponentClicked}
-							onRestore={() => restore(component)}
-							onRemove={() => remove(component)}
-							onUnRemove={() => unRemove(component)}
-							onUnAdd={() => unAdd(component)}
-						/>
-					))}
-				</div>
+				{props.components.length > 0 && (
+					<div className="flex flex-col gap-2">
+						{props.components.map((component, i) => (
+							<ComponentCard
+								key={component.id}
+								dndId={dndIds[i]!} // Has to be the same as `ids` array passed to `SortableContext`
+								component={{
+									id: component.id,
+									name: component.definition.name,
+									diff: component.diff,
+								}}
+								onClick={props.onComponentClicked}
+								onRestore={() => restore(component)}
+								onRemove={() => remove(component)}
+								onUnRemove={() => unRemove(component)}
+								onUnAdd={() => unAdd(component)}
+							/>
+						))}
+					</div>
+				)}
 			</SortableContext>
 		</DndContext>
 	);

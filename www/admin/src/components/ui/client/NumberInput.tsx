@@ -54,9 +54,9 @@ function NumberInput({
 
 			<NumericFormat
 				className={cn(
-					inputVariants({ size }),
+					inputVariants({ className: inputClassName, size }),
+					"pr-10",
 					icon && "pl-10",
-					inputClassName,
 					// Fix for red borders not showing up when form is invalid
 					className?.includes("border-destructive") && "border-destructive",
 				)}

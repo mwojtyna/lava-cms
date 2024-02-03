@@ -2,8 +2,7 @@ import { ArrowUturnLeftIcon } from "@heroicons/react/24/outline";
 import React, { forwardRef, useEffect, useMemo } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import {
-	Input,
-	getRestorableInputProps,
+	type Input,
 	type FormFieldProps,
 	FormField,
 	FormItem,
@@ -14,6 +13,8 @@ import {
 	ActionIcon,
 	NumberInput,
 	getRestorableNumberInputProps,
+	Textarea,
+	getRestorableTextareaProps,
 } from "@/src/components/ui/client";
 import { TypographyMuted } from "@/src/components/ui/server";
 import { usePageEditor, type ComponentUI, type FieldUI } from "@/src/data/stores/pageEditor";
@@ -115,74 +116,73 @@ export interface FieldProps extends FormFieldProps<string> {
 	edited: boolean;
 	onRestore: () => void;
 }
-export const Field = forwardRef<HTMLInputElement | HTMLButtonElement, FieldProps>(
-	({ className, component, field, edited, onRestore, value, onChange }, ref) => {
-		switch (field.type) {
-			case "TEXT": {
-				const inputProps = getRestorableInputProps(edited, onRestore);
-				return (
-					<Input
-						ref={ref as React.RefObject<HTMLInputElement>}
-						className={className}
-						type="text"
-						value={value}
-						onChange={(e) => onChange(e.currentTarget.value)}
-						{...inputProps}
-					/>
-				);
-			}
-			case "NUMBER": {
-				const numberInputProps = getRestorableNumberInputProps(edited, onRestore);
-				return (
-					<NumberInput
-						getInputRef={ref}
-						className={className}
-						value={value}
-						onChange={(e) => onChange(e.currentTarget.value)}
-						{...numberInputProps}
-					/>
-				);
-			}
-			case "SWITCH": {
-				return (
-					<div className="flex items-center gap-3">
-						<div
-							className={cn(
-								edited &&
-									"rounded ring-2 ring-brand ring-offset-2 ring-offset-black",
-							)}
-						>
-							<Checkbox
-								ref={ref as React.RefObject<HTMLButtonElement>}
-								className={className}
-								checked={value === "true"}
-								onCheckedChange={(checked) => onChange(checked ? "true" : "false")}
-							/>
-						</div>
-
-						{edited && (
-							<ActionIcon variant={"simple"} onClick={onRestore} tooltip="Restore">
-								<ArrowUturnLeftIcon className="w-4" />
-							</ActionIcon>
-						)}
-					</div>
-				);
-			}
-			case "COMPONENT": {
-				return (
-					<NestedComponentField
-						className={className}
-						value={value}
-						onChange={onChange}
-						edited={edited}
-						parentComponent={component}
-					/>
-				);
-			}
-			case "COLLECTION": {
-				return <ArrayField parentField={field} component={component} />;
-			}
+export const Field = forwardRef<
+	HTMLInputElement | HTMLTextAreaElement | HTMLButtonElement,
+	FieldProps
+>(({ className, component, field, edited, onRestore, value, onChange }, ref) => {
+	switch (field.type) {
+		case "TEXT": {
+			const inputProps = getRestorableTextareaProps(edited, onRestore);
+			return (
+				<Textarea
+					ref={ref as React.RefObject<HTMLTextAreaElement>}
+					className={cn(className, "transition-colors", edited && "border-b-brand")}
+					value={value}
+					onChange={(e) => onChange(e.currentTarget.value.replaceAll("\n", ""))}
+					{...inputProps}
+				/>
+			);
 		}
-	},
-);
+		case "NUMBER": {
+			const inputProps = getRestorableNumberInputProps(edited, onRestore);
+			return (
+				<NumberInput
+					getInputRef={ref as React.RefObject<HTMLInputElement>}
+					className={className}
+					value={value}
+					onChange={(e) => onChange(e.currentTarget.value)}
+					{...inputProps}
+				/>
+			);
+		}
+		case "SWITCH": {
+			return (
+				<div className="flex items-center gap-3">
+					<div
+						className={cn(
+							edited && "rounded ring-2 ring-brand ring-offset-2 ring-offset-black",
+						)}
+					>
+						<Checkbox
+							ref={ref as React.RefObject<HTMLButtonElement>}
+							className={className}
+							checked={value === "true"}
+							onCheckedChange={(checked) => onChange(checked ? "true" : "false")}
+						/>
+					</div>
+
+					{edited && (
+						<ActionIcon variant={"simple"} onClick={onRestore} tooltip="Restore">
+							<ArrowUturnLeftIcon className="w-4" />
+						</ActionIcon>
+					)}
+				</div>
+			);
+		}
+		case "COMPONENT": {
+			return (
+				<NestedComponentField
+					className={className}
+					value={value}
+					onChange={onChange}
+					edited={edited}
+					parentComponent={component}
+				/>
+			);
+		}
+		case "COLLECTION": {
+			return <ArrayField parentField={field} component={component} />;
+		}
+	}
+});
 Field.displayName = "Field";
