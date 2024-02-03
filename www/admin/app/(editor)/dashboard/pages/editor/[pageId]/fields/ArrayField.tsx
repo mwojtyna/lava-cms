@@ -7,7 +7,7 @@ import {
 	DndContext,
 	closestCenter,
 } from "@dnd-kit/core";
-import { restrictToParentElement } from "@dnd-kit/modifiers";
+import { restrictToVerticalAxis } from "@dnd-kit/modifiers";
 import {
 	sortableKeyboardCoordinates,
 	arrayMove,
@@ -123,7 +123,7 @@ export function ArrayField(props: ArrayFieldProps) {
 				id={"id"}
 				sensors={sensors}
 				collisionDetection={closestCenter}
-				modifiers={[restrictToParentElement]}
+				modifiers={[restrictToVerticalAxis]}
 				onDragEnd={handleReorder}
 			>
 				<SortableContext items={dndIds} strategy={verticalListSortingStrategy}>
@@ -265,7 +265,7 @@ function ArrayFieldItem(props: ArrayFieldItemProps) {
 				/>
 			</div>
 
-			<div className="w-full">
+			<div className="w-full bg-card">
 				{props.parentField.arrayItemType !== "COMPONENT" ? (
 					<Field
 						className={cn(
