@@ -12,7 +12,7 @@ import { pageEditorStore, usePageEditor } from "@/src/data/stores/pageEditor";
 import { useWindowEvent } from "@/src/hooks";
 import { trpcFetch } from "@/src/utils/trpc";
 import { MIN_WIDTH as INSPECTOR_MIN_WIDTH } from "./Inspector";
-import { type IframeMessage } from "./types";
+import { type IframeMessage, type PageEditorMessage } from "./types";
 
 const MIN_WIDTH = 250;
 const HANDLES_WIDTH = 45;
@@ -38,7 +38,7 @@ export function PagePreview(props: { baseUrl: string; pageUrl: string }) {
 	// Init bridge when iframe loaded and again when component is mounted
 	const initIframeBridge = React.useCallback(() => {
 		iframeRef.current?.contentWindow?.postMessage(
-			{ name: "init" } as IframeMessage,
+			{ name: "init" } as PageEditorMessage,
 			url.origin,
 		);
 		pageEditorStore.setState({

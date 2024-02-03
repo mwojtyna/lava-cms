@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import type {
 	Component,
-	IframeMessage,
+	PageEditorMessage,
 } from "@/app/(editor)/dashboard/pages/editor/[pageId]/types";
 import type { ArrayItem } from "@/src/trpc/routes/private/pages/types";
 import type { trpc } from "@/src/utils/trpc";
@@ -291,7 +291,7 @@ const pageEditorStore = create<PageEditorState>((set) => ({
 					// `fidToBid` is a map of frontend ids to backend ids
 					onSuccess: (fidToBid) => {
 						state.iframe!.contentWindow!.postMessage(
-							{ name: "update" } as IframeMessage,
+							{ name: "update" } as PageEditorMessage,
 							state.iframeOrigin,
 						);
 

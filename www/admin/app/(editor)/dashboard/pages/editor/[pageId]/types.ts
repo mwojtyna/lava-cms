@@ -4,11 +4,13 @@ import type { PrivateRouter } from "@/src/trpc/routes/private/_private";
 export type Component =
 	inferRouterOutputs<PrivateRouter>["pages"]["getPageComponents"]["components"][number];
 
-export type IframeMessage =
-	| {
-			name: "init" | "update";
-	  }
-	| {
-			name: "urlChanged";
-			url: string;
-	  };
+/** Message sent from page editor to iframe */
+export type PageEditorMessage = {
+	name: "init" | "update";
+};
+
+/** Message sent from iframe to page editor */
+export type IframeMessage = {
+	name: "urlChanged";
+	url: string;
+};

@@ -1,6 +1,6 @@
 // NOTE: Remember to restart the frontend dev server after changing this file
 
-import type { IframeMessage } from "@lavacms/types";
+import type { IframeMessage, PageEditorMessage } from "@lavacms/types";
 import config from "virtual:lavacms-config";
 
 function postMessage(message: IframeMessage, targetOrigin: string) {
@@ -19,7 +19,7 @@ window.addEventListener("message", (e) => {
 		return;
 	}
 
-	const data = e.data as IframeMessage;
+	const data = e.data as PageEditorMessage;
 	if (data.name === "init") {
 		postMessage({ name: "urlChanged", url: window.location.href }, configOrigin);
 
