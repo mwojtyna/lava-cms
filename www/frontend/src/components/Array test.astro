@@ -2,7 +2,7 @@
 interface Props {
 	cms: {
 		header: string;
-		articles: boolean[];
+		articles: string[];
 	};
 }
 
@@ -12,7 +12,7 @@ const { cms } = Astro.props;
 <div>
 	<h1>{cms.header}</h1>
 	<div class="articles">
-		{cms.articles.map((article) => <p>{String(article)}</p>)}
+		{cms.articles.map((article) => <p>{article}</p>)}
 	</div>
 </div>
 
