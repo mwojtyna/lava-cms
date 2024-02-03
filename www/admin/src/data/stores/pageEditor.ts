@@ -76,13 +76,21 @@ const pageEditorStore = create<PageEditorState>((set) => ({
 	components: [],
 	setComponents: (newComponents) =>
 		set((state) => {
+			let i = 0;
 			for (const nc of newComponents) {
+				// Fix for when a component is added, reordered and then deleted
+				// The components which were reordered still have the 'reordered' diff
+				// but they are not reordered, because the added component was deleted
+				nc.order = i;
+
 				if (nc.diff === "edited" || nc.diff === "reordered") {
 					const original = state.originalComponents.find((oc) => oc.id === nc.id)!;
 					if (areSame(original, nc)) {
 						nc.diff = "none";
 					}
 				}
+
+				i++;
 			}
 
 			return {
@@ -122,7 +130,13 @@ const pageEditorStore = create<PageEditorState>((set) => ({
 	arrayItems: {},
 	setArrayItems: (parentFieldId, newArrayItems) =>
 		set((state) => {
+			let i = 0;
 			for (const ai of newArrayItems) {
+				// Fix for when an item is added, reordered and then deleted
+				// The items which were reordered still have the 'reordered' diff
+				// but they are not reordered, because the added item was deleted
+				ai.order = i;
+
 				if (ai.diff === "edited" || ai.diff === "reordered") {
 					const original = state.originalArrayItems[parentFieldId]!.find(
 						(oc) => oc.id === ai.id,
@@ -132,6 +146,8 @@ const pageEditorStore = create<PageEditorState>((set) => ({
 						ai.diff = "none";
 					}
 				}
+
+				i++;
 			}
 			let arrayItems: ArrayItemGroups = {
 				...state.arrayItems,
