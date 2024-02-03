@@ -20,7 +20,7 @@ import { cn } from "@/src/utils/styling";
 const getRestorableComboboxProps = (edited: boolean, restore: () => void) => ({
 	className: cn(edited && "ring-2 ring-brand ring-offset-2 ring-offset-black"),
 	restoreButton: edited ? (
-		<ActionIcon variant={"simple"} onClick={restore}>
+		<ActionIcon variant={"simple"} onClick={restore} tooltip="Restore">
 			<ArrowUturnLeftIcon className="w-5" />
 		</ActionIcon>
 	) : null,

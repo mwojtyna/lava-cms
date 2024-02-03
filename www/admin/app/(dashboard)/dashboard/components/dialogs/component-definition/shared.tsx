@@ -103,6 +103,7 @@ export const FieldTypePicker = React.forwardRef<
 			contentProps={{
 				className: "w-[165px]",
 				placeholder: "Search types...",
+				align: "start",
 			}}
 			placeholder={placeholder}
 			value={value}
