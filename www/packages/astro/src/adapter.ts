@@ -52,10 +52,7 @@ export function lavaCmsAstro(config: ClientConfigAstro): AstroIntegration {
 					`,
 				);
 
-				// Remove source map (last comment)
-				const sourceMapIndex = bridgeScript.lastIndexOf("//");
-				const pageEditorScript = bridgeScript.slice(0, sourceMapIndex);
-				injectScript("page", pageEditorScript);
+				injectScript("page", bridgeScript);
 
 				updateConfig({
 					vite: {
