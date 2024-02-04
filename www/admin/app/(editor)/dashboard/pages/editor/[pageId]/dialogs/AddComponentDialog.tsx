@@ -19,6 +19,17 @@ import type { ComponentUI } from "@/src/data/stores/pageEditor";
 import { cn } from "@/src/utils/styling";
 import { trpc, trpcFetch } from "@/src/utils/trpc";
 
+const RICH_TEXT_INITIAL_VALUE = JSON.stringify([
+	{
+		type: "p",
+		children: [
+			{
+				text: "",
+			},
+		],
+	},
+]);
+
 export async function createComponentInstance(
 	definitionId: string,
 	data: Pick<ComponentUI, "pageId" | "parentComponentId" | "order">,
@@ -34,16 +45,25 @@ export async function createComponentInstance(
 			id: definition.id,
 			name: definition.name,
 		},
-		fields: definition.field_definitions.map((fieldDef) => ({
-			id: createId(),
-			name: fieldDef.name,
-			data: fieldDef.type === "SWITCH" ? "false" : "",
-			richTextData: fieldDef.type === "RICH_TEXT" ? "" : null,
-			definitionId: fieldDef.id,
-			order: fieldDef.order,
-			type: fieldDef.type,
-			arrayItemType: fieldDef.array_item_type,
-		})),
+		fields: definition.field_definitions.map((fieldDef) => {
+			let data = "";
+			if (fieldDef.type === "SWITCH") {
+				data = "false";
+			} else if (fieldDef.type === "RICH_TEXT") {
+				data = RICH_TEXT_INITIAL_VALUE;
+			}
+
+			return {
+				id: createId(),
+				name: fieldDef.name,
+				data,
+				serializedRichText: fieldDef.type === "RICH_TEXT" ? "" : null,
+				definitionId: fieldDef.id,
+				order: fieldDef.order,
+				type: fieldDef.type,
+				arrayItemType: fieldDef.array_item_type,
+			};
+		}),
 		order: data.order,
 		pageId: data.pageId,
 		parentComponentId: data.parentComponentId,

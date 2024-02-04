@@ -1,10 +1,10 @@
-import type { LavaCms } from "@lavacms/core";
+import type { ClientConfigBase } from "@lavacms/core";
 import type { AstroIntegration } from "astro";
 import bridgeScript from "./bridge";
 import { vitePluginLavaCmsComponents } from "./vite-plugin-lavacms-components";
 import { vitePluginLavaCmsConfig } from "./vite-plugin-lavacms-config";
 
-export interface ClientConfigAstro extends LavaCms.ClientConfigBase {
+export interface ClientConfigAstro extends ClientConfigBase {
 	/**
 	 * Assign CMS component name to an Astro component path
 	 * @example

@@ -18,6 +18,7 @@ const addedComponentSchema = z.object({
 		z.object({
 			frontendId: z.string().cuid2(),
 			data: z.string(),
+			serializedRichText: z.string().nullable(),
 			definitionId: z.string().cuid(),
 		}),
 	),
@@ -72,6 +73,7 @@ export const editPageComponents = privateProcedure
 									return {
 										id,
 										data: field.data,
+										serialized_rich_text: field.serializedRichText,
 										field_definition_id: field.definitionId,
 									};
 								}),
@@ -95,6 +97,7 @@ export const editPageComponents = privateProcedure
 								where: { id: field.id },
 								data: {
 									data: field.data,
+									serialized_rich_text: field.serializedRichText,
 								},
 							})),
 						},

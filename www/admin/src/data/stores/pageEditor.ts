@@ -1,8 +1,12 @@
+import type { inferRouterInputs } from "@trpc/server";
+import { createPlateEditor, type Value } from "@udecode/plate-common";
+import { serializeHtml } from "@udecode/plate-serializer-html";
 import { create } from "zustand";
 import type {
 	Component,
 	PageEditorMessage,
 } from "@/app/(editor)/dashboard/pages/editor/[pageId]/types";
+import type { PrivateRouter } from "@/src/trpc/routes/private/_private";
 import type { ArrayItem } from "@/src/trpc/routes/private/pages/types";
 import type { trpc } from "@/src/utils/trpc";
 import "client-only";
@@ -227,6 +231,9 @@ const pageEditorStore = create<PageEditorState>((set) => ({
 		}),
 	save: (mutation, pageId) =>
 		set((state) => {
+			type AddedComponent =
+				inferRouterInputs<PrivateRouter>["pages"]["editPageComponents"]["addedComponents"][number];
+
 			// Fix component order
 			const correctedOrderComponents = state.components
 				.filter((comp) => comp.diff !== "deleted")
@@ -253,15 +260,27 @@ const pageEditorStore = create<PageEditorState>((set) => ({
 				}
 			}
 
+			const allComponents = state.components.concat(state.nestedComponents);
+
+			const editor = createPlateEditor();
+			for (const component of state.components.concat(state.nestedComponents)) {
+				for (const field of component.fields) {
+					if (field.type === "RICH_TEXT") {
+						field.serializedRichText = serializeHtml(editor, {
+							nodes: JSON.parse(field.data) as Value,
+						});
+					}
+				}
+			}
+
 			const flattenedItems = Object.values(state.arrayItems).flat();
 
 			mutation.mutate(
 				{
 					pageId,
-					addedComponents: state.components
-						.concat(state.nestedComponents)
+					addedComponents: allComponents
 						.filter((comp) => comp.diff === "added" || comp.diff === "replaced")
-						.map((comp) => ({
+						.map<AddedComponent>((comp) => ({
 							pageId,
 							parentComponentId: comp.parentComponentId,
 							frontendId: comp.id,
@@ -270,15 +289,14 @@ const pageEditorStore = create<PageEditorState>((set) => ({
 							fields: comp.fields.map((field) => ({
 								frontendId: field.id,
 								data: field.data,
+								serializedRichText: field.serializedRichText,
 								definitionId: field.definitionId,
 							})),
 						})),
 					editedComponents: correctedOrderComponents
 						.concat(state.nestedComponents)
 						.filter((comp) => comp.diff === "edited" || comp.diff === "reordered"),
-					deletedComponentIds: state.components
-						.concat(state.nestedComponents)
-						// Replaced components have the same id as the original
+					deletedComponentIds: allComponents // Replaced components have the same id as the original
 						.filter((comp) => comp.diff === "deleted" || comp.diff === "replaced")
 						.map((comp) => comp.id),
 

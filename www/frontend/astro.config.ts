@@ -20,6 +20,7 @@ export default defineConfig({
 				Random: "./src/components/Random.astro",
 				"Array test": "./src/components/Array test.astro",
 				"Array test 2": "./src/components/Array test 2.astro",
+				Paragraph: "./src/components/Paragraph.astro",
 			},
 			enableFallbackComponent: true,
 		}),

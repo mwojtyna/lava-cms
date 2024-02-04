@@ -48,7 +48,7 @@ export const getPageComponents = privateProcedure
 					id: field.id,
 					name: field.definition.name,
 					data: field.data,
-					richTextData: field.rich_text_data,
+					serializedRichText: field.serialized_rich_text,
 					type: field.definition.type,
 					arrayItemType: field.definition.array_item_type,
 					definitionId: field.definition.id,

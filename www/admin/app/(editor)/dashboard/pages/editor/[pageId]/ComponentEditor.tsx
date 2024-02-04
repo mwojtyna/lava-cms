@@ -1,3 +1,4 @@
+import type { Value } from "@udecode/plate-common";
 import { ArrowUturnLeftIcon } from "@heroicons/react/24/outline";
 import React, { forwardRef, useEffect, useMemo } from "react";
 import { FormProvider, useForm } from "react-hook-form";
@@ -133,7 +134,15 @@ export const Field = forwardRef<HTMLTextAreaElement | HTMLButtonElement, FieldPr
 				);
 			}
 			case "RICH_TEXT": {
-				return <RichTextEditor value={value} onChange={onChange} />;
+				return (
+					// When saving a freshly added component, the value is an empty string for a moment
+					value !== "" && (
+						<RichTextEditor
+							value={JSON.parse(value) as Value}
+							onChange={(v) => onChange(JSON.stringify(v))}
+						/>
+					)
+				);
 			}
 			case "NUMBER": {
 				const inputProps = getRestorableNumberInputProps(edited, onRestore);

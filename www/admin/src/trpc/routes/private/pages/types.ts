@@ -7,7 +7,7 @@ const fieldSchema = z.object({
 	id: z.string().cuid(),
 	name: z.string(),
 	data: z.string(),
-	richTextData: z.string().nullable(),
+	serializedRichText: z.string().nullable(),
 	type: ComponentFieldTypeSchema,
 	arrayItemType: ArrayItemTypeSchema.nullable(),
 	definitionId: z.string().cuid(),

@@ -86,6 +86,7 @@ type Component = Prisma.PageGetPayload<typeof pageWithInclude>["components"][num
 interface Field {
 	name: string;
 	data: string;
+	serializedRichText: string | null;
 	type: ComponentFieldType;
 	arrayItems: Field[];
 }
@@ -95,10 +96,12 @@ async function getFields(component: Component): Promise<Record<string, FieldCont
 		const generalField: Field = {
 			name: field.definition.name,
 			data: field.data,
+			serializedRichText: field.serialized_rich_text,
 			type: field.definition.type,
 			arrayItems: field.array_items.map((ai, i) => ({
 				name: `${field.definition.name} -> [item nr ${i}]`,
 				data: ai.data,
+				serializedRichText: null,
 				type: field.definition.array_item_type!,
 				arrayItems: [], // A field within an array item cannot be an array item itself
 			})),
@@ -119,7 +122,7 @@ async function getField(field: Field, parentComponent: Component): Promise<Field
 			break;
 		}
 		case "RICH_TEXT": {
-			data = field.data;
+			data = field.serializedRichText!;
 			break;
 		}
 		case "NUMBER": {

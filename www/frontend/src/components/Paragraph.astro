@@ -1,0 +1,16 @@
+---
+interface Props {
+	cms: {
+		content: string;
+	};
+}
+const { cms } = Astro.props;
+---
+
+<div set:html={cms.content} />
+
+<style>
+	div {
+		border: 1px solid red;
+	}
+</style>
