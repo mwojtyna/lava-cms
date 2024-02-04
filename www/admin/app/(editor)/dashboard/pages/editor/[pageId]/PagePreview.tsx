@@ -38,7 +38,7 @@ export function PagePreview(props: { baseUrl: string; pageUrl: string }) {
 	// Init bridge when iframe loaded and again when component is mounted
 	const initIframeBridge = React.useCallback(() => {
 		iframeRef.current?.contentWindow?.postMessage(
-			{ name: "init" } as PageEditorMessage,
+			{ name: "init" } satisfies PageEditorMessage,
 			url.origin,
 		);
 		pageEditorStore.setState({

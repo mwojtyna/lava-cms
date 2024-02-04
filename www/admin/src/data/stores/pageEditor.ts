@@ -307,7 +307,7 @@ const pageEditorStore = create<PageEditorState>((set) => ({
 					// `fidToBid` is a map of frontend ids to backend ids
 					onSuccess: (fidToBid) => {
 						state.iframe!.contentWindow!.postMessage(
-							{ name: "update" } as PageEditorMessage,
+							{ name: "update" } satisfies PageEditorMessage,
 							state.iframeOrigin,
 						);
 

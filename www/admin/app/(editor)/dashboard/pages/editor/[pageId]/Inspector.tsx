@@ -113,7 +113,7 @@ export function Inspector(props: Props) {
 				// Use flex instead of space-y-5, because Resizable adds a div when resizing which messes up the spacing
 				className="flex flex-col gap-5 overflow-y-auto p-4 max-md:hidden"
 				minWidth={MIN_WIDTH}
-				maxWidth={windowWidth !== 0 ? windowWidth / 2 : undefined} // `windowWidth` is 0 when SSR
+				maxWidth={windowWidth !== 0 ? windowWidth * (2 / 3) : undefined} // `windowWidth` is 0 when SSR
 				size={{ width, height: "100%" }}
 				enable={{ left: true }}
 				handleComponent={{

@@ -127,7 +127,6 @@ export function AddFieldDefs() {
 								<FormControl>
 									<FieldTypePicker
 										className="rounded-l-none border-l-0"
-										placeholder="Type"
 										{...field}
 									/>
 								</FormControl>

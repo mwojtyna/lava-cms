@@ -118,6 +118,10 @@ async function getField(field: Field, parentComponent: Component): Promise<Field
 			data = field.data;
 			break;
 		}
+		case "RICH_TEXT": {
+			data = field.data;
+			break;
+		}
 		case "NUMBER": {
 			data = parseFloat(field.data);
 			break;

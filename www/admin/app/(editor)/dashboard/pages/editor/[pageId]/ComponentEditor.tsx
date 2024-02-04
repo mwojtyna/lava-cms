@@ -1,6 +1,7 @@
 import { ArrowUturnLeftIcon } from "@heroicons/react/24/outline";
 import React, { forwardRef, useEffect, useMemo } from "react";
 import { FormProvider, useForm } from "react-hook-form";
+import { RichTextEditor } from "@/src/components/RichTextEditor";
 import {
 	type Input,
 	type FormFieldProps,
@@ -130,6 +131,9 @@ export const Field = forwardRef<HTMLTextAreaElement | HTMLButtonElement, FieldPr
 						{...inputProps}
 					/>
 				);
+			}
+			case "RICH_TEXT": {
+				return <RichTextEditor value={value} onChange={onChange} />;
 			}
 			case "NUMBER": {
 				const inputProps = getRestorableNumberInputProps(edited, onRestore);

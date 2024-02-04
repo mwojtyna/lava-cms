@@ -38,6 +38,7 @@ export async function createComponentInstance(
 			id: createId(),
 			name: fieldDef.name,
 			data: fieldDef.type === "SWITCH" ? "false" : "",
+			richTextData: fieldDef.type === "RICH_TEXT" ? "" : null,
 			definitionId: fieldDef.id,
 			order: fieldDef.order,
 			type: fieldDef.type,

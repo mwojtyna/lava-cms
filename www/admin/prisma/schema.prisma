@@ -146,13 +146,16 @@ model ComponentInstance {
 }
 
 model ComponentInstanceField {
-    id                  String @id @default(cuid())
+    id                  String  @id @default(cuid())
     component_id        String
     field_definition_id String
     /// If type is a primitive type, then data is a string
-    /// If type is an array, then data empty, and array items reference this field in their `parent_field_id`
+    /// If type is an array, then data is empty, and array items reference this field's id in their `parent_field_id`
     /// If type is a component, then data is that component's id
+    /// If type is RICH_TEXT, then data is HTML serialized from `rich_text_data`
     data                String
+    /// Slate JSON
+    rich_text_data      String?
 
     component   ComponentInstance        @relation(fields: [component_id], references: [id], onDelete: Cascade)
     definition  ComponentDefinitionField @relation(fields: [field_definition_id], references: [id])
@@ -170,12 +173,12 @@ model ArrayItem {
 
     parent_field ComponentInstanceField @relation(fields: [parent_field_id], references: [id], onDelete: Cascade)
 
-    @@index([parent_field_id])
     @@map("array_item")
 }
 
 enum ComponentFieldType {
     TEXT
+    RICH_TEXT
     NUMBER
     SWITCH
     COMPONENT

@@ -29,14 +29,6 @@ export const fieldDefinitionUISchema = z.object({
 });
 export type FieldDefinitionUI = z.infer<typeof fieldDefinitionUISchema>;
 
-export const fieldTypeMap: Record<string, string> = Object.values(ComponentFieldType).reduce<
-	Record<string, string>
->((acc, type) => {
-	const label = type.charAt(0).toUpperCase() + type.slice(1).toLowerCase();
-	acc[type] = label;
-	return acc;
-}, {});
-
 export type DialogType = "add" | "edit";
 export type Step =
 	| {
@@ -73,6 +65,19 @@ export function groupsToComboboxEntries(
 }
 
 // ---------------- COMPONENTS ----------------
+export const fieldTypeMap: Record<string, string> = Object.values(ComponentFieldType).reduce<
+	Record<string, string>
+>((acc, type) => {
+	const split: string[] = [];
+	for (const word of type.split("_")) {
+		const part = word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+		split.push(part);
+	}
+
+	acc[type] = split.join(" ");
+	return acc;
+}, {});
+
 interface FieldTypePickerProps extends FormFieldProps<ComponentFieldType> {
 	className?: string;
 	onKeyDown?: (e: React.KeyboardEvent<HTMLButtonElement>) => void;

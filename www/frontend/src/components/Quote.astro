@@ -13,7 +13,7 @@ const { cms } = Astro.props;
 
 <figure>
 	<cite>{cms.content}</cite>
-	<figcaption>
+	<figcaption style="padding-top: 1rem">
 		{cms.author && <LavaCmsComponent component={cms.author} />}
 	</figcaption>
 </figure>
