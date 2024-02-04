@@ -10,17 +10,27 @@
 			"import": "./dist/index.js",
 			"types": "./dist/index.d.ts"
 		},
-		"./LavaCmsComponent.astro": "./LavaCmsComponent.astro",
-		"./LavaCmsComponents.astro": "./LavaCmsComponents.astro"
+		"./LavaCmsComponent.astro": {
+			"types": "./components/LavaCmsComponent.ts",
+			"import": "./components/LavaCmsComponent.astro"
+		},
+		"./LavaCmsComponents.astro": {
+			"types": "./components/LavaCmsComponents.ts",
+			"import": "./components/LavaCmsComponents.astro"
+		},
+		"./FallbackComponent.astro": {
+			"types": "./components/FallbackComponent.ts",
+			"import": "./components/FallbackComponent.astro"
+		}
 	},
 	"files": [
 		"dist",
-		"*.astro"
+		"components"
 	],
 	"license": "MIT",
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/matijas-05/lava-cms.git",
+		"url": "git+https://github.com/matijas-05/lava-cms.git",
 		"directory": "www/packages/astro"
 	},
 	"keywords": [
@@ -34,7 +44,7 @@
 		"dev": "pnpm run build --watch",
 		"build": "vite build",
 		"lint": "tsc && eslint .",
-		"prepublishOnly": "pnpm lint && pnpm build && rm -rf dist/src && rm dist/index.js"
+		"prepublishOnly": "pnpm lint && pnpm build"
 	},
 	"dependencies": {
 		"@lavacms/core": "workspace:*",

@@ -32,4 +32,4 @@ if (!(name in astroComponents) && !config.enableFallbackComponent) {
 }
 ---
 
-{!Comp ? <FallbackComponent name={cmsComponent.name} /> : <Comp cms={cmsComponent.fields} />}
+{!Comp ? <FallbackComponent component={cmsComponent} /> : <Comp cms={cmsComponent.fields} />}

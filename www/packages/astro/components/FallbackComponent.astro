@@ -1,15 +1,17 @@
 ---
+import type { CmsComponent } from "@lavacms/types";
+
 interface Props {
-	name: string;
+	component: CmsComponent;
 }
 
-const { name } = Astro.props;
+const { component } = Astro.props;
 ---
 
 <div>
 	<p>
 		No Astro component found for CMS component
-		<span>{name}</span>
+		<span>{component.name}</span>
 	</p>
 	<p>Make sure you have configured the Astro adapter properly</p>
 </div>

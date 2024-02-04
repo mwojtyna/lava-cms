@@ -1,8 +1,8 @@
 {
 	"name": "@lavacms/types",
-	"version": "0.0.1",
+	"version": "0.2.0",
 	"type": "module",
-	"description": "Types for Lava CMS API",
+	"description": "Types for the Lava CMS API. Used by framework packages such as @lavacms/astro",
 	"types": "dist/index.d.ts",
 	"files": [
 		"dist"
@@ -10,8 +10,8 @@
 	"license": "MIT",
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/matijas-05/lava-cms.git",
-		"directory": "www/packages/server"
+		"url": "git+https://github.com/matijas-05/lava-cms.git",
+		"directory": "www/packages/types"
 	},
 	"scripts": {
 		"dev": "pnpm run build --watch",

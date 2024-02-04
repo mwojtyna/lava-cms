@@ -1,6 +1,6 @@
 {
 	"name": "@lavacms/core",
-	"version": "0.1.0",
+	"version": "0.2.0",
 	"type": "module",
 	"description": "Core methods for Lava CMS API clients",
 	"main": "dist/index.js",
@@ -11,7 +11,7 @@
 	"license": "MIT",
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/matijas-05/lava-cms.git",
+		"url": "git+https://github.com/matijas-05/lava-cms.git",
 		"directory": "www/packages/core"
 	},
 	"keywords": [

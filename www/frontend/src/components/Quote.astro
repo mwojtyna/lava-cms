@@ -1,12 +1,11 @@
 ---
-// @ts-expect-error - this is a bug in astro
-import LavaCmsComponent from "@lavacms/astro/LavaCmsComponent.astro";
 import type { CmsComponent } from "@lavacms/astro";
+import LavaCmsComponent from "@lavacms/astro/LavaCmsComponent.astro";
 
 interface Props {
 	cms: {
 		content: string;
-		author: CmsComponent;
+		author: CmsComponent | null;
 	};
 }
 const { cms } = Astro.props;
