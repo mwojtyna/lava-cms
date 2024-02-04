@@ -89,9 +89,7 @@ export function FieldDefEditor(props: FieldDefEditorProps) {
 		// Trigger validation on mount, fixes Ctrl+S after first change not saving
 		void form.trigger();
 
-		// TODO: Optimize
 		const { unsubscribe } = form.watch(() => {
-			// setIsValid(form.formState.isValid);
 			if (form.formState.isValid && !form.formState.isValidating) {
 				void form.handleSubmit(onSubmit)();
 			}

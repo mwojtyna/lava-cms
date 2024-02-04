@@ -19,7 +19,7 @@ import type { ComponentUI } from "@/src/data/stores/pageEditor";
 import { cn } from "@/src/utils/styling";
 import { trpc, trpcFetch } from "@/src/utils/trpc";
 
-const RICH_TEXT_INITIAL_VALUE = JSON.stringify([
+const RICH_TEXT_INITIAL_VALUE = [
 	{
 		type: "p",
 		children: [
@@ -28,7 +28,7 @@ const RICH_TEXT_INITIAL_VALUE = JSON.stringify([
 			},
 		],
 	},
-]);
+];
 
 export async function createComponentInstance(
 	definitionId: string,
@@ -50,7 +50,8 @@ export async function createComponentInstance(
 			if (fieldDef.type === "SWITCH") {
 				data = "false";
 			} else if (fieldDef.type === "RICH_TEXT") {
-				data = RICH_TEXT_INITIAL_VALUE;
+				// Rich text editor's value is an object instead of a string
+				data = RICH_TEXT_INITIAL_VALUE as unknown as string;
 			}
 
 			return {

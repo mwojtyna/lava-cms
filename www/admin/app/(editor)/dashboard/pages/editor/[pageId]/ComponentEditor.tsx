@@ -1,6 +1,6 @@
 import type { Value } from "@udecode/plate-common";
 import { ArrowUturnLeftIcon } from "@heroicons/react/24/outline";
-import React, { forwardRef, useEffect, useMemo } from "react";
+import React, { forwardRef, useEffect, useMemo, useRef } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import { RichTextEditor } from "@/src/components/RichTextEditor";
 import {
@@ -32,7 +32,6 @@ interface ComponentEditorProps {
 }
 export function ComponentEditor(props: ComponentEditorProps) {
 	const { originalComponents, originalNestedComponents, setIsValid } = usePageEditor();
-
 	const originalComponent = useMemo(
 		() =>
 			(props.component.parentComponentId === null
@@ -50,20 +49,32 @@ export function ComponentEditor(props: ComponentEditorProps) {
 		shouldFocusError: false,
 	});
 
+	const debounceTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 	useEffect(() => {
 		// Trigger validation on mount, fixes Ctrl+S after first change not saving
 		void form.trigger();
 
-		// TODO: Optimize
 		const { unsubscribe } = form.watch(() => {
 			setIsValid(form.formState.isValid);
+
 			if (form.formState.isValid && !form.formState.isValidating) {
-				void form.handleSubmit(props.onChange)();
+				if (debounceTimeoutRef.current !== null) {
+					clearTimeout(debounceTimeoutRef.current);
+				}
+				debounceTimeoutRef.current = setTimeout(() => {
+					console.log("onChange");
+					props.onChange(form.getValues());
+				}, 250);
 			}
 		});
 
-		return unsubscribe;
-	}, [form, props.onChange, setIsValid]);
+		return () => {
+			unsubscribe();
+			if (debounceTimeoutRef.current !== null) {
+				clearTimeout(debounceTimeoutRef.current);
+			}
+		};
+	}, [form, props, setIsValid]);
 
 	return props.component.fields.length > 0 ? (
 		<FormProvider {...form}>
@@ -135,13 +146,11 @@ export const Field = forwardRef<HTMLTextAreaElement | HTMLButtonElement, FieldPr
 			}
 			case "RICH_TEXT": {
 				return (
-					// When saving a freshly added component, the value is an empty string for a moment
-					value !== "" && (
-						<RichTextEditor
-							value={JSON.parse(value) as Value}
-							onChange={(v) => onChange(JSON.stringify(v))}
-						/>
-					)
+					<RichTextEditor
+						// Rich text editor's value is an object instead of a string
+						value={value as unknown as Value}
+						onChange={(v) => onChange(v as unknown as string)}
+					/>
 				);
 			}
 			case "NUMBER": {

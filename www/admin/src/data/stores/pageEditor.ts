@@ -79,10 +79,10 @@ const pageEditorStore = create<PageEditorState>((set) => ({
 
 	originalComponents: [],
 	components: [],
-	setComponents: (newComponents) =>
+	setComponents: (changedComponents) =>
 		set((state) => {
 			let i = 0;
-			for (const nc of newComponents) {
+			for (const nc of changedComponents) {
 				// Fix for when a component is added, reordered and then deleted
 				// The components which were reordered still have the 'reordered' diff
 				// but they are not reordered, because the added component was deleted
@@ -99,9 +99,10 @@ const pageEditorStore = create<PageEditorState>((set) => ({
 			}
 
 			return {
-				components: newComponents,
+				components: changedComponents,
 				isDirty:
-					JSON.stringify(state.originalComponents) !== JSON.stringify(newComponents) ||
+					JSON.stringify(state.originalComponents) !==
+						JSON.stringify(changedComponents) ||
 					JSON.stringify(state.originalNestedComponents) !==
 						JSON.stringify(state.nestedComponents) ||
 					JSON.stringify(state.originalArrayItems) !== JSON.stringify(state.arrayItems),
@@ -110,9 +111,9 @@ const pageEditorStore = create<PageEditorState>((set) => ({
 
 	originalNestedComponents: [],
 	nestedComponents: [],
-	setNestedComponents: (newNestedComponents) =>
+	setNestedComponents: (changedNestedComponents) =>
 		set((state) => {
-			for (const nc of newNestedComponents) {
+			for (const nc of changedNestedComponents) {
 				if (nc.diff === "edited" || nc.diff === "reordered") {
 					const original = state.originalNestedComponents.find((oc) => oc.id === nc.id)!;
 					if (areSame(original, nc)) {
@@ -122,21 +123,21 @@ const pageEditorStore = create<PageEditorState>((set) => ({
 			}
 
 			return {
-				nestedComponents: newNestedComponents,
+				nestedComponents: changedNestedComponents,
 				isDirty:
 					JSON.stringify(state.originalComponents) !== JSON.stringify(state.components) ||
 					JSON.stringify(state.originalNestedComponents) !==
-						JSON.stringify(newNestedComponents) ||
+						JSON.stringify(changedNestedComponents) ||
 					JSON.stringify(state.originalArrayItems) !== JSON.stringify(state.arrayItems),
 			};
 		}),
 
 	originalArrayItems: {},
 	arrayItems: {},
-	setArrayItems: (parentFieldId, newArrayItems) =>
+	setArrayItems: (parentFieldId, changedArrayItems) =>
 		set((state) => {
 			let i = 0;
-			for (const ai of newArrayItems) {
+			for (const ai of changedArrayItems) {
 				// Fix for when an item is added, reordered and then deleted
 				// The items which were reordered still have the 'reordered' diff
 				// but they are not reordered, because the added item was deleted
@@ -156,7 +157,7 @@ const pageEditorStore = create<PageEditorState>((set) => ({
 			}
 			let arrayItems: ArrayItemGroups = {
 				...state.arrayItems,
-				[parentFieldId]: newArrayItems,
+				[parentFieldId]: changedArrayItems,
 			};
 			if (Object.values(arrayItems).flat().length === 0) {
 				arrayItems = {};
@@ -184,6 +185,15 @@ const pageEditorStore = create<PageEditorState>((set) => ({
 				items.push(item);
 			}
 			arrayItemsGrouped[item.parentFieldId] = items;
+		}
+
+		// Parse stringified rich text
+		for (const comp of components.concat(nestedComponents)) {
+			for (const field of comp.fields) {
+				if (field.type === "RICH_TEXT" && typeof field.data === "string") {
+					field.data = JSON.parse(field.data) as Value as unknown as string;
+				}
+			}
 		}
 
 		set({
@@ -268,8 +278,9 @@ const pageEditorStore = create<PageEditorState>((set) => ({
 				for (const field of component.fields) {
 					if (field.type === "RICH_TEXT") {
 						field.serializedRichText = serializeHtml(editor, {
-							nodes: JSON.parse(field.data) as Value,
+							nodes: field.data as unknown as Value,
 						});
+						field.data = JSON.stringify(field.data);
 					}
 				}
 			}
