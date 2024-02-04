@@ -19,7 +19,7 @@ const popoverVariants = cva(
 		defaultVariants: {
 			variant: "default",
 		},
-	}
+	},
 );
 
 const PopoverContent = React.forwardRef<

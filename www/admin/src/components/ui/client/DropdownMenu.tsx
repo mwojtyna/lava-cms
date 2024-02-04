@@ -164,6 +164,22 @@ const DropdownMenuShortcut = ({ className, ...props }: React.HTMLAttributes<HTML
 };
 DropdownMenuShortcut.displayName = "DropdownMenuShortcut";
 
+const useOpenState = () => {
+	const [open, setOpen] = React.useState(false);
+
+	const onOpenChange = React.useCallback(
+		(_value = !open) => {
+			setOpen(_value);
+		},
+		[open],
+	);
+
+	return {
+		open,
+		onOpenChange,
+	};
+};
+
 export {
 	DropdownMenu,
 	DropdownMenuTrigger,
@@ -180,4 +196,5 @@ export {
 	DropdownMenuSubContent,
 	DropdownMenuSubTrigger,
 	DropdownMenuRadioGroup,
+	useOpenState,
 };
