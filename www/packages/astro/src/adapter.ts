@@ -28,17 +28,9 @@ export interface ClientConfigAstro extends LavaCms.ClientConfigBase {
 
 export function lavaCmsAstro(config: ClientConfigAstro): AstroIntegration {
 	return {
-		name: "lava-cms",
+		name: "@lavacms/astro",
 		hooks: {
-			"astro:config:setup": ({ updateConfig, injectScript, config: astroConfig }) => {
-				if (astroConfig.output !== "static") {
-					injectScript(
-						"page-ssr",
-						`throw new Error("Lava CMS Astro adapter doesn't support SSR");`,
-					);
-					return;
-				}
-
+			"astro:config:setup": ({ updateConfig, injectScript }) => {
 				injectScript(
 					"page-ssr",
 					`
@@ -52,7 +44,9 @@ export function lavaCmsAstro(config: ClientConfigAstro): AstroIntegration {
 					`,
 				);
 
-				injectScript("page", bridgeScript);
+				if (process.env.NODE_ENV !== "production") {
+					injectScript("page", bridgeScript);
+				}
 
 				updateConfig({
 					vite: {
@@ -60,6 +54,22 @@ export function lavaCmsAstro(config: ClientConfigAstro): AstroIntegration {
 							vitePluginLavaCmsConfig(config),
 							vitePluginLavaCmsComponents(config.components),
 						],
+					},
+				});
+			},
+			"astro:config:done": ({ setAdapter }) => {
+				setAdapter({
+					name: "@lavacms/astro",
+					supportedAstroFeatures: {
+						staticOutput: "stable",
+						serverOutput: "unsupported",
+						hybridOutput: "unsupported",
+						assets: {
+							supportKind: "stable",
+							isSharpCompatible: true,
+							isSquooshCompatible: true,
+						},
+						i18nDomains: "stable",
 					},
 				});
 			},
