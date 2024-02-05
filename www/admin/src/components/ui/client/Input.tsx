@@ -15,9 +15,15 @@ const inputVariants = cva(
 				md: "h-10 text-sm",
 				lg: "h-11 text-base",
 			},
+			variant: {
+				default:
+					"border border-input ring-offset-background focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
+				ghost: "border-none focus-visible:ring-transparent",
+			},
 		},
 		defaultVariants: {
 			size: "md",
+			variant: "default",
 		},
 	},
 );

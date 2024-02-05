@@ -14,7 +14,13 @@ import {
 } from "@udecode/plate-basic-marks";
 import { ELEMENT_BLOCKQUOTE } from "@udecode/plate-block-quote";
 import { ELEMENT_CODE_BLOCK } from "@udecode/plate-code-block";
-import { Plate, createPlugins, type Value, PlateLeaf } from "@udecode/plate-common";
+import {
+	Plate,
+	createPlugins,
+	type Value,
+	PlateLeaf,
+	type RenderAfterEditable,
+} from "@udecode/plate-common";
 import {
 	ELEMENT_H1,
 	ELEMENT_H2,
@@ -26,6 +32,7 @@ import {
 import { createIndentPlugin } from "@udecode/plate-indent";
 import { createIndentListPlugin } from "@udecode/plate-indent-list";
 import { createLineHeightPlugin } from "@udecode/plate-line-height";
+import { ELEMENT_LINK, createLinkPlugin } from "@udecode/plate-link";
 import { ELEMENT_PARAGRAPH } from "@udecode/plate-paragraph";
 import React from "react";
 import { cn } from "../utils/styling";
@@ -38,6 +45,8 @@ import {
 	FixedToolbar,
 	FixedToolbarButtons,
 	CodeLeaf,
+	LinkElement,
+	LinkFloatingToolbar,
 } from "./plate-ui";
 import { ActionIcon, type FormFieldProps } from "./ui/client";
 
@@ -98,9 +107,12 @@ export const plugins = createPlugins(
 				},
 			},
 		}),
+		createLinkPlugin({
+			renderAfterEditable: LinkFloatingToolbar as RenderAfterEditable,
+		}),
 	],
 	{
-		// TODO: Media, superscript, subscript, link, table, divider, dnd
+		// TODO: Media, superscript, subscript, table, divider, dnd
 		components: {
 			// createBasicElementsPlugin()
 			[ELEMENT_H1]: withProps(HeadingElement, { variant: "h1" }),
@@ -119,6 +131,9 @@ export const plugins = createPlugins(
 			[MARK_UNDERLINE]: withProps(PlateLeaf, { as: "u" }),
 			[MARK_STRIKETHROUGH]: withProps(PlateLeaf, { as: "s" }),
 			[MARK_CODE]: CodeLeaf,
+
+			// createLinkPlugin
+			[ELEMENT_LINK]: LinkElement,
 		},
 	},
 );

@@ -19,6 +19,7 @@ import {
 	ToolbarGroup,
 	AlignDropdownMenu,
 	IndentListToolbarButton,
+	LinkToolbarButton,
 } from "./";
 
 export function FixedToolbarButtons() {
@@ -36,12 +37,12 @@ export function FixedToolbarButtons() {
 			>
 				{!readOnly && (
 					<>
-						<ToolbarGroup noSeparator>
+						<ToolbarGroup noSeparator biggerGap>
 							<InsertDropdownMenu />
 							<TurnIntoDropdownMenu />
 						</ToolbarGroup>
 
-						<ToolbarGroup noGap>
+						<ToolbarGroup>
 							<MarkToolbarButton
 								tooltip={`Bold (${modifierKey}+B)`}
 								nodeType={MARK_BOLD}
@@ -75,11 +76,15 @@ export function FixedToolbarButtons() {
 							</MarkToolbarButton>
 						</ToolbarGroup>
 
-						<ToolbarGroup noGap>
+						<ToolbarGroup>
 							<AlignDropdownMenu />
 							<LineHeightDropdownMenu />
 							<IndentListToolbarButton nodeType={ListStyleType.Disc} />
 							<IndentListToolbarButton nodeType={ListStyleType.Decimal} />
+						</ToolbarGroup>
+
+						<ToolbarGroup>
+							<LinkToolbarButton tooltip={`Link (${modifierKey}+L)`} />
 						</ToolbarGroup>
 					</>
 				)}

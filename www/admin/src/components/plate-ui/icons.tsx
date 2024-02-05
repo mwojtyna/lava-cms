@@ -20,6 +20,10 @@ import {
 	IconLineHeight,
 	IconList,
 	IconListNumbers,
+	IconLink,
+	IconCursorText,
+	IconExternalLink,
+	IconLinkOff,
 } from "@tabler/icons-react";
 
 export const icons = {
@@ -47,4 +51,9 @@ export const icons = {
 	LineHeight: IconLineHeight,
 	Ul: IconList,
 	Ol: IconListNumbers,
+
+	Link: IconLink,
+	ExternalLink: IconExternalLink,
+	Unlink: IconLinkOff,
+	Text: IconCursorText,
 };

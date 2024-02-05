@@ -118,9 +118,9 @@ export const ToolbarGroup = withRef<
 	"div",
 	{
 		noSeparator?: boolean;
-		noGap?: boolean;
+		biggerGap?: boolean;
 	}
->(({ className, children, noSeparator, noGap }, ref) => {
+>(({ className, children, noSeparator, biggerGap }, ref) => {
 	const childArr = React.Children.map(children, (c) => c);
 	if (!childArr || childArr.length === 0) return null;
 
@@ -132,7 +132,9 @@ export const ToolbarGroup = withRef<
 				</div>
 			)}
 
-			<div className={cn("mx-1 flex items-center gap-1", noGap && "gap-px")}>{children}</div>
+			<div className={cn("mx-1 flex items-center gap-px", biggerGap && "gap-px")}>
+				{children}
+			</div>
 		</div>
 	);
 });

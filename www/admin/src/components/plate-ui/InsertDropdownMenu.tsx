@@ -111,17 +111,6 @@ const items = [
 	//     },
 	//   ],
 	// },
-	// {
-	//   label: 'Inline',
-	//   items: [
-	//     {
-	//       value: ELEMENT_LINK,
-	//       label: 'Link',
-	//       description: 'Link',
-	//       icon: Icons.link,
-	//     },
-	//   ],
-	// },
 ];
 
 export function InsertDropdownMenu(props: DropdownMenuProps) {
