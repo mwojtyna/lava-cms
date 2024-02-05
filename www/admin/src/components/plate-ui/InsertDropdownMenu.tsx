@@ -85,7 +85,7 @@ const items = [
 		items: [
 			{
 				value: ELEMENT_CODE_BLOCK,
-				label: "Code",
+				label: "Code block",
 				description: "Code (```)",
 				icon: icons.Code,
 			},

@@ -57,14 +57,12 @@ export function ComponentEditor(props: ComponentEditorProps) {
 		const { unsubscribe } = form.watch(() => {
 			setIsValid(form.formState.isValid);
 
-			if (form.formState.isValid && !form.formState.isValidating) {
-				if (debounceTimeoutRef.current !== null) {
-					clearTimeout(debounceTimeoutRef.current);
-				}
-				debounceTimeoutRef.current = setTimeout(() => {
-					props.onChange(form.getValues());
-				}, 250);
+			if (debounceTimeoutRef.current !== null) {
+				clearTimeout(debounceTimeoutRef.current);
 			}
+			debounceTimeoutRef.current = setTimeout(() => {
+				props.onChange(form.getValues());
+			}, 250);
 		});
 
 		return () => {

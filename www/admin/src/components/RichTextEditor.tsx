@@ -22,6 +22,7 @@ import {
 	PlateLeaf,
 	type RenderAfterEditable,
 } from "@udecode/plate-common";
+import { isSelectionAtBlockStart } from "@udecode/plate-common";
 import {
 	ELEMENT_H1,
 	ELEMENT_H2,
@@ -35,6 +36,7 @@ import { createIndentListPlugin } from "@udecode/plate-indent-list";
 import { createLineHeightPlugin } from "@udecode/plate-line-height";
 import { ELEMENT_LINK, createLinkPlugin } from "@udecode/plate-link";
 import { ELEMENT_PARAGRAPH } from "@udecode/plate-paragraph";
+import { createResetNodePlugin } from "@udecode/plate-reset-node";
 import React from "react";
 import { cn } from "../utils/styling";
 import {
@@ -50,6 +52,19 @@ import {
 	LinkFloatingToolbar,
 } from "./plate-ui";
 import { ActionIcon, type FormFieldProps } from "./ui/client";
+
+const resetBlockTypesCommonRule = {
+	types: [
+		ELEMENT_H1,
+		ELEMENT_H2,
+		ELEMENT_H3,
+		ELEMENT_H4,
+		ELEMENT_H5,
+		ELEMENT_H6,
+		ELEMENT_BLOCKQUOTE,
+	],
+	defaultType: ELEMENT_PARAGRAPH,
+};
 
 export const plugins = createPlugins(
 	[
@@ -120,6 +135,17 @@ export const plugins = createPlugins(
 						query: {
 							allow: [ELEMENT_CODE_BLOCK, ELEMENT_BLOCKQUOTE /* ,ELEMENT_TD */],
 						},
+					},
+				],
+			},
+		}),
+		createResetNodePlugin({
+			options: {
+				rules: [
+					{
+						...resetBlockTypesCommonRule,
+						hotkey: "Backspace",
+						predicate: isSelectionAtBlockStart,
 					},
 				],
 			},
