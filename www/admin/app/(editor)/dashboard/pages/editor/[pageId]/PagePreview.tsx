@@ -8,7 +8,7 @@ import { Resizable } from "re-resizable";
 import * as React from "react";
 import { ActionIcon } from "@/src/components/ui/client";
 import { Card } from "@/src/components/ui/server";
-import { pageEditorStore, usePageEditor } from "@/src/data/stores/pageEditor";
+import { pageEditorStore } from "@/src/data/stores/pageEditor";
 import { useWindowEvent } from "@/src/hooks";
 import { trpcFetch } from "@/src/utils/trpc";
 import { MIN_WIDTH as INSPECTOR_MIN_WIDTH } from "./Inspector";
@@ -33,7 +33,6 @@ export function PagePreview(props: { baseUrl: string; pageUrl: string }) {
 	);
 	const router = useRouter();
 	const pathname = usePathname();
-	const pageEditor = usePageEditor();
 
 	// Init bridge when iframe loaded and again when component is mounted
 	const initIframeBridge = React.useCallback(() => {
@@ -69,7 +68,8 @@ export function PagePreview(props: { baseUrl: string; pageUrl: string }) {
 			const newUrl = split.join("/");
 
 			router.push(newUrl);
-			pageEditor.setSteps([pageEditor.steps[0]!]); // For some reason the step gets preserved between pages
+			const state = pageEditorStore.getState();
+			state.setSteps([state.steps[0]!]); // For some reason the step gets preserved between pages
 		}
 	});
 

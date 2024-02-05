@@ -62,7 +62,6 @@ export function ComponentEditor(props: ComponentEditorProps) {
 					clearTimeout(debounceTimeoutRef.current);
 				}
 				debounceTimeoutRef.current = setTimeout(() => {
-					console.log("onChange");
 					props.onChange(form.getValues());
 				}, 250);
 			}
