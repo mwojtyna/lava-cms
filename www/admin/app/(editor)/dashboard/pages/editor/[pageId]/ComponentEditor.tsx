@@ -84,7 +84,10 @@ export function ComponentEditor(props: ComponentEditorProps) {
 
 					let edited = false;
 					if (field.type === "RICH_TEXT") {
-						if (JSON.stringify(field.data) !== JSON.stringify(originalField?.data)) {
+						if (
+							props.component.diff !== "added" &&
+							JSON.stringify(field.data) !== JSON.stringify(originalField?.data)
+						) {
 							edited = true;
 						}
 					} else {
