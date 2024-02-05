@@ -23,6 +23,7 @@ import {
 	ELEMENT_H5,
 	ELEMENT_H6,
 } from "@udecode/plate-heading";
+import { createLineHeightPlugin } from "@udecode/plate-line-height";
 import { ELEMENT_PARAGRAPH } from "@udecode/plate-paragraph";
 import React from "react";
 import { cn } from "../utils/styling";
@@ -55,6 +56,15 @@ export const plugins = createPlugins(
 						ELEMENT_PARAGRAPH,
 						ELEMENT_BLOCKQUOTE,
 					],
+				},
+			},
+		}),
+		createLineHeightPlugin({
+			inject: {
+				props: {
+					defaultNodeValue: 1.5,
+					validNodeValues: [1, 1.2, 1.5, 2, 3],
+					validTypes: [ELEMENT_PARAGRAPH, ELEMENT_H1, ELEMENT_H2, ELEMENT_H3],
 				},
 			},
 		}),

@@ -17,6 +17,7 @@ import {
 	IconAlignCenter,
 	IconAlignRight,
 	IconAlignJustified,
+	IconLineHeight,
 } from "@tabler/icons-react";
 
 export const icons = {
@@ -41,4 +42,5 @@ export const icons = {
 	AlignCenter: IconAlignCenter,
 	AlignRight: IconAlignRight,
 	AlignJustify: IconAlignJustified,
+	LineHeight: IconLineHeight,
 };

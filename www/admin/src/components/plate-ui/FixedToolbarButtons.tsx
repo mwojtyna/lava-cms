@@ -10,9 +10,14 @@ import { useEditorReadOnly } from "@udecode/plate-common";
 import React from "react";
 
 import { icons } from "./icons";
-import { InsertDropdownMenu } from "./InsertDropdownMenu";
-import { MarkToolbarButton } from "./MarkToolbarButton";
-import { TurnIntoDropdownMenu, ToolbarGroup, AlignDropdownMenu } from "./";
+import {
+	InsertDropdownMenu,
+	MarkToolbarButton,
+	LineHeightDropdownMenu,
+	TurnIntoDropdownMenu,
+	ToolbarGroup,
+	AlignDropdownMenu,
+} from "./";
 
 export function FixedToolbarButtons() {
 	const readOnly = useEditorReadOnly();
@@ -70,6 +75,7 @@ export function FixedToolbarButtons() {
 
 						<ToolbarGroup noGap>
 							<AlignDropdownMenu />
+							<LineHeightDropdownMenu />
 						</ToolbarGroup>
 					</>
 				)}

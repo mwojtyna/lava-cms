@@ -10,6 +10,7 @@ export * from "./FixedToolbar";
 export * from "./FixedToolbarButtons";
 export * from "./HeadingElement";
 export * from "./InsertDropdownMenu";
+export * from "./LineHeightDropdownMenu";
 export * from "./MarkToolbarButton";
 export * from "./ParagraphElement";
 export * from "./Toolbar";

@@ -13,7 +13,6 @@
 	"devDependencies": {
 		"@typescript-eslint/eslint-plugin": "^6.13.2",
 		"@typescript-eslint/parser": "^6.13.2",
-		"depcheck": "^1.4.7",
 		"eslint": "^8.55.0",
 		"prettier": "^3.1.0",
 		"tsup": "^8.0.1",
