@@ -13,6 +13,10 @@ import {
 	IconStrikethrough,
 	IconSelector,
 	IconCheck,
+	IconAlignLeft,
+	IconAlignCenter,
+	IconAlignRight,
+	IconAlignJustified,
 } from "@tabler/icons-react";
 
 export const icons = {
@@ -32,4 +36,9 @@ export const icons = {
 	ArrowUpDown: IconSelector,
 	Plus: IconPlus,
 	Check: IconCheck,
+
+	AlignLeft: IconAlignLeft,
+	AlignCenter: IconAlignCenter,
+	AlignRight: IconAlignRight,
+	AlignJustify: IconAlignJustified,
 };

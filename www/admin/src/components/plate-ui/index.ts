@@ -1,5 +1,6 @@
 "use client";
 
+export * from "./AlignDropdownMenu";
 export * from "./BlockQuoteElement";
 export * from "./CodeBlockCombobox";
 export * from "./CodeBlockElement";

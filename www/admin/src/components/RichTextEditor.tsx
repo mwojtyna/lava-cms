@@ -2,6 +2,7 @@
 
 import { ArrowUturnLeftIcon } from "@heroicons/react/24/outline";
 import { withProps } from "@udecode/cn";
+import { createAlignPlugin } from "@udecode/plate-alignment";
 import { createBasicElementsPlugin } from "@udecode/plate-basic-elements";
 import {
 	MARK_BOLD,
@@ -37,29 +38,50 @@ import {
 } from "./plate-ui";
 import { ActionIcon, type FormFieldProps } from "./ui/client";
 
-export const plugins = createPlugins([createBasicElementsPlugin(), createBasicMarksPlugin()], {
-	components: {
-		// createBasicElementsPlugin()
-		[ELEMENT_H1]: withProps(HeadingElement, { variant: "h1" }),
-		[ELEMENT_H2]: withProps(HeadingElement, { variant: "h2" }),
-		[ELEMENT_H3]: withProps(HeadingElement, { variant: "h3" }),
-		[ELEMENT_H4]: withProps(HeadingElement, { variant: "h4" }),
-		[ELEMENT_H5]: withProps(HeadingElement, { variant: "h5" }),
-		[ELEMENT_H6]: withProps(HeadingElement, { variant: "h6" }),
-		[ELEMENT_PARAGRAPH]: ParagraphElement,
-		[ELEMENT_BLOCKQUOTE]: BlockquoteElement,
-		[ELEMENT_CODE_BLOCK]: CodeBlockElement,
+export const plugins = createPlugins(
+	[
+		createBasicElementsPlugin(),
+		createBasicMarksPlugin(),
+		createAlignPlugin({
+			inject: {
+				props: {
+					validTypes: [
+						ELEMENT_H1,
+						ELEMENT_H2,
+						ELEMENT_H3,
+						ELEMENT_H4,
+						ELEMENT_H5,
+						ELEMENT_H6,
+						ELEMENT_PARAGRAPH,
+						ELEMENT_BLOCKQUOTE,
+					],
+				},
+			},
+		}),
+	],
+	{
+		// TODO: Media, superscript, subscript, link, list, table, divider, dnd
+		components: {
+			// createBasicElementsPlugin()
+			[ELEMENT_H1]: withProps(HeadingElement, { variant: "h1" }),
+			[ELEMENT_H2]: withProps(HeadingElement, { variant: "h2" }),
+			[ELEMENT_H3]: withProps(HeadingElement, { variant: "h3" }),
+			[ELEMENT_H4]: withProps(HeadingElement, { variant: "h4" }),
+			[ELEMENT_H5]: withProps(HeadingElement, { variant: "h5" }),
+			[ELEMENT_H6]: withProps(HeadingElement, { variant: "h6" }),
+			[ELEMENT_PARAGRAPH]: ParagraphElement,
+			[ELEMENT_BLOCKQUOTE]: BlockquoteElement,
+			[ELEMENT_CODE_BLOCK]: CodeBlockElement,
 
-		// createBasicMarksPlugin()
-		[MARK_BOLD]: withProps(PlateLeaf, { as: "strong" }),
-		[MARK_ITALIC]: withProps(PlateLeaf, { as: "em" }),
-		[MARK_UNDERLINE]: withProps(PlateLeaf, { as: "u" }),
-		[MARK_STRIKETHROUGH]: withProps(PlateLeaf, { as: "s" }),
-		[MARK_CODE]: CodeLeaf,
-
-		// TODO: Alignment, media, superscript, subscript, link, list, table, divider, dnd
+			// createBasicMarksPlugin()
+			[MARK_BOLD]: withProps(PlateLeaf, { as: "strong" }),
+			[MARK_ITALIC]: withProps(PlateLeaf, { as: "em" }),
+			[MARK_UNDERLINE]: withProps(PlateLeaf, { as: "u" }),
+			[MARK_STRIKETHROUGH]: withProps(PlateLeaf, { as: "s" }),
+			[MARK_CODE]: CodeLeaf,
+		},
 	},
-});
+);
 
 interface Props extends FormFieldProps<Value> {
 	edited: boolean;

@@ -44,6 +44,7 @@
 		"@trpc/react-query": "^10.44.1",
 		"@trpc/server": "^10.44.1",
 		"@udecode/cn": "^29.0.1",
+		"@udecode/plate-alignment": "^30.1.2",
 		"@udecode/plate-basic-elements": "^30.1.2",
 		"@udecode/plate-basic-marks": "^30.1.2",
 		"@udecode/plate-block-quote": "^30.1.2",

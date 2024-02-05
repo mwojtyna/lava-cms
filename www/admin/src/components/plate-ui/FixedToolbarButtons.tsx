@@ -12,7 +12,7 @@ import React from "react";
 import { icons } from "./icons";
 import { InsertDropdownMenu } from "./InsertDropdownMenu";
 import { MarkToolbarButton } from "./MarkToolbarButton";
-import { TurnIntoDropdownMenu, ToolbarGroup } from "./";
+import { TurnIntoDropdownMenu, ToolbarGroup, AlignDropdownMenu } from "./";
 
 export function FixedToolbarButtons() {
 	const readOnly = useEditorReadOnly();
@@ -66,6 +66,10 @@ export function FixedToolbarButtons() {
 							>
 								<icons.Code />
 							</MarkToolbarButton>
+						</ToolbarGroup>
+
+						<ToolbarGroup noGap>
+							<AlignDropdownMenu />
 						</ToolbarGroup>
 					</>
 				)}

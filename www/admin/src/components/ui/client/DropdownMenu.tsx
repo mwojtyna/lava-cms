@@ -109,23 +109,30 @@ const DropdownMenuCheckboxItem = React.forwardRef<
 ));
 DropdownMenuCheckboxItem.displayName = DropdownMenuPrimitive.CheckboxItem.displayName;
 
+interface DropdownMenuRadioItemProps
+	extends React.ComponentPropsWithoutRef<typeof DropdownMenuPrimitive.RadioItem> {
+	hideIcon?: boolean;
+}
 const DropdownMenuRadioItem = React.forwardRef<
 	React.ElementRef<typeof DropdownMenuPrimitive.RadioItem>,
-	React.ComponentPropsWithoutRef<typeof DropdownMenuPrimitive.RadioItem>
->(({ className, children, ...props }, ref) => (
+	DropdownMenuRadioItemProps
+>(({ className, children, hideIcon, ...props }, ref) => (
 	<DropdownMenuPrimitive.RadioItem
 		ref={ref}
 		className={cn(
-			"relative flex cursor-default select-none items-center rounded-sm py-1.5 pl-8 pr-2 text-sm outline-none transition-colors focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
+			"relative flex cursor-pointer select-none items-center rounded-sm py-1.5 pl-8 pr-2 text-sm outline-none transition-colors focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
+			hideIcon && "pl-2",
 			className,
 		)}
 		{...props}
 	>
-		<span className="absolute left-2 flex h-3.5 w-3.5 items-center justify-center">
-			<DropdownMenuPrimitive.ItemIndicator>
-				<IconCircle className="h-2 w-2 fill-current" />
-			</DropdownMenuPrimitive.ItemIndicator>
-		</span>
+		{!hideIcon && (
+			<span className="absolute left-2 flex h-3.5 w-3.5 items-center justify-center">
+				<DropdownMenuPrimitive.ItemIndicator>
+					<IconCircle className="h-2 w-2 fill-current" />
+				</DropdownMenuPrimitive.ItemIndicator>
+			</span>
+		)}
 		{children}
 	</DropdownMenuPrimitive.RadioItem>
 ));
