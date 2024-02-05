@@ -9,6 +9,8 @@ import {
 	MARK_CODE,
 	MARK_ITALIC,
 	MARK_STRIKETHROUGH,
+	MARK_SUBSCRIPT,
+	MARK_SUPERSCRIPT,
 	MARK_UNDERLINE,
 	createBasicMarksPlugin,
 } from "@udecode/plate-basic-marks";
@@ -174,6 +176,9 @@ export const plugins = createPlugins(
 
 			// createLinkPlugin()
 			[ELEMENT_LINK]: LinkElement,
+
+			[MARK_SUPERSCRIPT]: withProps(PlateLeaf, { as: "sup" }),
+			[MARK_SUBSCRIPT]: withProps(PlateLeaf, { as: "sub" }),
 		},
 	},
 );

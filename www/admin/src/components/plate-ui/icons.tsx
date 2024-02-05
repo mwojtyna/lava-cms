@@ -24,6 +24,8 @@ import {
 	IconCursorText,
 	IconExternalLink,
 	IconLinkOff,
+	IconSuperscript,
+	IconSubscript,
 } from "@tabler/icons-react";
 
 export const icons = {
@@ -56,4 +58,7 @@ export const icons = {
 	ExternalLink: IconExternalLink,
 	Unlink: IconLinkOff,
 	Text: IconCursorText,
+
+	Superscript: IconSuperscript,
+	Subscript: IconSubscript,
 };

@@ -4,6 +4,8 @@ import {
 	MARK_CODE,
 	MARK_ITALIC,
 	MARK_STRIKETHROUGH,
+	MARK_SUBSCRIPT,
+	MARK_SUPERSCRIPT,
 	MARK_UNDERLINE,
 } from "@udecode/plate-basic-marks";
 import { useEditorReadOnly } from "@udecode/plate-common";
@@ -85,6 +87,14 @@ export function FixedToolbarButtons() {
 
 						<ToolbarGroup>
 							<LinkToolbarButton tooltip={`Link (${modifierKey}+K)`} />
+
+							<MarkToolbarButton tooltip="Superscript" nodeType={MARK_SUPERSCRIPT}>
+								<icons.Superscript />
+							</MarkToolbarButton>
+
+							<MarkToolbarButton tooltip="Subscript" nodeType={MARK_SUBSCRIPT}>
+								<icons.Subscript />
+							</MarkToolbarButton>
 						</ToolbarGroup>
 					</>
 				)}
