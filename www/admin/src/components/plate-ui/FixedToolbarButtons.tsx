@@ -7,6 +7,7 @@ import {
 	MARK_UNDERLINE,
 } from "@udecode/plate-basic-marks";
 import { useEditorReadOnly } from "@udecode/plate-common";
+import { ListStyleType } from "@udecode/plate-indent-list";
 import React from "react";
 
 import { icons } from "./icons";
@@ -17,6 +18,7 @@ import {
 	TurnIntoDropdownMenu,
 	ToolbarGroup,
 	AlignDropdownMenu,
+	IndentListToolbarButton,
 } from "./";
 
 export function FixedToolbarButtons() {
@@ -76,6 +78,8 @@ export function FixedToolbarButtons() {
 						<ToolbarGroup noGap>
 							<AlignDropdownMenu />
 							<LineHeightDropdownMenu />
+							<IndentListToolbarButton nodeType={ListStyleType.Disc} />
+							<IndentListToolbarButton nodeType={ListStyleType.Decimal} />
 						</ToolbarGroup>
 					</>
 				)}

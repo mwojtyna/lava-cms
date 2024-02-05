@@ -23,6 +23,8 @@ import {
 	ELEMENT_H5,
 	ELEMENT_H6,
 } from "@udecode/plate-heading";
+import { createIndentPlugin } from "@udecode/plate-indent";
+import { createIndentListPlugin } from "@udecode/plate-indent-list";
 import { createLineHeightPlugin } from "@udecode/plate-line-height";
 import { ELEMENT_PARAGRAPH } from "@udecode/plate-paragraph";
 import React from "react";
@@ -68,9 +70,37 @@ export const plugins = createPlugins(
 				},
 			},
 		}),
+		createIndentPlugin({
+			inject: {
+				props: {
+					validTypes: [
+						ELEMENT_PARAGRAPH,
+						ELEMENT_H1,
+						ELEMENT_H2,
+						ELEMENT_H3,
+						ELEMENT_BLOCKQUOTE,
+						ELEMENT_CODE_BLOCK,
+					],
+				},
+			},
+		}),
+		createIndentListPlugin({
+			inject: {
+				props: {
+					validTypes: [
+						ELEMENT_PARAGRAPH,
+						ELEMENT_H1,
+						ELEMENT_H2,
+						ELEMENT_H3,
+						ELEMENT_BLOCKQUOTE,
+						ELEMENT_CODE_BLOCK,
+					],
+				},
+			},
+		}),
 	],
 	{
-		// TODO: Media, superscript, subscript, link, list, table, divider, dnd
+		// TODO: Media, superscript, subscript, link, table, divider, dnd
 		components: {
 			// createBasicElementsPlugin()
 			[ELEMENT_H1]: withProps(HeadingElement, { variant: "h1" }),

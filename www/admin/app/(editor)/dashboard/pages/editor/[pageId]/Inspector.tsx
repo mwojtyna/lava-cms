@@ -19,7 +19,7 @@ import { Components } from "./Components";
 import { AddComponentDialog, createComponentInstance } from "./dialogs/AddComponentDialog";
 
 export const MIN_WIDTH = 300;
-const DEFAULT_WIDTH = MIN_WIDTH * 1.5;
+const DEFAULT_WIDTH = MIN_WIDTH * 1.75;
 
 // Placeholder component to avoid undefined error when saving and current step's
 // component id hasn't been swapped to backend's id yet

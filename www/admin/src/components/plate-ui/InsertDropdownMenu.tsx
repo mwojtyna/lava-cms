@@ -60,18 +60,18 @@ const items = [
 			//   description: 'Table',
 			//   icon: Icons.table,
 			// },
-			// {
-			//   value: 'ul',
-			//   label: 'Bulleted list',
-			//   description: 'Bulleted list',
-			//   icon: Icons.ul,
-			// },
-			// {
-			//   value: 'ol',
-			//   label: 'Numbered list',
-			//   description: 'Numbered list',
-			//   icon: Icons.ol,
-			// },
+			{
+				value: "ul",
+				label: "Bulleted list",
+				description: "Bulleted list",
+				icon: icons.Ul,
+			},
+			{
+				value: "ol",
+				label: "Numbered list",
+				description: "Numbered list",
+				icon: icons.Ol,
+			},
 			// {
 			//   value: ELEMENT_HR,
 			//   label: 'Divider',

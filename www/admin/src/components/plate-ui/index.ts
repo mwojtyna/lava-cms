@@ -9,6 +9,7 @@ export * from "./Editor";
 export * from "./FixedToolbar";
 export * from "./FixedToolbarButtons";
 export * from "./HeadingElement";
+export * from "./IndentListToolbarButton";
 export * from "./InsertDropdownMenu";
 export * from "./LineHeightDropdownMenu";
 export * from "./MarkToolbarButton";
