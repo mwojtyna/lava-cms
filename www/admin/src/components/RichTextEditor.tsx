@@ -1,6 +1,6 @@
 "use client";
 
-import type { FormFieldProps } from "./ui/client";
+import { ArrowUturnLeftIcon } from "@heroicons/react/24/outline";
 import { withProps } from "@udecode/cn";
 import { createBasicElementsPlugin } from "@udecode/plate-basic-elements";
 import {
@@ -35,6 +35,7 @@ import {
 	FixedToolbarButtons,
 	CodeLeaf,
 } from "./plate-ui";
+import { ActionIcon, type FormFieldProps } from "./ui/client";
 
 export const plugins = createPlugins([createBasicElementsPlugin(), createBasicMarksPlugin()], {
 	components: {
@@ -55,24 +56,43 @@ export const plugins = createPlugins([createBasicElementsPlugin(), createBasicMa
 		[MARK_UNDERLINE]: withProps(PlateLeaf, { as: "u" }),
 		[MARK_STRIKETHROUGH]: withProps(PlateLeaf, { as: "s" }),
 		[MARK_CODE]: CodeLeaf,
+
+		// TODO: Alignment, media, superscript, subscript, link, list, table, divider, dnd
 	},
 });
 
-export function RichTextEditor(props: FormFieldProps<Value>) {
+interface Props extends FormFieldProps<Value> {
+	edited: boolean;
+	onRestore: () => void;
+}
+export function RichTextEditor(props: Props) {
 	return (
 		<Plate plugins={plugins} value={props.value} onChange={props.onChange}>
 			<div
 				className={cn(
 					// Block selection
 					"[&_.slate-start-area-left]:!w-[64px] [&_.slate-start-area-right]:!w-[64px] [&_.slate-start-area-top]:!h-4",
-					"rounded-md ring-ring ring-offset-2 ring-offset-card focus-within:ring-2",
+					"relative rounded-md ring-ring ring-offset-2 ring-offset-card focus-within:ring-2",
 				)}
 			>
 				<FixedToolbar>
 					<FixedToolbarButtons />
 				</FixedToolbar>
 
-				<Editor className="rounded-t-none border-t-0" focusRing={false} />
+				<Editor
+					className={cn("rounded-t-none border-t-0", props.edited && "border-b-brand")}
+					focusRing={false}
+				/>
+
+				{props.edited && (
+					<ActionIcon
+						className="absolute bottom-1 right-1 bg-background/50"
+						onClick={props.onRestore}
+						tooltip={"Restore"}
+					>
+						<ArrowUturnLeftIcon className="w-4" />
+					</ActionIcon>
+				)}
 			</div>
 		</Plate>
 	);

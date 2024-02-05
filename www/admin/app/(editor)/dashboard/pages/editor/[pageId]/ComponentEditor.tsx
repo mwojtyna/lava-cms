@@ -82,6 +82,18 @@ export function ComponentEditor(props: ComponentEditorProps) {
 				{props.component.fields.map((field, i) => {
 					// Is undefined if the component was only added in the page editor and not yet saved
 					const originalField = originalComponent?.fields[i];
+
+					let edited = false;
+					if (field.type === "RICH_TEXT") {
+						if (JSON.stringify(field.data) !== JSON.stringify(originalField?.data)) {
+							edited = true;
+						}
+					} else {
+						if (props.component.diff !== "replaced" && originalField) {
+							edited = field.data !== originalField.data;
+						}
+					}
+
 					return (
 						<FormField
 							key={field.id}
@@ -95,11 +107,7 @@ export function ComponentEditor(props: ComponentEditorProps) {
 									<FormControl>
 										<Field
 											component={props.component}
-											edited={
-												props.component.diff !== "replaced" && originalField
-													? field.data !== originalField.data
-													: false
-											}
+											edited={edited}
 											field={field}
 											onRestore={() => {
 												form.setValue(field.id, originalField!.data);
@@ -146,10 +154,13 @@ export const Field = forwardRef<HTMLTextAreaElement | HTMLButtonElement, FieldPr
 			}
 			case "RICH_TEXT": {
 				return (
+					// FIX: Upon restore, the value is not updated
 					<RichTextEditor
 						// Rich text editor's value is an object instead of a string
 						value={value as unknown as Value}
 						onChange={(v) => onChange(v as unknown as string)}
+						edited={edited}
+						onRestore={onRestore}
 					/>
 				);
 			}
