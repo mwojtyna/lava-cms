@@ -13,6 +13,7 @@ import {
 	createBasicMarksPlugin,
 } from "@udecode/plate-basic-marks";
 import { ELEMENT_BLOCKQUOTE } from "@udecode/plate-block-quote";
+import { createSoftBreakPlugin } from "@udecode/plate-break";
 import { ELEMENT_CODE_BLOCK } from "@udecode/plate-code-block";
 import {
 	Plate,
@@ -110,6 +111,19 @@ export const plugins = createPlugins(
 		createLinkPlugin({
 			renderAfterEditable: LinkFloatingToolbar as RenderAfterEditable,
 		}),
+		createSoftBreakPlugin({
+			options: {
+				rules: [
+					{ hotkey: "shift+enter" },
+					{
+						hotkey: "enter",
+						query: {
+							allow: [ELEMENT_CODE_BLOCK, ELEMENT_BLOCKQUOTE /* ,ELEMENT_TD */],
+						},
+					},
+				],
+			},
+		}),
 	],
 	{
 		// TODO: Media, superscript, subscript, table, divider, dnd
@@ -132,7 +146,7 @@ export const plugins = createPlugins(
 			[MARK_STRIKETHROUGH]: withProps(PlateLeaf, { as: "s" }),
 			[MARK_CODE]: CodeLeaf,
 
-			// createLinkPlugin
+			// createLinkPlugin()
 			[ELEMENT_LINK]: LinkElement,
 		},
 	},

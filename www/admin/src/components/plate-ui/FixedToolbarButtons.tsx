@@ -84,7 +84,7 @@ export function FixedToolbarButtons() {
 						</ToolbarGroup>
 
 						<ToolbarGroup>
-							<LinkToolbarButton tooltip={`Link (${modifierKey}+L)`} />
+							<LinkToolbarButton tooltip={`Link (${modifierKey}+K)`} />
 						</ToolbarGroup>
 					</>
 				)}
