@@ -3,8 +3,6 @@
 export * from "./AlignDropdownMenu";
 export * from "./BlockQuoteElement";
 export * from "./Caption";
-export * from "./CodeBlockCombobox";
-export * from "./CodeBlockElement";
 export * from "./CodeLeaf";
 export * from "./Draggable";
 export * from "./Editor";
@@ -20,7 +18,6 @@ export * from "./LinkElement";
 export * from "./LinkFloatingToolbar";
 export * from "./LinkToolbarButton";
 export * from "./MarkToolbarButton";
-// export * from "./MediaEmbedElement";
 export * from "./MediaPopover";
 export * from "./MediaToolbarButton";
 export * from "./ParagraphElement";

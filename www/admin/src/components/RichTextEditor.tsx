@@ -17,7 +17,6 @@ import {
 import { ELEMENT_BLOCKQUOTE, createBlockquotePlugin } from "@udecode/plate-block-quote";
 import { createSoftBreakPlugin } from "@udecode/plate-break";
 import { createCaptionPlugin } from "@udecode/plate-caption";
-import { ELEMENT_CODE_BLOCK } from "@udecode/plate-code-block";
 import {
 	Plate,
 	createPlugins,
@@ -44,7 +43,7 @@ import { createIndentPlugin } from "@udecode/plate-indent";
 import { createIndentListPlugin } from "@udecode/plate-indent-list";
 import { createLineHeightPlugin } from "@udecode/plate-line-height";
 import { ELEMENT_LINK, createLinkPlugin } from "@udecode/plate-link";
-import { ELEMENT_IMAGE, ELEMENT_MEDIA_EMBED, createImagePlugin } from "@udecode/plate-media";
+import { ELEMENT_IMAGE, createImagePlugin } from "@udecode/plate-media";
 import { createNodeIdPlugin } from "@udecode/plate-node-id";
 import { ELEMENT_PARAGRAPH, createParagraphPlugin } from "@udecode/plate-paragraph";
 import { createResetNodePlugin } from "@udecode/plate-reset-node";
@@ -71,13 +70,11 @@ import {
 	CodeLeaf,
 	LinkElement,
 	LinkFloatingToolbar,
-	// MediaEmbedElement,
 	ImageElement,
 	TableElement,
 	TableRowElement,
 	TableCellElement,
 	TableCellHeaderElement,
-	CodeBlockElement,
 	HrElement,
 } from "./plate-ui";
 import { withPlaceholders } from "./plate-ui/Placeholder";
@@ -101,7 +98,6 @@ export const plugins = [
 	createParagraphPlugin(),
 	createHeadingPlugin(),
 	createBlockquotePlugin(),
-	// createCodeBlockPlugin(),
 	createBasicMarksPlugin(),
 	createAlignPlugin({
 		inject: {
@@ -138,7 +134,6 @@ export const plugins = [
 					ELEMENT_H2,
 					ELEMENT_H3,
 					ELEMENT_BLOCKQUOTE,
-					ELEMENT_CODE_BLOCK,
 				],
 			},
 		},
@@ -152,7 +147,6 @@ export const plugins = [
 					ELEMENT_H2,
 					ELEMENT_H3,
 					ELEMENT_BLOCKQUOTE,
-					ELEMENT_CODE_BLOCK,
 				],
 			},
 		},
@@ -167,7 +161,7 @@ export const plugins = [
 				{
 					hotkey: "enter",
 					query: {
-						allow: [ELEMENT_CODE_BLOCK, ELEMENT_BLOCKQUOTE, ELEMENT_TD],
+						allow: [ELEMENT_BLOCKQUOTE, ELEMENT_TD],
 					},
 				},
 			],
@@ -214,7 +208,7 @@ export const plugins = [
 	}),
 	createCaptionPlugin({
 		options: {
-			pluginKeys: [ELEMENT_IMAGE, ELEMENT_MEDIA_EMBED],
+			pluginKeys: [ELEMENT_IMAGE],
 		},
 	}),
 	createDeserializeMdPlugin(),
@@ -266,7 +260,6 @@ export const components = {
 	[ELEMENT_H6]: withProps(HeadingElement, { variant: "h6" }),
 	[ELEMENT_PARAGRAPH]: ParagraphElement,
 	[ELEMENT_BLOCKQUOTE]: BlockquoteElement,
-	[ELEMENT_CODE_BLOCK]: CodeBlockElement,
 	[ELEMENT_HR]: HrElement,
 
 	// createBasicMarksPlugin()
@@ -281,7 +274,6 @@ export const components = {
 	[MARK_SUBSCRIPT]: withProps(PlateLeaf, { as: "sub" }),
 
 	[ELEMENT_IMAGE]: ImageElement,
-	// [ELEMENT_MEDIA_EMBED]: MediaEmbedElement,
 
 	[ELEMENT_TABLE]: TableElement,
 	[ELEMENT_TR]: TableRowElement,
@@ -291,7 +283,6 @@ export const components = {
 
 const pluginsWithDnd = createPlugins(plugins, {
 	// FIX: When just added a component with rich text field and saved, the content is empty
-	// TODO: Own codeblock element
 	// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
 	components: withPlaceholders(withDraggables(components)),
 });

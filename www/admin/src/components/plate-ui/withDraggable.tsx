@@ -2,7 +2,6 @@ import type { DraggableProps } from "./Draggable";
 import type { WithDraggableOptions } from "@udecode/plate-dnd";
 import type { FC } from "react";
 import { ELEMENT_BLOCKQUOTE } from "@udecode/plate-block-quote";
-import { ELEMENT_CODE_BLOCK } from "@udecode/plate-code-block";
 import { createNodesWithHOC } from "@udecode/plate-common";
 import { withDraggable as withDraggablePrimitive } from "@udecode/plate-dnd";
 import {
@@ -96,13 +95,13 @@ export const withDraggables = (components: any) => {
 				},
 			},
 		},
-		{
-			key: ELEMENT_CODE_BLOCK,
-			draggableProps: {
-				classNames: {
-					gutterLeft: "pt-8 px-0 pb-0",
-				},
-			},
-		},
+		// {
+		// 	key: ELEMENT_CODE_BLOCK,
+		// 	draggableProps: {
+		// 		classNames: {
+		// 			gutterLeft: "pt-8 px-0 pb-0",
+		// 		},
+		// 	},
+		// },
 	]);
 };
