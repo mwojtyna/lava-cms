@@ -58,6 +58,7 @@ import {
 	ImageElement,
 } from "./plate-ui";
 import { ActionIcon, type FormFieldProps } from "./ui/client";
+import { createDeserializeMdPlugin } from "@udecode/plate-serializer-md";
 
 const resetBlockTypesCommonRule = {
 	types: [
@@ -195,8 +196,10 @@ export const plugins = createPlugins(
 				pluginKeys: [ELEMENT_IMAGE, ELEMENT_MEDIA_EMBED],
 			},
 		}),
+		createDeserializeMdPlugin(),
 	],
 	{
+		// FIX: When just added a component with rich text field and saved, the content is empty
 		// TODO: Table, divider, dnd
 		components: {
 			// createBasicElementsPlugin()
