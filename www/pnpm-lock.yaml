@@ -129,9 +129,6 @@ importers:
       '@udecode/plate-alignment':
         specifier: ^30.1.2
         version: 30.1.2(@types/react@18.2.38)(react-dom@18.2.0)(react@18.2.0)(slate-history@0.100.0)(slate-hyperscript@0.100.0)(slate-react@0.101.6)(slate@0.101.5)
-      '@udecode/plate-basic-elements':
-        specifier: ^30.1.2
-        version: 30.1.2(@types/react@18.2.38)(react-dom@18.2.0)(react@18.2.0)(slate-history@0.100.0)(slate-hyperscript@0.100.0)(slate-react@0.101.6)(slate@0.101.5)
       '@udecode/plate-basic-marks':
         specifier: ^30.1.2
         version: 30.1.2(@types/react@18.2.38)(react-dom@18.2.0)(react@18.2.0)(slate-history@0.100.0)(slate-hyperscript@0.100.0)(slate-react@0.101.6)(slate@0.101.5)
@@ -3800,34 +3797,6 @@ packages:
       slate-react: '>=0.99.0'
     dependencies:
       '@udecode/plate-common': 30.1.2(@types/react@18.2.38)(react-dom@18.2.0)(react@18.2.0)(slate-history@0.100.0)(slate-hyperscript@0.100.0)(slate-react@0.101.6)(slate@0.101.5)
-      react: 18.2.0
-      react-dom: 18.2.0(react@18.2.0)
-      slate: 0.101.5
-      slate-history: 0.100.0(slate@0.101.5)
-      slate-hyperscript: 0.100.0(slate@0.101.5)
-      slate-react: 0.101.6(react-dom@18.2.0)(react@18.2.0)(slate@0.101.5)
-    transitivePeerDependencies:
-      - '@types/react'
-      - immer
-      - react-native
-      - scheduler
-    dev: false
-
-  /@udecode/plate-basic-elements@30.1.2(@types/react@18.2.38)(react-dom@18.2.0)(react@18.2.0)(slate-history@0.100.0)(slate-hyperscript@0.100.0)(slate-react@0.101.6)(slate@0.101.5):
-    resolution: {integrity: sha512-tm7PrSbRXK+J10oWUOUieHGtiKSUrALUzLmNJNda9ELm+A+hIo9bPnIxP1i0WatTQ3/sAMMYUR1iCfD+LjuKAA==}
-    peerDependencies:
-      react: '>=16.8.0'
-      react-dom: '>=16.8.0'
-      slate: '>=0.94.0'
-      slate-history: '>=0.93.0'
-      slate-hyperscript: '>=0.66.0'
-      slate-react: '>=0.99.0'
-    dependencies:
-      '@udecode/plate-block-quote': 30.1.2(@types/react@18.2.38)(react-dom@18.2.0)(react@18.2.0)(slate-history@0.100.0)(slate-hyperscript@0.100.0)(slate-react@0.101.6)(slate@0.101.5)
-      '@udecode/plate-code-block': 30.1.2(@types/react@18.2.38)(react-dom@18.2.0)(react@18.2.0)(slate-history@0.100.0)(slate-hyperscript@0.100.0)(slate-react@0.101.6)(slate@0.101.5)
-      '@udecode/plate-common': 30.1.2(@types/react@18.2.38)(react-dom@18.2.0)(react@18.2.0)(slate-history@0.100.0)(slate-hyperscript@0.100.0)(slate-react@0.101.6)(slate@0.101.5)
-      '@udecode/plate-heading': 30.1.2(@types/react@18.2.38)(react-dom@18.2.0)(react@18.2.0)(slate-history@0.100.0)(slate-hyperscript@0.100.0)(slate-react@0.101.6)(slate@0.101.5)
-      '@udecode/plate-paragraph': 30.1.2(@types/react@18.2.38)(react-dom@18.2.0)(react@18.2.0)(slate-history@0.100.0)(slate-hyperscript@0.100.0)(slate-react@0.101.6)(slate@0.101.5)
       react: 18.2.0
       react-dom: 18.2.0(react@18.2.0)
       slate: 0.101.5

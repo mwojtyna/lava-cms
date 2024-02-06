@@ -3,7 +3,6 @@
 import { ArrowUturnLeftIcon } from "@heroicons/react/24/outline";
 import { withProps } from "@udecode/cn";
 import { createAlignPlugin } from "@udecode/plate-alignment";
-import { createBasicElementsPlugin } from "@udecode/plate-basic-elements";
 import {
 	MARK_BOLD,
 	MARK_CODE,
@@ -14,7 +13,7 @@ import {
 	MARK_UNDERLINE,
 	createBasicMarksPlugin,
 } from "@udecode/plate-basic-marks";
-import { ELEMENT_BLOCKQUOTE } from "@udecode/plate-block-quote";
+import { ELEMENT_BLOCKQUOTE, createBlockquotePlugin } from "@udecode/plate-block-quote";
 import { createSoftBreakPlugin } from "@udecode/plate-break";
 import { createCaptionPlugin } from "@udecode/plate-caption";
 import { ELEMENT_CODE_BLOCK } from "@udecode/plate-code-block";
@@ -33,13 +32,14 @@ import {
 	ELEMENT_H4,
 	ELEMENT_H5,
 	ELEMENT_H6,
+	createHeadingPlugin,
 } from "@udecode/plate-heading";
 import { createIndentPlugin } from "@udecode/plate-indent";
 import { createIndentListPlugin } from "@udecode/plate-indent-list";
 import { createLineHeightPlugin } from "@udecode/plate-line-height";
 import { ELEMENT_LINK, createLinkPlugin } from "@udecode/plate-link";
 import { ELEMENT_IMAGE, ELEMENT_MEDIA_EMBED, createImagePlugin } from "@udecode/plate-media";
-import { ELEMENT_PARAGRAPH } from "@udecode/plate-paragraph";
+import { ELEMENT_PARAGRAPH, createParagraphPlugin } from "@udecode/plate-paragraph";
 import { createResetNodePlugin } from "@udecode/plate-reset-node";
 import { createDeserializeMdPlugin } from "@udecode/plate-serializer-md";
 import {
@@ -56,7 +56,6 @@ import {
 	BlockquoteElement,
 	HeadingElement,
 	ParagraphElement,
-	CodeBlockElement,
 	FixedToolbar,
 	FixedToolbarButtons,
 	CodeLeaf,
@@ -68,6 +67,7 @@ import {
 	TableRowElement,
 	TableCellElement,
 	TableCellHeaderElement,
+	CodeBlockElement,
 } from "./plate-ui";
 import { ActionIcon, type FormFieldProps } from "./ui/client";
 
@@ -86,7 +86,10 @@ const resetBlockTypesCommonRule = {
 
 export const plugins = createPlugins(
 	[
-		createBasicElementsPlugin(),
+		createParagraphPlugin(),
+		createHeadingPlugin(),
+		createBlockquotePlugin(),
+		// createCodeBlockPlugin(),
 		createBasicMarksPlugin(),
 		createAlignPlugin({
 			inject: {
@@ -123,7 +126,7 @@ export const plugins = createPlugins(
 						ELEMENT_H2,
 						ELEMENT_H3,
 						ELEMENT_BLOCKQUOTE,
-						// ELEMENT_CODE_BLOCK,
+						ELEMENT_CODE_BLOCK,
 					],
 				},
 			},
@@ -137,7 +140,7 @@ export const plugins = createPlugins(
 						ELEMENT_H2,
 						ELEMENT_H3,
 						ELEMENT_BLOCKQUOTE,
-						// ELEMENT_CODE_BLOCK,
+						ELEMENT_CODE_BLOCK,
 					],
 				},
 			},
@@ -152,7 +155,7 @@ export const plugins = createPlugins(
 					{
 						hotkey: "enter",
 						query: {
-							allow: [/* ELEMENT_CODE_BLOCK, */ ELEMENT_BLOCKQUOTE /* ,ELEMENT_TD */],
+							allow: [ELEMENT_CODE_BLOCK, ELEMENT_BLOCKQUOTE, ELEMENT_TD],
 						},
 					},
 				],
@@ -215,7 +218,7 @@ export const plugins = createPlugins(
 	],
 	{
 		// FIX: When just added a component with rich text field and saved, the content is empty
-		// TODO: Own codeblock element, table, divider, dnd
+		// TODO: Own codeblock element, divider, dnd
 		components: {
 			// createBasicElementsPlugin()
 			[ELEMENT_H1]: withProps(HeadingElement, { variant: "h1" }),

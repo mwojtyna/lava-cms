@@ -18,12 +18,13 @@ const DropdownMenuSubTrigger = React.forwardRef<
 	React.ComponentPropsWithoutRef<typeof DropdownMenuPrimitive.SubTrigger> & {
 		inset?: boolean;
 	}
->(({ className, inset, children, ...props }, ref) => (
+>(({ className, inset, children, disabled, ...props }, ref) => (
 	<DropdownMenuPrimitive.SubTrigger
 		ref={ref}
 		className={cn(
 			"flex cursor-default select-none items-center gap-1 rounded-sm px-2 py-1.5 text-sm outline-none focus:bg-accent data-[state=open]:bg-accent",
 			inset && "pl-8",
+			disabled && "pointer-events-none opacity-50",
 			className,
 		)}
 		{...props}
