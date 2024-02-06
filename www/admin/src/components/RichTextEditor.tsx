@@ -185,7 +185,6 @@ export const plugins = createPlugins(
 							className={className}
 							src={element.url as string}
 							alt={caption[0]?.text}
-							width={element.width as number}
 						/>
 					</div>
 				);
