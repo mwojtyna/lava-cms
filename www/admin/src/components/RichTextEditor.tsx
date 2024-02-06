@@ -41,6 +41,14 @@ import { ELEMENT_LINK, createLinkPlugin } from "@udecode/plate-link";
 import { ELEMENT_IMAGE, ELEMENT_MEDIA_EMBED, createImagePlugin } from "@udecode/plate-media";
 import { ELEMENT_PARAGRAPH } from "@udecode/plate-paragraph";
 import { createResetNodePlugin } from "@udecode/plate-reset-node";
+import { createDeserializeMdPlugin } from "@udecode/plate-serializer-md";
+import {
+	ELEMENT_TABLE,
+	ELEMENT_TD,
+	ELEMENT_TH,
+	ELEMENT_TR,
+	createTablePlugin,
+} from "@udecode/plate-table";
 import React from "react";
 import { cn } from "../utils/styling";
 import {
@@ -56,9 +64,12 @@ import {
 	LinkFloatingToolbar,
 	MediaEmbedElement,
 	ImageElement,
+	TableElement,
+	TableRowElement,
+	TableCellElement,
+	TableCellHeaderElement,
 } from "./plate-ui";
 import { ActionIcon, type FormFieldProps } from "./ui/client";
-import { createDeserializeMdPlugin } from "@udecode/plate-serializer-md";
 
 const resetBlockTypesCommonRule = {
 	types: [
@@ -112,7 +123,7 @@ export const plugins = createPlugins(
 						ELEMENT_H2,
 						ELEMENT_H3,
 						ELEMENT_BLOCKQUOTE,
-						ELEMENT_CODE_BLOCK,
+						// ELEMENT_CODE_BLOCK,
 					],
 				},
 			},
@@ -126,7 +137,7 @@ export const plugins = createPlugins(
 						ELEMENT_H2,
 						ELEMENT_H3,
 						ELEMENT_BLOCKQUOTE,
-						ELEMENT_CODE_BLOCK,
+						// ELEMENT_CODE_BLOCK,
 					],
 				},
 			},
@@ -141,7 +152,7 @@ export const plugins = createPlugins(
 					{
 						hotkey: "enter",
 						query: {
-							allow: [ELEMENT_CODE_BLOCK, ELEMENT_BLOCKQUOTE /* ,ELEMENT_TD */],
+							allow: [/* ELEMENT_CODE_BLOCK, */ ELEMENT_BLOCKQUOTE /* ,ELEMENT_TD */],
 						},
 					},
 				],
@@ -196,10 +207,15 @@ export const plugins = createPlugins(
 			},
 		}),
 		createDeserializeMdPlugin(),
+		createTablePlugin({
+			options: {
+				enableMerging: true,
+			},
+		}),
 	],
 	{
 		// FIX: When just added a component with rich text field and saved, the content is empty
-		// TODO: Table, divider, dnd
+		// TODO: Own codeblock element, table, divider, dnd
 		components: {
 			// createBasicElementsPlugin()
 			[ELEMENT_H1]: withProps(HeadingElement, { variant: "h1" }),
@@ -219,14 +235,17 @@ export const plugins = createPlugins(
 			[MARK_STRIKETHROUGH]: withProps(PlateLeaf, { as: "s" }),
 			[MARK_CODE]: CodeLeaf,
 
-			// createLinkPlugin()
 			[ELEMENT_LINK]: LinkElement,
-
 			[MARK_SUPERSCRIPT]: withProps(PlateLeaf, { as: "sup" }),
 			[MARK_SUBSCRIPT]: withProps(PlateLeaf, { as: "sub" }),
 
 			[ELEMENT_IMAGE]: ImageElement,
 			[ELEMENT_MEDIA_EMBED]: MediaEmbedElement,
+
+			[ELEMENT_TABLE]: TableElement,
+			[ELEMENT_TR]: TableRowElement,
+			[ELEMENT_TD]: TableCellElement,
+			[ELEMENT_TH]: TableCellHeaderElement,
 		},
 	},
 );

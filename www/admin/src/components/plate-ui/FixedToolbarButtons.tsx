@@ -23,6 +23,7 @@ import {
 	IndentListToolbarButton,
 	LinkToolbarButton,
 	MediaToolbarButton,
+	TableDropdownMenu,
 } from "./";
 
 export function FixedToolbarButtons() {
@@ -94,6 +95,7 @@ export function FixedToolbarButtons() {
 						<ToolbarGroup>
 							<LinkToolbarButton tooltip={`Link (${modifierKey}+K)`} />
 							<MediaToolbarButton tooltip="Image" />
+							<TableDropdownMenu />
 							{/* <MarkToolbarButton */}
 							{/* 	tooltip="Embed" */}
 							{/* 	nodeType={ELEMENT_MEDIA_EMBED} */}

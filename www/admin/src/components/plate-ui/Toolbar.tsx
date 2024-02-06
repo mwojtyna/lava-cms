@@ -51,7 +51,7 @@ const toolbarButtonVariants = cva(
 	},
 );
 
-const ToolbarButton = withTooltip(
+export const ToolbarButton = withTooltip(
 	// eslint-disable-next-line react/display-name
 	React.forwardRef<
 		React.ElementRef<typeof ToolbarToggleItem>,
@@ -107,7 +107,6 @@ const ToolbarButton = withTooltip(
 	}),
 );
 ToolbarButton.displayName = "ToolbarButton";
-export { ToolbarButton };
 
 export const ToolbarToggleItem = withVariants(ToolbarPrimitive.ToggleItem, toolbarButtonVariants, [
 	"variant",

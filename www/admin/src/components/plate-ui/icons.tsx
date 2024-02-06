@@ -29,6 +29,18 @@ import {
 	IconTrash,
 	IconPhoto,
 	IconMovie,
+	IconBorderBottom,
+	IconBorderTop,
+	IconBorderLeft,
+	IconBorderRight,
+	IconBorderNone,
+	IconBorderAll,
+	IconLayersIntersect2,
+	IconLayersDifference,
+	IconTable,
+	IconTableColumn,
+	IconMinus,
+	IconTableRow,
 } from "@tabler/icons-react";
 
 export const icons = {
@@ -47,6 +59,7 @@ export const icons = {
 	ArrowDown: IconChevronDown,
 	ArrowUpDown: IconSelector,
 	Plus: IconPlus,
+	Minus: IconMinus,
 	Check: IconCheck,
 
 	AlignLeft: IconAlignLeft,
@@ -67,4 +80,16 @@ export const icons = {
 	Image: IconPhoto,
 	Embed: IconMovie,
 	Delete: IconTrash,
+
+	Table: IconTable,
+	Column: IconTableColumn,
+	Row: IconTableRow,
+	BorderBottom: IconBorderBottom,
+	BorderTop: IconBorderTop,
+	BorderLeft: IconBorderLeft,
+	BorderRight: IconBorderRight,
+	BorderNone: IconBorderNone,
+	BorderAll: IconBorderAll,
+	Combine: IconLayersIntersect2,
+	Ungroup: IconLayersDifference,
 };
