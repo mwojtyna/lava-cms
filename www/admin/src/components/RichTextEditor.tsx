@@ -46,6 +46,7 @@ import { ELEMENT_LINK, createLinkPlugin } from "@udecode/plate-link";
 import { ELEMENT_IMAGE, ELEMENT_MEDIA_EMBED, createImagePlugin } from "@udecode/plate-media";
 import { ELEMENT_PARAGRAPH, createParagraphPlugin } from "@udecode/plate-paragraph";
 import { createResetNodePlugin } from "@udecode/plate-reset-node";
+import { createSelectOnBackspacePlugin } from "@udecode/plate-select";
 import { createDeserializeMdPlugin } from "@udecode/plate-serializer-md";
 import {
 	ELEMENT_TABLE,
@@ -222,6 +223,13 @@ export const plugins = createPlugins(
 			},
 		}),
 		createHorizontalRulePlugin(),
+		createSelectOnBackspacePlugin({
+			options: {
+				query: {
+					allow: [ELEMENT_IMAGE, ELEMENT_HR],
+				},
+			},
+		}),
 		createAutoformatPlugin({
 			options: {
 				rules: [
