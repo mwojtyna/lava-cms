@@ -38,12 +38,7 @@ import { createIndentPlugin } from "@udecode/plate-indent";
 import { createIndentListPlugin } from "@udecode/plate-indent-list";
 import { createLineHeightPlugin } from "@udecode/plate-line-height";
 import { ELEMENT_LINK, createLinkPlugin } from "@udecode/plate-link";
-import {
-	ELEMENT_IMAGE,
-	ELEMENT_MEDIA_EMBED,
-	createImagePlugin,
-	createMediaEmbedPlugin,
-} from "@udecode/plate-media";
+import { ELEMENT_IMAGE, ELEMENT_MEDIA_EMBED, createImagePlugin } from "@udecode/plate-media";
 import { ELEMENT_PARAGRAPH } from "@udecode/plate-paragraph";
 import { createResetNodePlugin } from "@udecode/plate-reset-node";
 import React from "react";
@@ -93,6 +88,7 @@ export const plugins = createPlugins(
 						ELEMENT_H6,
 						ELEMENT_PARAGRAPH,
 						ELEMENT_BLOCKQUOTE,
+						ELEMENT_IMAGE,
 					],
 				},
 			},
@@ -161,8 +157,39 @@ export const plugins = createPlugins(
 				],
 			},
 		}),
-		createImagePlugin(),
-		createMediaEmbedPlugin(),
+		createImagePlugin({
+			serializeHtml: ({ element, className }) => {
+				const caption = element.caption as Array<{ text: string }>;
+				const align = element.align as "left" | "center" | "right" | "justify";
+
+				let justifyContent = "";
+				if (align === "left") {
+					justifyContent = "flex-start";
+				} else if (align === "center") {
+					justifyContent = "center";
+				} else if (align === "right") {
+					justifyContent = "flex-end";
+				}
+
+				return (
+					<div
+						style={{
+							width: "100%",
+							display: "flex",
+							justifyContent,
+						}}
+					>
+						{/* eslint-disable-next-line @next/next/no-img-element */}
+						<img
+							className={className}
+							src={element.url as string}
+							alt={caption[0]?.text}
+							width={element.width as number}
+						/>
+					</div>
+				);
+			},
+		}),
 		createCaptionPlugin({
 			options: {
 				pluginKeys: [ELEMENT_IMAGE, ELEMENT_MEDIA_EMBED],
