@@ -16,6 +16,7 @@ import {
 } from "@udecode/plate-basic-marks";
 import { ELEMENT_BLOCKQUOTE } from "@udecode/plate-block-quote";
 import { createSoftBreakPlugin } from "@udecode/plate-break";
+import { createCaptionPlugin } from "@udecode/plate-caption";
 import { ELEMENT_CODE_BLOCK } from "@udecode/plate-code-block";
 import {
 	Plate,
@@ -37,6 +38,12 @@ import { createIndentPlugin } from "@udecode/plate-indent";
 import { createIndentListPlugin } from "@udecode/plate-indent-list";
 import { createLineHeightPlugin } from "@udecode/plate-line-height";
 import { ELEMENT_LINK, createLinkPlugin } from "@udecode/plate-link";
+import {
+	ELEMENT_IMAGE,
+	ELEMENT_MEDIA_EMBED,
+	createImagePlugin,
+	createMediaEmbedPlugin,
+} from "@udecode/plate-media";
 import { ELEMENT_PARAGRAPH } from "@udecode/plate-paragraph";
 import { createResetNodePlugin } from "@udecode/plate-reset-node";
 import React from "react";
@@ -52,6 +59,8 @@ import {
 	CodeLeaf,
 	LinkElement,
 	LinkFloatingToolbar,
+	MediaEmbedElement,
+	ImageElement,
 } from "./plate-ui";
 import { ActionIcon, type FormFieldProps } from "./ui/client";
 
@@ -152,9 +161,16 @@ export const plugins = createPlugins(
 				],
 			},
 		}),
+		createImagePlugin(),
+		createMediaEmbedPlugin(),
+		createCaptionPlugin({
+			options: {
+				pluginKeys: [ELEMENT_IMAGE, ELEMENT_MEDIA_EMBED],
+			},
+		}),
 	],
 	{
-		// TODO: Media, superscript, subscript, table, divider, dnd
+		// TODO: Table, divider, dnd
 		components: {
 			// createBasicElementsPlugin()
 			[ELEMENT_H1]: withProps(HeadingElement, { variant: "h1" }),
@@ -179,6 +195,9 @@ export const plugins = createPlugins(
 
 			[MARK_SUPERSCRIPT]: withProps(PlateLeaf, { as: "sup" }),
 			[MARK_SUBSCRIPT]: withProps(PlateLeaf, { as: "sub" }),
+
+			[ELEMENT_IMAGE]: ImageElement,
+			[ELEMENT_MEDIA_EMBED]: MediaEmbedElement,
 		},
 	},
 );

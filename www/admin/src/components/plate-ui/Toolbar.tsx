@@ -122,7 +122,9 @@ export const ToolbarGroup = withRef<
 	}
 >(({ className, children, noSeparator, biggerGap }, ref) => {
 	const childArr = React.Children.map(children, (c) => c);
-	if (!childArr || childArr.length === 0) return null;
+	if (!childArr || childArr.length === 0) {
+		return null;
+	}
 
 	return (
 		<div ref={ref} className={cn("flex", className)}>

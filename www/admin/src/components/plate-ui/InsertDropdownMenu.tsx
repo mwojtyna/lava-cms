@@ -2,9 +2,11 @@
 
 import type { DropdownMenuProps } from "@radix-ui/react-dropdown-menu";
 import { ELEMENT_BLOCKQUOTE } from "@udecode/plate-block-quote";
-import { ELEMENT_CODE_BLOCK } from "@udecode/plate-code-block";
+import { ELEMENT_CODE_BLOCK, insertEmptyCodeBlock } from "@udecode/plate-code-block";
 import { focusEditor, insertEmptyElement, useEditorRef } from "@udecode/plate-common";
 import { ELEMENT_H1, ELEMENT_H2, ELEMENT_H3 } from "@udecode/plate-heading";
+import { ELEMENT_LINK, triggerFloatingLink } from "@udecode/plate-link";
+import { ELEMENT_IMAGE, ELEMENT_MEDIA_EMBED, insertMedia } from "@udecode/plate-media";
 import { ELEMENT_PARAGRAPH } from "@udecode/plate-paragraph";
 import React from "react";
 
@@ -89,28 +91,37 @@ const items = [
 				description: "Code (```)",
 				icon: icons.Code,
 			},
+			{
+				value: ELEMENT_IMAGE,
+				label: "Image",
+				description: "Image",
+				icon: icons.Image,
+			},
+			// {
+			// 	value: ELEMENT_MEDIA_EMBED,
+			// 	label: "Embed",
+			// 	description: "Embed",
+			// 	icon: icons.Embed,
+			// },
+			// {
+			// 	value: ELEMENT_EXCALIDRAW,
+			// 	label: "Excalidraw",
+			// 	description: "Excalidraw",
+			// 	icon: Icons.excalidraw,
+			// },
 		],
 	},
-	//     {
-	//       value: ELEMENT_IMAGE,
-	//       label: 'Image',
-	//       description: 'Image',
-	//       icon: Icons.image,
-	//     },
-	//     {
-	//       value: ELEMENT_MEDIA_EMBED,
-	//       label: 'Embed',
-	//       description: 'Embed',
-	//       icon: Icons.embed,
-	//     },
-	//     {
-	//       value: ELEMENT_EXCALIDRAW,
-	//       label: 'Excalidraw',
-	//       description: 'Excalidraw',
-	//       icon: Icons.excalidraw,
-	//     },
-	//   ],
-	// },
+	{
+		label: "Inline",
+		items: [
+			{
+				value: ELEMENT_LINK,
+				label: "Link",
+				description: "Link",
+				icon: icons.Link,
+			},
+		],
+	},
 ];
 
 export function InsertDropdownMenu(props: DropdownMenuProps) {
@@ -134,29 +145,26 @@ export function InsertDropdownMenu(props: DropdownMenuProps) {
 						{index !== 0 && <DropdownMenuSeparator />}
 
 						<DropdownMenuLabel>{label}</DropdownMenuLabel>
-						{nestedItems.map(({ value: type, label: itemLabel, icon: Icon }) => (
+						{nestedItems?.map(({ value: type, label: itemLabel, icon: Icon }) => (
 							<DropdownMenuItem
 								key={type}
 								className="min-w-[180px]"
 								onSelect={() => {
 									switch (type) {
-										// case ELEMENT_CODE_BLOCK: {
-										//   insertEmptyCodeBlock(editor);
-										//
-										//   break;
-										// }
-										// case ELEMENT_IMAGE: {
-										//   await insertMedia(editor, { type: ELEMENT_IMAGE });
-										//
-										//   break;
-										// }
-										// case ELEMENT_MEDIA_EMBED: {
-										//   await insertMedia(editor, {
-										//     type: ELEMENT_MEDIA_EMBED,
-										//   });
-										//
-										//   break;
-										// }
+										case ELEMENT_CODE_BLOCK: {
+											insertEmptyCodeBlock(editor);
+											break;
+										}
+										case ELEMENT_IMAGE: {
+											void insertMedia(editor, { type: ELEMENT_IMAGE });
+											break;
+										}
+										case ELEMENT_MEDIA_EMBED: {
+											void insertMedia(editor, {
+												type: ELEMENT_MEDIA_EMBED,
+											});
+											break;
+										}
 										// case 'ul':
 										// case 'ol': {
 										//   insertEmptyElement(editor, ELEMENT_PARAGRAPH, {
@@ -179,11 +187,10 @@ export function InsertDropdownMenu(props: DropdownMenuProps) {
 										//
 										//   break;
 										// }
-										// case ELEMENT_LINK: {
-										//   triggerFloatingLink(editor, { focused: true });
-										//
-										//   break;
-										// }
+										case ELEMENT_LINK: {
+											triggerFloatingLink(editor, { focused: true });
+											break;
+										}
 										default: {
 											insertEmptyElement(editor, type, {
 												select: true,

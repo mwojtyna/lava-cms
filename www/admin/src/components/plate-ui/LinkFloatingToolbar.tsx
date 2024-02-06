@@ -67,7 +67,9 @@ export function LinkFloatingToolbar({ state }: LinkFloatingToolbarProps) {
 		unlinkButtonProps,
 	} = useFloatingLinkEdit(editState);
 
-	if (hidden) return null;
+	if (hidden) {
+		return null;
+	}
 
 	const input = (
 		<div className="flex w-[330px] flex-col">

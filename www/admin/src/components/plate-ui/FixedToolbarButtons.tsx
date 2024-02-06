@@ -22,6 +22,7 @@ import {
 	AlignDropdownMenu,
 	IndentListToolbarButton,
 	LinkToolbarButton,
+	MediaToolbarButton,
 } from "./";
 
 export function FixedToolbarButtons() {
@@ -63,7 +64,6 @@ export function FixedToolbarButtons() {
 							>
 								<icons.Underline />
 							</MarkToolbarButton>
-
 							<MarkToolbarButton
 								tooltip={`Strikethrough (${modifierKey}+Shift+M)`}
 								nodeType={MARK_STRIKETHROUGH}
@@ -76,6 +76,12 @@ export function FixedToolbarButtons() {
 							>
 								<icons.Code />
 							</MarkToolbarButton>
+							<MarkToolbarButton tooltip="Superscript" nodeType={MARK_SUPERSCRIPT}>
+								<icons.Superscript />
+							</MarkToolbarButton>
+							<MarkToolbarButton tooltip="Subscript" nodeType={MARK_SUBSCRIPT}>
+								<icons.Subscript />
+							</MarkToolbarButton>
 						</ToolbarGroup>
 
 						<ToolbarGroup>
@@ -87,14 +93,18 @@ export function FixedToolbarButtons() {
 
 						<ToolbarGroup>
 							<LinkToolbarButton tooltip={`Link (${modifierKey}+K)`} />
-
-							<MarkToolbarButton tooltip="Superscript" nodeType={MARK_SUPERSCRIPT}>
-								<icons.Superscript />
-							</MarkToolbarButton>
-
-							<MarkToolbarButton tooltip="Subscript" nodeType={MARK_SUBSCRIPT}>
-								<icons.Subscript />
-							</MarkToolbarButton>
+							<MediaToolbarButton tooltip="Image" />
+							{/* <MarkToolbarButton */}
+							{/* 	tooltip="Embed" */}
+							{/* 	nodeType={ELEMENT_MEDIA_EMBED} */}
+							{/* 	onClick={() => */}
+							{/* 		insertMedia(editor, { */}
+							{/* 			type: ELEMENT_MEDIA_EMBED, */}
+							{/* 		}) */}
+							{/* 	} */}
+							{/* > */}
+							{/* 	<icons.Embed /> */}
+							{/* </MarkToolbarButton> */}
 						</ToolbarGroup>
 					</>
 				)}

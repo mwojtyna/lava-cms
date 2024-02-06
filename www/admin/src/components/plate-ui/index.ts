@@ -2,6 +2,7 @@
 
 export * from "./AlignDropdownMenu";
 export * from "./BlockQuoteElement";
+export * from "./Caption";
 export * from "./CodeBlockCombobox";
 export * from "./CodeBlockElement";
 export * from "./CodeLeaf";
@@ -9,6 +10,7 @@ export * from "./Editor";
 export * from "./FixedToolbar";
 export * from "./FixedToolbarButtons";
 export * from "./HeadingElement";
+export * from "./ImageElement";
 export * from "./IndentListToolbarButton";
 export * from "./InsertDropdownMenu";
 export * from "./LineHeightDropdownMenu";
@@ -16,6 +18,10 @@ export * from "./LinkElement";
 export * from "./LinkFloatingToolbar";
 export * from "./LinkToolbarButton";
 export * from "./MarkToolbarButton";
+export * from "./MediaEmbedElement";
+export * from "./MediaPopover";
+export * from "./MediaToolbarButton";
 export * from "./ParagraphElement";
+export * from "./Resizable";
 export * from "./Toolbar";
 export * from "./TurnIntoDropdownMenu";
