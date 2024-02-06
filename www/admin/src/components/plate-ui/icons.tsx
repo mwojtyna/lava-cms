@@ -44,6 +44,7 @@ import {
 	IconH4,
 	IconH5,
 	IconH6,
+	IconSeparator,
 } from "@tabler/icons-react";
 
 export const icons = {
@@ -56,6 +57,7 @@ export const icons = {
 	H6: IconH6,
 	BlockQuote: IconBlockquote,
 	Code: IconCode,
+	Hr: IconSeparator,
 
 	Bold: IconBold,
 	Italic: IconItalic,

@@ -10,6 +10,7 @@ export * from "./Editor";
 export * from "./FixedToolbar";
 export * from "./FixedToolbarButtons";
 export * from "./HeadingElement";
+export * from "./HrElement";
 export * from "./ImageElement";
 export * from "./IndentListToolbarButton";
 export * from "./InsertDropdownMenu";

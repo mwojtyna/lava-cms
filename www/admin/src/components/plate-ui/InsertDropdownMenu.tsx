@@ -12,6 +12,7 @@ import {
 	ELEMENT_H5,
 	ELEMENT_H6,
 } from "@udecode/plate-heading";
+import { ELEMENT_HR } from "@udecode/plate-horizontal-rule";
 import { toggleIndentList } from "@udecode/plate-indent-list";
 import { ELEMENT_LINK, triggerFloatingLink } from "@udecode/plate-link";
 import { ELEMENT_IMAGE, ELEMENT_MEDIA_EMBED, insertMedia } from "@udecode/plate-media";
@@ -101,12 +102,12 @@ const items = [
 				description: "Numbered list",
 				icon: icons.Ol,
 			},
-			// {
-			//   value: ELEMENT_HR,
-			//   label: 'Divider',
-			//   description: 'Divider (---)',
-			//   icon: Icons.hr,
-			// },
+			{
+				value: ELEMENT_HR,
+				label: "Divider",
+				description: "Divider (---)",
+				icon: icons.Hr,
+			},
 		],
 	},
 	{

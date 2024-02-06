@@ -3,6 +3,7 @@
 import { ArrowUturnLeftIcon } from "@heroicons/react/24/outline";
 import { withProps } from "@udecode/cn";
 import { createAlignPlugin } from "@udecode/plate-alignment";
+import { createAutoformatPlugin } from "@udecode/plate-autoformat";
 import {
 	MARK_BOLD,
 	MARK_CODE,
@@ -23,6 +24,9 @@ import {
 	type Value,
 	PlateLeaf,
 	type RenderAfterEditable,
+	ELEMENT_DEFAULT,
+	insertNodes,
+	setNodes,
 } from "@udecode/plate-common";
 import { isSelectionAtBlockStart } from "@udecode/plate-common";
 import {
@@ -34,6 +38,7 @@ import {
 	ELEMENT_H6,
 	createHeadingPlugin,
 } from "@udecode/plate-heading";
+import { ELEMENT_HR, createHorizontalRulePlugin } from "@udecode/plate-horizontal-rule";
 import { createIndentPlugin } from "@udecode/plate-indent";
 import { createIndentListPlugin } from "@udecode/plate-indent-list";
 import { createLineHeightPlugin } from "@udecode/plate-line-height";
@@ -68,6 +73,7 @@ import {
 	TableCellElement,
 	TableCellHeaderElement,
 	CodeBlockElement,
+	HrElement,
 } from "./plate-ui";
 import { ActionIcon, type FormFieldProps } from "./ui/client";
 
@@ -215,10 +221,29 @@ export const plugins = createPlugins(
 				enableMerging: true,
 			},
 		}),
+		createHorizontalRulePlugin(),
+		createAutoformatPlugin({
+			options: {
+				rules: [
+					{
+						mode: "block",
+						type: ELEMENT_HR,
+						match: ["---", "—-", "___ "],
+						format: (editor) => {
+							setNodes(editor, { type: ELEMENT_HR });
+							insertNodes(editor, {
+								type: ELEMENT_DEFAULT,
+								children: [{ text: "" }],
+							});
+						},
+					},
+				],
+			},
+		}),
 	],
 	{
 		// FIX: When just added a component with rich text field and saved, the content is empty
-		// TODO: Own codeblock element, divider, dnd
+		// TODO: Own codeblock element, dnd
 		components: {
 			// createBasicElementsPlugin()
 			[ELEMENT_H1]: withProps(HeadingElement, { variant: "h1" }),
@@ -230,6 +255,7 @@ export const plugins = createPlugins(
 			[ELEMENT_PARAGRAPH]: ParagraphElement,
 			[ELEMENT_BLOCKQUOTE]: BlockquoteElement,
 			[ELEMENT_CODE_BLOCK]: CodeBlockElement,
+			[ELEMENT_HR]: HrElement,
 
 			// createBasicMarksPlugin()
 			[MARK_BOLD]: withProps(PlateLeaf, { as: "strong" }),
