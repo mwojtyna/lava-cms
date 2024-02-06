@@ -29,6 +29,7 @@ import {
 	setNodes,
 } from "@udecode/plate-common";
 import { isSelectionAtBlockStart } from "@udecode/plate-common";
+import { createDndPlugin } from "@udecode/plate-dnd";
 import {
 	ELEMENT_H1,
 	ELEMENT_H2,
@@ -44,6 +45,7 @@ import { createIndentListPlugin } from "@udecode/plate-indent-list";
 import { createLineHeightPlugin } from "@udecode/plate-line-height";
 import { ELEMENT_LINK, createLinkPlugin } from "@udecode/plate-link";
 import { ELEMENT_IMAGE, ELEMENT_MEDIA_EMBED, createImagePlugin } from "@udecode/plate-media";
+import { createNodeIdPlugin } from "@udecode/plate-node-id";
 import { ELEMENT_PARAGRAPH, createParagraphPlugin } from "@udecode/plate-paragraph";
 import { createResetNodePlugin } from "@udecode/plate-reset-node";
 import { createSelectOnBackspacePlugin } from "@udecode/plate-select";
@@ -56,6 +58,8 @@ import {
 	createTablePlugin,
 } from "@udecode/plate-table";
 import React from "react";
+import { DndProvider } from "react-dnd";
+import { HTML5Backend } from "react-dnd-html5-backend";
 import { cn } from "../utils/styling";
 import {
 	Editor,
@@ -67,7 +71,7 @@ import {
 	CodeLeaf,
 	LinkElement,
 	LinkFloatingToolbar,
-	MediaEmbedElement,
+	// MediaEmbedElement,
 	ImageElement,
 	TableElement,
 	TableRowElement,
@@ -76,6 +80,8 @@ import {
 	CodeBlockElement,
 	HrElement,
 } from "./plate-ui";
+import { withPlaceholders } from "./plate-ui/Placeholder";
+import { withDraggables } from "./plate-ui/withDraggable";
 import { ActionIcon, type FormFieldProps } from "./ui/client";
 
 const resetBlockTypesCommonRule = {
@@ -91,201 +97,204 @@ const resetBlockTypesCommonRule = {
 	defaultType: ELEMENT_PARAGRAPH,
 };
 
-export const plugins = createPlugins(
-	[
-		createParagraphPlugin(),
-		createHeadingPlugin(),
-		createBlockquotePlugin(),
-		// createCodeBlockPlugin(),
-		createBasicMarksPlugin(),
-		createAlignPlugin({
-			inject: {
-				props: {
-					validTypes: [
-						ELEMENT_H1,
-						ELEMENT_H2,
-						ELEMENT_H3,
-						ELEMENT_H4,
-						ELEMENT_H5,
-						ELEMENT_H6,
-						ELEMENT_PARAGRAPH,
-						ELEMENT_BLOCKQUOTE,
-						ELEMENT_IMAGE,
-					],
-				},
-			},
-		}),
-		createLineHeightPlugin({
-			inject: {
-				props: {
-					defaultNodeValue: 1.5,
-					validNodeValues: [1, 1.2, 1.5, 2, 3],
-					validTypes: [ELEMENT_PARAGRAPH, ELEMENT_H1, ELEMENT_H2, ELEMENT_H3],
-				},
-			},
-		}),
-		createIndentPlugin({
-			inject: {
-				props: {
-					validTypes: [
-						ELEMENT_PARAGRAPH,
-						ELEMENT_H1,
-						ELEMENT_H2,
-						ELEMENT_H3,
-						ELEMENT_BLOCKQUOTE,
-						ELEMENT_CODE_BLOCK,
-					],
-				},
-			},
-		}),
-		createIndentListPlugin({
-			inject: {
-				props: {
-					validTypes: [
-						ELEMENT_PARAGRAPH,
-						ELEMENT_H1,
-						ELEMENT_H2,
-						ELEMENT_H3,
-						ELEMENT_BLOCKQUOTE,
-						ELEMENT_CODE_BLOCK,
-					],
-				},
-			},
-		}),
-		createLinkPlugin({
-			renderAfterEditable: LinkFloatingToolbar as RenderAfterEditable,
-		}),
-		createSoftBreakPlugin({
-			options: {
-				rules: [
-					{ hotkey: "shift+enter" },
-					{
-						hotkey: "enter",
-						query: {
-							allow: [ELEMENT_CODE_BLOCK, ELEMENT_BLOCKQUOTE, ELEMENT_TD],
-						},
-					},
+export const plugins = [
+	createParagraphPlugin(),
+	createHeadingPlugin(),
+	createBlockquotePlugin(),
+	// createCodeBlockPlugin(),
+	createBasicMarksPlugin(),
+	createAlignPlugin({
+		inject: {
+			props: {
+				validTypes: [
+					ELEMENT_H1,
+					ELEMENT_H2,
+					ELEMENT_H3,
+					ELEMENT_H4,
+					ELEMENT_H5,
+					ELEMENT_H6,
+					ELEMENT_PARAGRAPH,
+					ELEMENT_BLOCKQUOTE,
+					ELEMENT_IMAGE,
 				],
 			},
-		}),
-		createResetNodePlugin({
-			options: {
-				rules: [
-					{
-						...resetBlockTypesCommonRule,
-						hotkey: "Backspace",
-						predicate: isSelectionAtBlockStart,
-					},
-				],
-			},
-		}),
-		createImagePlugin({
-			serializeHtml: ({ element, className }) => {
-				const caption = element.caption as Array<{ text: string }>;
-				const align = element.align as "left" | "center" | "right" | "justify";
-
-				let justifyContent = "";
-				if (align === "left") {
-					justifyContent = "flex-start";
-				} else if (align === "center") {
-					justifyContent = "center";
-				} else if (align === "right") {
-					justifyContent = "flex-end";
-				}
-
-				return (
-					<div
-						style={{
-							width: "100%",
-							display: "flex",
-							justifyContent,
-						}}
-					>
-						{/* eslint-disable-next-line @next/next/no-img-element */}
-						<img
-							className={className}
-							src={element.url as string}
-							alt={caption[0]?.text}
-						/>
-					</div>
-				);
-			},
-		}),
-		createCaptionPlugin({
-			options: {
-				pluginKeys: [ELEMENT_IMAGE, ELEMENT_MEDIA_EMBED],
-			},
-		}),
-		createDeserializeMdPlugin(),
-		createTablePlugin({
-			options: {
-				enableMerging: true,
-			},
-		}),
-		createHorizontalRulePlugin(),
-		createSelectOnBackspacePlugin({
-			options: {
-				query: {
-					allow: [ELEMENT_IMAGE, ELEMENT_HR],
-				},
-			},
-		}),
-		createAutoformatPlugin({
-			options: {
-				rules: [
-					{
-						mode: "block",
-						type: ELEMENT_HR,
-						match: ["---", "—-", "___ "],
-						format: (editor) => {
-							setNodes(editor, { type: ELEMENT_HR });
-							insertNodes(editor, {
-								type: ELEMENT_DEFAULT,
-								children: [{ text: "" }],
-							});
-						},
-					},
-				],
-			},
-		}),
-	],
-	{
-		// FIX: When just added a component with rich text field and saved, the content is empty
-		// TODO: Own codeblock element, dnd
-		components: {
-			// createBasicElementsPlugin()
-			[ELEMENT_H1]: withProps(HeadingElement, { variant: "h1" }),
-			[ELEMENT_H2]: withProps(HeadingElement, { variant: "h2" }),
-			[ELEMENT_H3]: withProps(HeadingElement, { variant: "h3" }),
-			[ELEMENT_H4]: withProps(HeadingElement, { variant: "h4" }),
-			[ELEMENT_H5]: withProps(HeadingElement, { variant: "h5" }),
-			[ELEMENT_H6]: withProps(HeadingElement, { variant: "h6" }),
-			[ELEMENT_PARAGRAPH]: ParagraphElement,
-			[ELEMENT_BLOCKQUOTE]: BlockquoteElement,
-			[ELEMENT_CODE_BLOCK]: CodeBlockElement,
-			[ELEMENT_HR]: HrElement,
-
-			// createBasicMarksPlugin()
-			[MARK_BOLD]: withProps(PlateLeaf, { as: "strong" }),
-			[MARK_ITALIC]: withProps(PlateLeaf, { as: "em" }),
-			[MARK_UNDERLINE]: withProps(PlateLeaf, { as: "u" }),
-			[MARK_STRIKETHROUGH]: withProps(PlateLeaf, { as: "s" }),
-			[MARK_CODE]: CodeLeaf,
-
-			[ELEMENT_LINK]: LinkElement,
-			[MARK_SUPERSCRIPT]: withProps(PlateLeaf, { as: "sup" }),
-			[MARK_SUBSCRIPT]: withProps(PlateLeaf, { as: "sub" }),
-
-			[ELEMENT_IMAGE]: ImageElement,
-			[ELEMENT_MEDIA_EMBED]: MediaEmbedElement,
-
-			[ELEMENT_TABLE]: TableElement,
-			[ELEMENT_TR]: TableRowElement,
-			[ELEMENT_TD]: TableCellElement,
-			[ELEMENT_TH]: TableCellHeaderElement,
 		},
-	},
-);
+	}),
+	createLineHeightPlugin({
+		inject: {
+			props: {
+				defaultNodeValue: 1.5,
+				validNodeValues: [1, 1.2, 1.5, 2, 3],
+				validTypes: [ELEMENT_PARAGRAPH, ELEMENT_H1, ELEMENT_H2, ELEMENT_H3],
+			},
+		},
+	}),
+	createIndentPlugin({
+		inject: {
+			props: {
+				validTypes: [
+					ELEMENT_PARAGRAPH,
+					ELEMENT_H1,
+					ELEMENT_H2,
+					ELEMENT_H3,
+					ELEMENT_BLOCKQUOTE,
+					ELEMENT_CODE_BLOCK,
+				],
+			},
+		},
+	}),
+	createIndentListPlugin({
+		inject: {
+			props: {
+				validTypes: [
+					ELEMENT_PARAGRAPH,
+					ELEMENT_H1,
+					ELEMENT_H2,
+					ELEMENT_H3,
+					ELEMENT_BLOCKQUOTE,
+					ELEMENT_CODE_BLOCK,
+				],
+			},
+		},
+	}),
+	createLinkPlugin({
+		renderAfterEditable: LinkFloatingToolbar as RenderAfterEditable,
+	}),
+	createSoftBreakPlugin({
+		options: {
+			rules: [
+				{ hotkey: "shift+enter" },
+				{
+					hotkey: "enter",
+					query: {
+						allow: [ELEMENT_CODE_BLOCK, ELEMENT_BLOCKQUOTE, ELEMENT_TD],
+					},
+				},
+			],
+		},
+	}),
+	createResetNodePlugin({
+		options: {
+			rules: [
+				{
+					...resetBlockTypesCommonRule,
+					hotkey: "Backspace",
+					predicate: isSelectionAtBlockStart,
+				},
+			],
+		},
+	}),
+	createImagePlugin({
+		serializeHtml: ({ element, className }) => {
+			const caption = element.caption as Array<{ text: string }>;
+			const align = element.align as "left" | "center" | "right" | "justify";
+
+			let justifyContent = "";
+			if (align === "left") {
+				justifyContent = "flex-start";
+			} else if (align === "center") {
+				justifyContent = "center";
+			} else if (align === "right") {
+				justifyContent = "flex-end";
+			}
+
+			return (
+				<div
+					style={{
+						width: "100%",
+						display: "flex",
+						justifyContent,
+					}}
+				>
+					{/* eslint-disable-next-line @next/next/no-img-element */}
+					<img className={className} src={element.url as string} alt={caption[0]?.text} />
+				</div>
+			);
+		},
+	}),
+	createCaptionPlugin({
+		options: {
+			pluginKeys: [ELEMENT_IMAGE, ELEMENT_MEDIA_EMBED],
+		},
+	}),
+	createDeserializeMdPlugin(),
+	createTablePlugin({
+		options: {
+			enableMerging: true,
+		},
+	}),
+	createHorizontalRulePlugin(),
+	createSelectOnBackspacePlugin({
+		options: {
+			query: {
+				allow: [ELEMENT_IMAGE, ELEMENT_HR],
+			},
+		},
+	}),
+	createAutoformatPlugin({
+		options: {
+			rules: [
+				{
+					mode: "block",
+					type: ELEMENT_HR,
+					match: ["---", "—-", "___ "],
+					format: (editor) => {
+						setNodes(editor, { type: ELEMENT_HR });
+						insertNodes(editor, {
+							type: ELEMENT_DEFAULT,
+							children: [{ text: "" }],
+						});
+					},
+				},
+			],
+		},
+	}),
+	createNodeIdPlugin(),
+	createDndPlugin({
+		options: {
+			enableScroller: true,
+		},
+	}),
+];
+export const components = {
+	// createBasicElementsPlugin()
+	[ELEMENT_H1]: withProps(HeadingElement, { variant: "h1" }),
+	[ELEMENT_H2]: withProps(HeadingElement, { variant: "h2" }),
+	[ELEMENT_H3]: withProps(HeadingElement, { variant: "h3" }),
+	[ELEMENT_H4]: withProps(HeadingElement, { variant: "h4" }),
+	[ELEMENT_H5]: withProps(HeadingElement, { variant: "h5" }),
+	[ELEMENT_H6]: withProps(HeadingElement, { variant: "h6" }),
+	[ELEMENT_PARAGRAPH]: ParagraphElement,
+	[ELEMENT_BLOCKQUOTE]: BlockquoteElement,
+	[ELEMENT_CODE_BLOCK]: CodeBlockElement,
+	[ELEMENT_HR]: HrElement,
+
+	// createBasicMarksPlugin()
+	[MARK_BOLD]: withProps(PlateLeaf, { as: "strong" }),
+	[MARK_ITALIC]: withProps(PlateLeaf, { as: "em" }),
+	[MARK_UNDERLINE]: withProps(PlateLeaf, { as: "u" }),
+	[MARK_STRIKETHROUGH]: withProps(PlateLeaf, { as: "s" }),
+	[MARK_CODE]: CodeLeaf,
+
+	[ELEMENT_LINK]: LinkElement,
+	[MARK_SUPERSCRIPT]: withProps(PlateLeaf, { as: "sup" }),
+	[MARK_SUBSCRIPT]: withProps(PlateLeaf, { as: "sub" }),
+
+	[ELEMENT_IMAGE]: ImageElement,
+	// [ELEMENT_MEDIA_EMBED]: MediaEmbedElement,
+
+	[ELEMENT_TABLE]: TableElement,
+	[ELEMENT_TR]: TableRowElement,
+	[ELEMENT_TD]: TableCellElement,
+	[ELEMENT_TH]: TableCellHeaderElement,
+};
+
+const pluginsWithDnd = createPlugins(plugins, {
+	// FIX: When just added a component with rich text field and saved, the content is empty
+	// TODO: Own codeblock element
+	// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+	components: withPlaceholders(withDraggables(components)),
+});
 
 interface Props extends FormFieldProps<Value> {
 	edited: boolean;
@@ -293,33 +302,38 @@ interface Props extends FormFieldProps<Value> {
 }
 export function RichTextEditor(props: Props) {
 	return (
-		<Plate plugins={plugins} value={props.value} onChange={props.onChange}>
-			<div
-				className={cn(
-					// Block selection
-					"[&_.slate-start-area-left]:!w-[64px] [&_.slate-start-area-right]:!w-[64px] [&_.slate-start-area-top]:!h-4",
-					"relative rounded-md ring-ring ring-offset-2 ring-offset-card focus-within:ring-2",
-				)}
-			>
-				<FixedToolbar>
-					<FixedToolbarButtons />
-				</FixedToolbar>
+		<DndProvider backend={HTML5Backend}>
+			<Plate plugins={pluginsWithDnd} value={props.value} onChange={props.onChange}>
+				<div
+					className={cn(
+						// Block selection
+						"[&_.slate-start-area-left]:!w-[64px] [&_.slate-start-area-right]:!w-[64px] [&_.slate-start-area-top]:!h-4",
+						"relative rounded-md p-2 ring-ring ring-offset-2 ring-offset-card focus-within:ring-2",
+					)}
+				>
+					<FixedToolbar>
+						<FixedToolbarButtons />
+					</FixedToolbar>
 
-				<Editor
-					className={cn("rounded-t-none border-t-0", props.edited && "border-b-brand")}
-					focusRing={false}
-				/>
+					<Editor
+						className={cn(
+							"rounded-t-none border-t-0 px-6 py-4",
+							props.edited && "border-b-brand",
+						)}
+						focusRing={false}
+					/>
 
-				{props.edited && (
-					<ActionIcon
-						className="absolute bottom-1 right-1 bg-background/50"
-						onClick={props.onRestore}
-						tooltip={"Restore"}
-					>
-						<ArrowUturnLeftIcon className="w-4" />
-					</ActionIcon>
-				)}
-			</div>
-		</Plate>
+					{props.edited && (
+						<ActionIcon
+							className="absolute bottom-1 right-1 bg-background/50"
+							onClick={props.onRestore}
+							tooltip={"Restore"}
+						>
+							<ArrowUturnLeftIcon className="w-4" />
+						</ActionIcon>
+					)}
+				</div>
+			</Plate>
+		</DndProvider>
 	);
 }

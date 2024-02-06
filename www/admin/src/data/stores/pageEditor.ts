@@ -1,12 +1,15 @@
 import type { inferRouterInputs } from "@trpc/server";
-import { createPlateEditor, type Value } from "@udecode/plate-common";
+import { createPlateEditor, createPlugins, type Value } from "@udecode/plate-common";
 import { serializeHtml } from "@udecode/plate-serializer-html";
 import { create } from "zustand";
 import type {
 	Component,
 	PageEditorMessage,
 } from "@/app/(editor)/dashboard/pages/editor/[pageId]/types";
-import { plugins as richTextEditorPlugins } from "@/src/components/RichTextEditor";
+import {
+	components as richTextEditorComponents,
+	plugins as richTextEditorPlugins,
+} from "@/src/components/RichTextEditor";
 import type { PrivateRouter } from "@/src/trpc/routes/private/_private";
 import type { ArrayItem } from "@/src/trpc/routes/private/pages/types";
 import type { trpc } from "@/src/utils/trpc";
@@ -273,7 +276,11 @@ const pageEditorStore = create<PageEditorState>((set) => ({
 
 			const allComponents = state.components.concat(state.nestedComponents);
 
-			const editor = createPlateEditor({ plugins: richTextEditorPlugins });
+			const editor = createPlateEditor({
+				plugins: createPlugins(richTextEditorPlugins, {
+					components: richTextEditorComponents,
+				}),
+			});
 			for (const component of state.components.concat(state.nestedComponents)) {
 				for (const field of component.fields) {
 					if (field.type === "RICH_TEXT") {

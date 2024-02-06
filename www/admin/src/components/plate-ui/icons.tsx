@@ -45,6 +45,7 @@ import {
 	IconH5,
 	IconH6,
 	IconSeparator,
+	IconGripVertical,
 } from "@tabler/icons-react";
 
 export const icons = {
@@ -69,6 +70,7 @@ export const icons = {
 	Plus: IconPlus,
 	Minus: IconMinus,
 	Check: IconCheck,
+	DragHandle: IconGripVertical,
 
 	AlignLeft: IconAlignLeft,
 	AlignCenter: IconAlignCenter,
