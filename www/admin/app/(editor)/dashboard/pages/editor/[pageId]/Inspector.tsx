@@ -45,17 +45,8 @@ export function Inspector(props: Props) {
 	const [width, setWidth] = useState(DEFAULT_WIDTH);
 	const { width: windowWidth } = useViewportSize();
 
-	const {
-		init,
-		components,
-		setComponents,
-		nestedComponents,
-		steps,
-		setSteps,
-		isDirty,
-		isValid,
-		save,
-	} = usePageEditor();
+	const { init, components, setComponents, nestedComponents, steps, setSteps, isDirty, save } =
+		usePageEditor();
 	const { data } = trpc.pages.getPageComponents.useQuery(
 		{ id: props.page.id },
 		{ initialData: props.serverData },
@@ -69,19 +60,7 @@ export function Inspector(props: Props) {
 	}, [data, init]);
 
 	const saveMutation = trpc.pages.editPageComponents.useMutation();
-	useHotkeys(
-		[
-			[
-				"mod+s",
-				() => {
-					if (isDirty && isValid) {
-						save(saveMutation, props.page.id);
-					}
-				},
-			],
-		],
-		[],
-	);
+	useHotkeys([["mod+s", () => save(saveMutation, props.page.id)]], []);
 	useWindowEvent("beforeunload", (e) => {
 		if (isDirty) {
 			// Display a confirmation dialog

@@ -2,11 +2,14 @@
 
 import type { PlateContentProps } from "@udecode/plate-common";
 import type { VariantProps } from "class-variance-authority";
+import { getHotkeyHandler } from "@mantine/hooks";
 import { PlateContent } from "@udecode/plate-common";
 import { cva } from "class-variance-authority";
 
 import React from "react";
+import { pageEditorStore } from "@/src/data/stores/pageEditor";
 import { cn } from "@/src/utils/styling";
+import { trpc } from "@/src/utils/trpc";
 
 const editorVariants = cva(
 	cn(
@@ -45,10 +48,15 @@ const editorVariants = cva(
 	},
 );
 
-export type EditorProps = PlateContentProps & VariantProps<typeof editorVariants>;
+export type EditorProps = { pageId: string } & PlateContentProps &
+	VariantProps<typeof editorVariants>;
 
 const Editor = React.forwardRef<HTMLDivElement, EditorProps>(
-	({ className, disabled, focused, focusRing, readOnly, size, variant, ...props }, ref) => {
+	(
+		{ className, disabled, focused, focusRing, readOnly, size, variant, pageId, ...props },
+		ref,
+	) => {
+		const mutation = trpc.pages.editPageComponents.useMutation();
 		return (
 			<div ref={ref} className="relative w-full">
 				<PlateContent
@@ -65,6 +73,9 @@ const Editor = React.forwardRef<HTMLDivElement, EditorProps>(
 					disableDefaultStyles
 					readOnly={disabled ?? readOnly}
 					aria-disabled={disabled}
+					onKeyDown={getHotkeyHandler([
+						["mod+s", () => pageEditorStore.getState().save(mutation, pageId)],
+					])}
 					{...props}
 				/>
 			</div>

@@ -290,6 +290,7 @@ const pluginsWithDnd = createPlugins(plugins, {
 interface Props extends FormFieldProps<Value> {
 	edited: boolean;
 	onRestore: () => void;
+	pageId: string;
 }
 export function RichTextEditor(props: Props) {
 	return (
@@ -311,6 +312,7 @@ export function RichTextEditor(props: Props) {
 							props.edited && "border-b-brand",
 						)}
 						focusRing={false}
+						pageId={props.pageId}
 					/>
 
 					{props.edited && (

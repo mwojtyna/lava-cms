@@ -31,7 +31,7 @@ interface ComponentEditorProps {
 	onChange: (data: Input) => void;
 }
 export function ComponentEditor(props: ComponentEditorProps) {
-	const { originalComponents, originalNestedComponents, setIsValid } = usePageEditor();
+	const { originalComponents, originalNestedComponents } = usePageEditor();
 	const originalComponent = useMemo(
 		() =>
 			(props.component.parentComponentId === null
@@ -55,8 +55,6 @@ export function ComponentEditor(props: ComponentEditorProps) {
 		void form.trigger();
 
 		const { unsubscribe } = form.watch(() => {
-			setIsValid(form.formState.isValid);
-
 			if (debounceTimeoutRef.current !== null) {
 				clearTimeout(debounceTimeoutRef.current);
 			}
@@ -71,7 +69,7 @@ export function ComponentEditor(props: ComponentEditorProps) {
 				clearTimeout(debounceTimeoutRef.current);
 			}
 		};
-	}, [form, props, setIsValid]);
+	}, [form, props]);
 
 	return props.component.fields.length > 0 ? (
 		<FormProvider {...form}>
@@ -112,7 +110,6 @@ export function ComponentEditor(props: ComponentEditorProps) {
 											onRestore={() => {
 												form.setValue(field.id, originalField!.data);
 												void form.handleSubmit(props.onChange)();
-												setIsValid(form.formState.isValid);
 											}}
 											{...formField}
 										/>
@@ -161,6 +158,7 @@ export const Field = forwardRef<HTMLTextAreaElement | HTMLButtonElement, FieldPr
 						onChange={(v) => onChange(v as unknown as string)}
 						edited={edited}
 						onRestore={onRestore}
+						pageId={component.pageId}
 					/>
 				);
 			}

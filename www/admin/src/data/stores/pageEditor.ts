@@ -40,8 +40,8 @@ export type Step =
 
 interface PageEditorState {
 	isDirty: boolean;
-	isValid: boolean;
-	setIsValid: (isValid: boolean) => void;
+	isSaving: boolean;
+	setIsSaving: (value: boolean) => void;
 
 	iframe: HTMLIFrameElement | null;
 	iframeOrigin: string;
@@ -74,8 +74,8 @@ interface PageEditorState {
 }
 const pageEditorStore = create<PageEditorState>((set) => ({
 	isDirty: false,
-	isValid: true,
-	setIsValid: (isValid) => set({ isValid }),
+	isSaving: false,
+	setIsSaving: (value) => set({ isSaving: value }),
 
 	iframe: null,
 	iframeOrigin: "",
@@ -245,6 +245,10 @@ const pageEditorStore = create<PageEditorState>((set) => ({
 		}),
 	save: (mutation, pageId) =>
 		set((state) => {
+			if (!state.isDirty || state.isSaving) {
+				return state;
+			}
+
 			type AddedComponent =
 				inferRouterInputs<PrivateRouter>["pages"]["editPageComponents"]["addedComponents"][number];
 
@@ -376,11 +380,15 @@ const pageEditorStore = create<PageEditorState>((set) => ({
 								return step;
 							}),
 						);
+
+						state.setIsSaving(false);
 					},
 				},
 			);
 
-			return state;
+			return {
+				isSaving: true,
+			};
 		}),
 }));
 
@@ -392,8 +400,7 @@ function areSame<T extends { diff: Diff }>(original: T, current: T) {
 
 function usePageEditor() {
 	const isDirty = pageEditorStore((state) => state.isDirty);
-	const isValid = pageEditorStore((state) => state.isValid);
-	const setIsValid = pageEditorStore((state) => state.setIsValid);
+	const isSaving = pageEditorStore((state) => state.isSaving);
 
 	const iframe = pageEditorStore((state) => state.iframe);
 	const iframeOrigin = pageEditorStore((state) => state.iframeOrigin);
@@ -419,8 +426,7 @@ function usePageEditor() {
 
 	return {
 		isDirty,
-		isValid,
-		setIsValid,
+		isSaving,
 		iframe,
 		iframeOrigin,
 		originalComponents,
