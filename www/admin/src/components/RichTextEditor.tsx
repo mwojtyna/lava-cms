@@ -299,7 +299,6 @@ export function RichTextEditor(props: Props) {
 					className={cn(
 						// Block selection
 						"[&_.slate-start-area-left]:!w-[64px] [&_.slate-start-area-right]:!w-[64px] [&_.slate-start-area-top]:!h-4",
-						"relative rounded-md p-2 ring-ring ring-offset-2 ring-offset-card focus-within:ring-2",
 					)}
 				>
 					<FixedToolbar>

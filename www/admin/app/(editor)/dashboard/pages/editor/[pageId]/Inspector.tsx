@@ -5,7 +5,7 @@ import type { inferRouterOutputs } from "@trpc/server";
 import { ChevronRightIcon, CubeIcon, DocumentIcon, PlusIcon } from "@heroicons/react/24/outline";
 import { useHotkeys, useViewportSize } from "@mantine/hooks";
 import { Resizable } from "re-resizable";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Button } from "@/src/components/ui/client";
 import { Stepper, TypographyH1, TypographyMuted } from "@/src/components/ui/server";
 import { pageEditorStore, usePageEditor } from "@/src/data/stores/pageEditor";
@@ -88,6 +88,16 @@ export function Inspector(props: Props) {
 			e.preventDefault();
 		}
 	});
+	const resizableRef = useRef<Resizable | null>(null);
+	useEffect(() => {
+		const resizable = resizableRef.current!.resizable!;
+		const handle = document.getElementById("handle-left")!.parentNode! as HTMLDivElement;
+
+		const onScroll = () => (handle.style.top = `${resizable?.scrollTop}px`);
+		resizable.addEventListener("scroll", onScroll);
+
+		return () => resizable.removeEventListener("scroll", onScroll);
+	}, [resizableRef]);
 
 	async function addComponent(id: string) {
 		const lastComponent = components.at(-1);
@@ -110,6 +120,7 @@ export function Inspector(props: Props) {
 	return (
 		<>
 			<Resizable
+				ref={resizableRef}
 				// Use flex instead of space-y-5, because Resizable adds a div when resizing which messes up the spacing
 				className="flex flex-col gap-5 overflow-y-auto p-4 max-md:hidden"
 				minWidth={MIN_WIDTH}
@@ -118,7 +129,10 @@ export function Inspector(props: Props) {
 				enable={{ left: true }}
 				handleComponent={{
 					left: (
-						<div className="mx-auto h-full w-px bg-border transition-colors group-hover:w-[3px] group-hover:bg-brand group-active:w-[3px] group-active:bg-brand" />
+						<div
+							id="handle-left"
+							className="mx-auto h-full w-px bg-border transition-colors group-hover:w-[3px] group-hover:bg-brand group-active:w-[3px] group-active:bg-brand"
+						/>
 					),
 				}}
 				handleClasses={{
