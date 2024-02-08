@@ -107,6 +107,7 @@ export function ComponentEditor(props: ComponentEditorProps) {
 											component={props.component}
 											edited={edited}
 											field={field}
+											originalValue={originalField?.data}
 											onRestore={() => {
 												form.setValue(field.id, originalField!.data);
 												void form.handleSubmit(props.onChange)();
@@ -131,11 +132,12 @@ export interface FieldProps extends FormFieldProps<string> {
 	className?: string;
 	component: ComponentUI;
 	field: Pick<FieldUI, "id" | "type" | "arrayItemType">;
+	originalValue?: string;
 	edited: boolean;
 	onRestore: () => void;
 }
 export const Field = forwardRef<HTMLTextAreaElement | HTMLButtonElement, FieldProps>(
-	({ className, component, field, edited, onRestore, value, onChange }, ref) => {
+	({ className, component, field, edited, onRestore, value, onChange, originalValue }, ref) => {
 		switch (field.type) {
 			case "TEXT": {
 				const inputProps = getRestorableTextareaProps(edited, onRestore);
@@ -151,11 +153,11 @@ export const Field = forwardRef<HTMLTextAreaElement | HTMLButtonElement, FieldPr
 			}
 			case "RICH_TEXT": {
 				return (
-					// FIX: Upon restore, the value is not updated
 					<RichTextEditor
 						// Rich text editor's value is an object instead of a string
 						value={value as unknown as Value}
 						onChange={(v) => onChange(v as unknown as string)}
+						originalValue={originalValue as unknown as Value | undefined}
 						edited={edited}
 						onRestore={onRestore}
 						pageId={component.pageId}

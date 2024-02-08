@@ -26,6 +26,7 @@ import {
 	ELEMENT_DEFAULT,
 	insertNodes,
 	setNodes,
+	type PlateEditor,
 } from "@udecode/plate-common";
 import { isSelectionAtBlockStart } from "@udecode/plate-common";
 import { createDndPlugin } from "@udecode/plate-dnd";
@@ -56,9 +57,10 @@ import {
 	ELEMENT_TR,
 	createTablePlugin,
 } from "@udecode/plate-table";
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
+import { pageEditorStore } from "../data/stores/pageEditor";
 import { cn } from "../utils/styling";
 import {
 	Editor,
@@ -282,34 +284,64 @@ export const components = {
 };
 
 const pluginsWithDnd = createPlugins(plugins, {
-	// FIX: When just added a component with rich text field and saved, the content is empty
 	// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
 	components: withPlaceholders(withDraggables(components)),
 });
 
 interface Props extends FormFieldProps<Value> {
+	originalValue: Value | undefined;
 	edited: boolean;
 	onRestore: () => void;
 	pageId: string;
 }
+
+let lastValidValue: Value | null = null;
 export function RichTextEditor(props: Props) {
+	const editorRef = useRef<PlateEditor<Value>>(null);
+
+	// Stupid workaround for reapplying value after saving a new component,
+	// because on the first render value is still a string for some reason
+	useEffect(() => {
+		if (typeof props.value === "object") {
+			lastValidValue = props.value;
+		}
+		if (lastValidValue && typeof props.value === "string") {
+			editorRef.current!.children = lastValidValue;
+		}
+	}, [editorRef, props.value]);
+
+	// Reset editor when the global Reset button is pressed
+	useEffect(() => {
+		if (props.originalValue) {
+			pageEditorStore.setState({
+				onReset: () => (editorRef.current!.children = props.originalValue!),
+			});
+		}
+	}, [editorRef, props.originalValue]);
+
 	return (
 		<DndProvider backend={HTML5Backend}>
-			<Plate plugins={pluginsWithDnd} value={props.value} onChange={props.onChange}>
+			<Plate
+				editorRef={editorRef}
+				plugins={pluginsWithDnd}
+				value={props.value}
+				onChange={props.onChange}
+			>
 				<div
 					className={cn(
 						// Block selection
 						"[&_.slate-start-area-left]:!w-[64px] [&_.slate-start-area-right]:!w-[64px] [&_.slate-start-area-top]:!h-4",
+						"relative",
 					)}
 				>
-					<FixedToolbar>
+					<FixedToolbar className={cn(props.edited && "border-brand border-b-border")}>
 						<FixedToolbarButtons />
 					</FixedToolbar>
 
 					<Editor
 						className={cn(
 							"rounded-t-none border-t-0 px-6 py-4",
-							props.edited && "border-b-brand",
+							props.edited && "border-b-brand border-l-brand border-r-brand",
 						)}
 						focusRing={false}
 						pageId={props.pageId}
@@ -318,7 +350,10 @@ export function RichTextEditor(props: Props) {
 					{props.edited && (
 						<ActionIcon
 							className="absolute bottom-1 right-1 bg-background/50"
-							onClick={props.onRestore}
+							onClick={() => {
+								editorRef.current!.children = props.originalValue!;
+								props.onRestore();
+							}}
 							tooltip={"Restore"}
 						>
 							<ArrowUturnLeftIcon className="w-4" />

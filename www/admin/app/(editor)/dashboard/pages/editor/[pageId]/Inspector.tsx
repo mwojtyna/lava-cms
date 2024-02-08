@@ -67,6 +67,7 @@ export function Inspector(props: Props) {
 			e.preventDefault();
 		}
 	});
+
 	const resizableRef = useRef<Resizable | null>(null);
 	useEffect(() => {
 		const resizable = resizableRef.current!.resizable!;

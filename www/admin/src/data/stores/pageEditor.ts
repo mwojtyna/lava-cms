@@ -42,6 +42,7 @@ interface PageEditorState {
 	isDirty: boolean;
 	isSaving: boolean;
 	setIsSaving: (value: boolean) => void;
+	onReset: (() => void) | null;
 
 	iframe: HTMLIFrameElement | null;
 	iframeOrigin: string;
@@ -212,6 +213,7 @@ const pageEditorStore = create<PageEditorState>((set) => ({
 			isDirty: false,
 		});
 	},
+	onReset: null,
 	reset: () =>
 		set((state) => {
 			// Get last step which has a defined component
@@ -235,6 +237,8 @@ const pageEditorStore = create<PageEditorState>((set) => ({
 				}
 				return steps;
 			}
+			state.onReset?.();
+
 			return {
 				components: state.originalComponents,
 				nestedComponents: state.originalNestedComponents,
@@ -280,12 +284,13 @@ const pageEditorStore = create<PageEditorState>((set) => ({
 
 			const allComponents = state.components.concat(state.nestedComponents);
 
+			// Serialize rich text
 			const editor = createPlateEditor({
 				plugins: createPlugins(richTextEditorPlugins, {
 					components: richTextEditorComponents,
 				}),
 			});
-			for (const component of state.components.concat(state.nestedComponents)) {
+			for (const component of allComponents) {
 				for (const field of component.fields) {
 					if (field.type === "RICH_TEXT") {
 						field.serializedRichText = serializeHtml(editor, {
@@ -380,7 +385,8 @@ const pageEditorStore = create<PageEditorState>((set) => ({
 								return step;
 							}),
 						);
-
+					},
+					onSettled: () => {
 						state.setIsSaving(false);
 					},
 				},
@@ -395,6 +401,7 @@ const pageEditorStore = create<PageEditorState>((set) => ({
 function areSame<T extends { diff: Diff }>(original: T, current: T) {
 	const a = { ...original, diff: undefined };
 	const b = { ...current, diff: undefined };
+
 	return JSON.stringify(a) === JSON.stringify(b);
 }
 
