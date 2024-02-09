@@ -60,6 +60,7 @@ import {
 import React, { useEffect, useRef } from "react";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
+import { Node, Point, Transforms, Editor as SlateEditor } from "slate";
 import { pageEditorStore } from "../data/stores/pageEditor";
 import { cn } from "../utils/styling";
 import {
@@ -295,6 +296,32 @@ interface Props extends FormFieldProps<Value> {
 	pageId: string;
 }
 
+function resetNodes(
+	editor: SlateEditor,
+	options: {
+		nodes?: Node | Node[];
+		at?: Location;
+	} = {},
+): void {
+	const children = [...editor.children];
+	for (const node of children) {
+		editor.apply({ type: "remove_node", path: [0], node });
+	}
+
+	if (options.nodes) {
+		const nodes = Node.isNode(options.nodes) ? [options.nodes] : options.nodes;
+		for (let i = 0; i < nodes.length; i++) {
+			editor.apply({ type: "insert_node", path: [i], node: nodes[i]! });
+		}
+	}
+
+	const point =
+		options.at && Point.isPoint(options.at) ? options.at : SlateEditor.end(editor, []);
+	if (point) {
+		Transforms.select(editor, point);
+	}
+}
+
 let lastValidValue: Value | null = null;
 export function RichTextEditor(props: Props) {
 	const editorRef = useRef<PlateEditor<Value>>(null);
@@ -306,7 +333,8 @@ export function RichTextEditor(props: Props) {
 			lastValidValue = props.value;
 		}
 		if (lastValidValue && typeof props.value === "string") {
-			editorRef.current!.children = lastValidValue;
+			// @ts-expect-error - Don't know how to type this
+			resetNodes(editorRef.current!, { nodes: lastValidValue });
 		}
 	}, [editorRef, props.value]);
 
@@ -314,7 +342,8 @@ export function RichTextEditor(props: Props) {
 	useEffect(() => {
 		if (props.originalValue) {
 			pageEditorStore.setState({
-				onReset: () => (editorRef.current!.children = props.originalValue!),
+				// @ts-expect-error - Don't know how to type this
+				onReset: () => resetNodes(editorRef.current!, { nodes: props.originalValue }),
 			});
 		}
 	}, [editorRef, props.originalValue]);
@@ -351,7 +380,8 @@ export function RichTextEditor(props: Props) {
 						<ActionIcon
 							className="absolute bottom-1 right-1 bg-background/50"
 							onClick={() => {
-								editorRef.current!.children = props.originalValue!;
+								// @ts-expect-error - Don't know how to type this
+								resetNodes(editorRef.current!, { nodes: props.originalValue });
 								props.onRestore();
 							}}
 							tooltip={"Restore"}

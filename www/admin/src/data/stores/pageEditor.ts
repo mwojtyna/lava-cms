@@ -398,9 +398,28 @@ const pageEditorStore = create<PageEditorState>((set) => ({
 		}),
 }));
 
+function removeId(obj: Record<string, unknown>) {
+	for (const key in obj) {
+		if (key === "id") {
+			delete obj[key];
+		} else if (typeof obj[key] === "object") {
+			removeId(obj[key] as Record<string, unknown>);
+		}
+	}
+}
 function areSame<T extends { diff: Diff }>(original: T, current: T) {
 	const a = { ...original, diff: undefined };
 	const b = { ...current, diff: undefined };
+
+	// Remove id from rich text data, otherwise restoring doesn't clear diffs
+	if ("fields" in current) {
+		const fields = current.fields as FieldUI[];
+		for (const field of fields) {
+			if (field.type === "RICH_TEXT" && typeof field.data === "object") {
+				removeId(field.data as Record<string, unknown>);
+			}
+		}
+	}
 
 	return JSON.stringify(a) === JSON.stringify(b);
 }
