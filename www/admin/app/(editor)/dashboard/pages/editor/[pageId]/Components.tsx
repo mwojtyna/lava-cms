@@ -53,9 +53,7 @@ export function Components(props: Props) {
 				const item = reordered[i]!;
 				if (item.order !== i) {
 					item.order = i;
-					if (item.diff === "none") {
-						item.diff = "reordered";
-					}
+					item.reordered = true;
 				}
 			}
 
@@ -80,10 +78,9 @@ export function Components(props: Props) {
 		setComponents(newComponents);
 	}
 	function unRemove(component: ComponentUI) {
-		const original = originalComponents.find((comp) => comp.id === component.id)!;
 		const newComponents = props.components.toSpliced(props.components.indexOf(component), 1, {
 			...component,
-			diff: original.order !== component.order ? "reordered" : "none",
+			diff: "none",
 		});
 		setComponents(newComponents);
 	}
@@ -157,7 +154,7 @@ export function ComponentCard(props: ComponentCardProps) {
 		zIndex: isDragging ? 1 : undefined,
 	};
 
-	const diffStyle: Record<Exclude<Diff, "reordered" | "none">, string> = {
+	const diffStyle: Record<Exclude<Diff, "none">, string> = {
 		added: "border-l-green-500",
 		edited: "border-l-brand",
 		replaced: "border-l-brand",
@@ -171,7 +168,6 @@ export function ComponentCard(props: ComponentCardProps) {
 			style={style}
 			className={cn(
 				props.component.diff !== "none" &&
-					props.component.diff !== "reordered" &&
 					`border-l-[3px] ${diffStyle[props.component.diff]}`,
 
 				props.component.diff !== "deleted" && "hover:bg-accent/70",
@@ -254,7 +250,6 @@ function Actions(props: ActionsProps) {
 		}
 
 		case "added":
-		case "reordered":
 		case "none": {
 			return (
 				<ActionIcon

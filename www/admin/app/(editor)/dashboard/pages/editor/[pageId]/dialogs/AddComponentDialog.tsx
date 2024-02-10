@@ -69,6 +69,7 @@ export async function createComponentInstance(
 		pageId: data.pageId,
 		parentComponentId: data.parentComponentId,
 		diff: currentComponent ? "replaced" : "added",
+		reordered: false,
 	};
 }
 

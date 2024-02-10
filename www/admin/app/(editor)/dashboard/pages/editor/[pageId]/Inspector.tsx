@@ -34,6 +34,7 @@ const COMPONENT_PLACEHOLDER: ComponentUI = {
 	pageId: "",
 	parentComponentId: "",
 	diff: "none",
+	reordered: false,
 };
 
 interface Props {
@@ -53,9 +54,9 @@ export function Inspector(props: Props) {
 	);
 	useEffect(() => {
 		init(
-			data.components.map((comp) => ({ ...comp, diff: "none" })),
-			data.nestedComponents.map((comp) => ({ ...comp, diff: "none" })),
-			data.arrayItems.map((item) => ({ ...item, diff: "none" })),
+			data.components.map((comp) => ({ ...comp, diff: "none", reordered: false })),
+			data.nestedComponents.map((comp) => ({ ...comp, diff: "none", reordered: false })),
+			data.arrayItems.map((item) => ({ ...item, diff: "none", reordered: false })),
 		);
 	}, [data, init]);
 
@@ -177,6 +178,7 @@ export function Inspector(props: Props) {
 							: props.serverData.components.map((c) => ({
 									...c,
 									diff: "none",
+								reordered: false,
 							  }))
 					}
 					openAddComponentDialog={() => setOpenAdd(true)}

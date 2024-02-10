@@ -15,13 +15,15 @@ import type { ArrayItem } from "@/src/trpc/routes/private/pages/types";
 import type { trpc } from "@/src/utils/trpc";
 import "client-only";
 
-export type Diff = "added" | "edited" | "deleted" | "reordered" | "replaced" | "none";
+export type Diff = "added" | "edited" | "deleted" | "replaced" | "none";
 export interface ComponentUI extends Component {
 	diff: Diff;
+	reordered: boolean;
 }
 export type FieldUI = ComponentUI["fields"][number];
 export interface ArrayItemUI extends ArrayItem {
 	diff: Diff;
+	reordered: boolean;
 }
 type ArrayItemGroups = Record<string, ArrayItemUI[]>;
 
@@ -92,10 +94,11 @@ const pageEditorStore = create<PageEditorState>((set) => ({
 				// but they are not reordered, because the added component was deleted
 				nc.order = i;
 
-				if (nc.diff === "edited" || nc.diff === "reordered") {
+				if (nc.diff === "edited" || nc.reordered) {
 					const original = state.originalComponents.find((oc) => oc.id === nc.id)!;
 					if (areSame(original, nc)) {
 						nc.diff = "none";
+						nc.reordered = false;
 					}
 				}
 
@@ -118,10 +121,11 @@ const pageEditorStore = create<PageEditorState>((set) => ({
 	setNestedComponents: (changedNestedComponents) =>
 		set((state) => {
 			for (const nc of changedNestedComponents) {
-				if (nc.diff === "edited" || nc.diff === "reordered") {
+				if (nc.diff === "edited" || nc.reordered) {
 					const original = state.originalNestedComponents.find((oc) => oc.id === nc.id)!;
 					if (areSame(original, nc)) {
 						nc.diff = "none";
+						nc.reordered = false;
 					}
 				}
 			}
@@ -147,13 +151,14 @@ const pageEditorStore = create<PageEditorState>((set) => ({
 				// but they are not reordered, because the added item was deleted
 				ai.order = i;
 
-				if (ai.diff === "edited" || ai.diff === "reordered") {
+				if (ai.diff === "edited" || ai.reordered) {
 					const original = state.originalArrayItems[parentFieldId]!.find(
 						(oc) => oc.id === ai.id,
 					)!;
 
 					if (areSame(original, ai)) {
 						ai.diff = "none";
+						ai.reordered = false;
 					}
 				}
 
@@ -259,10 +264,10 @@ const pageEditorStore = create<PageEditorState>((set) => ({
 			// Fix component order
 			const correctedOrderComponents = state.components
 				.filter((comp) => comp.diff !== "deleted")
-				.map((comp, i) => ({
+				.map<ComponentUI>((comp, i) => ({
 					...comp,
 					order: i,
-					diff: comp.order !== i ? "reordered" : comp.diff,
+					diff: comp.diff,
 				}));
 
 			// Fix array item order
@@ -275,7 +280,7 @@ const pageEditorStore = create<PageEditorState>((set) => ({
 				let i = 0;
 				for (const item of correctedOrderItems[parentId]!) {
 					if (item.order !== i) {
-						item.diff = "reordered";
+						item.reordered = true;
 						item.order = i;
 					}
 					i++;
@@ -323,7 +328,10 @@ const pageEditorStore = create<PageEditorState>((set) => ({
 						})),
 					editedComponents: correctedOrderComponents
 						.concat(state.nestedComponents)
-						.filter((comp) => comp.diff === "edited" || comp.diff === "reordered"),
+						.filter(
+							(comp) =>
+								comp.diff === "edited" || (comp.reordered && comp.diff !== "added"),
+						),
 					deletedComponentIds: allComponents // Replaced components have the same id as the original
 						.filter((comp) => comp.diff === "deleted" || comp.diff === "replaced")
 						.map((comp) => comp.id),
@@ -341,7 +349,7 @@ const pageEditorStore = create<PageEditorState>((set) => ({
 						.filter(
 							(item) =>
 								item.diff === "edited" ||
-								item.diff === "reordered" ||
+								item.reordered ||
 								// 'replaced' is for when the item is of type COMPONENT, see ArrayFieldItem handleChange() function
 								item.diff === "replaced",
 						),
@@ -407,9 +415,9 @@ function removeId(obj: Record<string, unknown>) {
 		}
 	}
 }
-function areSame<T extends { diff: Diff }>(original: T, current: T) {
-	const a = { ...original, diff: undefined };
-	const b = { ...current, diff: undefined };
+function areSame<T extends { diff: Diff; reordered: boolean }>(original: T, current: T) {
+	const a = { ...original, diff: undefined, reordered: undefined };
+	const b = { ...current, diff: undefined, reordered: undefined };
 
 	// Remove id from rich text data, otherwise restoring doesn't clear diffs
 	if ("fields" in current) {

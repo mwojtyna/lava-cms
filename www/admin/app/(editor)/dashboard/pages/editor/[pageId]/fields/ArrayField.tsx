@@ -69,6 +69,7 @@ export function ArrayField(props: ArrayFieldProps) {
 					parentFieldId: props.parentField.id,
 					order: lastItem ? lastItem.order + 1 : 0,
 					diff: "added",
+					reordered: false,
 				},
 			]);
 		} else {
@@ -78,16 +79,14 @@ export function ArrayField(props: ArrayFieldProps) {
 	function handleReorder(e: DragEndEvent) {
 		const { over, active } = e;
 		if (over && active.id !== over.id) {
-			const reordered: ArrayItemUI[] = structuredClone(
+			const reordered = structuredClone(
 				arrayMove(myArrayItems, Number(active.id) - 1, Number(over.id) - 1),
 			);
 			for (let i = 0; i < reordered.length; i++) {
 				const item = reordered[i]!;
 				if (item.order !== i) {
 					item.order = i;
-					if (item.diff === "none") {
-						item.diff = "reordered";
-					}
+					item.reordered = true;
 				}
 			}
 
@@ -112,6 +111,7 @@ export function ArrayField(props: ArrayFieldProps) {
 				parentFieldId: props.parentField.id,
 				order: lastItem ? lastItem.order + 1 : 0,
 				diff: "added",
+				reordered: true,
 			},
 		]);
 	}
