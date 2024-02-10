@@ -19,7 +19,7 @@ import { CSS } from "@dnd-kit/utilities";
 import { PlusIcon, TrashIcon, ArrowUturnLeftIcon } from "@heroicons/react/24/outline";
 import { createId } from "@paralleldrive/cuid2";
 import { IconGripVertical } from "@tabler/icons-react";
-import { useMemo, useState, useRef } from "react";
+import { useMemo, useState } from "react";
 import { Button, ActionIcon } from "@/src/components/ui/client";
 import { Card } from "@/src/components/ui/server";
 import { type ComponentUI, usePageEditor, type ArrayItemUI } from "@/src/data/stores/pageEditor";
@@ -190,8 +190,6 @@ function ArrayFieldItem(props: ArrayFieldItemProps) {
 		zIndex: isDragging ? 1 : undefined,
 	};
 
-	const preDeletedDiff = useRef<ArrayItemUI["diff"]>(props.item.diff);
-
 	function handleChange(value: string) {
 		setArrayItems(
 			props.parentField.id,
@@ -235,7 +233,6 @@ function ArrayFieldItem(props: ArrayFieldItemProps) {
 		);
 	}
 	function handleRemove() {
-		preDeletedDiff.current = props.item.diff;
 		setArrayItems(
 			props.parentField.id,
 			props.item.diff === "added"
@@ -249,7 +246,7 @@ function ArrayFieldItem(props: ArrayFieldItemProps) {
 		setArrayItems(
 			props.parentField.id,
 			props.items.map((item) =>
-				item.id === props.item.id ? { ...item, diff: preDeletedDiff.current } : item,
+				item.id === props.item.id ? { ...item, diff: "none" } : item,
 			),
 		);
 	}

@@ -94,7 +94,7 @@ const pageEditorStore = create<PageEditorState>((set) => ({
 				// but they are not reordered, because the added component was deleted
 				nc.order = i;
 
-				if (nc.diff === "edited" || nc.reordered) {
+				if (nc.diff === "edited" || (nc.reordered && nc.diff === "none")) {
 					const original = state.originalComponents.find((oc) => oc.id === nc.id)!;
 					if (areSame(original, nc)) {
 						nc.diff = "none";
@@ -121,7 +121,7 @@ const pageEditorStore = create<PageEditorState>((set) => ({
 	setNestedComponents: (changedNestedComponents) =>
 		set((state) => {
 			for (const nc of changedNestedComponents) {
-				if (nc.diff === "edited" || nc.reordered) {
+				if (nc.diff === "edited" || (nc.reordered && nc.diff === "none")) {
 					const original = state.originalNestedComponents.find((oc) => oc.id === nc.id)!;
 					if (areSame(original, nc)) {
 						nc.diff = "none";
@@ -151,7 +151,7 @@ const pageEditorStore = create<PageEditorState>((set) => ({
 				// but they are not reordered, because the added item was deleted
 				ai.order = i;
 
-				if (ai.diff === "edited" || ai.reordered) {
+				if (ai.diff === "edited" || (ai.reordered && ai.diff === "none")) {
 					const original = state.originalArrayItems[parentFieldId]!.find(
 						(oc) => oc.id === ai.id,
 					)!;
@@ -330,7 +330,7 @@ const pageEditorStore = create<PageEditorState>((set) => ({
 						.concat(state.nestedComponents)
 						.filter(
 							(comp) =>
-								comp.diff === "edited" || (comp.reordered && comp.diff !== "added"),
+								comp.diff === "edited" || (comp.reordered && comp.diff === "none"),
 						),
 					deletedComponentIds: allComponents // Replaced components have the same id as the original
 						.filter((comp) => comp.diff === "deleted" || comp.diff === "replaced")
