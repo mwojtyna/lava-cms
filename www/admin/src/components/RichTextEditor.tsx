@@ -346,6 +346,11 @@ export function RichTextEditor(props: Props) {
 				onReset: () => resetNodes(editorRef.current!, { nodes: props.originalValue }),
 			});
 		}
+
+		return () =>
+			pageEditorStore.setState({
+				onReset: null,
+			});
 	}, [editorRef, props.originalValue]);
 
 	return (
