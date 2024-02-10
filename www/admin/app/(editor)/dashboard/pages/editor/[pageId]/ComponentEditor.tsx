@@ -213,7 +213,7 @@ export const Field = forwardRef<HTMLTextAreaElement | HTMLButtonElement, FieldPr
 				);
 			}
 			case "COLLECTION": {
-				return <ArrayField parentField={field} component={component} />;
+				return <ArrayField parentField={field} parentComponent={component} />;
 			}
 		}
 	},

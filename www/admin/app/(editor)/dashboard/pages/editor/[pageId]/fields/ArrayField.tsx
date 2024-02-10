@@ -7,7 +7,7 @@ import {
 	DndContext,
 	closestCenter,
 } from "@dnd-kit/core";
-import { restrictToVerticalAxis } from "@dnd-kit/modifiers";
+import { restrictToParentElement, restrictToVerticalAxis } from "@dnd-kit/modifiers";
 import {
 	sortableKeyboardCoordinates,
 	arrayMove,
@@ -30,7 +30,7 @@ import { NestedComponentField } from "./NestedComponentField";
 
 interface ArrayFieldProps {
 	parentField: FieldProps["field"];
-	component: ComponentUI;
+	parentComponent: ComponentUI;
 }
 export function ArrayField(props: ArrayFieldProps) {
 	const { originalArrayItems, arrayItems, setArrayItems, nestedComponents, setNestedComponents } =
@@ -97,8 +97,8 @@ export function ArrayField(props: ArrayFieldProps) {
 	async function addComponent(compDefId: string) {
 		const newComponent = await createComponentInstance(compDefId, {
 			order: 0,
-			pageId: props.component.pageId,
-			parentComponentId: props.component.id,
+			pageId: props.parentComponent.pageId,
+			parentComponentId: props.parentComponent.id,
 		});
 		setNestedComponents([...nestedComponents, newComponent]);
 
@@ -123,7 +123,11 @@ export function ArrayField(props: ArrayFieldProps) {
 				id={"id"}
 				sensors={sensors}
 				collisionDetection={closestCenter}
-				modifiers={[restrictToVerticalAxis]}
+				modifiers={[
+					props.parentField.arrayItemType !== "TEXT"
+						? restrictToParentElement
+						: restrictToVerticalAxis,
+				]}
 				onDragEnd={handleReorder}
 			>
 				<SortableContext items={dndIds} strategy={verticalListSortingStrategy}>
@@ -137,7 +141,7 @@ export function ArrayField(props: ArrayFieldProps) {
 									items={myArrayItems}
 									originalItems={myOriginalArrayItems}
 									parentField={props.parentField}
-									component={props.component}
+									component={props.parentComponent}
 								/>
 							))}
 						</div>
