@@ -258,7 +258,7 @@ const pageEditorStore = create<PageEditorState>((set) => ({
 
 			// Fix component order
 			const correctedOrderComponents = state.components
-				.filter((comp) => comp.diff !== "deleted")
+				.filter((comp) => comp.diff !== "deleted" && comp.diff !== "added")
 				.map((comp, i) => ({
 					...comp,
 					order: i,
@@ -269,7 +269,7 @@ const pageEditorStore = create<PageEditorState>((set) => ({
 			const correctedOrderItems: ArrayItemGroups = structuredClone(state.arrayItems);
 			for (const parentId of Object.keys(correctedOrderItems)) {
 				correctedOrderItems[parentId] = correctedOrderItems[parentId]!.filter(
-					(item) => item.diff !== "deleted",
+					(item) => item.diff !== "deleted" && item.diff !== "added",
 				);
 
 				let i = 0;
