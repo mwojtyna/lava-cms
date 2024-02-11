@@ -16,15 +16,14 @@ import type { trpc } from "@/src/utils/trpc";
 import "client-only";
 
 export type Diff = "added" | "edited" | "deleted" | "replaced" | "none";
-export interface ComponentUI extends Component {
+interface Editable {
 	diff: Diff;
 	reordered: boolean;
 }
+
+export type ComponentUI = Component & Editable;
 export type FieldUI = ComponentUI["fields"][number];
-export interface ArrayItemUI extends ArrayItem {
-	diff: Diff;
-	reordered: boolean;
-}
+export type ArrayItemUI = ArrayItem & Editable;
 type ArrayItemGroups = Record<string, ArrayItemUI[]>;
 
 export type Step =
@@ -99,7 +98,7 @@ const pageEditorStore = create<PageEditorState>((set) => ({
 				// but they are not reordered, because the added component was deleted
 				nc.order = i;
 
-				if (nc.diff === "edited" || (nc.reordered && nc.diff === "none")) {
+				if (isEdited(nc)) {
 					const original = state.originalComponents.find((oc) => oc.id === nc.id)!;
 					if (areSame(original, nc)) {
 						nc.diff = "none";
@@ -128,7 +127,7 @@ const pageEditorStore = create<PageEditorState>((set) => ({
 	setNestedComponents: (changedNestedComponents) =>
 		set((state) => {
 			for (const nc of changedNestedComponents) {
-				if (nc.diff === "edited" || (nc.reordered && nc.diff === "none")) {
+				if (isEdited(nc)) {
 					const original = state.originalNestedComponents.find((oc) => oc.id === nc.id)!;
 					if (areSame(original, nc)) {
 						nc.diff = "none";
@@ -157,7 +156,7 @@ const pageEditorStore = create<PageEditorState>((set) => ({
 				// but they are not reordered, because the added item was deleted
 				ai.order = i;
 
-				if (ai.diff === "edited" || (ai.reordered && ai.diff === "none")) {
+				if (isEdited(ai)) {
 					const original = state.originalArrayItems[parentFieldId]!.find(
 						(oc) => oc.id === ai.id,
 					)!;
@@ -180,6 +179,7 @@ const pageEditorStore = create<PageEditorState>((set) => ({
 				arrayItems = {};
 			}
 
+			console.log(arrayItems);
 			return {
 				arrayItems,
 				isDirty:
@@ -203,7 +203,7 @@ const pageEditorStore = create<PageEditorState>((set) => ({
 		const arrayItemsGrouped: ArrayItemGroups = {};
 		for (const item of arrayItems) {
 			const items = arrayItemsGrouped[item.parentFieldId] ?? [];
-			if (item.diff !== "deleted") {
+			if (!isDeleted(item)) {
 				items.push(item);
 			}
 			arrayItemsGrouped[item.parentFieldId] = items;
@@ -276,7 +276,7 @@ const pageEditorStore = create<PageEditorState>((set) => ({
 
 			// Fix component order
 			const correctedOrderComponents = state.components
-				.filter((comp) => comp.diff !== "deleted")
+				.filter((comp) => !isDeleted(comp))
 				.map<ComponentUI>((comp, i) => ({
 					...comp,
 					order: i,
@@ -287,7 +287,7 @@ const pageEditorStore = create<PageEditorState>((set) => ({
 			const correctedOrderItems: ArrayItemGroups = structuredClone(state.arrayItems);
 			for (const parentId of Object.keys(correctedOrderItems)) {
 				correctedOrderItems[parentId] = correctedOrderItems[parentId]!.filter(
-					(item) => item.diff !== "deleted",
+					(item) => !isDeleted(item),
 				);
 
 				let i = 0;
@@ -325,7 +325,7 @@ const pageEditorStore = create<PageEditorState>((set) => ({
 				{
 					pageId,
 					addedComponents: allComponents
-						.filter((comp) => comp.diff === "added" || comp.diff === "replaced")
+						.filter((comp) => isAdded(comp) || isReplaced(comp))
 						.map<AddedComponent>((comp) => ({
 							pageId,
 							parentComponentId: comp.parentComponentId,
@@ -341,16 +341,13 @@ const pageEditorStore = create<PageEditorState>((set) => ({
 						})),
 					editedComponents: correctedOrderComponents
 						.concat(state.nestedComponents)
-						.filter(
-							(comp) =>
-								comp.diff === "edited" || (comp.reordered && comp.diff === "none"),
-						),
+						.filter((comp) => isEdited(comp)),
 					deletedComponentIds: allComponents // Replaced components have the same id as the original
-						.filter((comp) => comp.diff === "deleted" || comp.diff === "replaced")
+						.filter((comp) => isDeleted(comp) || isReplaced(comp))
 						.map((comp) => comp.id),
 
 					addedArrayItems: flattenedItems
-						.filter((item) => item.diff === "added")
+						.filter((item) => isAdded(item))
 						.map((item) => ({
 							frontendId: item.id,
 							data: item.data,
@@ -361,13 +358,12 @@ const pageEditorStore = create<PageEditorState>((set) => ({
 						.flat()
 						.filter(
 							(item) =>
-								item.diff === "edited" ||
-								(item.reordered && item.diff === "none") ||
-								// 'replaced' is for when the item is of type COMPONENT, see ArrayFieldItem handleChange() function
-								item.diff === "replaced",
+								isEdited(item) ||
+								// isReplaced is for when the item is of type COMPONENT, see ArrayFieldItem handleChange() function
+								isReplaced(item),
 						),
 					deletedArrayItemIds: flattenedItems
-						.filter((item) => item.diff === "deleted")
+						.filter((item) => isDeleted(item))
 						.map((item) => item.id),
 				},
 				{
@@ -428,10 +424,7 @@ function removeId(obj: Record<string, unknown>) {
 		}
 	}
 }
-function areSame<T extends { diff: Diff; reordered: boolean; order: number }>(
-	original: T,
-	current: T,
-) {
+function areSame<T extends Editable & { order: number }>(original: T, current: T) {
 	const a = { ...original, diff: undefined, reordered: undefined, order: undefined };
 	const b = { ...current, diff: undefined, reordered: undefined, order: undefined };
 
@@ -446,6 +439,19 @@ function areSame<T extends { diff: Diff; reordered: boolean; order: number }>(
 	}
 
 	return JSON.stringify(a) === JSON.stringify(b);
+}
+
+function isAdded(editable: Editable) {
+	return editable.diff === "added";
+}
+function isEdited(editable: Editable) {
+	return editable.diff === "edited" || (editable.reordered && editable.diff === "none");
+}
+function isDeleted(editable: Editable) {
+	return editable.diff === "deleted";
+}
+function isReplaced(editable: Editable) {
+	return editable.diff === "replaced";
 }
 
 function usePageEditor() {
