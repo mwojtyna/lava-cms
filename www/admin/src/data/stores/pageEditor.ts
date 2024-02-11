@@ -64,7 +64,6 @@ interface PageEditorState {
 
 	steps: Step[];
 	setSteps: (steps: Step[]) => void;
-	onStepsChanged: (() => void) | null;
 
 	init: (
 		components: ComponentUI[],
@@ -179,7 +178,6 @@ const pageEditorStore = create<PageEditorState>((set) => ({
 				arrayItems = {};
 			}
 
-			console.log(arrayItems);
 			return {
 				arrayItems,
 				isDirty:
@@ -191,12 +189,7 @@ const pageEditorStore = create<PageEditorState>((set) => ({
 		}),
 
 	steps: [{ name: "components" }],
-	setSteps: (steps) =>
-		set((state) => {
-			state.onStepsChanged?.();
-			return { steps };
-		}),
-	onStepsChanged: null,
+	setSteps: (steps) => set({ steps }),
 
 	init: (components, nestedComponents, arrayItems) => {
 		// Group array items by parent

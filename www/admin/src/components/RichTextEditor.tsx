@@ -322,42 +322,17 @@ function resetNodes(
 	}
 }
 
-let lastValidValue: Value | null = null;
 export function RichTextEditor(props: Props) {
 	const editorRef = useRef<PlateEditor<Value>>(null);
-
-	// Stupid workaround for reapplying value after saving a new component,
-	// because on the first render value is still a string for some reason
-	useEffect(() => {
-		if (typeof props.value === "object") {
-			lastValidValue = props.value;
-		}
-		if (lastValidValue && typeof props.value === "string") {
-			// @ts-expect-error - Don't know how to type this
-			resetNodes(editorRef.current!, { nodes: lastValidValue });
-		}
-	}, [editorRef, props.value]);
-
-	// Reset lastValidValue when steps change to avoid applying this value when opening a different component
-	useEffect(() => {
-		pageEditorStore.setState({
-			onStepsChanged: () => {
-				lastValidValue = null;
-			},
-		});
-
-		return () =>
-			pageEditorStore.setState({
-				onStepsChanged: null,
-			});
-	}, []);
 
 	// Reset editor when the global Reset button is pressed
 	useEffect(() => {
 		if (props.originalValue) {
 			pageEditorStore.setState({
-				// @ts-expect-error - Don't know how to type this
-				onReset: () => resetNodes(editorRef.current!, { nodes: props.originalValue }),
+				onReset: () => {
+					// @ts-expect-error - Don't know how to type this
+					resetNodes(editorRef.current!, { nodes: props.originalValue });
+				},
 			});
 		}
 
