@@ -42,6 +42,8 @@ export type Step =
 
 interface PageEditorState {
 	isDirty: boolean;
+	isTyping: boolean;
+	setIsTyping: (value: boolean) => void;
 	isSaving: boolean;
 	setIsSaving: (value: boolean) => void;
 	onReset: (() => void) | null;
@@ -78,6 +80,8 @@ interface PageEditorState {
 }
 const pageEditorStore = create<PageEditorState>((set) => ({
 	isDirty: false,
+	isTyping: false,
+	setIsTyping: (value) => set({ isTyping: value }),
 	isSaving: false,
 	setIsSaving: (value) => set({ isSaving: value }),
 
@@ -128,9 +132,6 @@ const pageEditorStore = create<PageEditorState>((set) => ({
 					const original = state.originalNestedComponents.find((oc) => oc.id === nc.id)!;
 					if (areSame(original, nc)) {
 						nc.diff = "none";
-					}
-					if (original.order === nc.order) {
-						nc.reordered = false;
 					}
 				}
 			}
@@ -266,7 +267,7 @@ const pageEditorStore = create<PageEditorState>((set) => ({
 		}),
 	save: (mutation, pageId) =>
 		set((state) => {
-			if (!state.isDirty || state.isSaving) {
+			if (!state.isDirty || state.isSaving || (state.isDirty && state.isTyping)) {
 				return state;
 			}
 
@@ -449,6 +450,8 @@ function areSame<T extends { diff: Diff; reordered: boolean; order: number }>(
 
 function usePageEditor() {
 	const isDirty = pageEditorStore((state) => state.isDirty);
+	const isTyping = pageEditorStore((state) => state.isTyping);
+	const setIsTyping = pageEditorStore((state) => state.setIsTyping);
 	const isSaving = pageEditorStore((state) => state.isSaving);
 
 	const iframe = pageEditorStore((state) => state.iframe);
@@ -475,6 +478,8 @@ function usePageEditor() {
 
 	return {
 		isDirty,
+		isTyping,
+		setIsTyping,
 		isSaving,
 		iframe,
 		iframeOrigin,

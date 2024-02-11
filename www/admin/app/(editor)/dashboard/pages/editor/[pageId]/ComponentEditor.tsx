@@ -1,7 +1,7 @@
 import type { Value } from "@udecode/plate-common";
 import { ArrowUturnLeftIcon } from "@heroicons/react/24/outline";
 import React, { forwardRef, useEffect, useMemo, useRef } from "react";
-import { FormProvider, useForm } from "react-hook-form";
+import { FormProvider, useForm, type ControllerRenderProps } from "react-hook-form";
 import { RichTextEditor } from "@/src/components/RichTextEditor";
 import {
 	type Input,
@@ -31,7 +31,7 @@ interface ComponentEditorProps {
 	onChange: (data: Input) => void;
 }
 export function ComponentEditor(props: ComponentEditorProps) {
-	const { originalComponents, originalNestedComponents } = usePageEditor();
+	const { originalComponents, originalNestedComponents, setIsTyping } = usePageEditor();
 	const originalComponent = useMemo(
 		() =>
 			(props.component.parentComponentId === null
@@ -50,26 +50,25 @@ export function ComponentEditor(props: ComponentEditorProps) {
 	});
 
 	const debounceTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+	function onFieldChanged(formField: ControllerRenderProps<Input, string>, value: string) {
+		formField.onChange(value);
+
+		if (debounceTimeoutRef.current !== null) {
+			clearTimeout(debounceTimeoutRef.current);
+		}
+
+		setIsTyping(true);
+		debounceTimeoutRef.current = setTimeout(() => {
+			props.onChange(form.getValues());
+			setIsTyping(false);
+			debounceTimeoutRef.current = null;
+		}, 250);
+	}
+
 	useEffect(() => {
 		// Trigger validation on mount, fixes Ctrl+S after first change not saving
 		void form.trigger();
-
-		const { unsubscribe } = form.watch(() => {
-			if (debounceTimeoutRef.current !== null) {
-				clearTimeout(debounceTimeoutRef.current);
-			}
-			debounceTimeoutRef.current = setTimeout(() => {
-				props.onChange(form.getValues());
-			}, 250);
-		});
-
-		return () => {
-			unsubscribe();
-			if (debounceTimeoutRef.current !== null) {
-				clearTimeout(debounceTimeoutRef.current);
-			}
-		};
-	}, [form, props]);
+	}, [form]);
 
 	return props.component.fields.length > 0 ? (
 		<FormProvider {...form}>
@@ -122,6 +121,7 @@ export function ComponentEditor(props: ComponentEditorProps) {
 												}}
 												{...formField}
 												value={value}
+												onChange={(v) => onFieldChanged(formField, v)}
 											/>
 										</FormControl>
 										<FormError />
