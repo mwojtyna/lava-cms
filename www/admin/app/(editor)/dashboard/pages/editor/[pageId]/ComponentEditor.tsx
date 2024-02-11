@@ -97,27 +97,37 @@ export function ComponentEditor(props: ComponentEditorProps) {
 							key={field.id}
 							control={form.control}
 							name={field.id}
-							render={({ field: formField }) => (
-								<FormItem
-									className={cn(field.type === "SWITCH" && "flex-row", "gap-3")}
-								>
-									<FormLabel>{field.name}</FormLabel>
-									<FormControl>
-										<Field
-											component={props.component}
-											edited={edited}
-											field={field}
-											originalValue={originalField?.data}
-											onRestore={() => {
-												form.setValue(field.id, originalField!.data);
-												void form.handleSubmit(props.onChange)();
-											}}
-											{...formField}
-										/>
-									</FormControl>
-									<FormError />
-								</FormItem>
-							)}
+							render={({ field: formField }) => {
+								// I don't know how the hell, but formField.value is an empty string for one render
+								// when the form is first mounted when the field is a rich text field
+								const value =
+									field.type === "RICH_TEXT" ? field.data : formField.value;
+								return (
+									<FormItem
+										className={cn(
+											field.type === "SWITCH" && "flex-row",
+											"gap-3",
+										)}
+									>
+										<FormLabel>{field.name}</FormLabel>
+										<FormControl>
+											<Field
+												component={props.component}
+												edited={edited}
+												field={field}
+												originalValue={originalField?.data}
+												onRestore={() => {
+													form.setValue(field.id, originalField!.data);
+													void form.handleSubmit(props.onChange)();
+												}}
+												{...formField}
+												value={value}
+											/>
+										</FormControl>
+										<FormError />
+									</FormItem>
+								);
+							}}
 						/>
 					);
 				})}

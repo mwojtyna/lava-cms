@@ -221,11 +221,15 @@ function ArrayFieldItem(props: ArrayFieldItemProps) {
 		);
 	}
 	function handleRestore() {
+		const original = props.originalItems.find((i) => i.id === props.item.id)!;
 		setArrayItems(
 			props.parentField.id,
 			props.items.map((item) =>
 				item.id === props.item.id
-					? props.originalItems.find((i) => i.id === props.item.id)!
+					? {
+							...original,
+							reordered: props.item.reordered,
+					  }
 					: item,
 			),
 		);

@@ -338,6 +338,20 @@ export function RichTextEditor(props: Props) {
 		}
 	}, [editorRef, props.value]);
 
+	// Reset lastValidValue when steps change to avoid applying this value when opening a different component
+	useEffect(() => {
+		pageEditorStore.setState({
+			onStepsChanged: () => {
+				lastValidValue = null;
+			},
+		});
+
+		return () =>
+			pageEditorStore.setState({
+				onStepsChanged: null,
+			});
+	}, []);
+
 	// Reset editor when the global Reset button is pressed
 	useEffect(() => {
 		if (props.originalValue) {

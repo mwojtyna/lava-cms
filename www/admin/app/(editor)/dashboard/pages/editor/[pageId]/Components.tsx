@@ -63,10 +63,13 @@ export function Components(props: Props) {
 
 	function restore(component: ComponentUI) {
 		const original = originalComponents.find((comp) => comp.id === component.id)!;
-		const newComponents = props.components.toSpliced(
-			props.components.indexOf(component),
-			1,
-			original,
+		const newComponents = props.components.map((c) =>
+			c.id === component.id
+				? {
+						...original,
+						reordered: component.reordered,
+				  }
+				: c,
 		);
 		setComponents(newComponents);
 	}

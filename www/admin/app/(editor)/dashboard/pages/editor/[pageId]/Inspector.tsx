@@ -178,7 +178,7 @@ export function Inspector(props: Props) {
 							: props.serverData.components.map((c) => ({
 									...c,
 									diff: "none",
-								reordered: false,
+									reordered: false,
 							  }))
 					}
 					openAddComponentDialog={() => setOpenAdd(true)}

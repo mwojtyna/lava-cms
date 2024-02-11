@@ -63,6 +63,7 @@ interface PageEditorState {
 
 	steps: Step[];
 	setSteps: (steps: Step[]) => void;
+	onStepsChanged: (() => void) | null;
 
 	init: (
 		components: ComponentUI[],
@@ -98,6 +99,8 @@ const pageEditorStore = create<PageEditorState>((set) => ({
 					const original = state.originalComponents.find((oc) => oc.id === nc.id)!;
 					if (areSame(original, nc)) {
 						nc.diff = "none";
+					}
+					if (original.order === nc.order) {
 						nc.reordered = false;
 					}
 				}
@@ -125,6 +128,8 @@ const pageEditorStore = create<PageEditorState>((set) => ({
 					const original = state.originalNestedComponents.find((oc) => oc.id === nc.id)!;
 					if (areSame(original, nc)) {
 						nc.diff = "none";
+					}
+					if (original.order === nc.order) {
 						nc.reordered = false;
 					}
 				}
@@ -158,6 +163,8 @@ const pageEditorStore = create<PageEditorState>((set) => ({
 
 					if (areSame(original, ai)) {
 						ai.diff = "none";
+					}
+					if (original.order === ai.order) {
 						ai.reordered = false;
 					}
 				}
@@ -183,7 +190,12 @@ const pageEditorStore = create<PageEditorState>((set) => ({
 		}),
 
 	steps: [{ name: "components" }],
-	setSteps: (steps) => set({ steps }),
+	setSteps: (steps) =>
+		set((state) => {
+			state.onStepsChanged?.();
+			return { steps };
+		}),
+	onStepsChanged: null,
 
 	init: (components, nestedComponents, arrayItems) => {
 		// Group array items by parent
@@ -349,7 +361,7 @@ const pageEditorStore = create<PageEditorState>((set) => ({
 						.filter(
 							(item) =>
 								item.diff === "edited" ||
-								item.reordered ||
+								(item.reordered && item.diff === "none") ||
 								// 'replaced' is for when the item is of type COMPONENT, see ArrayFieldItem handleChange() function
 								item.diff === "replaced",
 						),
@@ -415,9 +427,12 @@ function removeId(obj: Record<string, unknown>) {
 		}
 	}
 }
-function areSame<T extends { diff: Diff; reordered: boolean }>(original: T, current: T) {
-	const a = { ...original, diff: undefined, reordered: undefined };
-	const b = { ...current, diff: undefined, reordered: undefined };
+function areSame<T extends { diff: Diff; reordered: boolean; order: number }>(
+	original: T,
+	current: T,
+) {
+	const a = { ...original, diff: undefined, reordered: undefined, order: undefined };
+	const b = { ...current, diff: undefined, reordered: undefined, order: undefined };
 
 	// Remove id from rich text data, otherwise restoring doesn't clear diffs
 	if ("fields" in current) {
