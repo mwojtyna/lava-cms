@@ -17,7 +17,7 @@ import {
 	FormError,
 	getRestorableInputProps,
 } from "@/src/components/ui/client";
-import { useComponentsTableDialogs } from "@/src/data/stores/componentDefinitions";
+import { useComponentsTableDialogsStore } from "@/src/data/stores/componentDefinitions";
 import { cn } from "@/src/utils/styling";
 import { fieldDefinitionUISchema, FieldTypePicker } from "./shared";
 
@@ -34,7 +34,11 @@ interface FieldDefEditorProps {
 	dialogType: DialogType;
 }
 export function FieldDefEditor(props: FieldDefEditorProps) {
-	const { fields, setFields, originalFields } = useComponentsTableDialogs();
+	const { setFields, originalFields } = useComponentsTableDialogsStore((state) => ({
+		fields: state.fields,
+		setFields: state.setFields,
+		originalFields: state.originalFields,
+	}));
 	// Can be undefined if the field was just added in an 'add' type dialog
 	const originalField = useMemo(
 		() => originalFields.find((f) => f.id === props.step.fieldDef.id),
@@ -65,7 +69,7 @@ export function FieldDefEditor(props: FieldDefEditorProps) {
 						: step,
 				),
 			);
-			setFields(
+			setFields((fields) =>
 				fields.map((f) =>
 					f.id === props.step.fieldDef.id
 						? {
@@ -82,7 +86,7 @@ export function FieldDefEditor(props: FieldDefEditorProps) {
 				),
 			);
 		},
-		[fields, props, setFields],
+		[props, setFields],
 	);
 
 	useEffect(() => {

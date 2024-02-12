@@ -6,7 +6,7 @@ import * as React from "react";
 import { Button, Tooltip, TooltipContent, TooltipTrigger } from "@/src/components/ui/client";
 import type { NavMenuRoute } from "@/src/data/routes/navMenu";
 import { getRoute } from "@/src/data/routes/shared";
-import { useNavMenu } from "@/src/data/stores/dashboard";
+import { useNavMenuStore } from "@/src/data/stores/dashboard";
 import { cn } from "@/src/utils/styling";
 
 interface Props {
@@ -16,7 +16,7 @@ interface Props {
 }
 export function NavMenuItem({ routes, route, small }: Props) {
 	const matchedRoute = getRoute(usePathname(), routes);
-	const { setIsOpen: setOpen } = useNavMenu();
+	const { setIsOpen: setOpen } = useNavMenuStore((state) => ({ setIsOpen: state.setIsOpen }));
 
 	return (
 		<Tooltip>

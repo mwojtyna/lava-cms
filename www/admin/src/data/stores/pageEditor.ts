@@ -1,6 +1,7 @@
 import type { inferRouterInputs } from "@trpc/server";
 import { createPlateEditor, createPlugins, type Value } from "@udecode/plate-common";
 import { serializeHtml } from "@udecode/plate-serializer-html";
+import { mountStoreDevtool } from "simple-zustand-devtools";
 import { create } from "zustand";
 import type {
 	Component,
@@ -10,9 +11,11 @@ import {
 	components as richTextEditorComponents,
 	plugins as richTextEditorPlugins,
 } from "@/src/components/RichTextEditor";
+import { env } from "@/src/env/client.mjs";
 import type { PrivateRouter } from "@/src/trpc/routes/private/_private";
 import type { ArrayItem } from "@/src/trpc/routes/private/pages/types";
 import type { trpc } from "@/src/utils/trpc";
+import { unwrapSetStateAction } from "./utils";
 import "client-only";
 
 export type Diff = "added" | "edited" | "deleted" | "replaced" | "none";
@@ -90,7 +93,7 @@ const usePageEditorStore = create<PageEditorState>((set) => ({
 	components: [],
 	setComponents: (components) =>
 		set((state) => {
-			const newComponents = getChanged(components, state.components);
+			const newComponents = unwrapSetStateAction(components, state.components);
 
 			let i = 0;
 			for (const nc of newComponents) {
@@ -126,7 +129,7 @@ const usePageEditorStore = create<PageEditorState>((set) => ({
 	nestedComponents: [],
 	setNestedComponents: (components) =>
 		set((state) => {
-			const newNestedComponents = getChanged(components, state.nestedComponents);
+			const newNestedComponents = unwrapSetStateAction(components, state.nestedComponents);
 
 			for (const nc of newNestedComponents) {
 				if (isEdited(nc)) {
@@ -151,7 +154,10 @@ const usePageEditorStore = create<PageEditorState>((set) => ({
 	arrayItems: {},
 	setArrayItems: (parentFieldId, arrayItems) =>
 		set((state) => {
-			const changedArrayItems = getChanged(arrayItems, state.arrayItems[parentFieldId] ?? []);
+			const changedArrayItems = unwrapSetStateAction(
+				arrayItems,
+				state.arrayItems[parentFieldId] ?? [],
+			);
 
 			let i = 0;
 			for (const ai of changedArrayItems) {
@@ -196,7 +202,7 @@ const usePageEditorStore = create<PageEditorState>((set) => ({
 	steps: [{ name: "components" }],
 	setSteps: (steps) =>
 		set((state) => {
-			const newSteps = getChanged(steps, state.steps);
+			const newSteps = unwrapSetStateAction(steps, state.steps);
 			return { steps: newSteps };
 		}),
 
@@ -456,10 +462,8 @@ function isReplaced(editable: Editable) {
 	return editable.diff === "replaced";
 }
 
-function getChanged<T>(changed: React.SetStateAction<T>, state: T): T {
-	// Typescript is dumb
-	const fun = changed as (state: T) => T;
-	return typeof changed === "function" ? fun(state) : changed;
+if (env.NEXT_PUBLIC_DEV) {
+	mountStoreDevtool("PageEditorStore", usePageEditorStore);
 }
 
 export { usePageEditorStore };

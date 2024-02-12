@@ -4,15 +4,15 @@ import type { NextFont } from "next/dist/compiled/@next/font";
 import { IconVolcano } from "@tabler/icons-react";
 import Link from "next/link";
 import { TypographyH1, TypographyMuted } from "@/src/components/ui/server";
-import { useNavMenu } from "@/src/data/stores/dashboard";
+import { useNavMenuStore } from "@/src/data/stores/dashboard";
 import { cn } from "@/src/utils/styling";
 
 export function NavMenuLogo({ version, font }: { version: string; font: NextFont }) {
-	const { setIsOpen: setOpen } = useNavMenu();
+	const { setIsOpen } = useNavMenuStore((state) => ({ setIsOpen: state.setIsOpen }));
 
 	return (
 		<Link
-			onClick={() => setTimeout(() => setOpen(false))}
+			onClick={() => setTimeout(() => setIsOpen(false))}
 			href="/dashboard"
 			className="mb-8 flex items-center justify-center gap-2"
 			aria-label="Logo link"

@@ -6,7 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import * as React from "react";
 import { useForm, type SubmitHandler, FormProvider } from "react-hook-form";
 import { Button, Sheet, SheetContent, SheetFooter } from "@/src/components/ui/client";
-import { useComponentsTableDialogs } from "@/src/data/stores/componentDefinitions";
+import { useComponentsTableDialogsStore } from "@/src/data/stores/componentDefinitions";
 import { useAlertDialog, useWindowEvent } from "@/src/hooks";
 import type { PrivateRouter } from "@/src/trpc/routes/private/_private";
 import { cn } from "@/src/utils/styling";
@@ -43,7 +43,10 @@ export function AddComponentDefDialog(props: Props) {
 		},
 	]);
 
-	const { fields, fieldsDirty } = useComponentsTableDialogs();
+	const { fields, fieldsDirty } = useComponentsTableDialogsStore((state) => ({
+		fields: state.fields,
+		fieldsDirty: state.fieldsDirty,
+	}));
 	const addMutation = trpc.components.addComponentDefinition.useMutation();
 
 	const form = useForm<ComponentDefEditorInputs>({

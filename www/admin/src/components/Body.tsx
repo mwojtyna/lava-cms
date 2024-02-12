@@ -3,13 +3,16 @@
 import type { NextFontWithVariable } from "next/dist/compiled/@next/font";
 import * as React from "react";
 import { cn } from "@/src/utils/styling";
-import { useColorTheme } from "../data/stores/dashboard";
+import { useColorThemeStore } from "../data/stores/dashboard";
 
 interface Props extends React.ComponentPropsWithRef<"body"> {
 	fonts: NextFontWithVariable[];
 }
 export function Body({ children, fonts, ...props }: Props) {
-	const { colorTheme, setColorTheme } = useColorTheme();
+	const { colorTheme, setColorTheme } = useColorThemeStore((state) => ({
+		colorTheme: state.colorTheme,
+		setColorTheme: state.setColorTheme,
+	}));
 
 	React.useEffect(() => {
 		const prefersDark = window.matchMedia("(prefers-color-scheme: dark)");

@@ -34,7 +34,7 @@ import {
 	FormError,
 } from "@/src/components/ui/client";
 import { Card, TypographyMuted } from "@/src/components/ui/server";
-import { useComponentsTableDialogs } from "@/src/data/stores/componentDefinitions";
+import { useComponentsTableDialogsStore } from "@/src/data/stores/componentDefinitions";
 import { cn } from "@/src/utils/styling";
 import { FieldTypePicker, fieldTypeMap, type FieldDefinitionUI, type DialogType } from "./shared";
 
@@ -45,7 +45,10 @@ const addFieldDefsSchema = z.object({
 type AddFieldDefsInputs = z.infer<typeof addFieldDefsSchema>;
 
 export function AddFieldDefs() {
-	const { fields, setFields } = useComponentsTableDialogs();
+	const { fields, setFields } = useComponentsTableDialogsStore((state) => ({
+		fields: state.fields,
+		setFields: state.setFields,
+	}));
 
 	const form = useForm<AddFieldDefsInputs>({
 		resolver: async (values, context, options) => {
@@ -71,7 +74,7 @@ export function AddFieldDefs() {
 		mode: "onChange",
 	});
 	const onSubmit: SubmitHandler<AddFieldDefsInputs> = (data) => {
-		setFields([
+		setFields((fields) => [
 			...fields,
 			{
 				id: createId(),
@@ -152,7 +155,11 @@ interface FieldDefsProps {
 	onFieldClick: (field: FieldDefinitionUI) => void;
 }
 export const FieldDefs = React.forwardRef<React.ComponentRef<"div">, FieldDefsProps>((props, _) => {
-	const { fields, setFields, originalFields } = useComponentsTableDialogs();
+	const { fields, setFields, originalFields } = useComponentsTableDialogsStore((state) => ({
+		fields: state.fields,
+		setFields: state.setFields,
+		originalFields: state.originalFields,
+	}));
 
 	const dndIds: string[] = React.useMemo(() => fields.map((_, i) => i.toString()), [fields]);
 	const sensors = useSensors(

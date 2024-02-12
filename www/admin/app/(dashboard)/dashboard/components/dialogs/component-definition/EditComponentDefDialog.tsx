@@ -7,7 +7,7 @@ import * as React from "react";
 import { useForm, type SubmitHandler, FormProvider } from "react-hook-form";
 import { Button, Sheet, SheetContent, SheetFooter } from "@/src/components/ui/client";
 import { TypographyMuted } from "@/src/components/ui/server";
-import { useComponentsTableDialogs } from "@/src/data/stores/componentDefinitions";
+import { useComponentsTableDialogsStore } from "@/src/data/stores/componentDefinitions";
 import { useAlertDialog, useWindowEvent } from "@/src/hooks";
 import type { PrivateRouter } from "@/src/trpc/routes/private/_private";
 import { cn } from "@/src/utils/styling";
@@ -33,7 +33,14 @@ export function EditComponentDefDialog(props: Props) {
 		},
 	]);
 
-	const { setItem, fields, originalFields, fieldsDirty } = useComponentsTableDialogs();
+	const { setItem, fields, originalFields, fieldsDirty } = useComponentsTableDialogsStore(
+		(state) => ({
+			setItem: state.setItem,
+			fields: state.fields,
+			originalFields: state.originalFields,
+			fieldsDirty: state.fieldsDirty,
+		}),
+	);
 	const editMutation = trpc.components.editComponentDefinition.useMutation();
 
 	const form = useForm<ComponentDefEditorInputs>({

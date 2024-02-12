@@ -1,6 +1,9 @@
+import { mountStoreDevtool } from "simple-zustand-devtools";
 import { create } from "zustand";
 import type { ComponentsTableItem } from "@/app/(dashboard)/dashboard/components/ComponentsTable";
 import type { FieldDefinitionUI } from "@/app/(dashboard)/dashboard/components/dialogs/component-definition/shared";
+import { env } from "@/src/env/client.mjs";
+import { unwrapSetStateAction } from "./utils";
 import "client-only";
 
 interface DialogState {
@@ -14,7 +17,7 @@ interface ComponentsTableDialogsState {
 	fieldsDirty: boolean;
 	fields: FieldDefinitionUI[];
 	originalFields: FieldDefinitionUI[];
-	setFields: (fields: FieldDefinitionUI[]) => void;
+	setFields: (fields: React.SetStateAction<FieldDefinitionUI[]>) => void;
 
 	editComponentDefDialog: DialogState;
 	editGroupDialog: DialogState;
@@ -22,7 +25,7 @@ interface ComponentsTableDialogsState {
 	duplicateDialog: DialogState;
 	deleteDialog: DialogState;
 }
-const componentsTableDialogsStore = create<ComponentsTableDialogsState>((set) => ({
+const useComponentsTableDialogsStore = create<ComponentsTableDialogsState>((set) => ({
 	item: null,
 	setItem: (item) =>
 		set(() => {
@@ -50,7 +53,9 @@ const componentsTableDialogsStore = create<ComponentsTableDialogsState>((set) =>
 	originalFields: [],
 	setFields: (fields) =>
 		set((state) => {
-			for (const field of fields) {
+			const newFields = unwrapSetStateAction(fields, state.fields);
+
+			for (const field of newFields) {
 				if (field.diff === "edited" || field.diff === "reordered") {
 					const original = state.originalFields.find((of) => of.id === field.id)!;
 					if (areSame(original, field)) {
@@ -60,8 +65,8 @@ const componentsTableDialogsStore = create<ComponentsTableDialogsState>((set) =>
 			}
 
 			return {
-				fields,
-				fieldsDirty: JSON.stringify(state.originalFields) !== JSON.stringify(fields),
+				fields: newFields,
+				fieldsDirty: JSON.stringify(state.originalFields) !== JSON.stringify(newFields),
 			};
 		}),
 
@@ -99,36 +104,8 @@ function areSame(original: FieldDefinitionUI, current: FieldDefinitionUI) {
 	return JSON.stringify(a) === JSON.stringify(b);
 }
 
-function useComponentsTableDialogs() {
-	const item = componentsTableDialogsStore((state) => state.item);
-	const setItem = componentsTableDialogsStore((state) => state.setItem);
-
-	const fieldsDirty = componentsTableDialogsStore((state) => state.fieldsDirty);
-	const fields = componentsTableDialogsStore((state) => state.fields);
-	const originalFields = componentsTableDialogsStore((state) => state.originalFields);
-	const setFields = componentsTableDialogsStore((state) => state.setFields);
-
-	const editComponentDefDialog = componentsTableDialogsStore(
-		(state) => state.editComponentDefDialog,
-	);
-	const editGroupDialog = componentsTableDialogsStore((state) => state.editGroupDialog);
-	const moveDialog = componentsTableDialogsStore((state) => state.moveDialog);
-	const duplicateDialog = componentsTableDialogsStore((state) => state.duplicateDialog);
-	const deleteDialog = componentsTableDialogsStore((state) => state.deleteDialog);
-
-	return {
-		item,
-		setItem,
-		fieldsDirty,
-		fields,
-		originalFields,
-		setFields,
-		editComponentDefDialog,
-		editGroupDialog,
-		moveDialog,
-		duplicateDialog,
-		deleteDialog,
-	};
+if (env.NEXT_PUBLIC_DEV) {
+	mountStoreDevtool("ComponentDefinitionTableDialogsStore", useComponentsTableDialogsStore);
 }
 
-export { componentsTableDialogsStore, useComponentsTableDialogs };
+export { useComponentsTableDialogsStore };

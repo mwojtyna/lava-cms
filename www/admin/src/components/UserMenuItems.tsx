@@ -4,11 +4,14 @@ import { ArrowLeftEndOnRectangleIcon, MoonIcon, SunIcon } from "@heroicons/react
 import { useRouter } from "next/navigation";
 import { DropdownMenuItem } from "@/src/components/ui/client";
 import { Loader } from "@/src/components/ui/server";
-import { useColorTheme } from "@/src/data/stores/dashboard";
+import { useColorThemeStore } from "@/src/data/stores/dashboard";
 import { trpc, type Meta } from "@/src/utils/trpc";
 
 export const ThemeSwitchItem = () => {
-	const { colorTheme, setColorTheme } = useColorTheme();
+	const { colorTheme, setColorTheme } = useColorThemeStore((state) => ({
+		colorTheme: state.colorTheme,
+		setColorTheme: state.setColorTheme,
+	}));
 
 	return (
 		<DropdownMenuItem onSelect={() => setColorTheme(colorTheme === "dark" ? "light" : "dark")}>

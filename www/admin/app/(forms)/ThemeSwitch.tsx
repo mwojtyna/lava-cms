@@ -2,7 +2,7 @@
 
 import { MoonIcon, SunIcon } from "@heroicons/react/24/outline";
 import * as React from "react";
-import { useColorTheme } from "@/src/data/stores/dashboard";
+import { useColorThemeStore } from "@/src/data/stores/dashboard";
 import { Switch } from "../../src/components/ui/client";
 import { cn } from "../../src/utils/styling";
 
@@ -10,7 +10,10 @@ export const ThemeSwitch = React.forwardRef<
 	HTMLButtonElement,
 	React.ComponentPropsWithRef<typeof Switch>
 >(({ className, ...props }, ref) => {
-	const { colorTheme, setColorTheme } = useColorTheme();
+	const { colorTheme, setColorTheme } = useColorThemeStore((state) => ({
+		colorTheme: state.colorTheme,
+		setColorTheme: state.setColorTheme,
+	}));
 
 	return (
 		<Switch
