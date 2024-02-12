@@ -3,6 +3,7 @@ import { renderTrpcPanel } from "trpc-panel";
 import { getCurrentUser } from "@/src/auth";
 import { privateRouter } from "@/src/trpc/routes/private/_private";
 
+// NOTE: Doesn't work with turbopack
 export const GET = async () => {
 	if (await getCurrentUser()) {
 		return new Response(

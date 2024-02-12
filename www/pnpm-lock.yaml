@@ -5320,10 +5320,6 @@ packages:
     resolution: {integrity: sha512-HWJnhnID+0YMtGlzcp3T9drmBJUVDchPJ08tpUGFLs9CYlwWPH2uLgpHn8fND5pCgXVtnGS3H4QR9XLMHVNkHw==}
     dev: true
 
-  /caniuse-lite@1.0.30001579:
-    resolution: {integrity: sha512-u5AUVkixruKHJjw/pj9wISlcMpgFWzSrczLZbrqBSxukQixmg0SJ5sZTpvaFvxU0HoQKd4yoyAogyrAz9pzJnA==}
-    dev: false
-
   /caniuse-lite@1.0.30001583:
     resolution: {integrity: sha512-acWTYaha8xfhA/Du/z4sNZjHUWjkiuoAi2LM+T/aL+kemKQgPT1xBb/YKjlQ0Qo8gvbHsGNplrEJ+9G3gL7i4Q==}
 
@@ -8331,7 +8327,7 @@ packages:
       '@next/env': 14.1.0
       '@swc/helpers': 0.5.2
       busboy: 1.6.0
-      caniuse-lite: 1.0.30001579
+      caniuse-lite: 1.0.30001583
       graceful-fs: 4.2.11
       postcss: 8.4.31
       react: 18.2.0
@@ -10334,9 +10330,9 @@ packages:
       '@trpc/server': 10.44.1
       fuzzysort: 2.0.4
       path: 0.12.7
-      url: 0.11.1
+      url: 0.11.3
       zod: 3.22.4
-      zod-to-json-schema: 3.21.2(zod@3.22.4)
+      zod-to-json-schema: 3.22.4(zod@3.22.4)
     dev: true
 
   /ts-api-utils@1.0.3(typescript@5.3.2):
@@ -10732,8 +10728,8 @@ packages:
       punycode: 2.3.1
     dev: true
 
-  /url@0.11.1:
-    resolution: {integrity: sha512-rWS3H04/+mzzJkv0eZ7vEDGiQbgquI1fGfOad6zKvgYQi1SzMmhl7c/DdRGxhaWrVH6z0qWITo8rpnxK/RfEhA==}
+  /url@0.11.3:
+    resolution: {integrity: sha512-6hxOLGfZASQK/cijlZnZJTq8OXAkt/3YGfQX45vvMYXpZoo8NdWZcY73K108Jf759lS1Bv/8wXnHDTSz17dSRw==}
     dependencies:
       punycode: 1.4.1
       qs: 6.11.2
@@ -11402,10 +11398,10 @@ packages:
       - supports-color
     dev: true
 
-  /zod-to-json-schema@3.21.2(zod@3.22.4):
-    resolution: {integrity: sha512-02yfKymfmIf2rM/5LYGlyw0daEel/f3MsSGMNJZWWf44ato+Y+diFugOpDtgvEUn3cYM5oDAGWW2NHeSD4mByw==}
+  /zod-to-json-schema@3.22.4(zod@3.22.4):
+    resolution: {integrity: sha512-2Ed5dJ+n/O3cU383xSY28cuVi0BCQhF8nYqWU5paEpl7fVdqdAmiLdqLyfblbNdfOFwFfi/mqU4O1pwc60iBhQ==}
     peerDependencies:
-      zod: ^3.21.4
+      zod: ^3.22.4
     dependencies:
       zod: 3.22.4
     dev: true
