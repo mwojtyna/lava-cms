@@ -46,7 +46,6 @@ interface PageEditorState {
 	setIsTyping: (value: boolean) => void;
 	isSaving: boolean;
 	setIsSaving: (value: boolean) => void;
-	onReset: (() => void) | null;
 
 	iframe: HTMLIFrameElement | null;
 	iframeOrigin: string;
@@ -71,7 +70,11 @@ interface PageEditorState {
 		nestedComponents: ComponentUI[],
 		arrayItems: ArrayItemUI[],
 	) => void;
+	isInitialized: boolean;
+
 	reset: () => void;
+	onReset: (() => void) | null;
+
 	save: (
 		mutation: ReturnType<typeof trpc.pages.editPageComponents.useMutation>,
 		pageId: string,
@@ -235,8 +238,11 @@ const usePageEditorStore = create<PageEditorState>((set) => ({
 			originalArrayItems: structuredClone(arrayItemsGrouped),
 
 			isDirty: false,
+			isInitialized: true,
 		});
 	},
+	isInitialized: false,
+
 	onReset: null,
 	reset: () =>
 		set((state) => {
@@ -271,6 +277,7 @@ const usePageEditorStore = create<PageEditorState>((set) => ({
 				steps: getLastValidStep(state.steps),
 			};
 		}),
+
 	save: (mutation, pageId) =>
 		set((state) => {
 			if (!state.isDirty || state.isSaving || (state.isDirty && state.isTyping)) {

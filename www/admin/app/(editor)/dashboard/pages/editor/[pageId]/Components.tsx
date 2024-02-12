@@ -27,19 +27,22 @@ import { usePageEditorStore, type ComponentUI, type Diff } from "@/src/data/stor
 import { cn } from "@/src/utils/styling";
 
 interface Props {
+	/** Guaranteed to not be empty when SSR */
 	components: ComponentUI[];
 	onComponentClicked: (id: string) => void;
 }
 export function Components(props: Props) {
-	const { originalComponents, setComponents } = usePageEditorStore((state) => ({
-		originalComponents: state.originalComponents,
-		setComponents: state.setComponents,
-	}));
-
-	const dndIds: string[] = useMemo(
-		() => props.components.map((_, i) => i.toString()),
-		[props.components],
+	const { componentsInit, originalComponents, setComponents, isInitialized } = usePageEditorStore(
+		(state) => ({
+			componentsInit: state.components,
+			originalComponents: state.originalComponents,
+			setComponents: state.setComponents,
+			isInitialized: state.isInitialized,
+		}),
 	);
+	const components = isInitialized ? componentsInit : props.components;
+
+	const dndIds: string[] = useMemo(() => components.map((_, i) => i.toString()), [components]);
 	const sensors = useSensors(
 		useSensor(PointerSensor),
 		useSensor(KeyboardSensor, {
@@ -50,7 +53,7 @@ export function Components(props: Props) {
 		const { active, over } = e;
 		if (over && active.id !== over.id) {
 			const reordered = structuredClone(
-				arrayMove(props.components, Number(active.id), Number(over.id)),
+				arrayMove(components, Number(active.id), Number(over.id)),
 			);
 			for (let i = 0; i < reordered.length; i++) {
 				const item = reordered[i]!;
@@ -66,7 +69,7 @@ export function Components(props: Props) {
 
 	function restore(component: ComponentUI) {
 		const original = originalComponents.find((comp) => comp.id === component.id)!;
-		const newComponents = props.components.map((c) =>
+		const newComponents = components.map((c) =>
 			c.id === component.id
 				? {
 						...original,
@@ -77,21 +80,21 @@ export function Components(props: Props) {
 		setComponents(newComponents);
 	}
 	function remove(component: ComponentUI) {
-		const newComponents = props.components.toSpliced(props.components.indexOf(component), 1, {
+		const newComponents = components.toSpliced(components.indexOf(component), 1, {
 			...component,
 			diff: "deleted",
 		});
 		setComponents(newComponents);
 	}
 	function unRemove(component: ComponentUI) {
-		const newComponents = props.components.toSpliced(props.components.indexOf(component), 1, {
+		const newComponents = components.toSpliced(components.indexOf(component), 1, {
 			...component,
 			diff: "none",
 		});
 		setComponents(newComponents);
 	}
 	function unAdd(component: ComponentUI) {
-		setComponents(props.components.filter((comp) => comp.id !== component.id));
+		setComponents(components.filter((comp) => comp.id !== component.id));
 	}
 
 	return (
@@ -104,9 +107,9 @@ export function Components(props: Props) {
 			onDragEnd={reorder}
 		>
 			<SortableContext items={dndIds} strategy={verticalListSortingStrategy}>
-				{props.components.length > 0 && (
+				{components.length > 0 && (
 					<div className="flex flex-col gap-2">
-						{props.components.map((component, i) => (
+						{components.map((component, i) => (
 							<ComponentCard
 								key={component.id}
 								dndId={dndIds[i]!} // Has to be the same as `ids` array passed to `SortableContext`
