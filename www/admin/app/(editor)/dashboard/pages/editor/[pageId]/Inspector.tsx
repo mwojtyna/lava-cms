@@ -8,7 +8,7 @@ import { Resizable } from "re-resizable";
 import { useEffect, useRef, useState } from "react";
 import { Button } from "@/src/components/ui/client";
 import { Stepper, TypographyH1, TypographyMuted } from "@/src/components/ui/server";
-import { pageEditorStore, usePageEditor } from "@/src/data/stores/pageEditor";
+import { usePageEditorStore } from "@/src/data/stores/pageEditor";
 import { type Step as StepType, type ComponentUI } from "@/src/data/stores/pageEditor";
 import { useWindowEvent } from "@/src/hooks";
 import type { PrivateRouter } from "@/src/trpc/routes/private/_private";
@@ -47,7 +47,17 @@ export function Inspector(props: Props) {
 	const { width: windowWidth } = useViewportSize();
 
 	const { init, components, setComponents, nestedComponents, steps, setSteps, isDirty, save } =
-		usePageEditor();
+		usePageEditorStore((state) => ({
+			init: state.init,
+			components: state.components,
+			setComponents: state.setComponents,
+			nestedComponents: state.nestedComponents,
+			steps: state.steps,
+			setSteps: state.setSteps,
+			isDirty: state.isDirty,
+			save: state.save,
+		}));
+
 	const { data } = trpc.pages.getPageComponents.useQuery(
 		{ id: props.page.id },
 		{ initialData: props.serverData },
@@ -88,7 +98,7 @@ export function Inspector(props: Props) {
 			order: lastComponent ? lastComponent.order + 1 : 0,
 		});
 
-		setComponents([...components, newComponent]);
+		setComponents((components) => [...components, newComponent]);
 	}
 
 	function getComponent(id: string): ComponentUI {
@@ -154,7 +164,7 @@ export function Inspector(props: Props) {
 										"gap-1 whitespace-nowrap font-normal",
 										i + 1 < steps.length - 1 && "text-muted-foreground",
 									)}
-									onClick={() => setSteps(steps.slice(0, i + 2))}
+									onClick={() => setSteps((steps) => steps.slice(0, i + 2))}
 								>
 									<CubeIcon className="w-4" />
 									{step.name === "edit-component" &&
@@ -200,7 +210,11 @@ interface StepProps {
 	openAddComponentDialog: () => void;
 }
 function Step(props: StepProps) {
-	const { steps, setSteps, setComponents, setNestedComponents } = usePageEditor();
+	const { setSteps, setComponents, setNestedComponents } = usePageEditorStore((state) => ({
+		setSteps: state.setSteps,
+		setComponents: state.setComponents,
+		setNestedComponents: state.setNestedComponents,
+	}));
 
 	// Typescript is stupid and doesn't properly narrow the type of `props.step` in the switch statement
 	const step = props.step;
@@ -211,7 +225,10 @@ function Step(props: StepProps) {
 					<Components
 						components={props.components}
 						onComponentClicked={(id) =>
-							setSteps([...steps, { name: "edit-component", componentId: id }])
+							setSteps((steps) => [
+								...steps,
+								{ name: "edit-component", componentId: id },
+							])
 						}
 					/>
 					<Button
@@ -260,7 +277,7 @@ function Step(props: StepProps) {
 						// Don't know why, but when using nestedComponents from the usePageEditor hook,
 						// the components are outdated and when NestedComponentField changes nestedComponents,
 						// the changes get overwritten by the code below. So we use the state directly.
-						const nestedComponents = pageEditorStore.getState().nestedComponents;
+						const nestedComponents = usePageEditorStore.getState().nestedComponents;
 						const changedComponents: ComponentUI[] = nestedComponents.map(
 							(component) => {
 								if (component.id === step.nestedComponentId) {

@@ -1,6 +1,6 @@
 import type { Value } from "@udecode/plate-common";
 import { ArrowUturnLeftIcon } from "@heroicons/react/24/outline";
-import React, { forwardRef, useEffect, useMemo, useRef } from "react";
+import React, { forwardRef, useMemo, useRef } from "react";
 import { FormProvider, useForm, type ControllerRenderProps } from "react-hook-form";
 import { RichTextEditor } from "@/src/components/RichTextEditor";
 import {
@@ -19,7 +19,7 @@ import {
 	getRestorableTextareaProps,
 } from "@/src/components/ui/client";
 import { TypographyMuted } from "@/src/components/ui/server";
-import { usePageEditor, type ComponentUI, type FieldUI } from "@/src/data/stores/pageEditor";
+import { usePageEditorStore, type ComponentUI, type FieldUI } from "@/src/data/stores/pageEditor";
 import { cn } from "@/src/utils/styling";
 import { ArrayField } from "./fields/ArrayField";
 import { NestedComponentField } from "./fields/NestedComponentField";
@@ -31,7 +31,13 @@ interface ComponentEditorProps {
 	onChange: (data: Input) => void;
 }
 export function ComponentEditor(props: ComponentEditorProps) {
-	const { originalComponents, originalNestedComponents, setIsTyping } = usePageEditor();
+	const { originalComponents, originalNestedComponents, setIsTyping } = usePageEditorStore(
+		(state) => ({
+			originalComponents: state.originalComponents,
+			originalNestedComponents: state.originalNestedComponents,
+			setIsTyping: state.setIsTyping,
+		}),
+	);
 	const originalComponent = useMemo(
 		() =>
 			(props.component.parentComponentId === null
@@ -64,11 +70,6 @@ export function ComponentEditor(props: ComponentEditorProps) {
 			debounceTimeoutRef.current = null;
 		}, 250);
 	}
-
-	useEffect(() => {
-		// Trigger validation on mount, fixes Ctrl+S after first change not saving
-		void form.trigger();
-	}, [form]);
 
 	return props.component.fields.length > 0 ? (
 		<FormProvider {...form}>

@@ -7,7 +7,7 @@ import { PlateContent } from "@udecode/plate-common";
 import { cva } from "class-variance-authority";
 
 import React from "react";
-import { pageEditorStore } from "@/src/data/stores/pageEditor";
+import { usePageEditorStore } from "@/src/data/stores/pageEditor";
 import { cn } from "@/src/utils/styling";
 import { trpc } from "@/src/utils/trpc";
 
@@ -74,7 +74,7 @@ const Editor = React.forwardRef<HTMLDivElement, EditorProps>(
 					readOnly={disabled ?? readOnly}
 					aria-disabled={disabled}
 					onKeyDown={getHotkeyHandler([
-						["mod+s", () => pageEditorStore.getState().save(mutation, pageId)],
+						["mod+s", () => usePageEditorStore.getState().save(mutation, pageId)],
 					])}
 					{...props}
 				/>

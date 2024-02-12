@@ -52,18 +52,18 @@ interface PageEditorState {
 
 	originalComponents: ComponentUI[];
 	components: ComponentUI[];
-	setComponents: (components: ComponentUI[]) => void;
+	setComponents: (newComponents: React.SetStateAction<ComponentUI[]>) => void;
 
 	originalNestedComponents: ComponentUI[];
 	nestedComponents: ComponentUI[];
-	setNestedComponents: (components: ComponentUI[]) => void;
+	setNestedComponents: (newComponents: React.SetStateAction<ComponentUI[]>) => void;
 
 	originalArrayItems: ArrayItemGroups;
 	arrayItems: ArrayItemGroups;
-	setArrayItems: (parentFieldId: string, arrayItems: ArrayItemUI[]) => void;
+	setArrayItems: (parentFieldId: string, arrayItems: React.SetStateAction<ArrayItemUI[]>) => void;
 
 	steps: Step[];
-	setSteps: (steps: Step[]) => void;
+	setSteps: (newSteps: React.SetStateAction<Step[]>) => void;
 
 	init: (
 		components: ComponentUI[],
@@ -76,7 +76,7 @@ interface PageEditorState {
 		pageId: string,
 	) => void;
 }
-const pageEditorStore = create<PageEditorState>((set) => ({
+const usePageEditorStore = create<PageEditorState>((set) => ({
 	isDirty: false,
 	isTyping: false,
 	setIsTyping: (value) => set({ isTyping: value }),
@@ -88,10 +88,12 @@ const pageEditorStore = create<PageEditorState>((set) => ({
 
 	originalComponents: [],
 	components: [],
-	setComponents: (changedComponents) =>
+	setComponents: (components) =>
 		set((state) => {
+			const newComponents = getChanged(components, state.components);
+
 			let i = 0;
-			for (const nc of changedComponents) {
+			for (const nc of newComponents) {
 				// Fix for when a component is added, reordered and then deleted
 				// The components which were reordered still have the 'reordered' diff
 				// but they are not reordered, because the added component was deleted
@@ -111,10 +113,9 @@ const pageEditorStore = create<PageEditorState>((set) => ({
 			}
 
 			return {
-				components: changedComponents,
+				components: newComponents,
 				isDirty:
-					JSON.stringify(state.originalComponents) !==
-						JSON.stringify(changedComponents) ||
+					JSON.stringify(state.originalComponents) !== JSON.stringify(newComponents) ||
 					JSON.stringify(state.originalNestedComponents) !==
 						JSON.stringify(state.nestedComponents) ||
 					JSON.stringify(state.originalArrayItems) !== JSON.stringify(state.arrayItems),
@@ -123,9 +124,11 @@ const pageEditorStore = create<PageEditorState>((set) => ({
 
 	originalNestedComponents: [],
 	nestedComponents: [],
-	setNestedComponents: (changedNestedComponents) =>
+	setNestedComponents: (components) =>
 		set((state) => {
-			for (const nc of changedNestedComponents) {
+			const newNestedComponents = getChanged(components, state.nestedComponents);
+
+			for (const nc of newNestedComponents) {
 				if (isEdited(nc)) {
 					const original = state.originalNestedComponents.find((oc) => oc.id === nc.id)!;
 					if (areSame(original, nc)) {
@@ -135,19 +138,21 @@ const pageEditorStore = create<PageEditorState>((set) => ({
 			}
 
 			return {
-				nestedComponents: changedNestedComponents,
+				nestedComponents: newNestedComponents,
 				isDirty:
 					JSON.stringify(state.originalComponents) !== JSON.stringify(state.components) ||
 					JSON.stringify(state.originalNestedComponents) !==
-						JSON.stringify(changedNestedComponents) ||
+						JSON.stringify(newNestedComponents) ||
 					JSON.stringify(state.originalArrayItems) !== JSON.stringify(state.arrayItems),
 			};
 		}),
 
 	originalArrayItems: {},
 	arrayItems: {},
-	setArrayItems: (parentFieldId, changedArrayItems) =>
+	setArrayItems: (parentFieldId, arrayItems) =>
 		set((state) => {
+			const changedArrayItems = getChanged(arrayItems, state.arrayItems[parentFieldId] ?? []);
+
 			let i = 0;
 			for (const ai of changedArrayItems) {
 				// Fix for when an item is added, reordered and then deleted
@@ -170,26 +175,30 @@ const pageEditorStore = create<PageEditorState>((set) => ({
 
 				i++;
 			}
-			let arrayItems: ArrayItemGroups = {
+			let arrayItemsGrouped: ArrayItemGroups = {
 				...state.arrayItems,
 				[parentFieldId]: changedArrayItems,
 			};
-			if (Object.values(arrayItems).flat().length === 0) {
-				arrayItems = {};
+			if (Object.values(arrayItemsGrouped).flat().length === 0) {
+				arrayItemsGrouped = {};
 			}
 
 			return {
-				arrayItems,
+				arrayItems: arrayItemsGrouped,
 				isDirty:
 					JSON.stringify(state.originalComponents) !== JSON.stringify(state.components) ||
 					JSON.stringify(state.originalNestedComponents) !==
 						JSON.stringify(state.nestedComponents) ||
-					JSON.stringify(state.originalArrayItems) !== JSON.stringify(arrayItems),
+					JSON.stringify(state.originalArrayItems) !== JSON.stringify(arrayItemsGrouped),
 			};
 		}),
 
 	steps: [{ name: "components" }],
-	setSteps: (steps) => set({ steps }),
+	setSteps: (steps) =>
+		set((state) => {
+			const newSteps = getChanged(steps, state.steps);
+			return { steps: newSteps };
+		}),
 
 	init: (components, nestedComponents, arrayItems) => {
 		// Group array items by parent
@@ -447,56 +456,10 @@ function isReplaced(editable: Editable) {
 	return editable.diff === "replaced";
 }
 
-function usePageEditor() {
-	const isDirty = pageEditorStore((state) => state.isDirty);
-	const isTyping = pageEditorStore((state) => state.isTyping);
-	const setIsTyping = pageEditorStore((state) => state.setIsTyping);
-	const isSaving = pageEditorStore((state) => state.isSaving);
-
-	const iframe = pageEditorStore((state) => state.iframe);
-	const iframeOrigin = pageEditorStore((state) => state.iframeOrigin);
-
-	const originalComponents = pageEditorStore((state) => state.originalComponents);
-	const components = pageEditorStore((state) => state.components);
-	const setComponents = pageEditorStore((state) => state.setComponents);
-
-	const originalNestedComponents = pageEditorStore((state) => state.originalNestedComponents);
-	const nestedComponents = pageEditorStore((state) => state.nestedComponents);
-	const setNestedComponents = pageEditorStore((state) => state.setNestedComponents);
-
-	const originalArrayItems = pageEditorStore((state) => state.originalArrayItems);
-	const arrayItems = pageEditorStore((state) => state.arrayItems);
-	const setArrayItems = pageEditorStore((state) => state.setArrayItems);
-
-	const steps = pageEditorStore((state) => state.steps);
-	const setSteps = pageEditorStore((state) => state.setSteps);
-
-	const init = pageEditorStore((state) => state.init);
-	const reset = pageEditorStore((state) => state.reset);
-	const save = pageEditorStore((state) => state.save);
-
-	return {
-		isDirty,
-		isTyping,
-		setIsTyping,
-		isSaving,
-		iframe,
-		iframeOrigin,
-		originalComponents,
-		components,
-		setComponents,
-		originalNestedComponents,
-		nestedComponents,
-		setNestedComponents,
-		originalArrayItems,
-		arrayItems,
-		setArrayItems,
-		steps,
-		setSteps,
-		init,
-		reset,
-		save,
-	};
+function getChanged<T>(changed: React.SetStateAction<T>, state: T): T {
+	// Typescript is dumb
+	const fun = changed as (state: T) => T;
+	return typeof changed === "function" ? fun(state) : changed;
 }
 
-export { usePageEditor, pageEditorStore };
+export { usePageEditorStore };

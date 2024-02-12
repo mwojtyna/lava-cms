@@ -8,7 +8,7 @@ import { Resizable } from "re-resizable";
 import * as React from "react";
 import { ActionIcon } from "@/src/components/ui/client";
 import { Card } from "@/src/components/ui/server";
-import { pageEditorStore } from "@/src/data/stores/pageEditor";
+import { usePageEditorStore } from "@/src/data/stores/pageEditor";
 import { useWindowEvent } from "@/src/hooks";
 import { trpcFetch } from "@/src/utils/trpc";
 import { MIN_WIDTH as INSPECTOR_MIN_WIDTH } from "./Inspector";
@@ -40,7 +40,7 @@ export function PagePreview(props: { baseUrl: string; pageUrl: string }) {
 			{ name: "init" } satisfies PageEditorMessage,
 			url.origin,
 		);
-		pageEditorStore.setState({
+		usePageEditorStore.setState({
 			iframe: iframeRef.current,
 			iframeOrigin: url.origin,
 		});
@@ -68,7 +68,7 @@ export function PagePreview(props: { baseUrl: string; pageUrl: string }) {
 			const newUrl = split.join("/");
 
 			router.push(newUrl);
-			const state = pageEditorStore.getState();
+			const state = usePageEditorStore.getState();
 			state.setSteps([state.steps[0]!]); // For some reason the step gets preserved between pages
 		}
 	});

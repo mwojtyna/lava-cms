@@ -61,7 +61,7 @@ import React, { useEffect, useRef } from "react";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import { Node, Point, Transforms, Editor as SlateEditor } from "slate";
-import { pageEditorStore } from "../data/stores/pageEditor";
+import { usePageEditorStore } from "../data/stores/pageEditor";
 import { cn } from "../utils/styling";
 import {
 	Editor,
@@ -328,7 +328,7 @@ export function RichTextEditor(props: Props) {
 	// Reset editor when the global Reset button is pressed
 	useEffect(() => {
 		if (props.originalValue) {
-			pageEditorStore.setState({
+			usePageEditorStore.setState({
 				onReset: () => {
 					// @ts-expect-error - Don't know how to type this
 					resetNodes(editorRef.current!, { nodes: props.originalValue });
@@ -337,7 +337,7 @@ export function RichTextEditor(props: Props) {
 		}
 
 		return () =>
-			pageEditorStore.setState({
+			usePageEditorStore.setState({
 				onReset: null,
 			});
 	}, [editorRef, props.originalValue]);

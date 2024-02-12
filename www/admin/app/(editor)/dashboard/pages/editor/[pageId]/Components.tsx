@@ -23,7 +23,7 @@ import { IconGripVertical } from "@tabler/icons-react";
 import React, { useMemo } from "react";
 import { ActionIcon } from "@/src/components/ui/client";
 import { Card } from "@/src/components/ui/server";
-import { usePageEditor, type ComponentUI, type Diff } from "@/src/data/stores/pageEditor";
+import { usePageEditorStore, type ComponentUI, type Diff } from "@/src/data/stores/pageEditor";
 import { cn } from "@/src/utils/styling";
 
 interface Props {
@@ -31,7 +31,10 @@ interface Props {
 	onComponentClicked: (id: string) => void;
 }
 export function Components(props: Props) {
-	const { originalComponents, setComponents } = usePageEditor();
+	const { originalComponents, setComponents } = usePageEditorStore((state) => ({
+		originalComponents: state.originalComponents,
+		setComponents: state.setComponents,
+	}));
 
 	const dndIds: string[] = useMemo(
 		() => props.components.map((_, i) => i.toString()),

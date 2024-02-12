@@ -1,7 +1,7 @@
 import { ArrowPathRoundedSquareIcon } from "@heroicons/react/24/outline";
 import { useState, useMemo } from "react";
 import { ActionIcon, Button } from "@/src/components/ui/client";
-import { type ComponentUI, usePageEditor } from "@/src/data/stores/pageEditor";
+import { type ComponentUI, usePageEditorStore } from "@/src/data/stores/pageEditor";
 import { ComponentCard } from "../Components";
 import { AddComponentDialog, createComponentInstance } from "../dialogs/AddComponentDialog";
 
@@ -20,8 +20,13 @@ interface NestedComponentFieldProps {
 }
 export function NestedComponentField(props: NestedComponentFieldProps) {
 	const [dialogOpen, setDialogOpen] = useState(false);
-	const { steps, setSteps, originalNestedComponents, nestedComponents, setNestedComponents } =
-		usePageEditor();
+	const { setSteps, originalNestedComponents, nestedComponents, setNestedComponents } =
+		usePageEditorStore((state) => ({
+			setSteps: state.setSteps,
+			originalNestedComponents: state.originalNestedComponents,
+			nestedComponents: state.nestedComponents,
+			setNestedComponents: state.setNestedComponents,
+		}));
 
 	const currentComponent = useMemo(
 		() => nestedComponents.find((comp) => comp.id === props.value),
@@ -44,7 +49,7 @@ export function NestedComponentField(props: NestedComponentFieldProps) {
 		);
 
 		props.onChange(newComponent.id);
-		setNestedComponents(
+		setNestedComponents((nestedComponents) =>
 			currentComponent
 				? nestedComponents.map((nc) => (nc.id === currentComponent.id ? newComponent : nc))
 				: [...nestedComponents, newComponent],
@@ -53,26 +58,28 @@ export function NestedComponentField(props: NestedComponentFieldProps) {
 
 	function restore() {
 		props.onChange(originalComponent!.id);
-		setNestedComponents(
+		setNestedComponents((nestedComponents) =>
 			nestedComponents.map((c) => (c.id === originalComponent!.id ? originalComponent! : c)),
 		);
 		props.onRestore?.();
 	}
 	function remove(component: ComponentUI) {
-		setNestedComponents(
+		setNestedComponents((nestedComponents) =>
 			nestedComponents.map((c) => (c.id === component.id ? { ...c, diff: "deleted" } : c)),
 		);
 		props.onRemove?.();
 	}
 	function unRemove(component: ComponentUI) {
-		setNestedComponents(
+		setNestedComponents((nestedComponents) =>
 			nestedComponents.map((c) => (c.id === component.id ? { ...c, diff: "none" } : c)),
 		);
 		props.onUnRemove?.();
 	}
 	function unAdd(component: ComponentUI) {
 		props.onChange("");
-		setNestedComponents(nestedComponents.filter((c) => c.id !== component.id));
+		setNestedComponents((nestedComponents) =>
+			nestedComponents.filter((c) => c.id !== component.id),
+		);
 		props.onUnAdd?.();
 	}
 
@@ -89,7 +96,7 @@ export function NestedComponentField(props: NestedComponentFieldProps) {
 							diff: currentComponent.diff,
 						}}
 						onClick={() =>
-							setSteps([
+							setSteps((steps) => [
 								...steps,
 								{
 									name: "edit-nested-component",

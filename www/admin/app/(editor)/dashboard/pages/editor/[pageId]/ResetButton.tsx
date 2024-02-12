@@ -3,10 +3,13 @@
 import { ArrowPathIcon } from "@heroicons/react/24/outline";
 import React from "react";
 import { Button } from "@/src/components/ui/client";
-import { usePageEditor } from "@/src/data/stores/pageEditor";
+import { usePageEditorStore } from "@/src/data/stores/pageEditor";
 
 export function ResetButton() {
-	const { isDirty, reset } = usePageEditor();
+	const { isDirty, reset } = usePageEditorStore((state) => ({
+		isDirty: state.isDirty,
+		reset: state.reset,
+	}));
 
 	return (
 		<Button

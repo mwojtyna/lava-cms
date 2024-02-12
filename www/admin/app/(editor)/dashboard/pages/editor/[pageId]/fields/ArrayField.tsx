@@ -22,7 +22,11 @@ import { IconGripVertical } from "@tabler/icons-react";
 import { useMemo, useState } from "react";
 import { Button, ActionIcon } from "@/src/components/ui/client";
 import { Card } from "@/src/components/ui/server";
-import { type ComponentUI, usePageEditor, type ArrayItemUI } from "@/src/data/stores/pageEditor";
+import {
+	type ComponentUI,
+	usePageEditorStore,
+	type ArrayItemUI,
+} from "@/src/data/stores/pageEditor";
 import { cn } from "@/src/utils/styling";
 import { type FieldProps, Field } from "../ComponentEditor";
 import { createComponentInstance, AddComponentDialog } from "../dialogs/AddComponentDialog";
@@ -33,8 +37,13 @@ interface ArrayFieldProps {
 	parentComponent: ComponentUI;
 }
 export function ArrayField(props: ArrayFieldProps) {
-	const { originalArrayItems, arrayItems, setArrayItems, nestedComponents, setNestedComponents } =
-		usePageEditor();
+	const { originalArrayItems, arrayItems, setArrayItems, setNestedComponents } =
+		usePageEditorStore((state) => ({
+			originalArrayItems: state.originalArrayItems,
+			arrayItems: state.arrayItems,
+			setArrayItems: state.setArrayItems,
+			setNestedComponents: state.setNestedComponents,
+		}));
 	const myArrayItems = useMemo(
 		() => arrayItems[props.parentField.id] ?? [],
 		[arrayItems, props.parentField.id],
@@ -100,7 +109,7 @@ export function ArrayField(props: ArrayFieldProps) {
 			pageId: props.parentComponent.pageId,
 			parentComponentId: props.parentComponent.id,
 		});
-		setNestedComponents([...nestedComponents, newComponent]);
+		setNestedComponents((nestedComponents) => [...nestedComponents, newComponent]);
 
 		const lastItem = myArrayItems.at(-1);
 		setArrayItems(props.parentField.id, [
@@ -178,7 +187,9 @@ interface ArrayFieldItemProps {
 	component: ComponentUI;
 }
 function ArrayFieldItem(props: ArrayFieldItemProps) {
-	const { setArrayItems } = usePageEditor();
+	const { setArrayItems } = usePageEditorStore((state) => ({
+		setArrayItems: state.setArrayItems,
+	}));
 
 	const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
 		id: props.dndId,
