@@ -12,19 +12,17 @@ import { useEditorReadOnly } from "@udecode/plate-common";
 import { ListStyleType } from "@udecode/plate-indent-list";
 import React from "react";
 
+import { AlignDropdownMenu } from "./AlignDropdownMenu";
 import { icons } from "./icons";
-import {
-	InsertDropdownMenu,
-	MarkToolbarButton,
-	LineHeightDropdownMenu,
-	TurnIntoDropdownMenu,
-	ToolbarGroup,
-	AlignDropdownMenu,
-	IndentListToolbarButton,
-	LinkToolbarButton,
-	MediaToolbarButton,
-	TableDropdownMenu,
-} from "./";
+import { IndentListToolbarButton } from "./IndentListToolbarButton";
+import { InsertDropdownMenu } from "./InsertDropdownMenu";
+import { LineHeightDropdownMenu } from "./LineHeightDropdownMenu";
+import { LinkToolbarButton } from "./LinkToolbarButton";
+import { MarkToolbarButton } from "./MarkToolbarButton";
+import { MediaToolbarButton } from "./MediaToolbarButton";
+import { TableDropdownMenu } from "./TableDropdownMenu";
+import { ToolbarGroup } from "./Toolbar";
+import { TurnIntoDropdownMenu } from "./TurnIntoDropdownMenu";
 
 export function FixedToolbarButtons() {
 	const readOnly = useEditorReadOnly();

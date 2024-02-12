@@ -1,14 +1,17 @@
+"use client";
+
 import type { ComponentsTableComponentDef } from "../../ComponentsTable";
 import type { inferRouterInputs } from "@trpc/server";
 import { PencilSquareIcon } from "@heroicons/react/24/outline";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useHotkeys, useOs } from "@mantine/hooks";
+import { useHotkeys, useOs, useWindowEvent } from "@mantine/hooks";
 import * as React from "react";
 import { useForm, type SubmitHandler, FormProvider } from "react-hook-form";
-import { Button, Sheet, SheetContent, SheetFooter } from "@/src/components/ui/client";
-import { TypographyMuted } from "@/src/components/ui/server";
+import { Button } from "@/src/components/ui/client/Button";
+import { Sheet, SheetContent, SheetFooter } from "@/src/components/ui/client/Sheet";
+import { TypographyMuted } from "@/src/components/ui/server/typography";
 import { useComponentsTableDialogsStore } from "@/src/data/stores/componentDefinitions";
-import { useAlertDialog, useWindowEvent } from "@/src/hooks";
+import { useAlertDialog } from "@/src/hooks/useAlertDialog";
 import type { PrivateRouter } from "@/src/trpc/routes/private/_private";
 import { cn } from "@/src/utils/styling";
 import { trpc, trpcFetch } from "@/src/utils/trpc";

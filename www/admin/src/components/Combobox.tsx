@@ -1,21 +1,13 @@
 "use client";
 
 import { ArrowUturnLeftIcon, CheckIcon, ChevronUpDownIcon } from "@heroicons/react/20/solid";
+import { Command, CommandInput, CommandEmpty, CommandGroup, CommandItem } from "cmdk";
 import * as React from "react";
-import {
-	ActionIcon,
-	Button,
-	Command,
-	CommandEmpty,
-	CommandGroup,
-	CommandInput,
-	CommandItem,
-	FormControl,
-	Popover,
-	PopoverContent,
-	PopoverTrigger,
-} from "@/src/components/ui/client";
 import { cn } from "@/src/utils/styling";
+import { ActionIcon } from "./ui/client/ActionIcon";
+import { Button } from "./ui/client/Button";
+import { FormControl } from "./ui/client/Form";
+import { PopoverContent, Popover, PopoverTrigger } from "./ui/client/Popover";
 
 const getRestorableComboboxProps = (edited: boolean, restore: () => void) => ({
 	className: cn(edited && "ring-2 ring-brand ring-offset-2 ring-offset-black"),

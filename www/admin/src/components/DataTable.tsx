@@ -17,24 +17,11 @@ import {
 } from "@tanstack/react-table";
 import Link from "next/link";
 import { cn } from "../utils/styling";
-import {
-	ActionIcon,
-	Button,
-	Select,
-	SelectContent,
-	SelectItem,
-	SelectTrigger,
-	SelectValue,
-} from "./ui/client";
-import {
-	Table,
-	TableHeader,
-	TableRow,
-	TableHead,
-	TableBody,
-	TableCell,
-	Stepper,
-} from "./ui/server";
+import { ActionIcon } from "./ui/client/ActionIcon";
+import { Button } from "./ui/client/Button";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/client/Select";
+import { Stepper } from "./ui/server/Stepper";
+import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "./ui/server/Table";
 
 export const dateFormatOptions: Intl.DateTimeFormatOptions = {
 	year: "numeric",

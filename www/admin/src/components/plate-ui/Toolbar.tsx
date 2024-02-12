@@ -5,7 +5,8 @@ import { cn, withCn, withRef, withVariants } from "@udecode/cn";
 import { cva, type VariantProps } from "class-variance-authority";
 import * as React from "react";
 
-import { Separator, withTooltip } from "@/src/components/ui/client";
+import { Separator } from "@/src/components/ui/client/Separator";
+import { withTooltip } from "../ui/client/Tooltip";
 import { icons } from "./icons";
 
 export const Toolbar = withCn(

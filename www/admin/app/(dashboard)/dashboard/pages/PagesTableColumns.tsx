@@ -14,15 +14,15 @@ import { sortingFns, type ColumnDef } from "@tanstack/react-table";
 import Link from "next/link";
 import * as React from "react";
 import { DataTableSortableHeader, dateFormatOptions } from "@/src/components/DataTable";
+import { ActionIcon } from "@/src/components/ui/client/ActionIcon";
+import { Button } from "@/src/components/ui/client/Button";
+import { Checkbox } from "@/src/components/ui/client/Checkbox";
 import {
-	ActionIcon,
-	Button,
-	Checkbox,
 	DropdownMenu,
+	DropdownMenuTrigger,
 	DropdownMenuContent,
 	DropdownMenuItem,
-	DropdownMenuTrigger,
-} from "@/src/components/ui/client";
+} from "@/src/components/ui/client/DropdownMenu";
 import {
 	BulkDeleteDialog,
 	BulkMoveDialog,

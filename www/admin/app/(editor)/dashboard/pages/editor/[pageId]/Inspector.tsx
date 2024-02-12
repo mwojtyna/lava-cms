@@ -3,14 +3,14 @@
 import type { Page } from "@prisma/client";
 import type { inferRouterOutputs } from "@trpc/server";
 import { ChevronRightIcon, CubeIcon, DocumentIcon, PlusIcon } from "@heroicons/react/24/outline";
-import { useHotkeys, useViewportSize } from "@mantine/hooks";
+import { useHotkeys, useViewportSize, useWindowEvent } from "@mantine/hooks";
 import { Resizable } from "re-resizable";
 import { useEffect, useRef, useState } from "react";
-import { Button } from "@/src/components/ui/client";
-import { Stepper, TypographyH1, TypographyMuted } from "@/src/components/ui/server";
+import { Button } from "@/src/components/ui/client/Button";
+import { Stepper } from "@/src/components/ui/server/Stepper";
+import { TypographyH1, TypographyMuted } from "@/src/components/ui/server/typography";
 import { usePageEditorStore } from "@/src/data/stores/pageEditor";
 import { type Step as StepType, type ComponentUI } from "@/src/data/stores/pageEditor";
-import { useWindowEvent } from "@/src/hooks";
 import type { PrivateRouter } from "@/src/trpc/routes/private/_private";
 import { cn } from "@/src/utils/styling";
 import { trpc } from "@/src/utils/trpc";

@@ -1,6 +1,7 @@
 import { ArrowPathRoundedSquareIcon } from "@heroicons/react/24/outline";
 import { useState, useMemo } from "react";
-import { ActionIcon, Button } from "@/src/components/ui/client";
+import { ActionIcon } from "@/src/components/ui/client/ActionIcon";
+import { Button } from "@/src/components/ui/client/Button";
 import { type ComponentUI, usePageEditorStore } from "@/src/data/stores/pageEditor";
 import { ComponentCard } from "../Components";
 import { AddComponentDialog, createComponentInstance } from "../dialogs/AddComponentDialog";

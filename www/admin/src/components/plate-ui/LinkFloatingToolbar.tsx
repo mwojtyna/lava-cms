@@ -14,13 +14,10 @@ import {
 } from "@udecode/plate-link";
 import React from "react";
 
-import {
-	Button,
-	buttonVariants,
-	inputVariants,
-	popoverVariants,
-	Separator,
-} from "@/src/components/ui/client";
+import { Button, buttonVariants } from "../ui/client/Button";
+import { inputVariants } from "../ui/client/Input";
+import { popoverVariants } from "../ui/client/Popover";
+import { Separator } from "../ui/client/Separator";
 import { icons } from "./icons";
 
 const floatingOptions: UseVirtualFloatingOptions = {

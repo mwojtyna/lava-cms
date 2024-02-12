@@ -20,7 +20,7 @@ import {
 	DropdownMenuSubTrigger,
 	DropdownMenuTrigger,
 	useOpenState,
-} from "@/src/components/ui/client";
+} from "@/src/components/ui/client/DropdownMenu";
 import { icons } from "./icons";
 import { ToolbarButton } from "./Toolbar";
 

@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Button } from "@/src/components/ui/client";
+import { Button } from "@/src/components/ui/client/Button";
 import type { SettingsRoute } from "@/src/data/routes/settings";
 import { getRoute } from "@/src/data/routes/shared";
 import { cn } from "@/src/utils/styling";

@@ -1,5 +1,6 @@
 import { memo, useState } from "react";
-import { AlertDialog, type AlertDialogProps } from "../components";
+import { AlertDialog, type AlertDialogProps } from "../components/AlertDialog";
+import "client-only";
 
 type Props = Pick<AlertDialogProps, "title" | "description" | "yesMessage" | "noMessage" | "icon">;
 

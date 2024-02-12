@@ -1,3 +1,5 @@
+"use client";
+
 import { Slot } from "@radix-ui/react-slot";
 import * as React from "react";
 import {
@@ -9,9 +11,9 @@ import {
 	FormProvider,
 	useFormContext,
 } from "react-hook-form";
-import { Label } from "@/src/components/ui/client";
+import { Label } from "@/src/components/ui/client/Label";
 import { cn } from "@/src/utils/styling";
-import { TypographyMuted } from "../server";
+import { TypographyMuted } from "../server/typography";
 
 interface FormFieldProps<T> {
 	value: T;

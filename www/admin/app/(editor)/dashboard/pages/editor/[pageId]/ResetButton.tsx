@@ -2,7 +2,7 @@
 
 import { ArrowPathIcon } from "@heroicons/react/24/outline";
 import React from "react";
-import { Button } from "@/src/components/ui/client";
+import { Button } from "@/src/components/ui/client/Button";
 import { usePageEditorStore } from "@/src/data/stores/pageEditor";
 
 export function ResetButton() {

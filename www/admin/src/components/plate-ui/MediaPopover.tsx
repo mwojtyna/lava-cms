@@ -12,15 +12,10 @@ import {
 import React, { useEffect } from "react";
 import { useReadOnly, useSelected } from "slate-react";
 
-import {
-	Button,
-	buttonVariants,
-	inputVariants,
-	Popover,
-	PopoverAnchor,
-	PopoverContent,
-	Separator,
-} from "@/src/components/ui/client";
+import { Button, buttonVariants } from "../ui/client/Button";
+import { inputVariants } from "../ui/client/Input";
+import { Popover, PopoverAnchor, PopoverContent } from "../ui/client/Popover";
+import { Separator } from "../ui/client/Separator";
 import { icons } from "./icons";
 
 export interface MediaPopoverProps {

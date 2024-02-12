@@ -4,17 +4,19 @@ import { ChevronRightIcon, CubeIcon, FolderIcon, HomeIcon } from "@heroicons/rea
 import { createId } from "@paralleldrive/cuid2";
 import { useEffect, useState } from "react";
 import type { ComponentsTableItem } from "@/app/(dashboard)/dashboard/components/ComponentsTable";
+import { ActionIcon } from "@/src/components/ui/client/ActionIcon";
+import { Button } from "@/src/components/ui/client/Button";
 import {
-	ActionIcon,
-	Button,
+	DialogHeader,
 	Dialog,
 	DialogContent,
-	DialogHeader,
 	DialogTitle,
-	Input,
-	Separator,
-} from "@/src/components/ui/client";
-import { Skeleton, Stepper, TypographyMuted } from "@/src/components/ui/server";
+} from "@/src/components/ui/client/Dialog";
+import { Input } from "@/src/components/ui/client/Input";
+import { Separator } from "@/src/components/ui/client/Separator";
+import { Skeleton } from "@/src/components/ui/server/Skeleton";
+import { Stepper } from "@/src/components/ui/server/Stepper";
+import { TypographyMuted } from "@/src/components/ui/server/typography";
 import type { ComponentUI } from "@/src/data/stores/pageEditor";
 import { cn } from "@/src/utils/styling";
 import { trpc, trpcFetch } from "@/src/utils/trpc";

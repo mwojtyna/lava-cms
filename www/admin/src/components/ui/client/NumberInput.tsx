@@ -1,3 +1,5 @@
+"use client";
+
 import type { VariantProps } from "class-variance-authority";
 import { ArrowUturnLeftIcon } from "@heroicons/react/24/outline";
 import React from "react";

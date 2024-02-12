@@ -3,7 +3,7 @@
 import { usePathname } from "next/navigation";
 import type { NavMenuRoute } from "@/src/data/routes/navMenu";
 import { getRoute } from "@/src/data/routes/shared";
-import { TypographyH1, TypographyMuted } from "./ui/server";
+import { TypographyH1, TypographyMuted } from "./ui/server/typography";
 
 export function PageTitle({ routes }: { routes: NavMenuRoute[] }) {
 	const route = getRoute(usePathname(), routes)!;

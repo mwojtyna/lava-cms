@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { cookies } from "next/headers";
 import { notFound } from "next/navigation";
-import type { TableSearchParams } from "@/src/hooks";
+import type { TableSearchParams } from "@/src/hooks/useDataTable";
 import { caller } from "@/src/trpc/routes/private/_private";
 import { type CookieName, tableCookieSchema } from "@/src/utils/cookies";
 import { PagesTable } from "../PagesTable";

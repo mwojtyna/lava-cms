@@ -1,5 +1,6 @@
 "use client";
 
+import type { FormFieldProps } from "./ui/client/Form";
 import { ArrowUturnLeftIcon } from "@heroicons/react/24/outline";
 import { withProps } from "@udecode/cn";
 import { createAlignPlugin } from "@udecode/plate-alignment";
@@ -63,26 +64,23 @@ import { HTML5Backend } from "react-dnd-html5-backend";
 import { Node, Point, Transforms, Editor as SlateEditor } from "slate";
 import { usePageEditorStore } from "../data/stores/pageEditor";
 import { cn } from "../utils/styling";
-import {
-	Editor,
-	BlockquoteElement,
-	HeadingElement,
-	ParagraphElement,
-	FixedToolbar,
-	FixedToolbarButtons,
-	CodeLeaf,
-	LinkElement,
-	LinkFloatingToolbar,
-	ImageElement,
-	TableElement,
-	TableRowElement,
-	TableCellElement,
-	TableCellHeaderElement,
-	HrElement,
-} from "./plate-ui";
+import { BlockquoteElement } from "./plate-ui/BlockQuoteElement";
+import { CodeLeaf } from "./plate-ui/CodeLeaf";
+import { Editor } from "./plate-ui/Editor";
+import { FixedToolbar } from "./plate-ui/FixedToolbar";
+import { FixedToolbarButtons } from "./plate-ui/FixedToolbarButtons";
+import { HeadingElement } from "./plate-ui/HeadingElement";
+import { HrElement } from "./plate-ui/HrElement";
+import { ImageElement } from "./plate-ui/ImageElement";
+import { LinkElement } from "./plate-ui/LinkElement";
+import { LinkFloatingToolbar } from "./plate-ui/LinkFloatingToolbar";
+import { ParagraphElement } from "./plate-ui/ParagraphElement";
 import { withPlaceholders } from "./plate-ui/Placeholder";
+import { TableCellElement, TableCellHeaderElement } from "./plate-ui/TableCellElement";
+import { TableElement } from "./plate-ui/TableElement";
+import { TableRowElement } from "./plate-ui/TableRowElement";
 import { withDraggables } from "./plate-ui/withDraggable";
-import { ActionIcon, type FormFieldProps } from "./ui/client";
+import { ActionIcon } from "./ui/client/ActionIcon";
 
 const resetBlockTypesCommonRule = {
 	types: [

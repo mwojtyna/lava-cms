@@ -5,17 +5,12 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { type SubmitHandler, useForm } from "react-hook-form";
 import { z } from "zod";
-import { InfoTooltip } from "@/src/components";
-import {
-	Button,
-	FormControl,
-	FormField,
-	FormItem,
-	FormLabel,
-	Input,
-	Textarea,
-} from "@/src/components/ui/client";
-import { TypographyCode } from "@/src/components/ui/server";
+import { InfoTooltip } from "@/src/components/InfoTooltip";
+import { Button } from "@/src/components/ui/client/Button";
+import { FormField, FormItem, FormLabel, FormControl } from "@/src/components/ui/client/Form";
+import { Input } from "@/src/components/ui/client/Input";
+import { Textarea } from "@/src/components/ui/client/Textarea";
+import { TypographyCode } from "@/src/components/ui/server/typography";
 import { trpc } from "@/src/utils/trpc";
 import { SinglePageForm } from "../SinglePageForm";
 

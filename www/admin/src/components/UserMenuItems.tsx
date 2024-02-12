@@ -2,8 +2,8 @@
 
 import { ArrowLeftEndOnRectangleIcon, MoonIcon, SunIcon } from "@heroicons/react/24/outline";
 import { useRouter } from "next/navigation";
-import { DropdownMenuItem } from "@/src/components/ui/client";
-import { Loader } from "@/src/components/ui/server";
+import { DropdownMenuItem } from "@/src/components/ui/client/DropdownMenu";
+import { Loader } from "@/src/components/ui/server/Loader";
 import { useColorThemeStore } from "@/src/data/stores/dashboard";
 import { trpc, type Meta } from "@/src/utils/trpc";
 

@@ -9,8 +9,8 @@ import {
 	DataTableBreadcrumbs,
 	DataTablePagination,
 	DataTableActions,
-} from "@/src/components";
-import { useDataTable, type TableSearchParams } from "@/src/hooks";
+} from "@/src/components/DataTable";
+import { type TableSearchParams, useDataTable } from "@/src/hooks/useDataTable";
 import type { PrivateRouter } from "@/src/trpc/routes/private/_private";
 import { type TableCookie } from "@/src/utils/cookies";
 import { trpc } from "@/src/utils/trpc";

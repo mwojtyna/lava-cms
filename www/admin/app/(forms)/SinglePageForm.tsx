@@ -1,6 +1,6 @@
 import type { UseFormReturn } from "react-hook-form";
-import { FormProvider } from "@/src/components/ui/client";
-import { TypographyH1 } from "@/src/components/ui/server";
+import { FormProvider } from "@/src/components/ui/client/Form";
+import { TypographyH1 } from "@/src/components/ui/server/typography";
 import { cn } from "@/src/utils/styling";
 import { ThemeSwitch } from "./ThemeSwitch";
 

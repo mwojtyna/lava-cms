@@ -19,8 +19,9 @@ import {
 	type CookieName,
 	type TableCookie,
 } from "@/src/utils/cookies";
-import { Input } from "../components/ui/client";
+import { Input } from "../components/ui/client/Input";
 import { useSearchParams } from "./useSearchParams";
+import "client-only";
 
 export type TableSearchParams =
 	| {

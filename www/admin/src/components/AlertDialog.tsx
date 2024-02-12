@@ -1,3 +1,4 @@
+import { Button } from "./ui/client/Button";
 import {
 	Dialog,
 	DialogContent,
@@ -5,8 +6,7 @@ import {
 	DialogDescription,
 	DialogHeader,
 	DialogFooter,
-	Button,
-} from "@/src/components/ui/client";
+} from "./ui/client/Dialog";
 
 export interface AlertDialogProps {
 	icon?: React.ReactNode;

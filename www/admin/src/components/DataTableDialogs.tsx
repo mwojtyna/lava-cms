@@ -1,7 +1,7 @@
-import type { FormFieldProps } from "./ui/client";
+import type { FormFieldProps } from "./ui/client/Form";
 import { forwardRef, type ComponentRef } from "react";
 import { Combobox } from "./Combobox";
-import { TypographyMuted } from "./ui/server";
+import { TypographyMuted } from "./ui/server/typography";
 
 export interface MoveDialogInputs {
 	newParentId: string;

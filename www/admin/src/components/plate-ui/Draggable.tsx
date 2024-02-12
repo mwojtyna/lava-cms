@@ -6,7 +6,12 @@ import { cn, withRef } from "@udecode/cn";
 import { type DragItemNode, useDraggable, useDraggableState } from "@udecode/plate-dnd";
 import React from "react";
 
-import { Tooltip, TooltipContent, TooltipPortal, TooltipTrigger } from "@/src/components/ui/client";
+import {
+	Tooltip,
+	TooltipContent,
+	TooltipPortal,
+	TooltipTrigger,
+} from "@/src/components/ui/client/Tooltip";
 import { icons } from "./icons";
 
 export interface DraggableProps

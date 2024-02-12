@@ -1,15 +1,14 @@
 "use client";
 
 import { ArrowPathIcon, ArrowTopRightOnSquareIcon } from "@heroicons/react/24/outline";
-import { useElementSize, useViewportSize } from "@mantine/hooks";
+import { useElementSize, useViewportSize, useWindowEvent } from "@mantine/hooks";
 import { IconMinusVertical } from "@tabler/icons-react";
 import { usePathname, useRouter } from "next/navigation";
 import { Resizable } from "re-resizable";
 import * as React from "react";
-import { ActionIcon } from "@/src/components/ui/client";
-import { Card } from "@/src/components/ui/server";
+import { ActionIcon } from "@/src/components/ui/client/ActionIcon";
+import { Card } from "@/src/components/ui/server/Card";
 import { usePageEditorStore } from "@/src/data/stores/pageEditor";
-import { useWindowEvent } from "@/src/hooks";
 import { trpcFetch } from "@/src/utils/trpc";
 import { MIN_WIDTH as INSPECTOR_MIN_WIDTH } from "./Inspector";
 import { type IframeMessage, type PageEditorMessage } from "./types";

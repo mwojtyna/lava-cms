@@ -4,18 +4,17 @@ import type { ComponentsTableItem } from "../ComponentsTable";
 import { FolderArrowDownIcon, TrashIcon } from "@heroicons/react/24/outline";
 import * as React from "react";
 import { FormProvider, useForm, type SubmitHandler } from "react-hook-form";
-import { AlertDialog, type MoveDialogInputs, NewParentSelect } from "@/src/components";
+import { AlertDialog } from "@/src/components/AlertDialog";
+import { type MoveDialogInputs, NewParentSelect } from "@/src/components/DataTableDialogs";
+import { Button } from "@/src/components/ui/client/Button";
 import {
-	Button,
+	DialogHeader,
+	DialogFooter,
 	Dialog,
 	DialogContent,
-	DialogFooter,
-	DialogHeader,
 	DialogTitle,
-	FormControl,
-	FormField,
-	FormItem,
-} from "@/src/components/ui/client";
+} from "@/src/components/ui/client/Dialog";
+import { FormField, FormItem, FormControl } from "@/src/components/ui/client/Form";
 import { trpc } from "@/src/utils/trpc";
 import { groupsToComboboxEntries } from "./component-definition/shared";
 

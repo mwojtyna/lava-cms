@@ -1,3 +1,5 @@
+"use client";
+
 import {
 	DndContext,
 	closestCenter,
@@ -24,16 +26,12 @@ import * as React from "react";
 import { useForm, type SubmitHandler, FormProvider } from "react-hook-form";
 import { z } from "zod";
 import { ComponentFieldTypeSchema } from "@/prisma/generated/zod";
-import {
-	FormField,
-	FormItem,
-	FormControl,
-	Input,
-	Button,
-	ActionIcon,
-	FormError,
-} from "@/src/components/ui/client";
-import { Card, TypographyMuted } from "@/src/components/ui/server";
+import { ActionIcon } from "@/src/components/ui/client/ActionIcon";
+import { Button } from "@/src/components/ui/client/Button";
+import { FormField, FormItem, FormControl, FormError } from "@/src/components/ui/client/Form";
+import { Input } from "@/src/components/ui/client/Input";
+import { Card } from "@/src/components/ui/server/Card";
+import { TypographyMuted } from "@/src/components/ui/server/typography";
 import { useComponentsTableDialogsStore } from "@/src/data/stores/componentDefinitions";
 import { cn } from "@/src/utils/styling";
 import { FieldTypePicker, fieldTypeMap, type FieldDefinitionUI, type DialogType } from "./shared";

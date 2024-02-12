@@ -2,29 +2,28 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as React from "react";
-import { type SubmitHandler, useForm } from "react-hook-form";
+import { type SubmitHandler, useForm, FormProvider } from "react-hook-form";
 import { z } from "zod";
+import { Button } from "@/src/components/ui/client/Button";
 import {
-	Button,
-	FormProvider,
-	FormControl,
 	FormField,
 	FormItem,
 	FormLabel,
-	Input,
-	Textarea,
+	FormControl,
 	FormDescription,
-	Separator,
-} from "@/src/components/ui/client";
+} from "@/src/components/ui/client/Form";
+import { Input } from "@/src/components/ui/client/Input";
+import { Separator } from "@/src/components/ui/client/Separator";
+import { Textarea } from "@/src/components/ui/client/Textarea";
 import {
 	Card,
-	CardContent,
-	CardDescription,
 	CardHeader,
 	CardTitle,
-	TypographyCode,
-} from "@/src/components/ui/server";
-import { useToast } from "@/src/hooks";
+	CardDescription,
+	CardContent,
+} from "@/src/components/ui/server/Card";
+import { TypographyCode } from "@/src/components/ui/server/typography";
+import { useToast } from "@/src/hooks/useToast";
 import { trpc } from "@/src/utils/trpc";
 
 const schema = z.object({

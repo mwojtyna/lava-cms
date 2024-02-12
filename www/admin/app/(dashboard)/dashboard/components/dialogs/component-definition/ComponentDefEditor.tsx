@@ -1,18 +1,18 @@
+"use client";
+
 import React from "react";
 import { useFormContext } from "react-hook-form";
 import { z } from "zod";
 import {
-	SheetHeader,
-	SheetTitle,
 	FormField,
 	FormItem,
 	FormLabel,
 	FormControl,
-	Input,
 	FormError,
-	getRestorableInputProps,
-} from "@/src/components/ui/client";
-import { TypographyMuted } from "@/src/components/ui/server";
+} from "@/src/components/ui/client/Form";
+import { Input, getRestorableInputProps } from "@/src/components/ui/client/Input";
+import { SheetHeader, SheetTitle } from "@/src/components/ui/client/Sheet";
+import { TypographyMuted } from "@/src/components/ui/server/typography";
 import { AddFieldDefs, FieldDefs } from "./FieldDefinitions";
 import { type DialogType, type Step } from "./shared";
 

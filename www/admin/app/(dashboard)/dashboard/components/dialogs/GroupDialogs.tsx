@@ -5,20 +5,22 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import * as React from "react";
 import { FormProvider, useForm, type SubmitHandler } from "react-hook-form";
 import { z } from "zod";
+import { Button } from "@/src/components/ui/client/Button";
 import {
-	Button,
+	DialogHeader,
+	DialogFooter,
 	Dialog,
 	DialogContent,
-	DialogFooter,
-	DialogHeader,
 	DialogTitle,
-	FormControl,
-	FormError,
+} from "@/src/components/ui/client/Dialog";
+import {
 	FormField,
 	FormItem,
 	FormLabel,
-	Input,
-} from "@/src/components/ui/client";
+	FormControl,
+	FormError,
+} from "@/src/components/ui/client/Form";
+import { Input } from "@/src/components/ui/client/Input";
 import { trpc } from "@/src/utils/trpc";
 
 interface Props {

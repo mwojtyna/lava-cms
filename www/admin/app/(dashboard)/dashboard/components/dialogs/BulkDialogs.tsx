@@ -1,25 +1,22 @@
 import type { ComponentsTableItem } from "../ComponentsTable";
 import { FolderArrowDownIcon, FolderIcon, TrashIcon } from "@heroicons/react/24/outline";
 import * as React from "react";
-import { useForm, type SubmitHandler } from "react-hook-form";
+import { useForm, type SubmitHandler, FormProvider } from "react-hook-form";
+import { AlertDialog } from "@/src/components/AlertDialog";
 import {
-	AlertDialog,
-	NewParentSelect,
-	type MoveDialogInputs,
 	type ItemParent,
-} from "@/src/components";
+	type MoveDialogInputs,
+	NewParentSelect,
+} from "@/src/components/DataTableDialogs";
+import { Button } from "@/src/components/ui/client/Button";
 import {
 	DialogHeader,
 	DialogFooter,
-	Button,
 	Dialog,
 	DialogContent,
 	DialogTitle,
-	FormProvider,
-	FormField,
-	FormItem,
-	FormControl,
-} from "@/src/components/ui/client";
+} from "@/src/components/ui/client/Dialog";
+import { FormField, FormItem, FormControl } from "@/src/components/ui/client/Form";
 import { trpc } from "@/src/utils/trpc";
 
 interface Props {

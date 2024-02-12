@@ -10,16 +10,16 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { type SubmitHandler, useForm } from "react-hook-form";
 import { z } from "zod";
+import { Button } from "@/src/components/ui/client/Button";
 import {
-	Input,
-	Button,
 	FormField,
 	FormItem,
 	FormLabel,
 	FormControl,
 	FormError,
-} from "@/src/components/ui/client";
-import { Alert, AlertTitle } from "@/src/components/ui/server";
+} from "@/src/components/ui/client/Form";
+import { Input } from "@/src/components/ui/client/Input";
+import { Alert, AlertTitle } from "@/src/components/ui/server/Alert";
 import { trpc } from "@/src/utils/trpc";
 import { SinglePageForm } from "../SinglePageForm";
 

@@ -3,22 +3,19 @@ import { ArrowUturnLeftIcon } from "@heroicons/react/24/outline";
 import React, { forwardRef, useMemo, useRef } from "react";
 import { FormProvider, useForm, type ControllerRenderProps } from "react-hook-form";
 import { RichTextEditor } from "@/src/components/RichTextEditor";
+import { ActionIcon } from "@/src/components/ui/client/ActionIcon";
+import { Checkbox } from "@/src/components/ui/client/Checkbox";
 import {
-	type Input,
-	type FormFieldProps,
 	FormField,
 	FormItem,
-	FormControl,
 	FormLabel,
-	Checkbox,
+	FormControl,
 	FormError,
-	ActionIcon,
-	NumberInput,
-	getRestorableNumberInputProps,
-	Textarea,
-	getRestorableTextareaProps,
-} from "@/src/components/ui/client";
-import { TypographyMuted } from "@/src/components/ui/server";
+	type FormFieldProps,
+} from "@/src/components/ui/client/Form";
+import { getRestorableNumberInputProps, NumberInput } from "@/src/components/ui/client/NumberInput";
+import { getRestorableTextareaProps, Textarea } from "@/src/components/ui/client/Textarea";
+import { TypographyMuted } from "@/src/components/ui/server/typography";
 import { usePageEditorStore, type ComponentUI, type FieldUI } from "@/src/data/stores/pageEditor";
 import { cn } from "@/src/utils/styling";
 import { ArrayField } from "./fields/ArrayField";

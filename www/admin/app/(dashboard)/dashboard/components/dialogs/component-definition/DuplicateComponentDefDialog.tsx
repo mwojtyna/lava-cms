@@ -1,12 +1,16 @@
+"use client";
+
 import type { ComponentsTableComponentDef } from "../../ComponentsTable";
 import type { inferRouterInputs } from "@trpc/server";
 import { DocumentDuplicateIcon } from "@heroicons/react/24/outline";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useWindowEvent } from "@mantine/hooks";
 import * as React from "react";
 import { useForm, type SubmitHandler, FormProvider } from "react-hook-form";
-import { Button, Sheet, SheetContent, SheetFooter } from "@/src/components/ui/client";
+import { Button } from "@/src/components/ui/client/Button";
+import { Sheet, SheetContent, SheetFooter } from "@/src/components/ui/client/Sheet";
 import { useComponentsTableDialogsStore } from "@/src/data/stores/componentDefinitions";
-import { useAlertDialog, useWindowEvent } from "@/src/hooks";
+import { useAlertDialog } from "@/src/hooks/useAlertDialog";
 import type { PrivateRouter } from "@/src/trpc/routes/private/_private";
 import { cn } from "@/src/utils/styling";
 import { trpc } from "@/src/utils/trpc";

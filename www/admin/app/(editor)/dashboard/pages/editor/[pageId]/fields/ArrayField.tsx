@@ -20,8 +20,9 @@ import { PlusIcon, TrashIcon, ArrowUturnLeftIcon } from "@heroicons/react/24/out
 import { createId } from "@paralleldrive/cuid2";
 import { IconGripVertical } from "@tabler/icons-react";
 import { useMemo, useState } from "react";
-import { Button, ActionIcon } from "@/src/components/ui/client";
-import { Card } from "@/src/components/ui/server";
+import { ActionIcon } from "@/src/components/ui/client/ActionIcon";
+import { Button } from "@/src/components/ui/client/Button";
+import { Card } from "@/src/components/ui/server/Card";
 import {
 	type ComponentUI,
 	usePageEditorStore,

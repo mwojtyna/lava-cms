@@ -6,15 +6,15 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { type SubmitHandler, useForm } from "react-hook-form";
 import { z } from "zod";
+import { Button } from "@/src/components/ui/client/Button";
 import {
-	Button,
-	FormControl,
-	FormError,
 	FormField,
 	FormItem,
 	FormLabel,
-	Input,
-} from "@/src/components/ui/client";
+	FormControl,
+	FormError,
+} from "@/src/components/ui/client/Form";
+import { Input } from "@/src/components/ui/client/Input";
 import { trpc } from "@/src/utils/trpc";
 import { SinglePageForm } from "../SinglePageForm";
 

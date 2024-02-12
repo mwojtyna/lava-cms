@@ -1,7 +1,10 @@
+"use client";
+
 import { ArrowRightIcon, PencilSquareIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import React, { useEffect, useRef, useState } from "react";
 import { cn } from "../utils/styling";
-import { ActionIcon, Input } from "./ui/client";
+import { ActionIcon } from "./ui/client/ActionIcon";
+import { Input } from "./ui/client/Input";
 
 type Props = {
 	value: string;

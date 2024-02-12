@@ -21,8 +21,8 @@ import { CSS } from "@dnd-kit/utilities";
 import { ArrowUturnLeftIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { IconGripVertical } from "@tabler/icons-react";
 import React, { useMemo } from "react";
-import { ActionIcon } from "@/src/components/ui/client";
-import { Card } from "@/src/components/ui/server";
+import { ActionIcon } from "@/src/components/ui/client/ActionIcon";
+import { Card } from "@/src/components/ui/server/Card";
 import { usePageEditorStore, type ComponentUI, type Diff } from "@/src/data/stores/pageEditor";
 import { cn } from "@/src/utils/styling";
 

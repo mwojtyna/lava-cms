@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { ArrowUturnLeftIcon } from "@heroicons/react/24/outline";
 import Link from "next/link";
 import { prisma } from "@/prisma/client";
-import { ActionIcon } from "@/src/components/ui/client";
+import { ActionIcon } from "@/src/components/ui/client/ActionIcon";
 import { UserMenu } from "@/src/components/UserMenu";
 import { caller } from "@/src/trpc/routes/private/_private";
 import { Inspector } from "./Inspector";

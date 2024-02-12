@@ -3,7 +3,7 @@
 import type { NextFont } from "next/dist/compiled/@next/font";
 import { IconVolcano } from "@tabler/icons-react";
 import Link from "next/link";
-import { TypographyH1, TypographyMuted } from "@/src/components/ui/server";
+import { TypographyH1, TypographyMuted } from "@/src/components/ui/server/typography";
 import { useNavMenuStore } from "@/src/data/stores/dashboard";
 import { cn } from "@/src/utils/styling";
 

@@ -6,9 +6,10 @@ import Link from "next/link";
 import * as React from "react";
 import { z } from "zod";
 import { ComponentDefinitionFieldSchema } from "@/prisma/generated/zod";
-import { Combobox, type ItemParent } from "@/src/components";
-import { Button } from "@/src/components/ui/client";
-import type { FormFieldProps } from "@/src/components/ui/client";
+import { Combobox } from "@/src/components/Combobox";
+import type { ItemParent } from "@/src/components/DataTableDialogs";
+import { Button } from "@/src/components/ui/client/Button";
+import type { FormFieldProps } from "@/src/components/ui/client/Form";
 import type { PrivateRouter } from "@/src/trpc/routes/private/_private";
 import { cn } from "@/src/utils/styling";
 

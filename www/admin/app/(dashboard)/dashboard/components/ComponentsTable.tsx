@@ -4,23 +4,21 @@ import type { inferRouterOutputs } from "@trpc/server";
 import { CubeIcon } from "@heroicons/react/24/outline";
 import * as React from "react";
 import {
-	DataTable,
 	DataTableActions,
 	DataTableBreadcrumbs,
+	DataTable,
 	DataTablePagination,
-} from "@/src/components";
+} from "@/src/components/DataTable";
 import { useComponentsTableDialogsStore } from "@/src/data/stores/componentDefinitions";
-import { useDataTable, type TableSearchParams } from "@/src/hooks";
+import { useDataTable, type TableSearchParams } from "@/src/hooks/useDataTable";
 import type { PrivateRouter } from "@/src/trpc/routes/private/_private";
 import type { GroupItem } from "@/src/trpc/routes/private/components/types";
 import type { TableCookie } from "@/src/utils/cookies";
 import { trpc } from "@/src/utils/trpc";
 import { columns } from "./ComponentsTableColumns";
-import {
-	AddComponentDefDialog,
-	DuplicateComponentDefDialog,
-	EditComponentDefDialog,
-} from "./dialogs/component-definition";
+import { AddComponentDefDialog } from "./dialogs/component-definition/AddComponentDefDialog";
+import { DuplicateComponentDefDialog } from "./dialogs/component-definition/DuplicateComponentDefDialog";
+import { EditComponentDefDialog } from "./dialogs/component-definition/EditComponentDefDialog";
 import { AddGroupDialog, EditGroupDialog } from "./dialogs/GroupDialogs";
 import { MoveDialog, DeleteDialog } from "./dialogs/SharedDialogs";
 

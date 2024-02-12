@@ -1,22 +1,22 @@
+"use client";
+
 import type { DialogType, Step } from "./shared";
 import type { z } from "zod";
 import { ArrowLeftIcon } from "@heroicons/react/24/outline";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMemo, useCallback, useEffect } from "react";
 import { useForm, type SubmitHandler, FormProvider } from "react-hook-form";
-import { getRestorableComboboxProps } from "@/src/components";
+import { getRestorableComboboxProps } from "@/src/components/Combobox";
+import { ActionIcon } from "@/src/components/ui/client/ActionIcon";
 import {
-	Input,
-	SheetHeader,
-	SheetTitle,
-	ActionIcon,
 	FormField,
 	FormItem,
 	FormLabel,
 	FormControl,
 	FormError,
-	getRestorableInputProps,
-} from "@/src/components/ui/client";
+} from "@/src/components/ui/client/Form";
+import { Input, getRestorableInputProps } from "@/src/components/ui/client/Input";
+import { SheetHeader, SheetTitle } from "@/src/components/ui/client/Sheet";
 import { useComponentsTableDialogsStore } from "@/src/data/stores/componentDefinitions";
 import { cn } from "@/src/utils/styling";
 import { fieldDefinitionUISchema, FieldTypePicker } from "./shared";

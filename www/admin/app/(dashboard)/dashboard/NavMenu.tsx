@@ -1,7 +1,9 @@
 import { Bars3Icon } from "@heroicons/react/24/outline";
 import { Poppins } from "next/font/google";
 import * as React from "react";
-import { ActionIcon, Separator, SheetContent, SheetTrigger } from "@/src/components/ui/client";
+import { ActionIcon } from "@/src/components/ui/client/ActionIcon";
+import { Separator } from "@/src/components/ui/client/Separator";
+import { SheetContent, SheetTrigger } from "@/src/components/ui/client/Sheet";
 import { UserMenu } from "@/src/components/UserMenu";
 import { navMenuRoutes } from "@/src/data/routes/navMenu";
 import { cn } from "@/src/utils/styling";

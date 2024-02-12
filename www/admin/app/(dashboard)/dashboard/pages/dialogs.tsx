@@ -21,28 +21,34 @@ import {
 	type UseFormReturn,
 	type Path,
 	type PathValue,
+	FormProvider,
 } from "react-hook-form";
 import slugify from "slugify";
 import { z } from "zod";
-import { AlertDialog, NewParentSelect, type MoveDialogInputs } from "@/src/components";
-import type { ItemParent } from "@/src/components/DataTableDialogs";
+import { AlertDialog } from "@/src/components/AlertDialog";
 import {
-	Button,
+	NewParentSelect,
+	type ItemParent,
+	type MoveDialogInputs,
+} from "@/src/components/DataTableDialogs";
+import { Button } from "@/src/components/ui/client/Button";
+import {
+	DialogHeader,
+	DialogFooter,
 	Dialog,
 	DialogContent,
-	DialogFooter,
-	DialogHeader,
 	DialogTitle,
-	FormProvider,
-	FormControl,
-	FormError,
+} from "@/src/components/ui/client/Dialog";
+import {
 	FormField,
 	FormItem,
+	FormControl,
+	FormError,
 	FormLabel,
-	Input,
-} from "@/src/components/ui/client";
-import { TypographyList } from "@/src/components/ui/server";
-import { usePagePreferences } from "@/src/hooks";
+} from "@/src/components/ui/client/Form";
+import { Input } from "@/src/components/ui/client/Input";
+import { TypographyList } from "@/src/components/ui/server/typography";
+import { usePagePreferences } from "@/src/hooks/usePagePreferences";
 import { trpc } from "@/src/utils/trpc";
 
 interface AddDialogProps {

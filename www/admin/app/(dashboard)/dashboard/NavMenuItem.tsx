@@ -3,7 +3,8 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import * as React from "react";
-import { Button, Tooltip, TooltipContent, TooltipTrigger } from "@/src/components/ui/client";
+import { Button } from "@/src/components/ui/client/Button";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/src/components/ui/client/Tooltip";
 import type { NavMenuRoute } from "@/src/data/routes/navMenu";
 import { getRoute } from "@/src/data/routes/shared";
 import { useNavMenuStore } from "@/src/data/stores/dashboard";

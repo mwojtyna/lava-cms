@@ -1,4 +1,5 @@
 import { useWindowEvent as useWindowEventMantine } from "@mantine/hooks";
+import "client-only";
 
 export function useWindowEvent<K extends keyof WindowEventMap>(
 	type: K,

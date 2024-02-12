@@ -5,6 +5,7 @@ import {
 	type ReadonlyURLSearchParams,
 } from "next/navigation";
 import * as React from "react";
+import "client-only";
 
 interface Options {
 	onChanged?: (value: ReadonlyURLSearchParams) => void;

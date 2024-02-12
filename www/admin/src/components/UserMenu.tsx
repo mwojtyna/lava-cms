@@ -1,14 +1,13 @@
 import { getCurrentUser } from "@/src/auth";
+import { Avatar, AvatarFallback } from "@/src/components/ui/client/Avatar";
 import {
-	Avatar,
-	AvatarFallback,
 	DropdownMenu,
+	DropdownMenuTrigger,
 	DropdownMenuContent,
 	DropdownMenuLabel,
 	DropdownMenuSeparator,
-	DropdownMenuTrigger,
-} from "@/src/components/ui/client";
-import { TypographyMuted } from "@/src/components/ui/server";
+} from "@/src/components/ui/client/DropdownMenu";
+import { TypographyMuted } from "@/src/components/ui/server/typography";
 import { cn } from "@/src/utils/styling";
 import { LogoutItem, ThemeSwitchItem } from "./UserMenuItems";
 
