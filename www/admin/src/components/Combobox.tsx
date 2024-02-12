@@ -1,11 +1,17 @@
 "use client";
 
 import { ArrowUturnLeftIcon, CheckIcon, ChevronUpDownIcon } from "@heroicons/react/20/solid";
-import { Command, CommandInput, CommandEmpty, CommandGroup, CommandItem } from "cmdk";
 import * as React from "react";
 import { cn } from "@/src/utils/styling";
 import { ActionIcon } from "./ui/client/ActionIcon";
 import { Button } from "./ui/client/Button";
+import {
+	Command,
+	CommandInput,
+	CommandEmpty,
+	CommandGroup,
+	CommandItem,
+} from "./ui/client/Command";
 import { FormControl } from "./ui/client/Form";
 import { PopoverContent, Popover, PopoverTrigger } from "./ui/client/Popover";
 
