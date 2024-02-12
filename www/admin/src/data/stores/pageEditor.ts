@@ -1,7 +1,6 @@
 import type { inferRouterInputs } from "@trpc/server";
 import { createPlateEditor, createPlugins, type Value } from "@udecode/plate-common";
 import { serializeHtml } from "@udecode/plate-serializer-html";
-import { mountStoreDevtool } from "simple-zustand-devtools";
 import { create } from "zustand";
 import type {
 	Component,
@@ -11,7 +10,6 @@ import {
 	components as richTextEditorComponents,
 	plugins as richTextEditorPlugins,
 } from "@/src/components/RichTextEditor";
-import { env } from "@/src/env/client.mjs";
 import type { PrivateRouter } from "@/src/trpc/routes/private/_private";
 import type { ArrayItem } from "@/src/trpc/routes/private/pages/types";
 import type { trpc } from "@/src/utils/trpc";
@@ -460,10 +458,6 @@ function isDeleted(editable: Editable) {
 }
 function isReplaced(editable: Editable) {
 	return editable.diff === "replaced";
-}
-
-if (env.NEXT_PUBLIC_DEV) {
-	mountStoreDevtool("PageEditorStore", usePageEditorStore);
 }
 
 export { usePageEditorStore };

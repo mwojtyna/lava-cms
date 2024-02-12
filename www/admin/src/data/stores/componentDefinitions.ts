@@ -1,8 +1,6 @@
-import { mountStoreDevtool } from "simple-zustand-devtools";
 import { create } from "zustand";
 import type { ComponentsTableItem } from "@/app/(dashboard)/dashboard/components/ComponentsTable";
 import type { FieldDefinitionUI } from "@/app/(dashboard)/dashboard/components/dialogs/component-definition/shared";
-import { env } from "@/src/env/client.mjs";
 import { unwrapSetStateAction } from "./utils";
 import "client-only";
 
@@ -102,10 +100,6 @@ function areSame(original: FieldDefinitionUI, current: FieldDefinitionUI) {
 	const a = { ...original, diff: undefined };
 	const b = { ...current, diff: undefined };
 	return JSON.stringify(a) === JSON.stringify(b);
-}
-
-if (env.NEXT_PUBLIC_DEV) {
-	mountStoreDevtool("ComponentDefinitionTableDialogsStore", useComponentsTableDialogsStore);
 }
 
 export { useComponentsTableDialogsStore };
