@@ -1,6 +1,7 @@
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import { prisma } from "@/prisma/client";
+import { RICH_TEXT_INITIAL_VALUE, SWITCH_INITIAL_VALUE } from "@/src/data/stores/utils";
 import { privateProcedure } from "@/src/trpc";
 import { fieldSchema } from "./types";
 
@@ -43,6 +44,8 @@ export const editComponentDefinition = privateProcedure
 
 		await prisma.$transaction(async (tx) => {
 			if (input.addedFields) {
+				const addInstanceFields = [];
+
 				for (const addedField of input.addedFields) {
 					const added = await tx.componentDefinitionField.create({
 						data: {
@@ -54,7 +57,35 @@ export const editComponentDefinition = privateProcedure
 						},
 					});
 					addedCompDefIds[addedField.id] = added.id;
+
+					// Add the new field to all instances of the component definition
+					const promise = new Promise<Promise<unknown>>(async (res) => {
+						const instances = await tx.componentInstance.findMany({
+							where: { definition_id: input.id },
+						});
+						const update = instances.map((instance) =>
+							tx.componentInstance.update({
+								where: { id: instance.id },
+								data: {
+									fields: {
+										create: {
+											data:
+												addedField.type === "SWITCH"
+													? SWITCH_INITIAL_VALUE
+													: JSON.stringify(RICH_TEXT_INITIAL_VALUE),
+											field_definition_id: added.id,
+										},
+									},
+								},
+							}),
+						);
+
+						res(Promise.all(update));
+					});
+					addInstanceFields.push(promise);
 				}
+
+				await Promise.all(addInstanceFields);
 			}
 
 			await tx.componentDefinition.update({

@@ -80,7 +80,7 @@ interface PageEditorState {
 		pageId: string,
 	) => void;
 }
-const usePageEditorStore = create<PageEditorState>((set) => ({
+export const usePageEditorStore = create<PageEditorState>((set) => ({
 	isDirty: false,
 	isTyping: false,
 	setIsTyping: (value) => set({ isTyping: value }),
@@ -466,5 +466,3 @@ function isDeleted(editable: Editable) {
 function isReplaced(editable: Editable) {
 	return editable.diff === "replaced";
 }
-
-export { usePageEditorStore };

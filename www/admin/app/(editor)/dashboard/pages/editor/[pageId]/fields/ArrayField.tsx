@@ -28,6 +28,7 @@ import {
 	usePageEditorStore,
 	type ArrayItemUI,
 } from "@/src/data/stores/pageEditor";
+import { REGULAR_INITIAL_VALUE, SWITCH_INITIAL_VALUE } from "@/src/data/stores/utils";
 import { cn } from "@/src/utils/styling";
 import { type FieldProps, Field } from "../ComponentEditor";
 import { createComponentInstance, AddComponentDialog } from "../dialogs/AddComponentDialog";
@@ -75,7 +76,10 @@ export function ArrayField(props: ArrayFieldProps) {
 				...myArrayItems,
 				{
 					id: createId(),
-					data: props.parentField.arrayItemType === "SWITCH" ? "false" : "",
+					data:
+						props.parentField.arrayItemType === "SWITCH"
+							? SWITCH_INITIAL_VALUE
+							: REGULAR_INITIAL_VALUE,
 					parentFieldId: props.parentField.id,
 					order: lastItem ? lastItem.order + 1 : 0,
 					diff: "added",
