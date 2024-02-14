@@ -18,11 +18,7 @@ import { Skeleton } from "@/src/components/ui/server/Skeleton";
 import { Stepper } from "@/src/components/ui/server/Stepper";
 import { TypographyMuted } from "@/src/components/ui/server/typography";
 import type { ComponentUI } from "@/src/data/stores/pageEditor";
-import {
-	REGULAR_INITIAL_VALUE,
-	RICH_TEXT_INITIAL_VALUE,
-	SWITCH_INITIAL_VALUE,
-} from "@/src/data/stores/utils";
+import { getInitialValue } from "@/src/data/stores/utils";
 import { cn } from "@/src/utils/styling";
 import { trpc, trpcFetch } from "@/src/utils/trpc";
 
@@ -42,13 +38,7 @@ export async function createComponentInstance(
 			name: definition.name,
 		},
 		fields: definition.field_definitions.map((fieldDef) => {
-			let data = REGULAR_INITIAL_VALUE;
-			if (fieldDef.type === "SWITCH") {
-				data = SWITCH_INITIAL_VALUE;
-			} else if (fieldDef.type === "RICH_TEXT") {
-				// Rich text editor's value is an object instead of a string
-				data = RICH_TEXT_INITIAL_VALUE as unknown as string;
-			}
+			const data = getInitialValue(fieldDef.type) as string;
 
 			return {
 				id: createId(),

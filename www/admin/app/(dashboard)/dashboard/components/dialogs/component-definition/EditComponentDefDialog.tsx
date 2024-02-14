@@ -13,6 +13,7 @@ import { TypographyMuted } from "@/src/components/ui/server/typography";
 import { useComponentsTableDialogsStore } from "@/src/data/stores/componentDefinitions";
 import { useAlertDialog } from "@/src/hooks/useAlertDialog";
 import type { PrivateRouter } from "@/src/trpc/routes/private/_private";
+import type { EditComponentDefinitionErrorMessage } from "@/src/trpc/routes/private/components/editComponentDefinition";
 import { cn } from "@/src/utils/styling";
 import { trpc, trpcFetch } from "@/src/utils/trpc";
 import {
@@ -91,8 +92,8 @@ export function EditComponentDefDialog(props: Props) {
 				id: props.componentDef.id,
 				newName: data.name,
 				addedFields,
-				deletedFieldIds,
 				editedFields,
+				deletedFieldIds,
 			},
 			{
 				// `fidToBid` is a map of frontend ids to backend ids
@@ -129,10 +130,9 @@ export function EditComponentDefDialog(props: Props) {
 				// because the type of `err` is impossible to specify
 				onError: (err) => {
 					if (err.data?.code === "CONFLICT") {
-						const group = JSON.parse(err.message) as {
-							name: string;
-							id: string;
-						};
+						const group = JSON.parse(
+							err.message,
+						) as EditComponentDefinitionErrorMessage;
 
 						form.setError("name", {
 							type: "manual",

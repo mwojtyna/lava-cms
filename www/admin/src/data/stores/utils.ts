@@ -1,15 +1,28 @@
-export const RICH_TEXT_INITIAL_VALUE = [
-	{
-		type: "p",
-		children: [
-			{
-				text: "",
-			},
-		],
-	},
-];
-export const SWITCH_INITIAL_VALUE = "false";
-export const REGULAR_INITIAL_VALUE = "";
+import type { ComponentFieldType } from "@prisma/client";
+
+export function getInitialValue(type: ComponentFieldType, stringify?: boolean): string | object {
+	switch (type) {
+		case "RICH_TEXT": {
+			const value = [
+				{
+					type: "p",
+					children: [
+						{
+							text: "",
+						},
+					],
+				},
+			];
+			return stringify ? JSON.stringify(value) : value;
+		}
+		case "SWITCH": {
+			return "false";
+		}
+		default: {
+			return "";
+		}
+	}
+}
 
 export function unwrapSetStateAction<T>(changed: React.SetStateAction<T>, state: T): T {
 	// Typescript is dumb

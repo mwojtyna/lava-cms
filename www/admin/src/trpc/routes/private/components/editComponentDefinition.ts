@@ -1,9 +1,14 @@
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import { prisma } from "@/prisma/client";
-import { RICH_TEXT_INITIAL_VALUE, SWITCH_INITIAL_VALUE } from "@/src/data/stores/utils";
+import { getInitialValue } from "@/src/data/stores/utils";
 import { privateProcedure } from "@/src/trpc";
 import { fieldSchema } from "./types";
+
+export type EditComponentDefinitionErrorMessage = {
+	id: string;
+	name: string;
+};
 
 export const editComponentDefinition = privateProcedure
 	.input(
@@ -37,12 +42,13 @@ export const editComponentDefinition = privateProcedure
 					message: JSON.stringify({
 						name: alreadyExists.group.name,
 						id: alreadyExists.group_id,
-					}),
+					} satisfies EditComponentDefinitionErrorMessage),
 				});
 			}
 		}
 
 		await prisma.$transaction(async (tx) => {
+			// Add new fields to all instances of the component definition
 			if (input.addedFields) {
 				const addInstanceFields = [];
 
@@ -58,7 +64,6 @@ export const editComponentDefinition = privateProcedure
 					});
 					addedCompDefIds[addedField.id] = added.id;
 
-					// Add the new field to all instances of the component definition
 					const promise = new Promise<Promise<unknown>>(async (res) => {
 						const instances = await tx.componentInstance.findMany({
 							where: { definition_id: input.id },
@@ -69,10 +74,7 @@ export const editComponentDefinition = privateProcedure
 								data: {
 									fields: {
 										create: {
-											data:
-												addedField.type === "SWITCH"
-													? SWITCH_INITIAL_VALUE
-													: JSON.stringify(RICH_TEXT_INITIAL_VALUE),
+											data: getInitialValue(added.type, true) as string,
 											field_definition_id: added.id,
 										},
 									},
