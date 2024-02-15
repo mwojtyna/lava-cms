@@ -62,7 +62,7 @@ export function EditComponentDefDialog(props: Props) {
 					({
 						...f,
 						order: i,
-						array_item_type: f.arrayItemType,
+						arrayItemType: f.arrayItemType,
 					}) satisfies AddedField,
 			)
 			.filter((f) => f.diff === "added");
@@ -78,7 +78,6 @@ export function EditComponentDefDialog(props: Props) {
 						...ef,
 						id: ef.id,
 						order: i,
-						array_item_type: ef.arrayItemType,
 						original: originalFields.find((of) => ef.id === of.id)!,
 					}) satisfies EditedField,
 			)

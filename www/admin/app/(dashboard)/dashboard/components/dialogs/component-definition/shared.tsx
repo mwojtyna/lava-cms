@@ -5,7 +5,7 @@ import { ArrayItemType, ComponentFieldType } from "@prisma/client";
 import Link from "next/link";
 import * as React from "react";
 import { z } from "zod";
-import { ComponentDefinitionFieldSchema } from "@/prisma/generated/zod";
+import { ArrayItemTypeSchema, ComponentDefinitionFieldSchema } from "@/prisma/generated/zod";
 import { Combobox } from "@/src/components/Combobox";
 import type { ItemParent } from "@/src/components/DataTableDialogs";
 import { Button } from "@/src/components/ui/client/Button";
@@ -18,7 +18,7 @@ export const fieldDefinitionUISchema = z.object({
 	id: z.string().cuid(),
 	name: z.string().min(1, { message: " " }),
 	type: ComponentDefinitionFieldSchema.shape.type,
-	arrayItemType: ComponentDefinitionFieldSchema.shape.array_item_type,
+	arrayItemType: ArrayItemTypeSchema.nullable(),
 	order: z.number(),
 	diff: z.union([
 		z.literal("none"),

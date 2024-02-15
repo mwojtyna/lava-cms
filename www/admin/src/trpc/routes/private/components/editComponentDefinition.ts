@@ -64,7 +64,7 @@ export const editComponentDefinition = privateProcedure
 						data: {
 							name: addedField.name,
 							type: addedField.type,
-							array_item_type: addedField.array_item_type,
+							array_item_type: addedField.arrayItemType,
 							order: addedField.order,
 							component_definition_id: input.id,
 						},
@@ -102,7 +102,7 @@ export const editComponentDefinition = privateProcedure
 				const editedInstanceFields = input.editedFields.map(async (editedField) => {
 					if (
 						editedField.type !== editedField.original.type ||
-						editedField.array_item_type !== editedField.original.array_item_type
+						editedField.arrayItemType !== editedField.original.arrayItemType
 					) {
 						// Delete component instance if the field type was COMPONENT
 						if (editedField.original.type === "COMPONENT") {
@@ -119,11 +119,16 @@ export const editComponentDefinition = privateProcedure
 						}
 
 						// Delete array items if the field type was COLLECTION
-						// NOTE: Thanks to parent_array_item_id's `onDelete: Cascade`,
-						// we don't need to manually delete components if array_item_type was of COMPONENT
 						if (editedField.original.type === "COLLECTION") {
 							const instances = await tx.componentInstanceField.findMany({
 								where: { field_definition_id: editedField.id },
+							});
+							await tx.componentInstance.deleteMany({
+								where: {
+									parent_field_id: {
+										in: instances.map((instance) => instance.id),
+									},
+								},
 							});
 							await tx.arrayItem.deleteMany({
 								where: {
@@ -145,32 +150,33 @@ export const editComponentDefinition = privateProcedure
 					}
 				});
 				await Promise.all(editedInstanceFields);
+
+				await tx.componentDefinition.update({
+					where: { id: input.id },
+					data: {
+						name: input.newName,
+						group_id: input.newGroupId,
+						field_definitions: {
+							updateMany: input.editedFields?.map((field) => ({
+								where: { id: field.id },
+								data: {
+									name: field.name,
+									type: field.type,
+									array_item_type: field.arrayItemType,
+									order: field.order,
+								},
+							})),
+						},
+						last_update: new Date(),
+					},
+				});
 			}
 
-			await tx.componentDefinition.update({
-				where: { id: input.id },
-				data: {
-					name: input.newName,
-					group_id: input.newGroupId,
-					field_definitions: {
-						updateMany: input.editedFields?.map((field) => ({
-							where: { id: field.id },
-							data: {
-								name: field.name,
-								type: field.type,
-								array_item_type: field.array_item_type,
-								order: field.order,
-							},
-						})),
-						deleteMany: {
-							id: {
-								in: input.deletedFieldIds,
-							},
-						},
-					},
-					last_update: new Date(),
-				},
-			});
+			if (input.deletedFieldIds) {
+				await tx.componentDefinitionField.deleteMany({
+					where: { id: { in: input.deletedFieldIds } },
+				});
+			}
 		});
 
 		return addedCompDefIds;

@@ -1,7 +1,9 @@
+import { z } from "zod";
 import {
-	ComponentDefinitionFieldSchema,
 	type ComponentDefinitionField,
 	type ComponentInstance,
+	ComponentFieldTypeSchema,
+	ArrayItemTypeSchema,
 } from "@/prisma/generated/zod";
 
 export type GroupItem = {
@@ -20,9 +22,9 @@ export type GroupItem = {
 	  }
 );
 
-export const fieldSchema = ComponentDefinitionFieldSchema.pick({
-	name: true,
-	type: true,
-	array_item_type: true,
-	order: true,
+export const fieldSchema = z.object({
+	name: z.string(),
+	type: ComponentFieldTypeSchema,
+	arrayItemType: ArrayItemTypeSchema.nullable(),
+	order: z.number(),
 });

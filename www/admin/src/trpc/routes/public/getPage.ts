@@ -66,7 +66,7 @@ export const getPage = publicProcedure
 
 		const components: CmsComponent[] = await Promise.all(
 			page.components
-				.filter((c) => c.parent_component_id === null)
+				.filter((c) => c.parent_field_id === null)
 				.map(async (component) => ({
 					name: component.definition.name,
 					fields: await getFields(component),

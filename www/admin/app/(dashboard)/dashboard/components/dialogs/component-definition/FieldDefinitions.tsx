@@ -79,7 +79,7 @@ export function AddFieldDefs() {
 				name: data.name,
 				type: data.type,
 				order: fields.length,
-				arrayItemType: data.type === "COLLECTION" ? "TEXT" : undefined,
+				arrayItemType: data.type === "COLLECTION" ? "TEXT" : null,
 				diff: "added",
 			},
 		]);

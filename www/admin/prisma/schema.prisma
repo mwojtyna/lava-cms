@@ -129,20 +129,17 @@ model ComponentDefinitionField {
 }
 
 model ComponentInstance {
-    id                   String  @id @default(cuid())
-    page_id              String
-    parent_component_id  String?
-    parent_array_item_id String?
-    definition_id        String
-    order                Int
+    id              String  @id @default(cuid())
+    page_id         String
+    parent_field_id String?
+    definition_id   String
+    order           Int
 
-    page              Page                     @relation(fields: [page_id], references: [id])
+    page         Page                     @relation(fields: [page_id], references: [id])
     // When the parent component is deleted, also delete its child component
-    parent_component  ComponentInstance?       @relation("component_instance", fields: [parent_component_id], references: [id], onDelete: Cascade)
-    nested_components ComponentInstance[]      @relation("component_instance")
-    parent_array_item ArrayItem?               @relation(fields: [parent_array_item_id], references: [id], onDelete: Cascade)
-    definition        ComponentDefinition      @relation(fields: [definition_id], references: [id])
-    fields            ComponentInstanceField[]
+    parent_field ComponentInstanceField?  @relation("parent_field", fields: [parent_field_id], references: [id], onDelete: Cascade)
+    definition   ComponentDefinition      @relation(fields: [definition_id], references: [id])
+    fields       ComponentInstanceField[]
 
     @@index([page_id])
     @@map("component_instance")
@@ -160,9 +157,10 @@ model ComponentInstanceField {
     serialized_rich_text String?
 
     // When component is deleted, also delete its fields
-    component   ComponentInstance        @relation(fields: [component_id], references: [id], onDelete: Cascade)
-    definition  ComponentDefinitionField @relation(fields: [field_definition_id], references: [id])
-    array_items ArrayItem[]
+    component         ComponentInstance        @relation(fields: [component_id], references: [id], onDelete: Cascade)
+    definition        ComponentDefinitionField @relation(fields: [field_definition_id], references: [id], onDelete: Cascade)
+    nested_components ComponentInstance[]      @relation("parent_field")
+    array_items       ArrayItem[]
 
     @@index([component_id])
     @@map("component_instance_field")
@@ -176,8 +174,7 @@ model ArrayItem {
     parent_field_id String
 
     // When parent field instance is deleted (meaning the parent component was deleted), also delete its array items
-    parent_field      ComponentInstanceField @relation(fields: [parent_field_id], references: [id], onDelete: Cascade)
-    nested_components ComponentInstance[]
+    parent_field ComponentInstanceField @relation(fields: [parent_field_id], references: [id], onDelete: Cascade)
 
     @@map("array_item")
 }

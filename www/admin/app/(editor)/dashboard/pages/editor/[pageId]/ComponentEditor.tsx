@@ -37,7 +37,7 @@ export function ComponentEditor(props: ComponentEditorProps) {
 	);
 	const originalComponent = useMemo(
 		() =>
-			(props.component.parentComponentId === null
+			(props.component.parentFieldId === null
 				? originalComponents
 				: originalNestedComponents
 			).find((comp) => comp.id === props.component.id),
@@ -226,8 +226,8 @@ export const Field = forwardRef<HTMLTextAreaElement | HTMLButtonElement, FieldPr
 						value={value}
 						onChange={onChange}
 						edited={edited}
-						parentComponent={component}
-						parentArrayItemId={null}
+						parentFieldId={field.id}
+						pageId={component.pageId}
 					/>
 				);
 			}

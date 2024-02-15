@@ -43,7 +43,7 @@ export const addComponentDefinition = privateProcedure
 				type: field.type,
 				order: i,
 				component_definition_id: componentDefinitionId,
-				array_item_type: field.array_item_type,
+				array_item_type: field.arrayItemType,
 			})),
 		});
 	});

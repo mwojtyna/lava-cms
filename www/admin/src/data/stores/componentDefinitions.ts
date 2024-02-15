@@ -32,7 +32,7 @@ const useComponentsTableDialogsStore = create<ComponentsTableDialogsState>((set)
 						id: fd.id,
 						name: fd.name,
 						type: fd.type,
-						arrayItemType: fd.array_item_type,
+						arrayItemType: fd.array_item_type ?? null,
 						order: fd.order,
 						diff: "none",
 				  }))

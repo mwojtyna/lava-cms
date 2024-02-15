@@ -62,8 +62,7 @@ export const getPageComponents = privateProcedure
 						name: component.definition.name,
 					},
 					pageId: component.page_id,
-					parentComponentId: component.parent_component_id,
-					parentArrayItemId: component.parent_array_item_id,
+					parentFieldId: component.parent_field_id,
 					order: component.order,
 					fields,
 				};
@@ -76,8 +75,8 @@ export const getPageComponents = privateProcedure
 			});
 
 			return {
-				components: components.filter((c) => c.parentComponentId === null),
-				nestedComponents: components.filter((c) => c.parentComponentId !== null),
+				components: components.filter((c) => c.parentFieldId === null),
+				nestedComponents: components.filter((c) => c.parentFieldId !== null),
 				arrayItems: arrayItems.map((item) => ({
 					id: item.id,
 					data: item.data,

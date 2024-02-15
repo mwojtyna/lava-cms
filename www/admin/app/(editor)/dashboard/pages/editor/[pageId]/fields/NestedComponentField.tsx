@@ -11,8 +11,8 @@ interface NestedComponentFieldProps {
 	onChange: (id: string) => void;
 
 	className?: string;
-	parentComponent: ComponentUI;
-	parentArrayItemId: string | null;
+	parentFieldId: string;
+	pageId: string;
 	edited: boolean;
 
 	onRestore?: () => void;
@@ -45,9 +45,8 @@ export function NestedComponentField(props: NestedComponentFieldProps) {
 			id,
 			{
 				order: 0,
-				parentComponentId: props.parentComponent.id,
-				parentArrayItemId: props.parentArrayItemId,
-				pageId: props.parentComponent.pageId,
+				parentFieldId: props.parentFieldId,
+				pageId: props.pageId,
 			},
 			currentComponent,
 		);

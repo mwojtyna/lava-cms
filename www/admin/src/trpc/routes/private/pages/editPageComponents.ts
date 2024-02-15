@@ -8,8 +8,7 @@ const addedComponentSchema = z.object({
 	frontendId: z.string().cuid2(),
 	pageId: z.string().cuid(),
 	// This has to be cuid or cuid2 because it also could be a frontend id, which is cuid2
-	parentComponentId: parentIdSchema.nullable(),
-	parentArrayItemId: parentIdSchema.nullable(),
+	parentFieldId: parentIdSchema.nullable(),
 	definition: z.object({
 		id: z.string().cuid(),
 		name: z.string(),
@@ -56,57 +55,38 @@ export const editPageComponents = privateProcedure
 		}
 
 		const addedFieldIds: Record<string, string> = {};
+		for (const comp of input.addedComponents) {
+			for (const field of comp.fields) {
+				addedFieldIds[field.frontendId] = cuid();
+			}
+		}
 
 		// NOTE: We don't have to manually delete any nested components (even when they're inside array items) when their parents are deleted,
-		// because those components have parentComponentId set, even when they're inside an array item. So when the parent component is deleted,
-		// all components which reference it are also deleted all the way down the tree. Same goes for array items (because of `parent_array_item_id`)
+		// because those components have parentFieldId set, even when they're inside an array item. So when the parent component is deleted (and its fields),
+		// all components which reference any of its fields are also deleted all the way down the tree.
 		await prisma.$transaction(async (tx) => {
-			// Add new array items
-			await tx.arrayItem.createMany({
-				data: input.addedArrayItems.map((item) => ({
-					id: addedArrayItemIds[item.frontendId],
-					data:
-						item.data in addedComponentIds ? addedComponentIds[item.data]! : item.data,
-					order: item.order,
-					parent_field_id:
-						item.parentFieldId in addedFieldIds
-							? addedFieldIds[item.parentFieldId]!
-							: item.parentFieldId,
-				})),
-			});
-
 			// Add new components
 			const addedComponents = input.addedComponents.map((component) => {
-				let parentComponentId = component.parentComponentId;
-				if (parentComponentId !== null && parentComponentId in addedComponentIds) {
-					parentComponentId = addedComponentIds[parentComponentId]!;
-				}
-
-				let parentArrayItemId = component.parentArrayItemId;
-				if (parentArrayItemId !== null && parentArrayItemId in addedArrayItemIds) {
-					parentArrayItemId = addedArrayItemIds[parentArrayItemId]!;
+				let parentFieldId = component.parentFieldId;
+				if (parentFieldId !== null && parentFieldId in addedFieldIds) {
+					parentFieldId = addedFieldIds[parentFieldId]!;
 				}
 
 				return tx.componentInstance.create({
 					data: {
 						id: addedComponentIds[component.frontendId],
 						page_id: component.pageId,
-						parent_component_id: parentComponentId,
-						parent_array_item_id: parentArrayItemId,
+						parent_field_id: parentFieldId,
 						definition_id: component.definition.id,
 						order: component.order,
 						fields: {
 							createMany: {
-								data: component.fields.map((field) => {
-									const id = cuid();
-									addedFieldIds[field.frontendId] = id;
-									return {
-										id,
-										data: field.data,
-										serialized_rich_text: field.serializedRichText,
-										field_definition_id: field.definitionId,
-									};
-								}),
+								data: component.fields.map((field) => ({
+									id: addedFieldIds[field.frontendId],
+									data: field.data,
+									serialized_rich_text: field.serializedRichText,
+									field_definition_id: field.definitionId,
+								})),
 							},
 						},
 					},
@@ -121,7 +101,7 @@ export const editPageComponents = privateProcedure
 					data: {
 						order: component.order,
 						definition_id: component.definition.id,
-						parent_component_id: component.parentComponentId,
+						parent_field_id: component.parentFieldId,
 						fields: {
 							updateMany: component.fields.map((field) => ({
 								where: { id: field.id },
@@ -170,6 +150,20 @@ export const editPageComponents = privateProcedure
 				data: {
 					data: "",
 				},
+			});
+
+			// Add new array items
+			await tx.arrayItem.createMany({
+				data: input.addedArrayItems.map((item) => ({
+					id: addedArrayItemIds[item.frontendId],
+					data:
+						item.data in addedComponentIds ? addedComponentIds[item.data]! : item.data,
+					order: item.order,
+					parent_field_id:
+						item.parentFieldId in addedFieldIds
+							? addedFieldIds[item.parentFieldId]!
+							: item.parentFieldId,
+				})),
 			});
 
 			// Edit existing array items
