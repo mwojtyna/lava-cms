@@ -304,6 +304,7 @@ function ArrayFieldItem(props: ArrayFieldItemProps) {
 						onRestore={handleRestore}
 					/>
 				) : (
+					// If the array item is a component, on top of setting the component's diff, we also mirror that diff to the array item's diff
 					<NestedComponentField
 						value={props.item.data}
 						onChange={handleChange}

@@ -46,6 +46,9 @@ export const editPageComponents = privateProcedure
 		const addedComponentIds: Record<string, string> = {};
 		const addedFieldIds: Record<string, string> = {};
 
+		// NOTE: We don't have to manually delete any nested components (even when they're inside array items) when their parents are deleted,
+		// because those components have parentComponentId set, even when they're inside an array item. So when the parent component is deleted,
+		// all components which reference it are also deleted all the way down the tree.
 		await prisma.$transaction(async (tx) => {
 			// Add new components
 			const addedComponents = input.addedComponents.map((component) => {

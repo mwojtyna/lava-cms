@@ -113,6 +113,7 @@ async function getFields(component: Component): Promise<Record<string, FieldCont
 		return accAwaited;
 	}, Promise.resolve({}));
 }
+
 async function getField(field: Field, parentComponent: Component): Promise<FieldContent> {
 	let data: FieldContent;
 

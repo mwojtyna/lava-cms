@@ -136,6 +136,7 @@ model ComponentInstance {
     order               Int
 
     page              Page                     @relation(fields: [page_id], references: [id])
+    // When the parent component is deleted, also delete its child component
     parent_component  ComponentInstance?       @relation("component_instance", fields: [parent_component_id], references: [id], onDelete: Cascade)
     nested_components ComponentInstance[]      @relation("component_instance")
     definition        ComponentDefinition      @relation(fields: [definition_id], references: [id])
@@ -156,6 +157,7 @@ model ComponentInstanceField {
     data                 String
     serialized_rich_text String?
 
+    // When component is deleted, also delete its fields
     component   ComponentInstance        @relation(fields: [component_id], references: [id], onDelete: Cascade)
     definition  ComponentDefinitionField @relation(fields: [field_definition_id], references: [id])
     array_items ArrayItem[]
@@ -166,10 +168,12 @@ model ComponentInstanceField {
 
 model ArrayItem {
     id              String @id @default(cuid())
+    /// Same as `ComponentInstanceField.data`
     data            String
     order           Int
     parent_field_id String
 
+    // When parent field instance is deleted (meaning the parent component was deleted), also delete its array items
     parent_field ComponentInstanceField @relation(fields: [parent_field_id], references: [id], onDelete: Cascade)
 
     @@map("array_item")
