@@ -79,8 +79,10 @@ export function EditComponentDefDialog(props: Props) {
 						id: ef.id,
 						order: i,
 						array_item_type: ef.arrayItemType,
+						original: originalFields.find((of) => ef.id === of.id)!,
 					}) satisfies EditedField,
 			)
+			// Filter after, otherwise order is wrong
 			.filter((f) =>
 				originalFields.find(
 					(of) => f.id === of.id && (f.diff === "edited" || f.diff === "reordered"),

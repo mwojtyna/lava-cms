@@ -106,10 +106,12 @@ export function ArrayField(props: ArrayFieldProps) {
 	}
 
 	async function addComponent(compDefId: string) {
+		const newItemId = createId();
 		const newComponent = await createComponentInstance(compDefId, {
 			order: 0,
 			pageId: props.parentComponent.pageId,
 			parentComponentId: props.parentComponent.id,
+			parentArrayItemId: newItemId,
 		});
 		setNestedComponents((nestedComponents) => [...nestedComponents, newComponent]);
 
@@ -117,7 +119,7 @@ export function ArrayField(props: ArrayFieldProps) {
 		setArrayItems(props.parentField.id, [
 			...myArrayItems,
 			{
-				id: createId(),
+				id: newItemId,
 				data: newComponent.id,
 				parentFieldId: props.parentField.id,
 				order: lastItem ? lastItem.order + 1 : 0,
@@ -309,6 +311,7 @@ function ArrayFieldItem(props: ArrayFieldItemProps) {
 						value={props.item.data}
 						onChange={handleChange}
 						parentComponent={props.component}
+						parentArrayItemId={props.item.id}
 						edited={props.item.diff === "edited" || props.item.diff === "replaced"}
 						onRestore={handleRestore}
 						onUnAdd={handleUnAdd}

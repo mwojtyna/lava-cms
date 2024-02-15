@@ -9,6 +9,7 @@ const addedComponentSchema = z.object({
 	pageId: z.string().cuid(),
 	// This has to be cuid or cuid2 because it also could be a frontend id, which is cuid2
 	parentComponentId: parentIdSchema.nullable(),
+	parentArrayItemId: parentIdSchema.nullable(),
 	definition: z.object({
 		id: z.string().cuid(),
 		name: z.string(),
@@ -43,29 +44,55 @@ export const editPageComponents = privateProcedure
 		}),
 	)
 	.mutation(async ({ input }): Promise<Record<string, string>> => {
+		// Use cuid1 to make it consistent with prisma
 		const addedComponentIds: Record<string, string> = {};
+		for (const comp of input.addedComponents) {
+			addedComponentIds[comp.frontendId] = cuid();
+		}
+
+		const addedArrayItemIds: Record<string, string> = {};
+		for (const item of input.addedArrayItems) {
+			addedArrayItemIds[item.frontendId] = cuid();
+		}
+
 		const addedFieldIds: Record<string, string> = {};
 
 		// NOTE: We don't have to manually delete any nested components (even when they're inside array items) when their parents are deleted,
 		// because those components have parentComponentId set, even when they're inside an array item. So when the parent component is deleted,
-		// all components which reference it are also deleted all the way down the tree.
+		// all components which reference it are also deleted all the way down the tree. Same goes for array items (because of `parent_array_item_id`)
 		await prisma.$transaction(async (tx) => {
+			// Add new array items
+			await tx.arrayItem.createMany({
+				data: input.addedArrayItems.map((item) => ({
+					id: addedArrayItemIds[item.frontendId],
+					data:
+						item.data in addedComponentIds ? addedComponentIds[item.data]! : item.data,
+					order: item.order,
+					parent_field_id:
+						item.parentFieldId in addedFieldIds
+							? addedFieldIds[item.parentFieldId]!
+							: item.parentFieldId,
+				})),
+			});
+
 			// Add new components
 			const addedComponents = input.addedComponents.map((component) => {
-				// There is no race condition, everything before the prisma query happens immediately
 				let parentComponentId = component.parentComponentId;
 				if (parentComponentId !== null && parentComponentId in addedComponentIds) {
 					parentComponentId = addedComponentIds[parentComponentId]!;
 				}
 
-				// Let's use cuid1 to make it consistent with the backend ids
-				const id = cuid();
-				addedComponentIds[component.frontendId] = id;
+				let parentArrayItemId = component.parentArrayItemId;
+				if (parentArrayItemId !== null && parentArrayItemId in addedArrayItemIds) {
+					parentArrayItemId = addedArrayItemIds[parentArrayItemId]!;
+				}
+
 				return tx.componentInstance.create({
 					data: {
-						id,
+						id: addedComponentIds[component.frontendId],
 						page_id: component.pageId,
 						parent_component_id: parentComponentId,
+						parent_array_item_id: parentArrayItemId,
 						definition_id: component.definition.id,
 						order: component.order,
 						fields: {
@@ -143,19 +170,6 @@ export const editPageComponents = privateProcedure
 				data: {
 					data: "",
 				},
-			});
-
-			// Add new array items
-			await tx.arrayItem.createMany({
-				data: input.addedArrayItems.map((item) => ({
-					data:
-						item.data in addedComponentIds ? addedComponentIds[item.data]! : item.data,
-					order: item.order,
-					parent_field_id:
-						item.parentFieldId in addedFieldIds
-							? addedFieldIds[item.parentFieldId]!
-							: item.parentFieldId,
-				})),
 			});
 
 			// Edit existing array items

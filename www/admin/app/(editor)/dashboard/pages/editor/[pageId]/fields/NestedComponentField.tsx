@@ -12,6 +12,7 @@ interface NestedComponentFieldProps {
 
 	className?: string;
 	parentComponent: ComponentUI;
+	parentArrayItemId: string | null;
 	edited: boolean;
 
 	onRestore?: () => void;
@@ -38,12 +39,14 @@ export function NestedComponentField(props: NestedComponentFieldProps) {
 		[originalNestedComponents, props.value],
 	);
 
+	// If the component is in an array item, this method only runs when replacing the component
 	async function selectComponent(id: string) {
 		const newComponent = await createComponentInstance(
 			id,
 			{
 				order: 0,
 				parentComponentId: props.parentComponent.id,
+				parentArrayItemId: props.parentArrayItemId,
 				pageId: props.parentComponent.pageId,
 			},
 			currentComponent,

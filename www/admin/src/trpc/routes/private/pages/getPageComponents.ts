@@ -63,6 +63,7 @@ export const getPageComponents = privateProcedure
 					},
 					pageId: component.page_id,
 					parentComponentId: component.parent_component_id,
+					parentArrayItemId: component.parent_array_item_id,
 					order: component.order,
 					fields,
 				};

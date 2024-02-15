@@ -1,4 +1,3 @@
-import type { ComponentFieldType } from "@prisma/client";
 import type { Value } from "@udecode/plate-common";
 import { ArrowUturnLeftIcon } from "@heroicons/react/24/outline";
 import React, { forwardRef, useMemo, useRef } from "react";
@@ -228,6 +227,7 @@ export const Field = forwardRef<HTMLTextAreaElement | HTMLButtonElement, FieldPr
 						onChange={onChange}
 						edited={edited}
 						parentComponent={component}
+						parentArrayItemId={null}
 					/>
 				);
 			}

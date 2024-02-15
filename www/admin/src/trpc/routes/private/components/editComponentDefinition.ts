@@ -17,7 +17,14 @@ export const editComponentDefinition = privateProcedure
 			newName: z.string().optional(),
 			newGroupId: z.string().cuid().optional(),
 			addedFields: z.array(fieldSchema.extend({ id: z.string().cuid2() })).optional(),
-			editedFields: z.array(fieldSchema.extend({ id: z.string().cuid() })).optional(),
+			editedFields: z
+				.array(
+					fieldSchema.extend({
+						id: z.string().cuid(),
+						original: fieldSchema.extend({ id: z.string().cuid() }),
+					}),
+				)
+				.optional(),
 			deletedFieldIds: z.array(z.string().cuid()).optional(),
 		}),
 	)
@@ -88,6 +95,56 @@ export const editComponentDefinition = privateProcedure
 				}
 
 				await Promise.all(addInstanceFields);
+			}
+
+			// When field type has changed, replace value with the initial value, clean up components and array items
+			if (input.editedFields) {
+				const editedInstanceFields = input.editedFields.map(async (editedField) => {
+					if (
+						editedField.type !== editedField.original.type ||
+						editedField.array_item_type !== editedField.original.array_item_type
+					) {
+						// Delete component instance if the field type was COMPONENT
+						if (editedField.original.type === "COMPONENT") {
+							const nested = await tx.componentInstanceField.findMany({
+								where: { field_definition_id: editedField.id },
+							});
+							await tx.componentInstance.deleteMany({
+								where: {
+									id: {
+										in: nested.map((n) => n.data),
+									},
+								},
+							});
+						}
+
+						// Delete array items if the field type was COLLECTION
+						// NOTE: Thanks to parent_array_item_id's `onDelete: Cascade`,
+						// we don't need to manually delete components if array_item_type was of COMPONENT
+						if (editedField.original.type === "COLLECTION") {
+							const instances = await tx.componentInstanceField.findMany({
+								where: { field_definition_id: editedField.id },
+							});
+							await tx.arrayItem.deleteMany({
+								where: {
+									parent_field_id: {
+										in: instances.map((instance) => instance.id),
+									},
+								},
+							});
+						}
+
+						// Reset to initial value
+						// This has to be the last operation
+						await tx.componentInstanceField.updateMany({
+							where: { field_definition_id: editedField.id },
+							data: {
+								data: getInitialValue(editedField.type, true),
+							},
+						});
+					}
+				});
+				await Promise.all(editedInstanceFields);
 			}
 
 			await tx.componentDefinition.update({

@@ -32,7 +32,8 @@ const COMPONENT_PLACEHOLDER: ComponentUI = {
 	order: 0,
 	fields: [],
 	pageId: "",
-	parentComponentId: "",
+	parentComponentId: null,
+	parentArrayItemId: null,
 	diff: "none",
 	reordered: false,
 };
@@ -95,6 +96,7 @@ export function Inspector(props: Props) {
 		const newComponent = await createComponentInstance(id, {
 			pageId: props.page.id,
 			parentComponentId: null,
+			parentArrayItemId: null,
 			order: lastComponent ? lastComponent.order + 1 : 0,
 		});
 

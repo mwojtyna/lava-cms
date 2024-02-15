@@ -182,12 +182,20 @@ export const usePageEditorStore = create<PageEditorState>((set) => ({
 
 				i++;
 			}
+
 			let arrayItemsGrouped: ArrayItemGroups = {
 				...state.arrayItems,
 				[parentFieldId]: changedArrayItems,
 			};
+
+			// Remove empty groups
 			if (Object.values(arrayItemsGrouped).flat().length === 0) {
 				arrayItemsGrouped = {};
+			}
+			for (const key in arrayItemsGrouped) {
+				if (arrayItemsGrouped[key]!.length === 0) {
+					delete arrayItemsGrouped[key];
+				}
 			}
 
 			return {
@@ -342,6 +350,7 @@ export const usePageEditorStore = create<PageEditorState>((set) => ({
 						.map<AddedComponent>((comp) => ({
 							pageId,
 							parentComponentId: comp.parentComponentId,
+							parentArrayItemId: comp.parentArrayItemId,
 							frontendId: comp.id,
 							definition: comp.definition,
 							order: comp.order,
