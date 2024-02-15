@@ -301,7 +301,7 @@ export const usePageEditorStore = create<PageEditorState>((set) => ({
 				.map<ComponentUI>((comp, i) => ({
 					...comp,
 					order: i,
-					diff: comp.diff,
+					reordered: true,
 				}));
 
 			// Fix array item order
