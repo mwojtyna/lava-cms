@@ -96,8 +96,8 @@ export const usePageEditorStore = create<PageEditorState>((set) => ({
 		set((state) => {
 			const newComponents = unwrapSetStateAction(components, state.components);
 
-			let i = 0;
-			for (const nc of newComponents) {
+			for (let i = 0; i < newComponents.length; i++) {
+				const nc = newComponents[i]!;
 				// Fix for when a component is added, reordered and then deleted
 				// The components which were reordered still have the 'reordered' diff
 				// but they are not reordered, because the added component was deleted
@@ -112,8 +112,6 @@ export const usePageEditorStore = create<PageEditorState>((set) => ({
 						nc.reordered = false;
 					}
 				}
-
-				i++;
 			}
 
 			return {
@@ -160,8 +158,8 @@ export const usePageEditorStore = create<PageEditorState>((set) => ({
 				state.arrayItems[parentFieldId] ?? [],
 			);
 
-			let i = 0;
-			for (const ai of changedArrayItems) {
+			for (let i = 0; i < changedArrayItems.length; i++) {
+				const ai = changedArrayItems[i]!;
 				// Fix for when an item is added, reordered and then deleted
 				// The items which were reordered still have the 'reordered' diff
 				// but they are not reordered, because the added item was deleted
@@ -179,8 +177,6 @@ export const usePageEditorStore = create<PageEditorState>((set) => ({
 						ai.reordered = false;
 					}
 				}
-
-				i++;
 			}
 
 			let arrayItemsGrouped: ArrayItemGroups = {
@@ -296,23 +292,26 @@ export const usePageEditorStore = create<PageEditorState>((set) => ({
 				inferRouterInputs<PrivateRouter>["pages"]["editPageComponents"]["addedComponents"][number];
 
 			// Fix component order
-			const correctedOrderComponents = state.components
+			const correctedComponents = state.components
 				.filter((comp) => !isDeleted(comp))
-				.map<ComponentUI>((comp, i) => ({
-					...comp,
-					order: i,
-					reordered: true,
-				}));
+				.map<ComponentUI>((comp, i) => {
+					const original = state.originalComponents.find((oc) => oc.id === comp.id);
+					return {
+						...comp,
+						order: i,
+						reordered: original ? i !== original.order : comp.reordered,
+					};
+				});
 
 			// Fix array item order
-			const correctedOrderItems: ArrayItemGroups = structuredClone(state.arrayItems);
-			for (const parentId of Object.keys(correctedOrderItems)) {
-				correctedOrderItems[parentId] = correctedOrderItems[parentId]!.filter(
+			const correctedArrayItems: ArrayItemGroups = structuredClone(state.arrayItems);
+			for (const parentId of Object.keys(correctedArrayItems)) {
+				correctedArrayItems[parentId] = correctedArrayItems[parentId]!.filter(
 					(item) => !isDeleted(item),
 				);
 
 				let i = 0;
-				for (const item of correctedOrderItems[parentId]!) {
+				for (const item of correctedArrayItems[parentId]!) {
 					if (item.order !== i) {
 						item.reordered = true;
 						item.order = i;
@@ -321,15 +320,13 @@ export const usePageEditorStore = create<PageEditorState>((set) => ({
 				}
 			}
 
-			const allComponents = state.components.concat(state.nestedComponents);
-
 			// Serialize rich text
 			const editor = createPlateEditor({
 				plugins: createPlugins(richTextEditorPlugins, {
 					components: richTextEditorComponents,
 				}),
 			});
-			for (const component of allComponents) {
+			for (const component of correctedComponents.concat(state.nestedComponents)) {
 				for (const field of component.fields) {
 					if (field.type === "RICH_TEXT") {
 						field.serializedRichText = serializeHtml(editor, {
@@ -340,12 +337,11 @@ export const usePageEditorStore = create<PageEditorState>((set) => ({
 				}
 			}
 
-			const flattenedItems = Object.values(state.arrayItems).flat();
-
 			mutation.mutate(
 				{
 					pageId,
-					addedComponents: allComponents
+					addedComponents: correctedComponents
+						.concat(state.nestedComponents)
 						.filter((comp) => isAdded(comp) || isReplaced(comp))
 						.map<AddedComponent>((comp) => ({
 							pageId,
@@ -360,14 +356,16 @@ export const usePageEditorStore = create<PageEditorState>((set) => ({
 								definitionId: field.definitionId,
 							})),
 						})),
-					editedComponents: correctedOrderComponents
+					editedComponents: correctedComponents
 						.concat(state.nestedComponents)
 						.filter((comp) => isEdited(comp)),
-					deletedComponentIds: allComponents // Replaced components have the same id as the original
+					deletedComponentIds: state.components
+						.concat(state.nestedComponents) // Replaced components have the same id as the original
 						.filter((comp) => isDeleted(comp) || isReplaced(comp))
 						.map((comp) => comp.id),
 
-					addedArrayItems: flattenedItems
+					addedArrayItems: Object.values(correctedArrayItems)
+						.flat()
 						.filter((item) => isAdded(item))
 						.map((item) => ({
 							frontendId: item.id,
@@ -375,7 +373,7 @@ export const usePageEditorStore = create<PageEditorState>((set) => ({
 							parentFieldId: item.parentFieldId,
 							order: item.order,
 						})),
-					editedArrayItems: Object.values(correctedOrderItems)
+					editedArrayItems: Object.values(correctedArrayItems)
 						.flat()
 						.filter(
 							(item) =>
@@ -383,7 +381,8 @@ export const usePageEditorStore = create<PageEditorState>((set) => ({
 								// isReplaced is for when the item is of type COMPONENT, see ArrayFieldItem handleChange() function
 								isReplaced(item),
 						),
-					deletedArrayItemIds: flattenedItems
+					deletedArrayItemIds: Object.values(state.arrayItems)
+						.flat()
 						.filter((item) => isDeleted(item))
 						.map((item) => item.id),
 				},
@@ -445,9 +444,9 @@ function removeId(obj: Record<string, unknown>) {
 		}
 	}
 }
-function areSame<T extends Editable & { order: number }>(original: T, current: T) {
-	const a = { ...original, diff: undefined, reordered: undefined, order: undefined };
-	const b = { ...current, diff: undefined, reordered: undefined, order: undefined };
+function areSame<T extends Editable>(original: T, current: T) {
+	const a: Partial<T> = { ...original, diff: undefined, reordered: undefined };
+	const b: Partial<T> = { ...current, diff: undefined, reordered: undefined };
 
 	// Remove id from rich text data, otherwise restoring doesn't clear diffs
 	if ("fields" in current) {

@@ -81,6 +81,7 @@ export function FieldDefEditor(props: FieldDefEditorProps) {
 									data.type === "COLLECTION" ? data.arrayItemType : null,
 								order: f.order,
 								diff: props.step.fieldDef.diff !== "added" ? "edited" : "added",
+								reordered: false,
 						  }
 						: f,
 				),

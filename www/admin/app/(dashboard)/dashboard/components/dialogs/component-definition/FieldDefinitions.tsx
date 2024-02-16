@@ -81,6 +81,7 @@ export function AddFieldDefs() {
 				order: fields.length,
 				arrayItemType: data.type === "COLLECTION" ? "TEXT" : null,
 				diff: "added",
+				reordered: false,
 			},
 		]);
 		form.resetField("name");
@@ -177,7 +178,7 @@ export const FieldDefs = React.forwardRef<React.ComponentRef<"div">, FieldDefsPr
 				if (item.order !== i) {
 					item.order = i;
 					if (item.diff === "none") {
-						item.diff = "reordered";
+						item.reordered = true;
 					}
 				}
 			}
@@ -188,8 +189,15 @@ export const FieldDefs = React.forwardRef<React.ComponentRef<"div">, FieldDefsPr
 
 	function onRestore(toRestore: FieldDefinitionUI) {
 		const original = originalFields.find((field) => field.id === toRestore.id)!;
-		const newFields = fields.map((field) => (field.id === toRestore.id ? original : field));
-		setFields(newFields);
+		const restored = fields.map((field) =>
+			field.id === toRestore.id
+				? {
+						...original,
+						reordered: field.reordered,
+				  }
+				: field,
+		);
+		setFields(restored);
 	}
 	function onDelete(toDelete: FieldDefinitionUI) {
 		let newFields: FieldDefinitionUI[] = [];
@@ -275,7 +283,7 @@ function FieldDefCard(props: FieldDefProps) {
 	};
 
 	type DiffType = FieldDefinitionUI["diff"];
-	const diffStyle: Record<Exclude<DiffType, "none" | "reordered">, string> = {
+	const diffStyle: Record<Exclude<DiffType, "none">, string> = {
 		added: "border-l-green-500",
 		edited: "border-l-brand",
 		deleted: "border-l-red-500",
@@ -288,7 +296,6 @@ function FieldDefCard(props: FieldDefProps) {
 			className={cn(
 				props.dialogType === "edit" &&
 					props.field.diff !== "none" &&
-					props.field.diff !== "reordered" &&
 					`border-l-[3px] ${diffStyle[props.field.diff]}`,
 
 				props.field.diff !== "deleted" && "cursor-pointer hover:bg-accent/70",
@@ -383,7 +390,6 @@ function Actions(props: ActionsProps) {
 			}
 
 			case "added":
-			case "reordered":
 			case "none": {
 				return <DefaultActions />;
 			}

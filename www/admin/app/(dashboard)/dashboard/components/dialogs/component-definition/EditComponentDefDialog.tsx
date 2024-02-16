@@ -22,7 +22,11 @@ import {
 	type ComponentDefEditorInputs,
 } from "./ComponentDefEditor";
 import { FieldDefEditor } from "./FieldDefEditor";
-import { ComponentDefinitionNameError, type Step } from "./shared";
+import { ComponentDefinitionNameError, type FieldDefinitionUI, type Step } from "./shared";
+
+function isEdited(field: FieldDefinitionUI) {
+	return field.diff === "edited" || (field.reordered && field.diff === "none");
+}
 
 interface Props {
 	open: boolean;
@@ -56,37 +60,42 @@ export function EditComponentDefDialog(props: Props) {
 		type AddedField = NonNullable<Inputs["addedFields"]>[number];
 		type EditedField = NonNullable<Inputs["editedFields"]>[number];
 
-		const addedFields: AddedField[] = fields
+		const correctedFields: FieldDefinitionUI[] = fields
+			.filter((f) => f.diff !== "deleted")
+			.map((f, i) => {
+				const original = originalFields.find((of) => f.id === of.id);
+				return {
+					...f,
+					order: i,
+					reordered: original ? i !== original.order : f.reordered,
+				};
+			});
+
+		const addedFields: AddedField[] = correctedFields
 			.map(
-				(f, i) =>
+				(f) =>
 					({
 						...f,
-						order: i,
 						arrayItemType: f.arrayItemType,
 					}) satisfies AddedField,
 			)
 			.filter((f) => f.diff === "added");
 
-		const deletedFieldIds: string[] = fields
-			.filter((f) => f.diff === "deleted")
-			.map((f) => f.id);
-
-		const editedFields: EditedField[] = fields
+		const editedFields: EditedField[] = correctedFields
 			.map(
-				(ef, i) =>
+				(ef) =>
 					({
 						...ef,
 						id: ef.id,
-						order: i,
 						original: originalFields.find((of) => ef.id === of.id)!,
 					}) satisfies EditedField,
 			)
 			// Filter after, otherwise order is wrong
-			.filter((f) =>
-				originalFields.find(
-					(of) => f.id === of.id && (f.diff === "edited" || f.diff === "reordered"),
-				),
-			);
+			.filter((f) => isEdited(f));
+
+		const deletedFieldIds: string[] = fields
+			.filter((f) => f.diff === "deleted")
+			.map((f) => f.id);
 
 		editMutation.mutate(
 			{

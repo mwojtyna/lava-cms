@@ -35,6 +35,7 @@ const useComponentsTableDialogsStore = create<ComponentsTableDialogsState>((set)
 						arrayItemType: fd.array_item_type ?? null,
 						order: fd.order,
 						diff: "none",
+						reordered: false,
 				  }))
 				: [];
 
@@ -53,11 +54,20 @@ const useComponentsTableDialogsStore = create<ComponentsTableDialogsState>((set)
 		set((state) => {
 			const newFields = unwrapSetStateAction(fields, state.fields);
 
-			for (const field of newFields) {
-				if (field.diff === "edited" || field.diff === "reordered") {
+			for (let i = 0; i < newFields.length; i++) {
+				const field = newFields[i]!;
+				// Fix for when a component is added, reordered and then deleted
+				// The components which were reordered still have the 'reordered' diff
+				// but they are not reordered, because the added component was deleted
+				field.order = i;
+
+				if (field.diff === "edited" || field.reordered) {
 					const original = state.originalFields.find((of) => of.id === field.id)!;
 					if (areSame(original, field)) {
 						field.diff = "none";
+					}
+					if (original.order === field.order) {
+						field.reordered = false;
 					}
 				}
 			}
@@ -97,8 +107,8 @@ const useComponentsTableDialogsStore = create<ComponentsTableDialogsState>((set)
 }));
 
 function areSame(original: FieldDefinitionUI, current: FieldDefinitionUI) {
-	const a = { ...original, diff: undefined };
-	const b = { ...current, diff: undefined };
+	const a: Partial<FieldDefinitionUI> = { ...original, diff: undefined, reordered: undefined };
+	const b: Partial<FieldDefinitionUI> = { ...current, diff: undefined, reordered: undefined };
 	return JSON.stringify(a) === JSON.stringify(b);
 }
 

@@ -25,8 +25,8 @@ export const fieldDefinitionUISchema = z.object({
 		z.literal("added"),
 		z.literal("deleted"),
 		z.literal("edited"),
-		z.literal("reordered"),
 	]),
+	reordered: z.boolean(),
 });
 export type FieldDefinitionUI = z.infer<typeof fieldDefinitionUISchema>;
 
