@@ -66,8 +66,6 @@ import {
 	createTablePlugin,
 } from "@udecode/plate-table";
 import React, { useEffect, useRef } from "react";
-import { DndProvider } from "react-dnd";
-import { HTML5Backend } from "react-dnd-html5-backend";
 import { Node, Point, Transforms, Editor as SlateEditor } from "slate";
 import { usePageEditorStore } from "../data/stores/pageEditor";
 import { cn } from "../utils/styling";
@@ -89,7 +87,6 @@ import { withPlaceholders } from "./plate-ui/Placeholder";
 import { TableCellElement, TableCellHeaderElement } from "./plate-ui/TableCellElement";
 import { TableElement } from "./plate-ui/TableElement";
 import { TableRowElement } from "./plate-ui/TableRowElement";
-import { withDraggables } from "./plate-ui/withDraggable";
 import { ActionIcon } from "./ui/client/ActionIcon";
 
 const resetBlockTypesCommonRule = {
@@ -277,7 +274,7 @@ export const plugins = createPlugins(
 	{
 		// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
 		components: withPlaceholders(
-			withDraggables({
+			/* withDraggables */ {
 				[ELEMENT_H1]: withProps(HeadingElement, { variant: "h1" }),
 				[ELEMENT_H2]: withProps(HeadingElement, { variant: "h2" }),
 				[ELEMENT_H3]: withProps(HeadingElement, { variant: "h3" }),
@@ -308,7 +305,7 @@ export const plugins = createPlugins(
 				[ELEMENT_TR]: TableRowElement,
 				[ELEMENT_TD]: TableCellElement,
 				[ELEMENT_TH]: TableCellHeaderElement,
-			}),
+			},
 		),
 	},
 );
@@ -367,48 +364,48 @@ export function RichTextEditor(props: Props) {
 	}, [editorRef, props.originalValue]);
 
 	return (
-		<DndProvider backend={HTML5Backend}>
-			<Plate
-				editorRef={editorRef}
-				plugins={plugins}
-				value={props.value}
-				onChange={props.onChange}
+		// <DndProvider backend={HTML5Backend}>
+		<Plate
+			editorRef={editorRef}
+			plugins={plugins}
+			value={props.value}
+			onChange={props.onChange}
+		>
+			<div
+				className={cn(
+					// Block selection
+					"[&_.slate-start-area-left]:!w-[64px] [&_.slate-start-area-right]:!w-[64px] [&_.slate-start-area-top]:!h-4",
+					"relative",
+				)}
 			>
-				<div
+				<FixedToolbar className={cn(props.edited && "border-brand border-b-border")}>
+					<FixedToolbarButtons />
+				</FixedToolbar>
+
+				<Editor
 					className={cn(
-						// Block selection
-						"[&_.slate-start-area-left]:!w-[64px] [&_.slate-start-area-right]:!w-[64px] [&_.slate-start-area-top]:!h-4",
-						"relative",
+						"rounded-t-none border-t-0 p-4",
+						props.edited && "border-b-brand border-l-brand border-r-brand",
 					)}
-				>
-					<FixedToolbar className={cn(props.edited && "border-brand border-b-border")}>
-						<FixedToolbarButtons />
-					</FixedToolbar>
+					focusRing={false}
+					pageId={props.pageId}
+				/>
 
-					<Editor
-						className={cn(
-							"rounded-t-none border-t-0 px-6 py-4",
-							props.edited && "border-b-brand border-l-brand border-r-brand",
-						)}
-						focusRing={false}
-						pageId={props.pageId}
-					/>
-
-					{props.edited && (
-						<ActionIcon
-							className="absolute bottom-1 right-1 bg-background/50"
-							onClick={() => {
-								// @ts-expect-error - Don't know how to type this
-								resetNodes(editorRef.current!, { nodes: props.originalValue });
-								props.onRestore();
-							}}
-							tooltip={"Restore"}
-						>
-							<ArrowUturnLeftIcon className="w-4" />
-						</ActionIcon>
-					)}
-				</div>
-			</Plate>
-		</DndProvider>
+				{props.edited && (
+					<ActionIcon
+						className="absolute bottom-1 right-1 bg-background/50"
+						onClick={() => {
+							// @ts-expect-error - Don't know how to type this
+							resetNodes(editorRef.current!, { nodes: props.originalValue });
+							props.onRestore();
+						}}
+						tooltip={"Restore"}
+					>
+						<ArrowUturnLeftIcon className="w-4" />
+					</ActionIcon>
+				)}
+			</div>
+		</Plate>
+		// </DndProvider>
 	);
 }
