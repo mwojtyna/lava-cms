@@ -2,6 +2,7 @@
 
 import type { DropdownMenuProps } from "@radix-ui/react-dropdown-menu";
 import { ELEMENT_BLOCKQUOTE } from "@udecode/plate-block-quote";
+import { ELEMENT_CODE_BLOCK, insertEmptyCodeBlock } from "@udecode/plate-code-block";
 import { focusEditor, insertEmptyElement, useEditorRef } from "@udecode/plate-common";
 import {
 	ELEMENT_H1,
@@ -112,12 +113,12 @@ const items = [
 	{
 		label: "Media",
 		items: [
-			// {
-			// 	value: ELEMENT_CODE_BLOCK,
-			// 	label: "Code block",
-			// 	description: "Code (```)",
-			// 	icon: icons.Code,
-			// },
+			{
+				value: ELEMENT_CODE_BLOCK,
+				label: "Code block",
+				description: "Code (```)",
+				icon: icons.Code,
+			},
 			{
 				value: ELEMENT_IMAGE,
 				label: "Image",
@@ -178,10 +179,10 @@ export function InsertDropdownMenu(props: DropdownMenuProps) {
 								className="min-w-[180px]"
 								onSelect={() => {
 									switch (type) {
-										// case ELEMENT_CODE_BLOCK: {
-										// 	insertEmptyCodeBlock(editor);
-										// 	break;
-										// }
+										case ELEMENT_CODE_BLOCK: {
+											insertEmptyCodeBlock(editor);
+											break;
+										}
 										case ELEMENT_IMAGE: {
 											void insertMedia(editor, { type: ELEMENT_IMAGE });
 											break;

@@ -50,6 +50,8 @@
 		"@udecode/plate-block-quote": "^30.1.2",
 		"@udecode/plate-break": "^30.1.2",
 		"@udecode/plate-caption": "^30.1.2",
+		"@udecode/plate-code-block": "^30.1.2",
+		"@udecode/plate-combobox": "^30.4.5",
 		"@udecode/plate-common": "^30.1.2",
 		"@udecode/plate-dnd": "^30.1.2",
 		"@udecode/plate-floating": "^30.1.2",

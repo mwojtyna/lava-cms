@@ -1,15 +1,14 @@
 import type { inferRouterInputs } from "@trpc/server";
-import { createPlateEditor, createPlugins, type Value } from "@udecode/plate-common";
+import { createPlateEditor, type Value } from "@udecode/plate-common";
 import { serializeHtml } from "@udecode/plate-serializer-html";
+import { DndProvider } from "react-dnd";
+import { HTML5Backend } from "react-dnd-html5-backend";
 import { create } from "zustand";
 import type {
 	Component,
 	PageEditorMessage,
 } from "@/app/(editor)/dashboard/pages/editor/[pageId]/types";
-import {
-	components as richTextEditorComponents,
-	plugins as richTextEditorPlugins,
-} from "@/src/components/RichTextEditor";
+import { plugins as richTextEditorPlugins } from "@/src/components/RichTextEditor";
 import type { PrivateRouter } from "@/src/trpc/routes/private/_private";
 import type { ArrayItem } from "@/src/trpc/routes/private/pages/types";
 import type { trpc } from "@/src/utils/trpc";
@@ -322,15 +321,17 @@ export const usePageEditorStore = create<PageEditorState>((set) => ({
 
 			// Serialize rich text
 			const editor = createPlateEditor({
-				plugins: createPlugins(richTextEditorPlugins, {
-					components: richTextEditorComponents,
-				}),
+				plugins: richTextEditorPlugins,
 			});
 			for (const component of correctedComponents.concat(state.nestedComponents)) {
 				for (const field of component.fields) {
 					if (field.type === "RICH_TEXT") {
+						console.log(field.data);
 						field.serializedRichText = serializeHtml(editor, {
 							nodes: field.data as unknown as Value,
+							dndWrapper: (props) => (
+								<DndProvider backend={HTML5Backend} {...props} />
+							),
 						});
 						field.data = JSON.stringify(field.data);
 					}
