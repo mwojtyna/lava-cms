@@ -88,6 +88,7 @@ import { TableCellElement, TableCellHeaderElement } from "./plate-ui/TableCellEl
 import { TableElement } from "./plate-ui/TableElement";
 import { TableRowElement } from "./plate-ui/TableRowElement";
 import { ActionIcon } from "./ui/client/ActionIcon";
+import { getInitialValue } from "../data/stores/utils";
 
 const resetBlockTypesCommonRule = {
 	types: [
@@ -348,7 +349,8 @@ export function RichTextEditor(props: Props) {
 
 	// Reset editor when the global Reset button is pressed
 	useEffect(() => {
-		if (props.originalValue) {
+		// If diff is "replaced", the originalValue is the value of the replaced component, which may not be a Slate value
+		if (typeof props.originalValue === "object") {
 			usePageEditorStore.setState({
 				onReset: () => {
 					// @ts-expect-error - Don't know how to type this

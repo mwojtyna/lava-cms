@@ -84,17 +84,11 @@ export function ComponentEditor(props: ComponentEditorProps) {
 					const originalField = originalComponent?.fields[i];
 
 					let edited = false;
-					if (field.type === "RICH_TEXT") {
-						if (
-							props.component.diff !== "added" &&
-							JSON.stringify(field.data) !== JSON.stringify(originalField?.data)
-						) {
-							edited = true;
-						}
-					} else {
-						if (props.component.diff !== "replaced" && originalField) {
-							edited = field.data !== originalField.data;
-						}
+					if (props.component.diff !== "replaced" && originalField) {
+						edited =
+							field.type === "RICH_TEXT"
+								? JSON.stringify(field.data) !== JSON.stringify(originalField?.data)
+								: field.data !== originalField.data;
 					}
 
 					return (
