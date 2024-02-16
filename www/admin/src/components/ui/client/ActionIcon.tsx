@@ -3,7 +3,7 @@
 import * as React from "react";
 import { cn } from "@/src/utils/styling";
 import { Button } from "./Button";
-import { Tooltip, TooltipContent, TooltipTrigger } from "./Tooltip";
+import { Tooltip, TooltipContent, TooltipPortal, TooltipTrigger } from "./Tooltip";
 
 interface ActionIconProps extends Omit<React.ComponentPropsWithoutRef<typeof Button>, "icon"> {
 	tooltip?: string;
@@ -25,7 +25,11 @@ const ActionIcon = React.forwardRef<HTMLButtonElement, ActionIconProps>(
 					</Button>
 				</TooltipTrigger>
 
-				{tooltip && <TooltipContent>{tooltip}</TooltipContent>}
+				{tooltip && (
+					<TooltipPortal>
+						<TooltipContent>{tooltip}</TooltipContent>
+					</TooltipPortal>
+				)}
 			</Tooltip>
 		);
 	},

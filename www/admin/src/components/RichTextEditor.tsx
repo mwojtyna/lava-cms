@@ -375,11 +375,23 @@ export function RichTextEditor(props: Props) {
 				className={cn(
 					// Block selection
 					"[&_.slate-start-area-left]:!w-[64px] [&_.slate-start-area-right]:!w-[64px] [&_.slate-start-area-top]:!h-4",
-					"relative",
 				)}
 			>
 				<FixedToolbar className={cn(props.edited && "border-brand border-b-border")}>
 					<FixedToolbarButtons />
+					{props.edited && (
+						<ActionIcon
+							className="absolute bottom-[5px] right-1 bg-background/50"
+							onClick={() => {
+								// @ts-expect-error - Don't know how to type this
+								resetNodes(editorRef.current!, { nodes: props.originalValue });
+								props.onRestore();
+							}}
+							tooltip={"Restore"}
+						>
+							<ArrowUturnLeftIcon className="w-4" />
+						</ActionIcon>
+					)}
 				</FixedToolbar>
 
 				<Editor
@@ -390,20 +402,6 @@ export function RichTextEditor(props: Props) {
 					focusRing={false}
 					pageId={props.pageId}
 				/>
-
-				{props.edited && (
-					<ActionIcon
-						className="absolute bottom-1 right-1 bg-background/50"
-						onClick={() => {
-							// @ts-expect-error - Don't know how to type this
-							resetNodes(editorRef.current!, { nodes: props.originalValue });
-							props.onRestore();
-						}}
-						tooltip={"Restore"}
-					>
-						<ArrowUturnLeftIcon className="w-4" />
-					</ActionIcon>
-				)}
 			</div>
 		</Plate>
 		// </DndProvider>
