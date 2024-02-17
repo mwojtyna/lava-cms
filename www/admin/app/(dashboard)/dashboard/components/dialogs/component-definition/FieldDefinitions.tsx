@@ -177,9 +177,7 @@ export const FieldDefs = React.forwardRef<React.ComponentRef<"div">, FieldDefsPr
 				const item = reordered[i]!;
 				if (item.order !== i) {
 					item.order = i;
-					if (item.diff === "none") {
-						item.reordered = true;
-					}
+					item.reordered = true;
 				}
 			}
 

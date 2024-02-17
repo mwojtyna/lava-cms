@@ -61,7 +61,7 @@ const useComponentsTableDialogsStore = create<ComponentsTableDialogsState>((set)
 				// but they are not reordered, because the added component was deleted
 				field.order = i;
 
-				if (field.diff === "edited" || field.reordered) {
+				if (field.diff === "edited" || (field.reordered && field.diff === "none")) {
 					const original = state.originalFields.find((of) => of.id === field.id)!;
 					if (areSame(original, field)) {
 						field.diff = "none";

@@ -326,7 +326,6 @@ export const usePageEditorStore = create<PageEditorState>((set) => ({
 			for (const component of correctedComponents.concat(state.nestedComponents)) {
 				for (const field of component.fields) {
 					if (field.type === "RICH_TEXT") {
-						console.log(field.data);
 						field.serializedRichText = serializeHtml(editor, {
 							nodes: field.data as unknown as Value,
 							dndWrapper: (props) => (
