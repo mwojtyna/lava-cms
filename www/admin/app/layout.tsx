@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter, Poppins } from "next/font/google";
 import { cookies } from "next/headers";
 import { Body } from "@/src/components/Body";
+import { AlertDialogProvider } from "@/src/components/providers/AlertDialogProvider";
 import { TrpcProvider } from "@/src/components/providers/TrpcProvider";
 import { ZustandProvider } from "@/src/components/providers/ZustandProvider";
 import { Toaster } from "@/src/components/ui/client/Toaster";
@@ -36,13 +37,15 @@ export default async function RootLayout({ children }: { children: React.ReactNo
 	return (
 		<html lang="en-US">
 			<ZustandProvider colorTheme={colorTheme}>
-				<Body fonts={[regularFont, headerFont]}>
-					<TooltipProvider delayDuration={0}>
-						<TrpcProvider>{children}</TrpcProvider>
-					</TooltipProvider>
+				<AlertDialogProvider>
+					<Body fonts={[regularFont, headerFont]}>
+						<TooltipProvider delayDuration={0}>
+							<TrpcProvider>{children}</TrpcProvider>
+						</TooltipProvider>
 
-					<Toaster />
-				</Body>
+						<Toaster />
+					</Body>
+				</AlertDialogProvider>
 			</ZustandProvider>
 		</html>
 	);

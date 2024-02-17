@@ -229,48 +229,41 @@ export function EditComponentDefDialog(props: Props) {
 	}
 
 	return (
-		<>
-			<Sheet open={props.open} onOpenChange={handleSetOpen}>
-				<SheetContent className="w-screen sm:max-w-md">
-					<FormProvider {...form}>
-						<form
-							className="flex flex-col gap-4"
-							onSubmit={form.handleSubmit(onSubmit)}
-						>
-							{steps.map((step, i) => (
-								<div
-									key={i}
-									className={cn(
-										"flex flex-col gap-4",
-										i < steps.length - 1 && "hidden",
-									)}
-								>
-									{displayStep(step)}
-								</div>
-							))}
-
-							<SheetFooter className="items-center gap-2">
-								{os !== "android" && os !== "ios" && (
-									<TypographyMuted>
-										{os === "macos" ? "Cmd" : "Ctrl"}+S
-									</TypographyMuted>
+		<Sheet open={props.open} onOpenChange={handleSetOpen}>
+			<SheetContent className="w-screen sm:max-w-md">
+				<FormProvider {...form}>
+					<form className="flex flex-col gap-4" onSubmit={form.handleSubmit(onSubmit)}>
+						{steps.map((step, i) => (
+							<div
+								key={i}
+								className={cn(
+									"flex flex-col gap-4",
+									i < steps.length - 1 && "hidden",
 								)}
-								<Button
-									className="max-sm:w-full"
-									type="submit"
-									loading={editMutation.isLoading}
-									disabled={!canSubmit}
-									icon={<PencilSquareIcon className="w-5" />}
-								>
-									Save
-								</Button>
-							</SheetFooter>
-						</form>
-					</FormProvider>
-				</SheetContent>
-			</Sheet>
+							>
+								{displayStep(step)}
+							</div>
+						))}
 
-			<alertDialog.Component />
-		</>
+						<SheetFooter className="items-center gap-2">
+							{os !== "android" && os !== "ios" && (
+								<TypographyMuted>
+									{os === "macos" ? "Cmd" : "Ctrl"}+S
+								</TypographyMuted>
+							)}
+							<Button
+								className="max-sm:w-full"
+								type="submit"
+								loading={editMutation.isLoading}
+								disabled={!canSubmit}
+								icon={<PencilSquareIcon className="w-5" />}
+							>
+								Save
+							</Button>
+						</SheetFooter>
+					</form>
+				</FormProvider>
+			</SheetContent>
+		</Sheet>
 	);
 }

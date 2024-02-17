@@ -153,42 +153,35 @@ export function AddComponentDefDialog(props: Props) {
 	}
 
 	return (
-		<>
-			<Sheet open={props.open} onOpenChange={handleSetOpen}>
-				<SheetContent className="w-screen sm:max-w-md">
-					<FormProvider {...form}>
-						<form
-							className="flex flex-col gap-4"
-							onSubmit={form.handleSubmit(onSubmit)}
-						>
-							{steps.map((step, i) => (
-								<div
-									key={i}
-									className={cn(
-										"flex flex-col gap-4",
-										i < steps.length - 1 && "hidden",
-									)}
-								>
-									{displayStep(step)}
-								</div>
-							))}
+		<Sheet open={props.open} onOpenChange={handleSetOpen}>
+			<SheetContent className="w-screen sm:max-w-md">
+				<FormProvider {...form}>
+					<form className="flex flex-col gap-4" onSubmit={form.handleSubmit(onSubmit)}>
+						{steps.map((step, i) => (
+							<div
+								key={i}
+								className={cn(
+									"flex flex-col gap-4",
+									i < steps.length - 1 && "hidden",
+								)}
+							>
+								{displayStep(step)}
+							</div>
+						))}
 
-							<SheetFooter>
-								<Button
-									type="submit"
-									loading={addMutation.isLoading}
-									disabled={!canSubmit}
-									icon={<CubeIcon className="w-5" />}
-								>
-									Add
-								</Button>
-							</SheetFooter>
-						</form>
-					</FormProvider>
-				</SheetContent>
-			</Sheet>
-
-			<alertDialog.Component />
-		</>
+						<SheetFooter>
+							<Button
+								type="submit"
+								loading={addMutation.isLoading}
+								disabled={!canSubmit}
+								icon={<CubeIcon className="w-5" />}
+							>
+								Add
+							</Button>
+						</SheetFooter>
+					</form>
+				</FormProvider>
+			</SheetContent>
+		</Sheet>
 	);
 }

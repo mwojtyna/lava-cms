@@ -88,7 +88,6 @@ import { TableCellElement, TableCellHeaderElement } from "./plate-ui/TableCellEl
 import { TableElement } from "./plate-ui/TableElement";
 import { TableRowElement } from "./plate-ui/TableRowElement";
 import { ActionIcon } from "./ui/client/ActionIcon";
-import { getInitialValue } from "../data/stores/utils";
 
 const resetBlockTypesCommonRule = {
 	types: [

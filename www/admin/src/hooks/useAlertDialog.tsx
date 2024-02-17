@@ -1,33 +1,39 @@
-import { memo, useState } from "react";
-import { AlertDialog, type AlertDialogProps } from "../components/AlertDialog";
+import { createContext, useContext } from "react";
+import { type AlertDialogProps } from "../components/AlertDialog";
 import "client-only";
 
-type Props = Pick<AlertDialogProps, "title" | "description" | "yesMessage" | "noMessage" | "icon">;
+type AlertDialogOptions = Pick<
+	AlertDialogProps,
+	"title" | "description" | "yesMessage" | "noMessage" | "icon"
+>;
+type AlertDialogState = AlertDialogOptions & {
+	setOpen: (value: boolean) => void;
+	setOnSubmit: (value: () => void) => void;
+};
 
-function useAlertDialog(dialogProps: Props): {
-	Component: React.MemoExoticComponent<() => JSX.Element>;
+const AlertDialogContext = createContext<
+	[AlertDialogState, React.Dispatch<React.SetStateAction<AlertDialogState>>] | null
+>(null);
+
+function useAlertDialog(options: AlertDialogOptions): {
 	open: (onYes: () => void) => void;
 } {
-	const [open, setOpen] = useState(false);
-	const [onSubmit, setOnSubmit] = useState<(() => void) | null>(null);
-
-	const Component = memo(() => (
-		<AlertDialog
-			{...dialogProps}
-			open={open}
-			setOpen={setOpen}
-			onSubmit={onSubmit ?? (() => console.warn("No onSubmit callback provided"))}
-		/>
-	));
-	Component.displayName = AlertDialog.name;
+	const context = useContext(AlertDialogContext);
+	const state = context![0];
+	const setState = context![1];
 
 	return {
-		Component,
 		open: (onConfirm) => {
-			setOpen(true);
-			setOnSubmit(() => {
+			// Set dialog properties
+			setState((state) => ({
+				...state,
+				...options,
+			}));
+
+			state.setOpen(true);
+			state.setOnSubmit(() => {
 				return () => {
-					setOpen(false);
+					state.setOpen(false);
 					onConfirm();
 				};
 			});
@@ -35,4 +41,4 @@ function useAlertDialog(dialogProps: Props): {
 	};
 }
 
-export { useAlertDialog };
+export { useAlertDialog, AlertDialogContext, type AlertDialogState };

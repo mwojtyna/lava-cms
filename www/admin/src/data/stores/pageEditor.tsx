@@ -342,7 +342,7 @@ export const usePageEditorStore = create<PageEditorState>((set) => ({
 					pageId,
 					addedComponents: correctedComponents
 						.concat(state.nestedComponents)
-						.filter((comp) => isAdded(comp) || isReplaced(comp))
+						.filter((comp) => isAdded(comp) || isReplaced(comp)) // Also add replacing components
 						.map<AddedComponent>((comp) => ({
 							pageId,
 							parentFieldId: comp.parentFieldId,
@@ -360,8 +360,8 @@ export const usePageEditorStore = create<PageEditorState>((set) => ({
 						.concat(state.nestedComponents)
 						.filter((comp) => isEdited(comp)),
 					deletedComponentIds: state.components
-						.concat(state.nestedComponents) // Replaced components have the same id as the original
-						.filter((comp) => isDeleted(comp) || isReplaced(comp))
+						.concat(state.nestedComponents)
+						.filter((comp) => isDeleted(comp) || isReplaced(comp)) // Also delete replaced components
 						.map((comp) => comp.id),
 
 					addedArrayItems: Object.values(correctedArrayItems)
