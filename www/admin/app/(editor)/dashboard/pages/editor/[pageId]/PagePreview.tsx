@@ -87,9 +87,7 @@ export function PagePreview(props: { baseUrl: string; pageUrl: string }) {
 			}
 			// Fill up available space when possible
 			if (width < maxWidth && width < preferredWidth) {
-				setWidth(
-					Math.min(preferredWidth, windowWidth - INSPECTOR_MIN_WIDTH - HANDLES_WIDTH),
-				);
+				setWidth(Math.min(preferredWidth, windowWidth - INSPECTOR_MIN_WIDTH - HANDLES_WIDTH));
 			}
 			// Update width when window is resized
 			if (width > windowWidth) {
