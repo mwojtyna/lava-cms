@@ -3,9 +3,10 @@
 import type { Page } from "@prisma/client";
 import type { inferRouterOutputs } from "@trpc/server";
 import { ChevronRightIcon, CubeIcon, DocumentIcon, PlusIcon } from "@heroicons/react/24/outline";
-import { useHotkeys, useViewportSize, useWindowEvent } from "@mantine/hooks";
+import { useHotkeys, usePrevious, useViewportSize, useWindowEvent } from "@mantine/hooks";
 import { Resizable } from "re-resizable";
 import { useEffect, useRef, useState } from "react";
+import { animated, useSpring } from "react-spring";
 import { Button } from "@/src/components/ui/client/Button";
 import { Stepper } from "@/src/components/ui/server/Stepper";
 import { TypographyH1, TypographyMuted } from "@/src/components/ui/server/typography";
@@ -35,6 +36,14 @@ const COMPONENT_PLACEHOLDER: ComponentUI = {
 	parentFieldId: null,
 	diff: "none",
 	reordered: false,
+};
+
+const animationOpen: Parameters<typeof useSpring>[0] = {
+	from: { x: 200, opacity: -0.5 },
+	to: { x: 0, opacity: 1 },
+	config: {
+		duration: 100,
+	},
 };
 
 interface Props {
@@ -90,6 +99,12 @@ export function Inspector(props: Props) {
 		return () => resizable.removeEventListener("scroll", onScroll);
 	}, [resizableRef]);
 
+	const [animStyles, animation] = useSpring(() => animationOpen);
+	// Run animation on initial render
+	useEffect(() => {
+		animation.start(animationOpen);
+	}, [animation]);
+
 	async function addComponent(id: string) {
 		const lastComponent = components.at(-1);
 		const newComponent = await createComponentInstance(id, {
@@ -113,7 +128,7 @@ export function Inspector(props: Props) {
 			<Resizable
 				ref={resizableRef}
 				// Use flex instead of space-y-5, because Resizable adds a div when resizing which messes up the spacing
-				className="flex flex-col gap-5 overflow-y-auto p-4 max-md:hidden"
+				className="flex flex-col gap-5 overflow-y-auto overflow-x-hidden p-4 max-md:hidden"
 				minWidth={MIN_WIDTH}
 				maxWidth={windowWidth !== 0 ? windowWidth * (2 / 3) : undefined} // `windowWidth` is 0 when SSR
 				size={{ width, height: "100%" }}
@@ -126,15 +141,8 @@ export function Inspector(props: Props) {
 						/>
 					),
 				}}
-				handleClasses={{
-					left: "group",
-				}}
-				handleStyles={{
-					left: {
-						width: 16,
-						left: -8,
-					},
-				}}
+				handleClasses={{ left: "group" }}
+				handleStyles={{ left: { width: 16, left: -8 } }}
 				onResizeStop={(_, __, ___, delta) => setWidth(width + delta.width)}
 			>
 				<header>
@@ -151,7 +159,11 @@ export function Inspector(props: Props) {
 								key={0}
 								variant={"link"}
 								className="gap-1 font-normal text-muted-foreground"
-								onClick={() => setSteps([{ name: "components" }])}
+								onClick={() => {
+									// Run animation when going back to components list
+									animation.start(animationOpen);
+									setSteps([{ name: "components" }]);
+								}}
 							>
 								<DocumentIcon className="w-4" />
 								{props.page.name}
@@ -179,22 +191,24 @@ export function Inspector(props: Props) {
 					/>
 				)}
 
-				<Step
-					step={steps.at(-1)!}
-					// Avoid showing no components before hydration
-					components={
-						components.length > 0
-							? components
-							: props.serverData.components.map((c) => ({
-									...c,
-									diff: "none",
-									reordered: false,
-							  }))
-					}
-					openAddComponentDialog={() => setOpenAdd(true)}
-					getComponent={getComponent}
-					getNestedComponent={getNestedComponent}
-				/>
+				<animated.div className="space-y-5" style={animStyles}>
+					<Step
+						step={steps.at(-1)!}
+						// Avoid showing no components before hydration
+						components={
+							components.length > 0
+								? components
+								: props.serverData.components.map((c) => ({
+										...c,
+										diff: "none",
+										reordered: false,
+								  }))
+						}
+						openAddComponentDialog={() => setOpenAdd(true)}
+						getComponent={getComponent}
+						getNestedComponent={getNestedComponent}
+					/>
+				</animated.div>
 			</Resizable>
 
 			<AddComponentDialog open={openAdd} setOpen={setOpenAdd} onSubmit={addComponent} />
@@ -209,12 +223,25 @@ interface StepProps {
 	getNestedComponent: (id: string) => ComponentUI;
 	openAddComponentDialog: () => void;
 }
+
 function Step(props: StepProps) {
 	const { setSteps, setComponents, setNestedComponents } = usePageEditorStore((state) => ({
 		setSteps: state.setSteps,
 		setComponents: state.setComponents,
 		setNestedComponents: state.setNestedComponents,
 	}));
+
+	const prevStep = usePrevious(props.step);
+	const [styles, animation] = useSpring(() => animationOpen, [props.step]);
+	// Run animation when step changes
+	// It must be split into Inspector and Step useEffects, because otherwise the animation will run on save
+	useEffect(() => {
+		// Run animation only when name of the step changes,
+		// because when adding a new component and saving, its id changes to the backend's id
+		if (prevStep?.name !== props.step.name) {
+			animation.start(animationOpen);
+		}
+	}, [animation, prevStep, props.step]);
 
 	// Typescript is stupid and doesn't properly narrow the type of `props.step` in the switch statement
 	const step = props.step;
@@ -244,63 +271,69 @@ function Step(props: StepProps) {
 		}
 		case "edit-component": {
 			return (
-				<ComponentEditor
-					component={props.getComponent(step.componentId)}
-					onChange={(data) => {
-						const changedComponents: ComponentUI[] = props.components.map(
-							(component) => {
-								if (component.id === step.componentId) {
-									return {
-										...component,
-										fields: component.fields.map((field) => ({
-											...field,
-											data: data[field.id]!,
-										})),
-										diff:
-											component.diff === "added" ? component.diff : "edited",
-									};
-								} else {
-									return component;
-								}
-							},
-						);
-						setComponents(changedComponents);
-					}}
-				/>
+				<animated.div style={styles}>
+					<ComponentEditor
+						component={props.getComponent(step.componentId)}
+						onChange={(data) => {
+							const changedComponents: ComponentUI[] = props.components.map(
+								(component) => {
+									if (component.id === step.componentId) {
+										return {
+											...component,
+											fields: component.fields.map((field) => ({
+												...field,
+												data: data[field.id]!,
+											})),
+											diff:
+												component.diff === "added"
+													? component.diff
+													: "edited",
+										};
+									} else {
+										return component;
+									}
+								},
+							);
+							setComponents(changedComponents);
+						}}
+					/>
+				</animated.div>
 			);
 		}
 		case "edit-nested-component": {
 			return (
-				<ComponentEditor
-					component={props.getNestedComponent(step.nestedComponentId)}
-					onChange={(data) => {
-						// Don't know why, but when using nestedComponents from the usePageEditor hook,
-						// the components are outdated and when NestedComponentField changes nestedComponents,
-						// the changes get overwritten by the code below. So we use the state directly.
-						const nestedComponents = usePageEditorStore.getState().nestedComponents;
-						const changedComponents: ComponentUI[] = nestedComponents.map(
-							(component) => {
-								if (component.id === step.nestedComponentId) {
-									return {
-										...component,
-										fields: component.fields.map((field) => ({
-											...field,
-											data: data[field.id]!,
-										})),
-										diff:
-											component.diff === "added" ||
-											component.diff === "replaced"
-												? component.diff
-												: "edited",
-									};
-								} else {
-									return component;
-								}
-							},
-						);
-						setNestedComponents(changedComponents);
-					}}
-				/>
+				<animated.div style={styles}>
+					<ComponentEditor
+						component={props.getNestedComponent(step.nestedComponentId)}
+						onChange={(data) => {
+							// Don't know why, but when using nestedComponents from the usePageEditor hook,
+							// the components are outdated and when NestedComponentField changes nestedComponents,
+							// the changes get overwritten by the code below. So we use the state directly.
+							const nestedComponents = usePageEditorStore.getState().nestedComponents;
+							const changedComponents: ComponentUI[] = nestedComponents.map(
+								(component) => {
+									if (component.id === step.nestedComponentId) {
+										return {
+											...component,
+											fields: component.fields.map((field) => ({
+												...field,
+												data: data[field.id]!,
+											})),
+											diff:
+												component.diff === "added" ||
+												component.diff === "replaced"
+													? component.diff
+													: "edited",
+										};
+									} else {
+										return component;
+									}
+								},
+							);
+							setNestedComponents(changedComponents);
+						}}
+					/>
+				</animated.div>
 			);
 		}
 	}
