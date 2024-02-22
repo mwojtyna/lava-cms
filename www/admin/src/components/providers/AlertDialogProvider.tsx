@@ -13,10 +13,11 @@ export function AlertDialogProvider({ children }: { children: React.ReactNode })
 		setOpen,
 		setOnSubmit,
 
+		className: undefined,
 		title: "Title",
 		description: "Description",
 		yesMessage: "Yes",
-		noMessage: "No",
+		noMessage: undefined,
 		icon: null,
 	});
 

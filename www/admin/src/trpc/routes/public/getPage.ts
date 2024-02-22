@@ -4,6 +4,7 @@ import { type ComponentFieldType, Prisma } from "@prisma/client";
 import { z } from "zod";
 import { prisma } from "@/prisma/client";
 import { publicProcedure } from "@/src/trpc";
+import { findPage } from "@/src/trpc/utils";
 
 const include = {
 	components: {
@@ -25,6 +26,19 @@ const include = {
 		},
 	},
 } satisfies Prisma.PageInclude<DefaultArgs>;
+const pageWithInclude = Prisma.validator<Prisma.PageDefaultArgs>()({
+	include,
+});
+
+type Page = Prisma.PageGetPayload<typeof pageWithInclude>;
+type Component = Page["components"][number];
+interface Field {
+	name: string;
+	data: string;
+	serializedRichText: string | null;
+	type: ComponentFieldType;
+	arrayItems: Field[];
+}
 
 export const getPage = publicProcedure
 	.input(
@@ -33,32 +47,8 @@ export const getPage = publicProcedure
 		}),
 	)
 	.query(async ({ input }): Promise<CmsPage | null> => {
-		let page = await prisma.page.findFirst({
-			where: {
-				url: input.path,
-				is_group: false,
-			},
-			include,
-		});
-
-		// Handle trailing slash
-		if (!page && !input.path.endsWith("/")) {
-			page = await prisma.page.findFirst({
-				where: {
-					url: input.path + "/",
-					is_group: false,
-				},
-				include,
-			});
-		} else if (!page && input.path.endsWith("/")) {
-			page = await prisma.page.findFirst({
-				where: {
-					url: input.path.replace(/\/$/, ""),
-					is_group: false,
-				},
-				include,
-			});
-		}
+		// Can't type this in the function itself based on the include, which will only be known at runtime
+		const page = (await findPage(input.path, include)) as Page;
 
 		if (!page) {
 			return null;
@@ -78,18 +68,6 @@ export const getPage = publicProcedure
 			components,
 		};
 	});
-
-const pageWithInclude = Prisma.validator<Prisma.PageDefaultArgs>()({
-	include,
-});
-type Component = Prisma.PageGetPayload<typeof pageWithInclude>["components"][number];
-interface Field {
-	name: string;
-	data: string;
-	serializedRichText: string | null;
-	type: ComponentFieldType;
-	arrayItems: Field[];
-}
 
 async function getFields(component: Component): Promise<Record<string, FieldContent>> {
 	return component.fields.reduce<Promise<CmsComponent["fields"]>>(async (acc, field) => {

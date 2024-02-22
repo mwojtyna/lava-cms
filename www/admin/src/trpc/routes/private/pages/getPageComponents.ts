@@ -1,4 +1,5 @@
 import type { ArrayItem, Component } from "./types";
+import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import { prisma } from "@/prisma/client";
 import { privateProcedure } from "@/src/trpc";
@@ -42,6 +43,13 @@ export const getPageComponents = privateProcedure
 					},
 				},
 			});
+			if (page.is_group) {
+				throw new TRPCError({
+					code: "BAD_REQUEST",
+					message:
+						"The page you're requesting is a group. This page cannot be edited in the page editor. It's likely that you're not adding a trailing slash to the URL.",
+				});
+			}
 
 			const components: Component[] = page.components.map((component) => {
 				const fields: Component["fields"] = component.fields.map((field) => ({

@@ -26,7 +26,6 @@ import {
 import { Popover, PopoverContent, PopoverTrigger } from "@/src/components/ui/client/Popover";
 import { useComponentsTableDialogsStore } from "@/src/data/stores/componentDefinitions";
 import { BulkDeleteDialog, BulkMoveDialog } from "./dialogs/BulkDialogs";
-import { TypographyList } from "@/src/components/ui/server/typography";
 
 export const columns: ColumnDef<ComponentsTableItem>[] = [
 	{

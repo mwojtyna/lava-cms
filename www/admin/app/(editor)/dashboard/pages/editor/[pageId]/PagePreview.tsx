@@ -9,6 +9,8 @@ import * as React from "react";
 import { ActionIcon } from "@/src/components/ui/client/ActionIcon";
 import { Card } from "@/src/components/ui/server/Card";
 import { usePageEditorStore } from "@/src/data/stores/pageEditor";
+import { useAlertDialog } from "@/src/hooks/useAlertDialog";
+import { useSearchParams } from "@/src/hooks/useSearchParams";
 import { trpcFetch } from "@/src/utils/trpc";
 import { MIN_WIDTH as INSPECTOR_MIN_WIDTH } from "./Inspector";
 import { type IframeMessage, type PageEditorMessage } from "./types";
@@ -32,6 +34,32 @@ export function PagePreview(props: { baseUrl: string; pageUrl: string }) {
 	);
 	const router = useRouter();
 	const pathname = usePathname();
+
+	const { searchParams, setSearchParams } = useSearchParams({
+		onChanged: (params) => {
+			if (params.has("error")) {
+				alert.open(() => setSearchParams({ error: "" }));
+			}
+		},
+		removeWhenValueIsEmptyString: true,
+		replace: true,
+	});
+	const alert = useAlertDialog(() => {
+		const url = searchParams.get("error")!;
+		return {
+			className: "max-w-xl",
+			title: `Page not found`,
+			description: (
+				<span>
+					The HTML page you are trying to access exists, but no CMS page was found with
+					its path assigned to <span className="text-accent-foreground">{url}</span>.{" "}
+					<br />
+					Please create a new CMS page if you want to edit it in the page editor.
+				</span>
+			),
+			yesMessage: "Understood",
+		};
+	});
 
 	// Init bridge when iframe loaded and again when component is mounted
 	const initIframeBridge = React.useCallback(() => {
@@ -60,6 +88,15 @@ export function PagePreview(props: { baseUrl: string; pageUrl: string }) {
 			const page = await trpcFetch.pages.getPageByUrl.query({
 				url: new URL(data.url).pathname,
 			});
+			if (!page) {
+				// Only way to prevent loading the missing page
+				history.back();
+				// setSearchParams doesn't work here
+				router.replace(
+					pathname + "?error=" + encodeURIComponent(new URL(data.url).pathname),
+				);
+				return;
+			}
 
 			const split = pathname.split("/");
 			split.pop();
@@ -87,7 +124,9 @@ export function PagePreview(props: { baseUrl: string; pageUrl: string }) {
 			}
 			// Fill up available space when possible
 			if (width < maxWidth && width < preferredWidth) {
-				setWidth(Math.min(preferredWidth, windowWidth - INSPECTOR_MIN_WIDTH - HANDLES_WIDTH));
+				setWidth(
+					Math.min(preferredWidth, windowWidth - INSPECTOR_MIN_WIDTH - HANDLES_WIDTH),
+				);
 			}
 			// Update width when window is resized
 			if (width > windowWidth) {

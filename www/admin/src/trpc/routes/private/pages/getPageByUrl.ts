@@ -1,6 +1,6 @@
 import { z } from "zod";
-import { prisma } from "@/prisma/client";
 import { privateProcedure } from "@/src/trpc";
+import { findPage } from "@/src/trpc/utils";
 
 export const getPageByUrl = privateProcedure
 	.input(
@@ -8,12 +8,11 @@ export const getPageByUrl = privateProcedure
 			url: z.string(),
 		}),
 	)
-	.query(async ({ input }) => {
-		const page = await prisma.page.findUniqueOrThrow({
-			where: {
-				url: input.url,
-			},
-		});
+	.query(async ({ input }): Promise<{ id: string } | null> => {
+		const page = await findPage(input.url);
+		if (!page) {
+			return null;
+		}
 
 		return {
 			id: page.id,

@@ -19,6 +19,13 @@ export function BackButton() {
 	return (
 		<ActionIcon
 			variant={"outline"}
+			onMouseDown={(e) => {
+				// If pressed middle button, open in new tab
+				if (e.button === 1) {
+					window.open("/admin/dashboard/pages", "_blank");
+					return;
+				}
+			}}
 			onClick={() => {
 				if (usePageEditorStore.getState().isDirty) {
 					alertDialog.open(() => {

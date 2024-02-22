@@ -10,6 +10,8 @@ import "client-only";
 interface Options {
 	onChanged?: (value: ReadonlyURLSearchParams) => void;
 	removeWhenValueIsEmptyString?: boolean;
+	/** Uses `router.replace()` instead of `router.push()` */
+	replace?: boolean;
 }
 
 export function useSearchParams(options?: Options): {
@@ -29,15 +31,22 @@ export function useSearchParams(options?: Options): {
 		[searchParams],
 	);
 
+	function navigate(href: string) {
+		if (options?.replace) {
+			router.replace(href);
+		} else {
+			router.push(href);
+		}
+	}
 	function setSearchParams(values: Record<string, unknown>) {
 		const queryString = createQueryString(values);
 
 		// If the query string is empty, remove it from the URL
 		if (queryString === "") {
-			router.push(pathname);
+			navigate(pathname);
 			return;
 		}
-		router.push(`${pathname}?${queryString}`);
+		navigate(`${pathname}?${queryString}`);
 
 		// Get a new searchParams string by merging the current
 		// searchParams with a provided key/value pair

@@ -4,7 +4,7 @@ import "client-only";
 
 type AlertDialogOptions = Pick<
 	AlertDialogProps,
-	"title" | "description" | "yesMessage" | "noMessage" | "icon"
+	"className" | "title" | "description" | "yesMessage" | "noMessage" | "icon"
 >;
 type AlertDialogState = AlertDialogOptions & {
 	setOpen: (value: boolean) => void;
@@ -15,7 +15,7 @@ const AlertDialogContext = createContext<
 	[AlertDialogState, React.Dispatch<React.SetStateAction<AlertDialogState>>] | null
 >(null);
 
-function useAlertDialog(options: AlertDialogOptions): {
+function useAlertDialog(options: AlertDialogOptions | (() => AlertDialogOptions)): {
 	open: (onYes: () => void) => void;
 } {
 	const context = useContext(AlertDialogContext);
@@ -25,9 +25,10 @@ function useAlertDialog(options: AlertDialogOptions): {
 	return {
 		open: (onConfirm) => {
 			// Set dialog properties
+			const _options = typeof options === "function" ? options() : options;
 			setState((state) => ({
 				...state,
-				...options,
+				..._options,
 			}));
 
 			state.setOpen(true);
