@@ -58,6 +58,7 @@ export function PagePreview(props: { baseUrl: string; pageUrl: string }) {
 				</span>
 			),
 			yesMessage: "Understood",
+			disableCloseOnBlur: true,
 		};
 	});
 

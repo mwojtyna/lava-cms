@@ -4,7 +4,13 @@ import "client-only";
 
 type AlertDialogOptions = Pick<
 	AlertDialogProps,
-	"className" | "title" | "description" | "yesMessage" | "noMessage" | "icon"
+	| "className"
+	| "title"
+	| "description"
+	| "yesMessage"
+	| "noMessage"
+	| "icon"
+	| "disableCloseOnBlur"
 >;
 type AlertDialogState = AlertDialogOptions & {
 	setOpen: (value: boolean) => void;

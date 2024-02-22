@@ -19,6 +19,7 @@ export function AlertDialogProvider({ children }: { children: React.ReactNode })
 		yesMessage: "Yes",
 		noMessage: undefined,
 		icon: null,
+		disableCloseOnBlur: undefined,
 	});
 
 	return (

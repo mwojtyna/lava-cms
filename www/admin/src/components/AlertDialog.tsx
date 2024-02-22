@@ -17,6 +17,8 @@ export interface AlertDialogProps {
 	yesMessage: React.ReactNode;
 	noMessage?: React.ReactNode;
 	loading?: boolean;
+	disableCloseOnBlur?: boolean;
+
 	onSubmit: () => void;
 	onCancel?: () => void;
 
@@ -27,7 +29,11 @@ export interface AlertDialogProps {
 export function AlertDialog(props: AlertDialogProps) {
 	return (
 		<Dialog open={props.open} onOpenChange={props.setOpen}>
-			<DialogContent className={cn("max-w-md", props.className)} withCloseButton={false}>
+			<DialogContent
+				className={cn("max-w-md", props.className)}
+				withCloseButton={false}
+				{...(props.disableCloseOnBlur && { onInteractOutside: (e) => e.preventDefault() })}
+			>
 				<DialogHeader>
 					<DialogTitle>{props.title}</DialogTitle>
 					<DialogDescription>{props.description}</DialogDescription>
