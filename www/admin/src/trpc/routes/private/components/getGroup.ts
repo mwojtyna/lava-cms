@@ -1,4 +1,4 @@
-import type { GroupItem } from "./types";
+import type { ComponentInstancePreview, GroupItem } from "./types";
 import type { ComponentDefinitionGroup } from "@prisma/client";
 import type { DefaultArgs } from "@prisma/client/runtime/library";
 import { Prisma } from "@prisma/client";
@@ -20,7 +20,7 @@ const include = {
 			name: "asc",
 		},
 		include: {
-			instances: true,
+			instances: { include: { page: true } },
 			field_definitions: {
 				orderBy: {
 					order: "asc",
@@ -112,17 +112,42 @@ function groupItems(group: GroupWithIncludes): GroupItem[] {
 			lastUpdate: group.last_update,
 			isGroup: true,
 		}));
+
 	const componentDefinitions: GroupItem[] = group.component_definitions
 		.toSorted((a, b) => natsort()(a.name, b.name))
-		.map((component, i) => ({
-			id: component.id,
-			name: component.name,
-			parentGroupId: component.group_id,
-			lastUpdate: component.last_update,
-			isGroup: false,
-			instances: group.component_definitions[i]!.instances,
-			fieldDefinitions: group.component_definitions[i]!.field_definitions,
-		}));
+		.map((component) => {
+			let allCount = 0;
+			const instances = component.instances.reduce<Record<string, ComponentInstancePreview>>(
+				(acc, instance) => {
+					allCount++;
+					const current = acc[instance.page_id];
+					acc[instance.page_id] = current
+						? {
+								...current,
+								count: current.count + 1,
+						  }
+						: {
+								pageName: instance.page.name,
+								count: 1,
+						  };
+					return acc;
+				},
+				{},
+			);
+
+			return {
+				id: component.id,
+				name: component.name,
+				parentGroupId: component.group_id,
+				lastUpdate: component.last_update,
+				isGroup: false,
+				instances: {
+					pageToInstance: instances,
+					count: allCount,
+				},
+				fieldDefinitions: component.field_definitions,
+			};
+		});
 
 	return [...groups, ...componentDefinitions];
 }

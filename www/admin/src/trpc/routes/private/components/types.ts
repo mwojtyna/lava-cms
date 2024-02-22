@@ -1,7 +1,6 @@
 import { z } from "zod";
 import {
 	type ComponentDefinitionField,
-	type ComponentInstance,
 	ComponentFieldTypeSchema,
 	ArrayItemTypeSchema,
 } from "@/prisma/generated/zod";
@@ -14,13 +13,20 @@ export type GroupItem = {
 } & (
 	| {
 			isGroup: false;
-			instances: ComponentInstance[];
+			instances: {
+				pageToInstance: Record<string, ComponentInstancePreview>;
+				count: number;
+			};
 			fieldDefinitions: ComponentDefinitionField[];
 	  }
 	| {
 			isGroup: true;
 	  }
 );
+export type ComponentInstancePreview = {
+	pageName: string;
+	count: number;
+};
 
 export const fieldSchema = z.object({
 	name: z.string(),

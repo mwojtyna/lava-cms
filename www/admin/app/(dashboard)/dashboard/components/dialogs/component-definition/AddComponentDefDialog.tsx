@@ -33,7 +33,7 @@ export function AddComponentDefDialog(props: Props) {
 		() => ({
 			id: "",
 			name: "",
-			instances: [],
+			instances: { count: 0, pageToInstance: {} },
 			lastUpdate: new Date(),
 			parentGroupId: props.group.id,
 			fieldDefinitions: [],

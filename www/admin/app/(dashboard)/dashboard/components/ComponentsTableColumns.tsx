@@ -1,7 +1,7 @@
 "use client";
 
 import type { ComponentsTableItem } from "./ComponentsTable";
-import { EllipsisHorizontalIcon } from "@heroicons/react/20/solid";
+import { ArrowTopRightOnSquareIcon, EllipsisHorizontalIcon } from "@heroicons/react/20/solid";
 import {
 	CubeIcon,
 	DocumentDuplicateIcon,
@@ -23,8 +23,10 @@ import {
 	DropdownMenuContent,
 	DropdownMenuItem,
 } from "@/src/components/ui/client/DropdownMenu";
+import { Popover, PopoverContent, PopoverTrigger } from "@/src/components/ui/client/Popover";
 import { useComponentsTableDialogsStore } from "@/src/data/stores/componentDefinitions";
 import { BulkDeleteDialog, BulkMoveDialog } from "./dialogs/BulkDialogs";
+import { TypographyList } from "@/src/components/ui/server/typography";
 
 export const columns: ColumnDef<ComponentsTableItem>[] = [
 	{
@@ -87,14 +89,12 @@ export const columns: ColumnDef<ComponentsTableItem>[] = [
 		accessorKey: "instances",
 		sortingFn: sortingFns.alphanumeric,
 		header: ({ column }) => <DataTableSortableHeader column={column} name="Instances" />,
-		cell: ({ row }) => (row.original.isGroup ? "-" : row.original.instances.length),
+		cell: ({ row }) => <ComponentInstancePopover item={row.original} />,
 	},
 	{
 		accessorKey: "type",
 		header: ({ column }) => <DataTableSortableHeader column={column} name="Type" />,
-		accessorFn: (item) => {
-			return item.isGroup ? "Group" : "Component Definition";
-		},
+		accessorFn: (item) => (item.isGroup ? "Group" : "Component Definition"),
 	},
 	{
 		accessorKey: "last_updated",
@@ -230,5 +230,46 @@ function ComponentsTableBulkActions(props: { items: ComponentsTableItem[]; onSub
 				onSubmit={props.onSubmit}
 			/>
 		</>
+	);
+}
+
+function ComponentInstancePopover({ item }: { item: ComponentsTableItem }) {
+	const label = item.isGroup ? "-" : item.instances.count.toString();
+	const hasInstances = !item.isGroup && Object.keys(item.instances).length > 0;
+
+	return (
+		<Popover>
+			{!hasInstances ? (
+				<span>{label}</span>
+			) : (
+				<>
+					<PopoverTrigger className="hover:text-accent-foreground">
+						{label}
+					</PopoverTrigger>
+					<PopoverContent className="p-0">
+						<ul>
+							{Object.entries(item.instances.pageToInstance).map(
+								([pageId, instance], i) => (
+									<li key={i} className="ml-4 list-disc">
+										<p className="inline">
+											{instance.count} instance{instance.count > 1 && "s"} in{" "}
+										</p>
+										<Button key={i} className="gap-0.5" variant={"link"}>
+											<Link
+												href={`/dashboard/pages/editor/${pageId}`}
+												target="_blank"
+											>
+												{instance.pageName}
+											</Link>
+											<ArrowTopRightOnSquareIcon className="w-4" />
+										</Button>
+									</li>
+								),
+							)}
+						</ul>
+					</PopoverContent>
+				</>
+			)}
+		</Popover>
 	);
 }
