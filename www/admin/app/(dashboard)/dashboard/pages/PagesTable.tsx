@@ -14,7 +14,7 @@ import { type TableSearchParams, useDataTable } from "@/src/hooks/useDataTable";
 import type { PrivateRouter } from "@/src/trpc/routes/private/_private";
 import { type TableCookie } from "@/src/utils/cookies";
 import { trpc } from "@/src/utils/trpc";
-import { AddDialog } from "./dialogs";
+import { AddDialog } from "./dialogs/shared/AddDialog";
 import { columns } from "./PagesTableColumns";
 
 interface Props {

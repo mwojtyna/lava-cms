@@ -50,12 +50,13 @@ export function PagePreview(props: { baseUrl: string; pageUrl: string }) {
 			className: "max-w-xl",
 			title: `Page not found`,
 			description: (
-				<span>
+				// Parent element is <p>
+				<>
 					The HTML page you are trying to access exists, but no CMS page was found with
-					its path assigned to <span className="text-accent-foreground">{url}</span>.{" "}
+					the path assigned to <span className="text-accent-foreground">{url}</span>.{" "}
 					<br />
 					Please create a new CMS page if you want to edit it in the page editor.
-				</span>
+				</>
 			),
 			yesMessage: "Understood",
 			disableCloseOnBlur: true,

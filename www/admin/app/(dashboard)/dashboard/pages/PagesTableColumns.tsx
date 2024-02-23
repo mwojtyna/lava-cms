@@ -23,14 +23,12 @@ import {
 	DropdownMenuContent,
 	DropdownMenuItem,
 } from "@/src/components/ui/client/DropdownMenu";
-import {
-	BulkDeleteDialog,
-	BulkMoveDialog,
-	DeleteDialog,
-	DuplicateDialog,
-	EditDetailsDialog,
-	MoveDialog,
-} from "./dialogs";
+import { BulkDeleteDialog } from "./dialogs/bulk/BulkDeleteDialog";
+import { BulkMoveDialog } from "./dialogs/bulk/BulkMoveDialog";
+import { DuplicateDialog } from "./dialogs/page/DuplicateDialog";
+import { DeleteDialog } from "./dialogs/shared/DeleteDialog";
+import { EditDetailsDialog } from "./dialogs/shared/EditDetailsDialog";
+import { MoveDialog } from "./dialogs/shared/MoveDialog";
 
 export const columns: ColumnDef<Page>[] = [
 	{
