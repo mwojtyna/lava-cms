@@ -234,7 +234,7 @@ function ComponentsTableBulkActions(props: { items: ComponentsTableItem[]; onSub
 
 function ComponentInstancePopover({ item }: { item: ComponentsTableItem }) {
 	const label = item.isGroup ? "-" : item.instances.count.toString();
-	const hasInstances = !item.isGroup && Object.keys(item.instances).length > 0;
+	const hasInstances = !item.isGroup && item.instances.count > 0;
 
 	return (
 		<Popover>
