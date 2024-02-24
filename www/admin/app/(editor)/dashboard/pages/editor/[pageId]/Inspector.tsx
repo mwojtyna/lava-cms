@@ -227,23 +227,25 @@ interface StepProps {
 }
 
 function Step(props: StepProps) {
-	const { setSteps, setComponents, setNestedComponents } = usePageEditorStore((state) => ({
-		setSteps: state.setSteps,
-		setComponents: state.setComponents,
-		setNestedComponents: state.setNestedComponents,
-	}));
+	const { setSteps, setComponents, setNestedComponents, isSaving } = usePageEditorStore(
+		(state) => ({
+			setSteps: state.setSteps,
+			setComponents: state.setComponents,
+			setNestedComponents: state.setNestedComponents,
+			isSaving: state.isSaving,
+		}),
+	);
 
-	const prevStep = usePrevious(props.step);
+	const prevIsSaving = usePrevious(isSaving);
 	const [styles, animation] = useSpring(() => animationOpen, [props.step]);
-	// Run animation when step changes
-	// It must be split into Inspector and Step useEffects, because otherwise the animation will run on save
+
 	useEffect(() => {
-		// Run animation only when name of the step changes,
-		// because when adding a new component and saving, its id changes to the backend's id
-		if (prevStep?.name !== props.step.name) {
+		// Weird condition to avoid running the animation after save (because id in step changes from frontend's to backend's)
+		if (prevIsSaving === isSaving) {
 			animation.start(animationOpen);
 		}
-	}, [animation, prevStep, props.step]);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [props.step]);
 
 	// Typescript is stupid and doesn't properly narrow the type of `props.step` in the switch statement
 	const step = props.step;
