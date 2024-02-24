@@ -1,7 +1,6 @@
 import type { Page } from "@prisma/client";
-import slugify from "slugify";
 import { z } from "zod";
-import { slugifyOptions } from "./utils";
+import { toPath } from "./utils";
 
 export interface EditDialogProps {
 	page: Page;
@@ -20,7 +19,7 @@ export const editDialogSchema = z.object({
 	slug: z
 		.string({ required_error: " " })
 		.min(1, { message: " " })
-		.refine((slug) => "/" + slugify(slug, slugifyOptions) === slug, {
+		.refine((slug) => toPath(slug) === slug, {
 			message: "Invalid slug.",
 		}),
 });

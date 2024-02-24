@@ -27,12 +27,10 @@ export const duplicatePage = privateProcedure
 			parentId: z.string().cuid().nullable(),
 		}),
 	)
-	.mutation(async ({ input }): Promise<string> => {
+	.mutation(async ({ input }): Promise<void> => {
 		if (await prisma.page.findFirst({ where: { url: input.url } })) {
 			throw new TRPCError({ code: "CONFLICT" });
 		}
-
-		let newPageId = "";
 
 		await prisma.$transaction(async (tx) => {
 			const original = await tx.page.findUnique({
@@ -57,16 +55,12 @@ export const duplicatePage = privateProcedure
 			await Promise.all(promises);
 
 			await replaceIds(tx);
-
-			newPageId = newPage.id;
 		});
 
 		idMap.clear();
 		kindMap.clear();
 		parentFieldIdMap.clear();
 		parentArrayItemIdMap.clear();
-
-		return newPageId;
 	});
 
 // Unfortunately, prisma doesn't support returning from createMany, so we have to do multiple INSERT statements

@@ -14,9 +14,9 @@ export const addPage = privateProcedure
 			isGroup: z.boolean(),
 		}),
 	)
-	.mutation(async ({ input }): Promise<string> => {
+	.mutation(async ({ input }): Promise<void> => {
 		try {
-			const page = await prisma.page.create({
+			await prisma.page.create({
 				data: {
 					name: input.name,
 					url: input.url,
@@ -24,7 +24,6 @@ export const addPage = privateProcedure
 					is_group: input.isGroup,
 				},
 			});
-			return page.id;
 		} catch (error) {
 			if (error instanceof PrismaClientKnownRequestError) {
 				if (error.code === "P2002") {

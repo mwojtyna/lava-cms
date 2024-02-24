@@ -11,12 +11,17 @@ import {
 } from "@/src/components/ui/client/Form";
 import { Input } from "@/src/components/ui/client/Input";
 
-export const slugifyOptions: Parameters<typeof slugify>[1] = {
-	lower: true,
-	strict: true,
-	locale: "en",
-	remove: /[*+~.()'"!:@]/g,
-};
+export function toPath(path: string) {
+	return (
+		"/" +
+		slugify(path, {
+			lower: true,
+			strict: true,
+			locale: "en",
+			remove: /[*+~.()'"!:@]/g,
+		})
+	);
+}
 
 export function getSlugFromUrl(path: string) {
 	const split = path.split("/");
@@ -47,10 +52,7 @@ export function NameSlugInput<T extends EditDialogInputs>({
 						if (!slugLocked)
 							form.setValue(
 								"slug" as Path<T>,
-								("/" + slugify(e.target.value, slugifyOptions)) as PathValue<
-									T,
-									Path<T>
-								>,
+								toPath(e.target.value) as PathValue<T, Path<T>>,
 							);
 					},
 				}}
@@ -79,7 +81,7 @@ export function NameSlugInput<T extends EditDialogInputs>({
 									onClick: null,
 									iconOn: <LockClosedIcon className="w-4" />,
 									iconOff: <LockOpenIcon className="w-4" />,
-									tooltip: "Toggle lock slug autofill",
+									tooltip: `${slugLocked ? "Unlock" : "Lock"} slug autofill`,
 								}}
 								aria-required
 								{...field}

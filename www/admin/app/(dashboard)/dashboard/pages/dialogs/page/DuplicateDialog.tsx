@@ -10,14 +10,12 @@ import {
 	DialogHeader,
 	DialogFooter,
 } from "@/src/components/ui/client/Dialog";
-import { usePagePreferences } from "@/src/hooks/usePagePreferences";
 import { trpc } from "@/src/utils/trpc";
 import { type EditDialogProps, type EditDialogInputs, editDialogSchema } from "../types";
 import { editUrl, getSlugFromUrl, NameSlugInput } from "../utils";
 
 export function DuplicateDialog(props: EditDialogProps) {
 	const mutation = trpc.pages.duplicatePage.useMutation();
-	const [preferences, setPreferences] = usePagePreferences(props.page.id);
 	const [slugLocked, setSlugLocked] = React.useState(false);
 
 	const form = useForm<EditDialogInputs>({
@@ -33,15 +31,7 @@ export function DuplicateDialog(props: EditDialogProps) {
 				parentId: props.page.parent_id!,
 			},
 			{
-				onSuccess: (id) => {
-					if (slugLocked) {
-						setPreferences({
-							...preferences,
-							[id]: slugLocked,
-						});
-					}
-					props.setOpen(false);
-				},
+				onSuccess: () => props.setOpen(false),
 				onError: (err) => {
 					if (err.data?.code === "CONFLICT") {
 						form.setError("slug", {

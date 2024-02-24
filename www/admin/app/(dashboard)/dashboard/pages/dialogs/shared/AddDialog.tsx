@@ -11,7 +11,6 @@ import {
 	DialogHeader,
 	DialogFooter,
 } from "@/src/components/ui/client/Dialog";
-import { usePagePreferences } from "@/src/hooks/usePagePreferences";
 import { trpc } from "@/src/utils/trpc";
 import { type EditDialogInputs, editDialogSchema } from "../types";
 import { NameSlugInput } from "../utils";
@@ -24,11 +23,14 @@ interface AddDialogProps {
 }
 export function AddDialog(props: AddDialogProps) {
 	const mutation = trpc.pages.addPage.useMutation();
-	const [preferences, setPreferences] = usePagePreferences(props.group.id);
 	const [slugLocked, setSlugLocked] = React.useState(false);
 
 	const form = useForm<EditDialogInputs>({
 		resolver: zodResolver(editDialogSchema),
+		defaultValues: {
+			name: "",
+			slug: "",
+		},
 	});
 	const onSubmit: SubmitHandler<EditDialogInputs> = (data) => {
 		const url = props.group.url + (props.group.url !== "/" ? "/" : "") + data.slug.slice(1);
@@ -40,15 +42,7 @@ export function AddDialog(props: AddDialogProps) {
 				isGroup: props.isGroup,
 			},
 			{
-				onSuccess: (id) => {
-					if (slugLocked) {
-						setPreferences({
-							...preferences,
-							[id]: slugLocked,
-						});
-					}
-					props.setOpen(false);
-				},
+				onSuccess: () => props.setOpen(false),
 				onError: (err) => {
 					if (err.data?.code === "CONFLICT") {
 						form.setError("slug", {
@@ -66,10 +60,6 @@ export function AddDialog(props: AddDialogProps) {
 			},
 		);
 	};
-
-	React.useEffect(() => {
-		setSlugLocked(false);
-	}, [props.open]);
 
 	return (
 		<Dialog open={props.open} onOpenChange={props.setOpen}>
