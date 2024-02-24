@@ -131,8 +131,8 @@ model ComponentDefinitionField {
 model ComponentInstance {
     id                   String  @id @default(cuid())
     page_id              String
-    parent_field_id      String? @unique
-    parent_array_item_id String? @unique
+    parent_field_id      String?
+    parent_array_item_id String?
     definition_id        String
     order                Int
 
@@ -174,7 +174,7 @@ model ArrayItem {
     parent_field_id String
 
     parent_field     ComponentInstanceField @relation(fields: [parent_field_id], references: [id], onDelete: Cascade)
-    nested_component ComponentInstance?
+    nested_component ComponentInstance[]
 
     @@index([parent_field_id])
     @@map("array_item")

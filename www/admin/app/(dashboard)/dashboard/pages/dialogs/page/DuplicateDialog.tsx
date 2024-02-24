@@ -16,7 +16,7 @@ import { type EditDialogProps, type EditDialogInputs, editDialogSchema } from ".
 import { editUrl, getSlugFromUrl, NameSlugInput } from "../utils";
 
 export function DuplicateDialog(props: EditDialogProps) {
-	const mutation = trpc.pages.addPage.useMutation();
+	const mutation = trpc.pages.duplicatePage.useMutation();
 	const [preferences, setPreferences] = usePagePreferences(props.page.id);
 	const [slugLocked, setSlugLocked] = React.useState(false);
 
@@ -27,10 +27,10 @@ export function DuplicateDialog(props: EditDialogProps) {
 		const newUrl = editUrl(props.page.url, data.slug);
 		mutation.mutate(
 			{
+				originId: props.page.id,
 				name: data.name,
 				url: newUrl,
 				parentId: props.page.parent_id!,
-				isGroup: false,
 			},
 			{
 				onSuccess: (id) => {
