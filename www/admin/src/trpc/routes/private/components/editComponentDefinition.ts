@@ -16,7 +16,7 @@ export const editComponentDefinition = privateProcedure
 			id: z.string().cuid(),
 			newName: z.string().optional(),
 			newGroupId: z.string().cuid().optional(),
-			addedFields: z.array(fieldSchema.extend({ id: z.string().cuid2() })).optional(),
+			addedFields: z.array(fieldSchema.extend({ id: z.string().cuid() })).optional(),
 			editedFields: z
 				.array(
 					fieldSchema.extend({

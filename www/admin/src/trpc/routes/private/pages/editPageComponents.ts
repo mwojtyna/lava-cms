@@ -2,14 +2,13 @@ import cuid from "cuid";
 import { z } from "zod";
 import { prisma } from "@/prisma/client";
 import { privateProcedure } from "@/src/trpc";
-import { arrayItemSchema, componentSchema, parentIdSchema } from "./types";
+import { arrayItemSchema, componentSchema } from "./types";
 
 const addedComponentSchema = z.object({
-	frontendId: z.string().cuid2(),
+	frontendId: z.string().cuid(),
 	pageId: z.string().cuid(),
-	// This has to be cuid or cuid2 because it also could be a frontend id, which is cuid2
-	parentFieldId: parentIdSchema.nullable(),
-	parentArrayItemId: parentIdSchema.nullable(),
+	parentFieldId: z.string().cuid().nullable(),
+	parentArrayItemId: z.string().cuid().nullable(),
 	definition: z.object({
 		id: z.string().cuid(),
 		name: z.string(),
@@ -17,7 +16,7 @@ const addedComponentSchema = z.object({
 	order: z.number(),
 	fields: z.array(
 		z.object({
-			frontendId: z.string().cuid2(),
+			frontendId: z.string().cuid(),
 			data: z.string(),
 			serializedRichText: z.string().nullable(),
 			definitionId: z.string().cuid(),
@@ -26,7 +25,7 @@ const addedComponentSchema = z.object({
 });
 
 const addedArrayItemSchema = arrayItemSchema.omit({ id: true }).extend({
-	frontendId: z.string().cuid2(),
+	frontendId: z.string().cuid(),
 });
 
 export const editPageComponents = privateProcedure
@@ -44,7 +43,6 @@ export const editPageComponents = privateProcedure
 		}),
 	)
 	.mutation(async ({ input }): Promise<Record<string, string>> => {
-		// Use cuid1 to make it consistent with prisma
 		const addedComponentIds: Record<string, string> = {};
 		for (const comp of input.addedComponents) {
 			addedComponentIds[comp.frontendId] = cuid();

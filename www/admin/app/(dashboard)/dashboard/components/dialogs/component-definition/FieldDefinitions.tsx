@@ -20,8 +20,8 @@ import {
 import { CSS } from "@dnd-kit/utilities";
 import { ArrowUturnLeftIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { createId } from "@paralleldrive/cuid2";
 import { IconGripVertical } from "@tabler/icons-react";
+import cuid from "cuid";
 import * as React from "react";
 import { useForm, type SubmitHandler, FormProvider } from "react-hook-form";
 import { z } from "zod";
@@ -75,7 +75,7 @@ export function AddFieldDefs() {
 		setFields((fields) => [
 			...fields,
 			{
-				id: createId(),
+				id: cuid(),
 				name: data.name,
 				type: data.type,
 				order: fields.length,

@@ -1,4 +1,4 @@
-import { createId } from "@paralleldrive/cuid2";
+import cuid from "cuid";
 import { z } from "zod";
 import { auth } from "@/src/auth";
 import { privateProcedure } from "@/src/trpc";
@@ -10,11 +10,11 @@ export const signUp = privateProcedure
 			lastName: z.string(),
 			email: z.string().email(),
 			password: z.string().min(8).regex(/[a-z]/).regex(/[A-Z]/).regex(/[0-9]/),
-		})
+		}),
 	)
 	.mutation(async ({ input, ctx }) => {
 		const user = await auth.createUser({
-			userId: createId(),
+			userId: cuid(),
 			key: {
 				providerId: "email",
 				providerUserId: input.email,

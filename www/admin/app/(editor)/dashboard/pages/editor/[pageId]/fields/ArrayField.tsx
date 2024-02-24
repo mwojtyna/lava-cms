@@ -17,8 +17,8 @@ import {
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { PlusIcon, TrashIcon, ArrowUturnLeftIcon } from "@heroicons/react/24/outline";
-import { createId } from "@paralleldrive/cuid2";
 import { IconGripVertical } from "@tabler/icons-react";
+import cuid from "cuid";
 import { useMemo, useState } from "react";
 import { ActionIcon } from "@/src/components/ui/client/ActionIcon";
 import { Button } from "@/src/components/ui/client/Button";
@@ -75,7 +75,7 @@ export function ArrayField(props: ArrayFieldProps) {
 			setArrayItems(props.parentField.id, [
 				...myArrayItems,
 				{
-					id: createId(),
+					id: cuid(),
 					data: getInitialValue(props.parentField.arrayItemType!) as string,
 					parentFieldId: props.parentField.id,
 					order: lastItem ? lastItem.order + 1 : 0,
@@ -106,7 +106,7 @@ export function ArrayField(props: ArrayFieldProps) {
 	}
 
 	async function addComponent(compDefId: string) {
-		const newItemId = createId();
+		const newItemId = cuid();
 		const newComponent = await createComponentInstance(compDefId, {
 			order: 0,
 			pageId: props.parentComponent.pageId,

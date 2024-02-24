@@ -1,5 +1,5 @@
-import { createId } from "@paralleldrive/cuid2";
 import { TRPCError } from "@trpc/server";
+import cuid from "cuid";
 import { z } from "zod";
 import { auth } from "@/src/auth";
 import { privateProcedure } from "@/src/trpc";
@@ -16,7 +16,7 @@ export const signIn = privateProcedure
 		try {
 			const key = await auth.useKey("email", input.email, input.password);
 			const session = await auth.createSession({
-				sessionId: createId(),
+				sessionId: cuid(),
 				userId: key.userId,
 				attributes: {},
 			});

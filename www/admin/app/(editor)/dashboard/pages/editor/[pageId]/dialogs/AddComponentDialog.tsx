@@ -1,7 +1,7 @@
 "use client";
 
 import { ChevronRightIcon, CubeIcon, FolderIcon, HomeIcon } from "@heroicons/react/24/outline";
-import { createId } from "@paralleldrive/cuid2";
+import cuid from "cuid";
 import { useEffect, useState } from "react";
 import type { ComponentsTableItem } from "@/app/(dashboard)/dashboard/components/ComponentsTable";
 import { ActionIcon } from "@/src/components/ui/client/ActionIcon";
@@ -32,7 +32,7 @@ export async function createComponentInstance(
 	});
 	return {
 		// When replacing component, keep the id
-		id: currentComponent?.id ?? createId(),
+		id: currentComponent?.id ?? cuid(),
 		definition: {
 			id: definition.id,
 			name: definition.name,
@@ -41,7 +41,7 @@ export async function createComponentInstance(
 			const data = getInitialValue(fieldDef.type) as string;
 
 			return {
-				id: createId(),
+				id: cuid(),
 				name: fieldDef.name,
 				data,
 				serializedRichText: fieldDef.type === "RICH_TEXT" ? "" : null,

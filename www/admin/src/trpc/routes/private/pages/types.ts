@@ -1,8 +1,6 @@
 import { z } from "zod";
 import { ArrayItemTypeSchema, ComponentFieldTypeSchema } from "@/prisma/generated/zod";
 
-export const parentIdSchema = z.string().cuid2().or(z.string().cuid());
-
 const fieldSchema = z.object({
 	id: z.string().cuid(),
 	name: z.string(),
@@ -29,7 +27,7 @@ export const componentSchema = z.object({
 export const arrayItemSchema = z.object({
 	id: z.string().cuid(),
 	data: z.string(),
-	parentFieldId: parentIdSchema,
+	parentFieldId: z.string().cuid(),
 	order: z.number(),
 });
 
