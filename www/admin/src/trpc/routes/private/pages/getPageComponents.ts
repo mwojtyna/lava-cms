@@ -56,6 +56,7 @@ export const getPageComponents = privateProcedure
 				const fields: Component["fields"] = component.fields.map((field) => ({
 					id: field.id,
 					name: field.definition.name,
+					displayName: field.definition.display_name,
 					data: field.data,
 					serializedRichText: field.serialized_rich_text,
 					type: field.definition.type,

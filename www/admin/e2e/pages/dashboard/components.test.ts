@@ -261,11 +261,13 @@ test.describe("component definition", () => {
 						data: [
 							{
 								name: "Label",
+								display_name: "Label",
 								type: "TEXT",
 								order: 0,
 							},
 							{
 								name: "Description",
+								display_name: "Description",
 								type: "TEXT",
 								order: 1,
 							},
@@ -450,6 +452,7 @@ test.describe("field definition", () => {
 						data: [
 							{
 								name: "Label",
+								display_name: "Label",
 								type: "TEXT",
 								order: 0,
 							},
@@ -500,6 +503,7 @@ test.describe("field definition", () => {
 						data: [
 							{
 								name: "Label",
+								display_name: "Label",
 								type: "TEXT",
 								order: 0,
 							},
@@ -607,11 +611,13 @@ test.describe("field definition", () => {
 						data: [
 							{
 								name: "Label",
+								display_name: "Label",
 								type: "TEXT",
 								order: 0,
 							},
 							{
 								name: "Description",
+								display_name: "Description",
 								type: "TEXT",
 								order: 1,
 							},
@@ -661,11 +667,13 @@ test.describe("field definition", () => {
 						data: [
 							{
 								name: "Label",
+								display_name: "Label",
 								type: "TEXT",
 								order: 0,
 							},
 							{
 								name: "Description",
+								display_name: "Description",
 								type: "TEXT",
 								order: 1,
 							},
@@ -713,6 +721,7 @@ test.describe("field definition", () => {
 						data: [
 							{
 								name: "Label",
+								display_name: "Label",
 								type: "TEXT",
 								order: 0,
 							},
@@ -750,16 +759,19 @@ test.describe("field definition", () => {
 						data: [
 							{
 								name: "Label",
+								display_name: "Label",
 								type: "TEXT",
 								order: 0,
 							},
 							{
 								name: "Description",
+								display_name: "Description",
 								type: "TEXT",
 								order: 1,
 							},
 							{
 								name: "State",
+								display_name: "State",
 								type: "SWITCH",
 								order: 2,
 							},

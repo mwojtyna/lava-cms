@@ -108,7 +108,7 @@ export function ComponentEditor(props: ComponentEditorProps) {
 											"gap-3",
 										)}
 									>
-										<FormLabel>{field.name}</FormLabel>
+										<FormLabel>{field.displayName}</FormLabel>
 										<FormControl>
 											<Field
 												component={props.component}

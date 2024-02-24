@@ -4,6 +4,7 @@ import { ArrayItemTypeSchema, ComponentFieldTypeSchema } from "@/prisma/generate
 const fieldSchema = z.object({
 	id: z.string().cuid(),
 	name: z.string(),
+	displayName: z.string(),
 	data: z.string(),
 	serializedRichText: z.string().nullable(),
 	type: ComponentFieldTypeSchema,

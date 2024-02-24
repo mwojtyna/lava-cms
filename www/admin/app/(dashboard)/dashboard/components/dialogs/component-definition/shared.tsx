@@ -5,19 +5,24 @@ import { ArrayItemType, ComponentFieldType } from "@prisma/client";
 import Link from "next/link";
 import * as React from "react";
 import { z } from "zod";
-import { ArrayItemTypeSchema, ComponentDefinitionFieldSchema } from "@/prisma/generated/zod";
+import { ArrayItemTypeSchema, ComponentFieldTypeSchema } from "@/prisma/generated/zod";
 import { Combobox } from "@/src/components/Combobox";
 import type { ItemParent } from "@/src/components/DataTableDialogs";
 import { Button } from "@/src/components/ui/client/Button";
 import type { FormFieldProps } from "@/src/components/ui/client/Form";
 import type { PrivateRouter } from "@/src/trpc/routes/private/_private";
+import { nameRegex } from "@/src/utils/regex";
 import { cn } from "@/src/utils/styling";
 
 // ---------------- TYPES ----------------
 export const fieldDefinitionUISchema = z.object({
 	id: z.string().cuid(),
-	name: z.string().min(1, { message: " " }),
-	type: ComponentDefinitionFieldSchema.shape.type,
+	name: z
+		.string()
+		.regex(nameRegex, { message: "Only letters and underscores allowed!" })
+		.min(1, { message: " " }),
+	displayName: z.string().min(1, { message: " " }),
+	type: ComponentFieldTypeSchema,
 	arrayItemType: ArrayItemTypeSchema.nullable(),
 	order: z.number(),
 	diff: z.union([
@@ -63,6 +68,15 @@ export function groupsToComboboxEntries(
 			</span>
 		),
 	}));
+}
+
+export function snakeCaseToTitleCase(input: string): string {
+	const words = input.split("_");
+	const correctedCase = words.map(
+		(word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase(),
+	);
+
+	return correctedCase.join(" ");
 }
 
 // ---------------- COMPONENTS ----------------

@@ -3,7 +3,7 @@ import { z } from "zod";
 import { prisma } from "@/prisma/client";
 import { getInitialValue } from "@/src/data/stores/utils";
 import { privateProcedure } from "@/src/trpc";
-import { fieldSchema } from "./types";
+import { fieldDefSchema } from "./types";
 
 export type EditComponentDefinitionErrorMessage = {
 	id: string;
@@ -16,12 +16,12 @@ export const editComponentDefinition = privateProcedure
 			id: z.string().cuid(),
 			newName: z.string().optional(),
 			newGroupId: z.string().cuid().optional(),
-			addedFields: z.array(fieldSchema.extend({ id: z.string().cuid() })).optional(),
+			addedFields: z.array(fieldDefSchema.extend({ id: z.string().cuid() })).optional(),
 			editedFields: z
 				.array(
-					fieldSchema.extend({
+					fieldDefSchema.extend({
 						id: z.string().cuid(),
-						original: fieldSchema.extend({ id: z.string().cuid() }),
+						original: fieldDefSchema.extend({ id: z.string().cuid() }),
 					}),
 				)
 				.optional(),
@@ -63,6 +63,7 @@ export const editComponentDefinition = privateProcedure
 					const added = await tx.componentDefinitionField.create({
 						data: {
 							name: addedField.name,
+							display_name: addedField.displayName,
 							type: addedField.type,
 							array_item_type: addedField.arrayItemType,
 							order: addedField.order,
@@ -161,6 +162,7 @@ export const editComponentDefinition = privateProcedure
 								where: { id: field.id },
 								data: {
 									name: field.name,
+									display_name: field.displayName,
 									type: field.type,
 									array_item_type: field.arrayItemType,
 									order: field.order,

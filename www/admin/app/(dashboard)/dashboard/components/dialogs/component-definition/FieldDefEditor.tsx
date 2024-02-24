@@ -23,6 +23,7 @@ import { fieldDefinitionUISchema, FieldTypePicker } from "./shared";
 
 const fieldDefDialogSchema = fieldDefinitionUISchema.pick({
 	name: true,
+	displayName: true,
 	type: true,
 	arrayItemType: true,
 });
@@ -49,6 +50,7 @@ export function FieldDefEditor(props: FieldDefEditorProps) {
 		resolver: zodResolver(fieldDefDialogSchema),
 		defaultValues: {
 			name: props.step.fieldDef.name,
+			displayName: props.step.fieldDef.displayName,
 			type: props.step.fieldDef.type,
 			arrayItemType: props.step.fieldDef.arrayItemType ?? "TEXT",
 		},
@@ -73,9 +75,10 @@ export function FieldDefEditor(props: FieldDefEditorProps) {
 				fields.map((f) =>
 					f.id === props.step.fieldDef.id
 						? {
-								id: f.id,
 								// Don't ever move this, order matters when checking for equality with original fields
+								id: f.id,
 								name: data.name,
+								displayName: data.displayName,
 								type: data.type,
 								arrayItemType:
 									data.type === "COLLECTION" ? data.arrayItemType : null,
@@ -118,6 +121,31 @@ export function FieldDefEditor(props: FieldDefEditorProps) {
 			</SheetHeader>
 
 			<FormProvider {...form}>
+				<FormField
+					control={form.control}
+					name="displayName"
+					render={({ field: formField }) => (
+						<FormItem>
+							<FormLabel>Display name</FormLabel>
+							<FormControl>
+								<Input
+									{...formField}
+									{...(props.dialogType === "edit" &&
+										getRestorableInputProps(
+											!!originalField &&
+												originalField.displayName !== formField.value,
+											() =>
+												form.setValue(
+													"displayName",
+													originalField!.displayName,
+												),
+										))}
+								/>
+							</FormControl>
+							<FormError />
+						</FormItem>
+					)}
+				/>
 				<FormField
 					control={form.control}
 					name="name"

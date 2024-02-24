@@ -43,6 +43,7 @@ export async function createComponentInstance(
 			return {
 				id: cuid(),
 				name: fieldDef.name,
+				displayName: fieldDef.display_name,
 				data,
 				serializedRichText: fieldDef.type === "RICH_TEXT" ? "" : null,
 				definitionId: fieldDef.id,

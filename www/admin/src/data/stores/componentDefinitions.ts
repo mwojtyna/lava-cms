@@ -31,6 +31,7 @@ const useComponentsTableDialogsStore = create<ComponentsTableDialogsState>((set)
 				? item.fieldDefinitions.map((fd) => ({
 						id: fd.id,
 						name: fd.name,
+						displayName: fd.display_name,
 						type: fd.type,
 						arrayItemType: fd.array_item_type ?? null,
 						order: fd.order,

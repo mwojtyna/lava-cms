@@ -116,6 +116,7 @@ model ComponentDefinition {
 model ComponentDefinitionField {
     id                      String             @id @default(cuid())
     name                    String
+    display_name            String
     type                    ComponentFieldType
     array_item_type         ArrayItemType?
     order                   Int

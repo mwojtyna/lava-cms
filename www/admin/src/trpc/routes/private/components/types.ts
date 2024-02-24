@@ -4,6 +4,7 @@ import {
 	ComponentFieldTypeSchema,
 	ArrayItemTypeSchema,
 } from "@/prisma/generated/zod";
+import { nameRegex } from "@/src/utils/regex";
 
 export type GroupItem = {
 	id: string;
@@ -28,8 +29,9 @@ export type ComponentInstancePreview = {
 	count: number;
 };
 
-export const fieldSchema = z.object({
-	name: z.string(),
+export const fieldDefSchema = z.object({
+	name: z.string().regex(nameRegex),
+	displayName: z.string(),
 	type: ComponentFieldTypeSchema,
 	arrayItemType: ArrayItemTypeSchema.nullable(),
 	order: z.number(),

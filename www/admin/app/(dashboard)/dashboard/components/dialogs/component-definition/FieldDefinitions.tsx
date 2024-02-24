@@ -1,5 +1,6 @@
 "use client";
 
+import type { z } from "zod";
 import {
 	DndContext,
 	closestCenter,
@@ -24,8 +25,6 @@ import { IconGripVertical } from "@tabler/icons-react";
 import cuid from "cuid";
 import * as React from "react";
 import { useForm, type SubmitHandler, FormProvider } from "react-hook-form";
-import { z } from "zod";
-import { ComponentFieldTypeSchema } from "@/prisma/generated/zod";
 import { ActionIcon } from "@/src/components/ui/client/ActionIcon";
 import { Button } from "@/src/components/ui/client/Button";
 import { FormField, FormItem, FormControl, FormError } from "@/src/components/ui/client/Form";
@@ -34,11 +33,18 @@ import { Card } from "@/src/components/ui/server/Card";
 import { TypographyMuted } from "@/src/components/ui/server/typography";
 import { useComponentsTableDialogsStore } from "@/src/data/stores/componentDefinitions";
 import { cn } from "@/src/utils/styling";
-import { FieldTypePicker, fieldTypeMap, type FieldDefinitionUI, type DialogType } from "./shared";
+import {
+	FieldTypePicker,
+	fieldTypeMap,
+	type FieldDefinitionUI,
+	type DialogType,
+	snakeCaseToTitleCase,
+	fieldDefinitionUISchema,
+} from "./shared";
 
-const addFieldDefsSchema = z.object({
-	name: z.string().min(1, { message: " " }),
-	type: ComponentFieldTypeSchema,
+const addFieldDefsSchema = fieldDefinitionUISchema.pick({
+	name: true,
+	type: true,
 });
 type AddFieldDefsInputs = z.infer<typeof addFieldDefsSchema>;
 
@@ -77,6 +83,7 @@ export function AddFieldDefs() {
 			{
 				id: cuid(),
 				name: data.name,
+				displayName: snakeCaseToTitleCase(data.name),
 				type: data.type,
 				order: fields.length,
 				arrayItemType: data.type === "COLLECTION" ? "TEXT" : null,

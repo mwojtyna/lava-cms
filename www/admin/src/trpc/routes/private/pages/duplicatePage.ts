@@ -3,7 +3,7 @@ import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import { prisma } from "@/prisma/client";
 import { privateProcedure } from "@/src/trpc";
-import { urlRegex } from "@/src/trpc/utils";
+import { urlRegex } from "@/src/utils/regex";
 
 type TX = Parameters<Parameters<typeof prisma.$transaction>[0]>[0];
 type Kind = "component" | "field" | "arrayItem";
