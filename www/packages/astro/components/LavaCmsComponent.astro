@@ -11,7 +11,8 @@ interface Props {
 
 const { component: cmsComponent } = Astro.props;
 
-if (!cmsComponent) {
+// If it's null, then it means the component field is empty, which is a valid state
+if (cmsComponent === undefined) {
 	throw new Error("No component data provided to `LavaCmsComponent` Astro component");
 }
 if (typeof cmsComponent.name !== "string") {

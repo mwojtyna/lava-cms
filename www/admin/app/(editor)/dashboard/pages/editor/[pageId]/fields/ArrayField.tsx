@@ -110,7 +110,8 @@ export function ArrayField(props: ArrayFieldProps) {
 		const newComponent = await createComponentInstance(compDefId, {
 			order: 0,
 			pageId: props.parentComponent.pageId,
-			parentFieldId: props.parentField.id,
+			parentFieldId: null,
+			parentArrayItemId: newItemId,
 		});
 		setNestedComponents((nestedComponents) => [...nestedComponents, newComponent]);
 
@@ -119,7 +120,7 @@ export function ArrayField(props: ArrayFieldProps) {
 			...myArrayItems,
 			{
 				id: newItemId,
-				data: newComponent.id,
+				data: "",
 				parentFieldId: props.parentField.id,
 				order: lastItem ? lastItem.order + 1 : 0,
 				diff: "added",
@@ -153,7 +154,7 @@ export function ArrayField(props: ArrayFieldProps) {
 									items={myArrayItems}
 									originalItems={myOriginalArrayItems}
 									parentField={props.parentField}
-									component={props.parentComponent}
+									parentComponent={props.parentComponent}
 								/>
 							))}
 						</div>
@@ -187,7 +188,7 @@ interface ArrayFieldItemProps {
 	items: ArrayItemUI[];
 	originalItems: ArrayItemUI[];
 	parentField: FieldProps["field"];
-	component: ComponentUI;
+	parentComponent: ComponentUI;
 }
 function ArrayFieldItem(props: ArrayFieldItemProps) {
 	const { setArrayItems } = usePageEditorStore((state) => ({
@@ -223,11 +224,19 @@ function ArrayFieldItem(props: ArrayFieldItemProps) {
 							props.parentField.arrayItemType !== "COMPONENT" ? "edited" : "replaced";
 					}
 
-					return {
-						...item,
-						data: value,
-						diff,
-					};
+					if (props.parentField.arrayItemType === "COMPONENT") {
+						return {
+							...item,
+							parentFieldId: props.parentField.id,
+							diff,
+						};
+					} else {
+						return {
+							...item,
+							data: value,
+							diff,
+						};
+					}
 				} else {
 					return item;
 				}
@@ -293,7 +302,7 @@ function ArrayFieldItem(props: ArrayFieldItemProps) {
 							props.item.diff === "added" && "bg-green-400/10",
 							props.item.diff === "deleted" && "bg-red-400/10",
 						)}
-						component={props.component}
+						component={props.parentComponent}
 						field={{
 							id: props.item.id,
 							type: props.parentField.arrayItemType!,
@@ -307,10 +316,10 @@ function ArrayFieldItem(props: ArrayFieldItemProps) {
 				) : (
 					// If the array item is a component, on top of setting the component's diff, we also mirror that diff to the array item's diff
 					<NestedComponentField
-						value={props.item.data}
 						onChange={handleChange}
-						parentFieldId={props.parentField.id}
-						pageId={props.component.pageId}
+						parentFieldId={null}
+						parentArrayItemId={props.item.id}
+						pageId={props.parentComponent.pageId}
 						edited={props.item.diff === "edited" || props.item.diff === "replaced"}
 						onRestore={handleRestore}
 						onUnAdd={handleUnAdd}

@@ -21,6 +21,7 @@ export const componentSchema = z.object({
 	}),
 	pageId: z.string().cuid(),
 	parentFieldId: z.string().cuid().nullable(),
+	parentArrayItemId: z.string().cuid().nullable(),
 	order: z.number(),
 	fields: z.array(fieldSchema),
 });

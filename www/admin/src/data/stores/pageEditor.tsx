@@ -346,6 +346,7 @@ export const usePageEditorStore = create<PageEditorState>((set) => ({
 						.map<AddedComponent>((comp) => ({
 							pageId,
 							parentFieldId: comp.parentFieldId,
+							parentArrayItemId: comp.parentArrayItemId,
 							frontendId: comp.id,
 							definition: comp.definition,
 							order: comp.order,

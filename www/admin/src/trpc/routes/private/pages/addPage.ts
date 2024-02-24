@@ -29,7 +29,11 @@ export const addPage = privateProcedure
 			if (error instanceof PrismaClientKnownRequestError) {
 				if (error.code === "P2002") {
 					throw new TRPCError({ code: "CONFLICT" });
-				} else throw new TRPCError({ code: "INTERNAL_SERVER_ERROR" });
-			} else throw new TRPCError({ code: "INTERNAL_SERVER_ERROR" });
+				} else {
+					throw new TRPCError({ code: "INTERNAL_SERVER_ERROR" });
+				}
+			} else {
+				throw new TRPCError({ code: "INTERNAL_SERVER_ERROR" });
+			}
 		}
 	});

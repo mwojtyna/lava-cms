@@ -217,10 +217,9 @@ export const Field = forwardRef<HTMLTextAreaElement | HTMLButtonElement, FieldPr
 				return (
 					<NestedComponentField
 						className={className}
-						value={value}
-						onChange={onChange}
 						edited={edited}
 						parentFieldId={field.id}
+						parentArrayItemId={null}
 						pageId={component.pageId}
 					/>
 				);

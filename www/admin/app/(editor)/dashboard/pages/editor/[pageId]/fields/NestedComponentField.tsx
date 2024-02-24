@@ -7,11 +7,11 @@ import { ComponentCard } from "../Components";
 import { AddComponentDialog, createComponentInstance } from "../dialogs/AddComponentDialog";
 
 interface NestedComponentFieldProps {
-	value: string;
-	onChange: (id: string) => void;
+	onChange?: (id: string) => void;
 
 	className?: string;
-	parentFieldId: string;
+	parentFieldId: string | null;
+	parentArrayItemId: string | null;
 	pageId: string;
 	edited: boolean;
 
@@ -31,12 +31,26 @@ export function NestedComponentField(props: NestedComponentFieldProps) {
 		}));
 
 	const currentComponent = useMemo(
-		() => nestedComponents.find((comp) => comp.id === props.value),
-		[nestedComponents, props.value],
+		() =>
+			nestedComponents.find((comp) => {
+				if (props.parentFieldId) {
+					return comp.parentFieldId === props.parentFieldId;
+				} else if (props.parentArrayItemId) {
+					return comp.parentArrayItemId === props.parentArrayItemId;
+				}
+			}),
+		[nestedComponents, props.parentArrayItemId, props.parentFieldId],
 	);
 	const originalComponent = useMemo(
-		() => originalNestedComponents.find((comp) => comp.id === props.value),
-		[originalNestedComponents, props.value],
+		() =>
+			originalNestedComponents.find((comp) => {
+				if (props.parentFieldId) {
+					return comp.parentFieldId === props.parentFieldId;
+				} else if (props.parentArrayItemId) {
+					return comp.parentArrayItemId === props.parentArrayItemId;
+				}
+			}),
+		[originalNestedComponents, props.parentArrayItemId, props.parentFieldId],
 	);
 
 	// If the component is in an array item, this method only runs when replacing the component
@@ -45,13 +59,14 @@ export function NestedComponentField(props: NestedComponentFieldProps) {
 			id,
 			{
 				order: 0,
-				parentFieldId: props.parentFieldId,
+				parentFieldId: currentComponent?.parentFieldId ?? props.parentFieldId,
+				parentArrayItemId: currentComponent?.parentArrayItemId ?? props.parentArrayItemId,
 				pageId: props.pageId,
 			},
 			currentComponent,
 		);
 
-		props.onChange(newComponent.id);
+		props.onChange?.(newComponent.id);
 		setNestedComponents((nestedComponents) =>
 			currentComponent
 				? nestedComponents.map((nc) => (nc.id === currentComponent.id ? newComponent : nc))
@@ -60,7 +75,7 @@ export function NestedComponentField(props: NestedComponentFieldProps) {
 	}
 
 	function restore() {
-		props.onChange(originalComponent!.id);
+		props.onChange?.(originalComponent!.id);
 		setNestedComponents((nestedComponents) =>
 			nestedComponents.map((c) => (c.id === originalComponent!.id ? originalComponent! : c)),
 		);
@@ -79,7 +94,7 @@ export function NestedComponentField(props: NestedComponentFieldProps) {
 		props.onUnRemove?.();
 	}
 	function unAdd(component: ComponentUI) {
-		props.onChange("");
+		props.onChange?.("");
 		setNestedComponents((nestedComponents) =>
 			nestedComponents.filter((c) => c.id !== component.id),
 		);

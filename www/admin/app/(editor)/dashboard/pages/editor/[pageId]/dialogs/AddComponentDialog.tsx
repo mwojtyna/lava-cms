@@ -24,7 +24,7 @@ import { trpc, trpcFetch } from "@/src/utils/trpc";
 
 export async function createComponentInstance(
 	definitionId: string,
-	data: Pick<ComponentUI, "pageId" | "parentFieldId" | "order">,
+	data: Pick<ComponentUI, "pageId" | "parentFieldId" | "parentArrayItemId" | "order">,
 	currentComponent?: ComponentUI,
 ): Promise<ComponentUI> {
 	const definition = await trpcFetch.components.getComponentDefinition.query({
@@ -54,6 +54,7 @@ export async function createComponentInstance(
 		order: data.order,
 		pageId: data.pageId,
 		parentFieldId: data.parentFieldId,
+		parentArrayItemId: data.parentArrayItemId,
 		diff: currentComponent ? "replaced" : "added",
 		reordered: false,
 	};

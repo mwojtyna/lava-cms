@@ -4,7 +4,7 @@ import { type ComponentFieldType, Prisma } from "@prisma/client";
 import { z } from "zod";
 import { prisma } from "@/prisma/client";
 import { publicProcedure } from "@/src/trpc";
-import { findPage } from "@/src/trpc/utils";
+import { findPage, isTopLevelComponent } from "@/src/trpc/utils";
 
 const include = {
 	components: {
@@ -33,6 +33,8 @@ const pageWithInclude = Prisma.validator<Prisma.PageDefaultArgs>()({
 type Page = Prisma.PageGetPayload<typeof pageWithInclude>;
 type Component = Page["components"][number];
 interface Field {
+	id: string;
+	parentFieldId?: string;
 	name: string;
 	data: string;
 	serializedRichText: string | null;
@@ -56,7 +58,7 @@ export const getPage = publicProcedure
 
 		const components: CmsComponent[] = await Promise.all(
 			page.components
-				.filter((c) => c.parent_field_id === null)
+				.filter((c) => isTopLevelComponent(c.parent_field_id, c.parent_array_item_id))
 				.map(async (component) => ({
 					name: component.definition.name,
 					fields: await getFields(component),
@@ -71,20 +73,23 @@ export const getPage = publicProcedure
 
 async function getFields(component: Component): Promise<Record<string, FieldContent>> {
 	return component.fields.reduce<Promise<CmsComponent["fields"]>>(async (acc, field) => {
-		const generalField: Field = {
+		const generalizedField: Field = {
+			id: field.id,
 			name: field.definition.name,
 			data: field.data,
 			serializedRichText: field.serialized_rich_text,
 			type: field.definition.type,
 			arrayItems: field.array_items.map((ai, i) => ({
+				id: ai.id,
+				parentFieldId: field.id,
 				name: `${field.definition.name} -> [item nr ${i}]`,
 				data: ai.data,
 				serializedRichText: null,
 				type: field.definition.array_item_type!,
-				arrayItems: [], // A field within an array item cannot be an array item itself
+				arrayItems: [], // An array item cannot contain array items
 			})),
 		};
-		const parsedField = await getField(generalField, component);
+		const parsedField = await getField(generalizedField, component);
 
 		const accAwaited = await acc;
 		accAwaited[field.definition.name] = parsedField;
@@ -113,23 +118,25 @@ async function getField(field: Field, parentComponent: Component): Promise<Field
 			break;
 		}
 		case "COMPONENT": {
-			if (field.data === "") {
+			let nestedComponent = await prisma.componentInstance.findUnique({
+				where: { parent_field_id: field.id },
+				include: include.components.include,
+			});
+			if (!nestedComponent) {
+				nestedComponent = await prisma.componentInstance.findUnique({
+					where: { parent_array_item_id: field.id },
+					include: include.components.include,
+				});
+			}
+			if (!nestedComponent) {
 				data = null;
 				break;
 			}
 
-			const nestedComponent = await prisma.componentInstance.findUnique({
-				where: { id: field.data },
-				include: include.components.include,
-			});
-			if (!nestedComponent) {
-				data = `Error getting \`${parentComponent.definition.name}\` component's \`${field.name}\` field of type \`Component\`: Component instance id \`${field.data}\` does not exist`;
-				break;
-			}
 			data = {
 				name: nestedComponent.definition.name,
 				fields: await getFields(nestedComponent),
-			} satisfies CmsComponent;
+			};
 
 			break;
 		}

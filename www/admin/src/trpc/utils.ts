@@ -39,3 +39,10 @@ export async function findPage(
 
 	return page;
 }
+
+export function isTopLevelComponent(
+	parentFieldId: string | null,
+	parentArrayItemId: string | null,
+) {
+	return parentFieldId === null && parentArrayItemId === null;
+}

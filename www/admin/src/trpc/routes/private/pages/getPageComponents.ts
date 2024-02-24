@@ -3,6 +3,7 @@ import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import { prisma } from "@/prisma/client";
 import { privateProcedure } from "@/src/trpc";
+import { isTopLevelComponent } from "@/src/trpc/utils";
 
 export const getPageComponents = privateProcedure
 	.input(
@@ -71,6 +72,7 @@ export const getPageComponents = privateProcedure
 					},
 					pageId: component.page_id,
 					parentFieldId: component.parent_field_id,
+					parentArrayItemId: component.parent_array_item_id,
 					order: component.order,
 					fields,
 				};
@@ -83,8 +85,12 @@ export const getPageComponents = privateProcedure
 			});
 
 			return {
-				components: components.filter((c) => c.parentFieldId === null),
-				nestedComponents: components.filter((c) => c.parentFieldId !== null),
+				components: components.filter((c) =>
+					isTopLevelComponent(c.parentFieldId, c.parentArrayItemId),
+				),
+				nestedComponents: components.filter(
+					(c) => !isTopLevelComponent(c.parentFieldId, c.parentArrayItemId),
+				),
 				arrayItems: arrayItems.map((item) => ({
 					id: item.id,
 					data: item.data,

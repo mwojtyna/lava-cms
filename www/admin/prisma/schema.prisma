@@ -129,19 +129,20 @@ model ComponentDefinitionField {
 }
 
 model ComponentInstance {
-    id              String  @id @default(cuid())
-    page_id         String
-    parent_field_id String?
-    definition_id   String
-    order           Int
+    id                   String  @id @default(cuid())
+    page_id              String
+    parent_field_id      String? @unique
+    parent_array_item_id String? @unique
+    definition_id        String
+    order                Int
 
-    page         Page                     @relation(fields: [page_id], references: [id])
-    // When the parent component is deleted, also delete its child component
-    parent_field ComponentInstanceField?  @relation("parent_field", fields: [parent_field_id], references: [id], onDelete: Cascade)
-    definition   ComponentDefinition      @relation(fields: [definition_id], references: [id])
-    fields       ComponentInstanceField[]
+    page              Page                     @relation(fields: [page_id], references: [id], onDelete: Cascade)
+    parent_field      ComponentInstanceField?  @relation("parent_field", fields: [parent_field_id], references: [id], onDelete: Cascade)
+    parent_array_item ArrayItem?               @relation(fields: [parent_array_item_id], references: [id], onDelete: Cascade)
+    definition        ComponentDefinition      @relation(fields: [definition_id], references: [id], onDelete: Cascade)
+    fields            ComponentInstanceField[]
 
-    @@index([page_id])
+    @@index([page_id, parent_field_id, parent_array_item_id])
     @@map("component_instance")
 }
 
@@ -151,12 +152,11 @@ model ComponentInstanceField {
     field_definition_id  String
     /// If type is a primitive type, then data is a string
     /// If type is an array, then data is empty, and array items reference this field's id in their `parent_field_id`
-    /// If type is a component, then data is that component's id
+    /// If type is a component, then data is empty
     /// If type is RICH_TEXT, then data is Slate JSON
     data                 String
     serialized_rich_text String?
 
-    // When component is deleted, also delete its fields
     component         ComponentInstance        @relation(fields: [component_id], references: [id], onDelete: Cascade)
     definition        ComponentDefinitionField @relation(fields: [field_definition_id], references: [id], onDelete: Cascade)
     nested_components ComponentInstance[]      @relation("parent_field")
@@ -173,9 +173,10 @@ model ArrayItem {
     order           Int
     parent_field_id String
 
-    // When parent field instance is deleted (meaning the parent component was deleted), also delete its array items
-    parent_field ComponentInstanceField @relation(fields: [parent_field_id], references: [id], onDelete: Cascade)
+    parent_field     ComponentInstanceField @relation(fields: [parent_field_id], references: [id], onDelete: Cascade)
+    nested_component ComponentInstance?
 
+    @@index([parent_field_id])
     @@map("array_item")
 }
 

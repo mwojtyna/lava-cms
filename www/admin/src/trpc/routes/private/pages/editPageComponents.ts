@@ -9,6 +9,7 @@ const addedComponentSchema = z.object({
 	pageId: z.string().cuid(),
 	// This has to be cuid or cuid2 because it also could be a frontend id, which is cuid2
 	parentFieldId: parentIdSchema.nullable(),
+	parentArrayItemId: parentIdSchema.nullable(),
 	definition: z.object({
 		id: z.string().cuid(),
 		name: z.string(),
@@ -62,9 +63,19 @@ export const editPageComponents = privateProcedure
 		}
 
 		// NOTE: We don't have to manually delete any nested components (even when they're inside array items) when their parents are deleted,
-		// because those components have parentFieldId set, even when they're inside an array item. So when the parent component is deleted (and its fields),
-		// all components which reference any of its fields are also deleted all the way down the tree.
+		// because those components have parentArrayItemId/parentFieldId set. So when the parent component is deleted (and its fields),
+		// all components/array items which reference any of its fields are also deleted all the way down the tree.
 		await prisma.$transaction(async (tx) => {
+			// Has to be before the added components because otherwise when replacing a component, parent_field_id unique constraint would fail
+			// Delete components
+			await tx.componentInstance.deleteMany({
+				where: {
+					id: {
+						in: input.deletedComponentIds,
+					},
+				},
+			});
+
 			// Add new components
 			const addedComponents = input.addedComponents.map((component) => {
 				let parentFieldId = component.parentFieldId;
@@ -77,6 +88,7 @@ export const editPageComponents = privateProcedure
 						id: addedComponentIds[component.frontendId],
 						page_id: component.pageId,
 						parent_field_id: parentFieldId,
+						parent_array_item_id: null, // Updates after creating array items to prevent circular dependency foreign key error
 						definition_id: component.definition.id,
 						order: component.order,
 						fields: {
@@ -116,48 +128,11 @@ export const editPageComponents = privateProcedure
 			);
 			await Promise.all(editedComponents);
 
-			// Delete components
-			await tx.componentInstance.deleteMany({
-				where: {
-					id: {
-						in: input.deletedComponentIds,
-					},
-				},
-			});
-
-			// Correct component data field (if it was a frontend id) to a backend id
-			const correctedComponents = Object.entries(addedComponentIds).map(([k, v]) =>
-				tx.componentInstanceField.updateMany({
-					where: {
-						data: {
-							equals: k,
-						},
-					},
-					data: {
-						data: v,
-					},
-				}),
-			);
-			await Promise.all(correctedComponents);
-
-			// Empty data field if it was an id to a deleted component
-			await tx.componentInstanceField.updateMany({
-				where: {
-					data: {
-						in: input.deletedComponentIds,
-					},
-				},
-				data: {
-					data: "",
-				},
-			});
-
 			// Add new array items
 			await tx.arrayItem.createMany({
 				data: input.addedArrayItems.map((item) => ({
 					id: addedArrayItemIds[item.frontendId],
-					data:
-						item.data in addedComponentIds ? addedComponentIds[item.data]! : item.data,
+					data: item.data,
 					order: item.order,
 					parent_field_id:
 						item.parentFieldId in addedFieldIds
@@ -166,15 +141,27 @@ export const editPageComponents = privateProcedure
 				})),
 			});
 
+			// Update parent_array_item_id for added components (couldn't do it earlier because of circular dependency foreign key error)
+			const updatedParentArrayItemIds = input.addedComponents
+				.filter((item) => item.parentArrayItemId)
+				.map((item) =>
+					tx.componentInstance.update({
+						where: { id: addedComponentIds[item.frontendId] },
+						data: {
+							parent_array_item_id:
+								addedArrayItemIds[item.parentArrayItemId!] ??
+								item.parentArrayItemId, // If replacing a component in an array item, there is not added array item
+						},
+					}),
+				);
+			await Promise.all(updatedParentArrayItemIds);
+
 			// Edit existing array items
 			const editedArrayItems = input.editedArrayItems.map((item) =>
 				tx.arrayItem.update({
 					where: { id: item.id },
 					data: {
-						data:
-							item.data in addedComponentIds
-								? addedComponentIds[item.data]!
-								: item.data,
+						data: item.data,
 						order: item.order,
 					},
 				}),
@@ -187,6 +174,13 @@ export const editPageComponents = privateProcedure
 					id: {
 						in: input.deletedArrayItemIds,
 					},
+				},
+			});
+
+			await tx.page.update({
+				where: { id: input.pageId },
+				data: {
+					last_update: new Date(),
 				},
 			});
 		});

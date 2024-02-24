@@ -11,6 +11,7 @@ import { getGroup } from "./getGroup";
 
 export const componentsRouter = router({
 	addComponentDefinition,
+	/** @returns A map describing the change from frontend id to backend id */
 	editComponentDefinition,
 	deleteComponentDefinition,
 	addGroup,
