@@ -1,5 +1,4 @@
 import type { TTableElement } from "@udecode/plate-table";
-import * as DropdownMenuPrimitive from "@radix-ui/react-dropdown-menu";
 import { cn, withRef } from "@udecode/cn";
 import {
 	isSelectionExpanded,
@@ -22,80 +21,86 @@ import {
 import React from "react";
 import { useReadOnly, useSelected } from "slate-react";
 import { Button } from "../ui/client/Button";
+import {
+	DropdownMenu,
+	DropdownMenuCheckboxItem,
+	DropdownMenuContent,
+	DropdownMenuPortal,
+	DropdownMenuSeparator,
+	DropdownMenuTrigger,
+} from "../ui/client/DropdownMenu";
 import { Popover, PopoverAnchor, PopoverContent, popoverVariants } from "../ui/client/Popover";
 
 import { icons } from "./icons";
 
-export const TableBordersDropdownMenuContent = withRef<typeof DropdownMenuPrimitive.Content>(
-	(props, ref) => {
-		const {
-			getOnSelectTableBorder,
-			hasOuterBorders,
-			hasBottomBorder,
-			hasLeftBorder,
-			hasNoBorders,
-			hasRightBorder,
-			hasTopBorder,
-		} = useTableBordersDropdownMenuContentState();
+export const TableBordersDropdownMenuContent = withRef<typeof DropdownMenuContent>((props, ref) => {
+	const {
+		getOnSelectTableBorder,
+		hasOuterBorders,
+		hasBottomBorder,
+		hasLeftBorder,
+		hasNoBorders,
+		hasRightBorder,
+		hasTopBorder,
+	} = useTableBordersDropdownMenuContentState();
 
-		return (
-			<DropdownMenuPrimitive.DropdownMenuContent
-				ref={ref}
-				className={cn("min-w-[220px]")}
-				side="right"
-				align="start"
-				sideOffset={0}
-				{...props}
+	return (
+		<DropdownMenuContent
+			ref={ref}
+			className={cn("min-w-[220px]")}
+			side="right"
+			align="start"
+			sideOffset={0}
+			{...props}
+		>
+			<DropdownMenuCheckboxItem
+				checked={hasBottomBorder}
+				onCheckedChange={getOnSelectTableBorder("bottom")}
 			>
-				<DropdownMenuPrimitive.DropdownMenuCheckboxItem
-					checked={hasBottomBorder}
-					onCheckedChange={getOnSelectTableBorder("bottom")}
-				>
-					<icons.BorderBottom />
-					<div>Bottom Border</div>
-				</DropdownMenuPrimitive.DropdownMenuCheckboxItem>
-				<DropdownMenuPrimitive.DropdownMenuCheckboxItem
-					checked={hasTopBorder}
-					onCheckedChange={getOnSelectTableBorder("top")}
-				>
-					<icons.BorderTop />
-					<div>Top Border</div>
-				</DropdownMenuPrimitive.DropdownMenuCheckboxItem>
-				<DropdownMenuPrimitive.DropdownMenuCheckboxItem
-					checked={hasLeftBorder}
-					onCheckedChange={getOnSelectTableBorder("left")}
-				>
-					<icons.BorderLeft />
-					<div>Left Border</div>
-				</DropdownMenuPrimitive.DropdownMenuCheckboxItem>
-				<DropdownMenuPrimitive.DropdownMenuCheckboxItem
-					checked={hasRightBorder}
-					onCheckedChange={getOnSelectTableBorder("right")}
-				>
-					<icons.BorderRight />
-					<div>Right Border</div>
-				</DropdownMenuPrimitive.DropdownMenuCheckboxItem>
+				<icons.BorderBottom />
+				<div>Bottom Border</div>
+			</DropdownMenuCheckboxItem>
+			<DropdownMenuCheckboxItem
+				checked={hasTopBorder}
+				onCheckedChange={getOnSelectTableBorder("top")}
+			>
+				<icons.BorderTop />
+				<div>Top Border</div>
+			</DropdownMenuCheckboxItem>
+			<DropdownMenuCheckboxItem
+				checked={hasLeftBorder}
+				onCheckedChange={getOnSelectTableBorder("left")}
+			>
+				<icons.BorderLeft />
+				<div>Left Border</div>
+			</DropdownMenuCheckboxItem>
+			<DropdownMenuCheckboxItem
+				checked={hasRightBorder}
+				onCheckedChange={getOnSelectTableBorder("right")}
+			>
+				<icons.BorderRight />
+				<div>Right Border</div>
+			</DropdownMenuCheckboxItem>
 
-				<DropdownMenuPrimitive.Separator />
+			<DropdownMenuSeparator />
 
-				<DropdownMenuPrimitive.DropdownMenuCheckboxItem
-					checked={hasNoBorders}
-					onCheckedChange={getOnSelectTableBorder("none")}
-				>
-					<icons.BorderNone />
-					<div>No Border</div>
-				</DropdownMenuPrimitive.DropdownMenuCheckboxItem>
-				<DropdownMenuPrimitive.DropdownMenuCheckboxItem
-					checked={hasOuterBorders}
-					onCheckedChange={getOnSelectTableBorder("outer")}
-				>
-					<icons.BorderAll />
-					<div>Outside Borders</div>
-				</DropdownMenuPrimitive.DropdownMenuCheckboxItem>
-			</DropdownMenuPrimitive.DropdownMenuContent>
-		);
-	},
-);
+			<DropdownMenuCheckboxItem
+				checked={hasNoBorders}
+				onCheckedChange={getOnSelectTableBorder("none")}
+			>
+				<icons.BorderNone />
+				<div>No Border</div>
+			</DropdownMenuCheckboxItem>
+			<DropdownMenuCheckboxItem
+				checked={hasOuterBorders}
+				onCheckedChange={getOnSelectTableBorder("outer")}
+			>
+				<icons.BorderAll />
+				<div>Outside Borders</div>
+			</DropdownMenuCheckboxItem>
+		</DropdownMenuContent>
+	);
+});
 
 export const TableFloatingToolbar = withRef<typeof PopoverContent>(
 	({ children, ...props }, ref) => {
@@ -133,18 +138,18 @@ export const TableFloatingToolbar = withRef<typeof PopoverContent>(
 
 		const bordersContent = collapsed && (
 			<>
-				<DropdownMenuPrimitive.DropdownMenu modal={false}>
-					<DropdownMenuPrimitive.DropdownMenuTrigger asChild>
+				<DropdownMenu modal={false}>
+					<DropdownMenuTrigger asChild>
 						<Button variant="ghost" className="justify-start">
 							<icons.BorderAll className="h-5 w-5" />
 							Borders
 						</Button>
-					</DropdownMenuPrimitive.DropdownMenuTrigger>
+					</DropdownMenuTrigger>
 
-					<DropdownMenuPrimitive.DropdownMenuPortal>
+					<DropdownMenuPortal>
 						<TableBordersDropdownMenuContent />
-					</DropdownMenuPrimitive.DropdownMenuPortal>
-				</DropdownMenuPrimitive.DropdownMenu>
+					</DropdownMenuPortal>
+				</DropdownMenu>
 
 				<Button
 					contentEditable={false}

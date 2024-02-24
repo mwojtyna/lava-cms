@@ -3,6 +3,8 @@ import type { DefaultArgs } from "@prisma/client/runtime/library";
 import { prisma } from "@/prisma/client";
 import "server-only";
 
+export const urlRegex = /^(?:\/[a-z0-9]*(?:-[a-z0-9]+)*)*$/;
+
 /** Handles trailing slash */
 export async function findPage(
 	url: string,

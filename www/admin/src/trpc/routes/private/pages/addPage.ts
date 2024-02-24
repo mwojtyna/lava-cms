@@ -3,7 +3,7 @@ import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import { prisma } from "@/prisma/client";
 import { privateProcedure } from "@/src/trpc";
-import { urlRegex } from "@/src/trpc/regex";
+import { urlRegex } from "@/src/trpc/utils";
 
 export const addPage = privateProcedure
 	.input(
