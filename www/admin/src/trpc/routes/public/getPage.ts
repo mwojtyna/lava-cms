@@ -118,12 +118,12 @@ async function getField(field: Field, parentComponent: Component): Promise<Field
 			break;
 		}
 		case "COMPONENT": {
-			let nestedComponent = await prisma.componentInstance.findFirst({
+			let nestedComponent = await prisma.componentInstance.findUnique({
 				where: { parent_field_id: field.id },
 				include: include.components.include,
 			});
 			if (!nestedComponent) {
-				nestedComponent = await prisma.componentInstance.findFirst({
+				nestedComponent = await prisma.componentInstance.findUnique({
 					where: { parent_array_item_id: field.id },
 					include: include.components.include,
 				});
