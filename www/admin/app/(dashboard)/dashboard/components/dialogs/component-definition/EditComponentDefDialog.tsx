@@ -12,6 +12,7 @@ import { Sheet, SheetContent, SheetFooter } from "@/src/components/ui/client/She
 import { TypographyMuted } from "@/src/components/ui/server/typography";
 import { useComponentsTableDialogsStore } from "@/src/data/stores/componentDefinitions";
 import { useAlertDialog } from "@/src/hooks/useAlertDialog";
+import { toast } from "@/src/hooks/useToast";
 import type { PrivateRouter } from "@/src/trpc/routes/private/_private";
 import type { EditComponentDefinitionErrorMessage } from "@/src/trpc/routes/private/components/editComponentDefinition";
 import { cn } from "@/src/utils/styling";
@@ -135,6 +136,11 @@ export function EditComponentDefDialog(props: Props) {
 						isGroup: false,
 					});
 					form.reset(form.getValues());
+
+					toast({
+						title: "Success",
+						description: "Component definition updated.",
+					});
 				},
 				// Can't extract the whole handler to a shared function
 				// because the type of `err` is impossible to specify
