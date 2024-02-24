@@ -23,34 +23,37 @@ export function toPath(path: string) {
 	);
 }
 
-export function getSlugFromUrl(path: string) {
+export function getSlugFromPath(path: string) {
 	const split = path.split("/");
 	return "/" + split[split.length - 1]!;
 }
-export function editUrl(url: string, newSlug: string) {
-	const split = url.split("/");
+
+export function editPath(path: string, newSlug: string) {
+	const split = path.split("/");
 	split[split.length - 1] = newSlug.slice(1);
 	return split.join("/");
 }
 
-export function NameSlugInput<T extends EditDialogInputs>({
-	form,
-	slugLocked,
-	setSlugLocked,
-}: {
+export function removeSlugFromPath(path: string) {
+	return path.split("/").slice(0, -1).join("/");
+}
+
+interface NameSlugInputProps<T extends EditDialogInputs> {
 	form: UseFormReturn<T>;
+	path: string;
 	slugLocked: boolean | undefined;
 	setSlugLocked: (value: boolean) => void;
-}) {
+}
+export function NameSlugInput<T extends EditDialogInputs>(props: NameSlugInputProps<T>) {
 	return (
-		<>
+		<div className="space-y-4">
 			<FormField
-				control={form.control}
+				control={props.form.control}
 				name={"name" as Path<T>}
 				rules={{
 					onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
-						if (!slugLocked)
-							form.setValue(
+						if (!props.slugLocked)
+							props.form.setValue(
 								"slug" as Path<T>,
 								toPath(e.target.value) as PathValue<T, Path<T>>,
 							);
@@ -67,7 +70,7 @@ export function NameSlugInput<T extends EditDialogInputs>({
 			/>
 
 			<FormField
-				control={form.control}
+				control={props.form.control}
 				name={"slug" as Path<T>}
 				render={({ field }) => (
 					<FormItem>
@@ -76,12 +79,14 @@ export function NameSlugInput<T extends EditDialogInputs>({
 							<Input
 								className="flex-row"
 								rightButton={{
-									state: !!slugLocked,
-									setState: setSlugLocked,
+									state: !!props.slugLocked,
+									setState: props.setSlugLocked,
 									onClick: null,
 									iconOn: <LockClosedIcon className="w-4" />,
 									iconOff: <LockOpenIcon className="w-4" />,
-									tooltip: `${slugLocked ? "Unlock" : "Lock"} slug autofill`,
+									tooltip: `${
+										props.slugLocked ? "Unlock" : "Lock"
+									} slug autofill`,
 								}}
 								aria-required
 								{...field}
@@ -91,6 +96,11 @@ export function NameSlugInput<T extends EditDialogInputs>({
 					</FormItem>
 				)}
 			/>
-		</>
+
+			<FormItem>
+				<FormLabel>Full path</FormLabel>
+				<Input disabled value={props.path + props.form.watch("slug" as Path<T>)} readOnly />
+			</FormItem>
+		</div>
 	);
 }

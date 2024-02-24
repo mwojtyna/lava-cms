@@ -14,9 +14,9 @@ export const getGroupContents = privateProcedure
 				breadcrumbs: [],
 				pages: await prisma.page
 					.findFirst({ where: { parent_id: null } })
-					.then((rootGroup) => {
-						return prisma.page.findMany({ where: { parent_id: rootGroup!.id } });
-					}),
+					.then((rootGroup) =>
+						prisma.page.findMany({ where: { parent_id: rootGroup!.id } }),
+					),
 			};
 		}
 

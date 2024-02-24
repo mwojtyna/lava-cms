@@ -12,7 +12,7 @@ import {
 } from "@/src/components/ui/client/Dialog";
 import { trpc } from "@/src/utils/trpc";
 import { type EditDialogProps, type EditDialogInputs, editDialogSchema } from "../types";
-import { editUrl, getSlugFromUrl, NameSlugInput } from "../utils";
+import { editPath, getSlugFromPath, NameSlugInput, removeSlugFromPath } from "../utils";
 
 export function DuplicateDialog(props: EditDialogProps) {
 	const mutation = trpc.pages.duplicatePage.useMutation();
@@ -22,7 +22,7 @@ export function DuplicateDialog(props: EditDialogProps) {
 		resolver: zodResolver(editDialogSchema),
 	});
 	const onSubmit: SubmitHandler<EditDialogInputs> = (data) => {
-		const newUrl = editUrl(props.page.url, data.slug);
+		const newUrl = editPath(props.page.url, data.slug);
 		mutation.mutate(
 			{
 				originId: props.page.id,
@@ -54,7 +54,7 @@ export function DuplicateDialog(props: EditDialogProps) {
 		if (props.open) {
 			form.reset({
 				name: props.page.name,
-				slug: getSlugFromUrl(props.page.url),
+				slug: getSlugFromPath(props.page.url),
 			});
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -71,6 +71,7 @@ export function DuplicateDialog(props: EditDialogProps) {
 					<form className="flex flex-col gap-4" onSubmit={form.handleSubmit(onSubmit)}>
 						<NameSlugInput
 							form={form}
+							path={removeSlugFromPath(props.page.url)}
 							slugLocked={slugLocked}
 							setSlugLocked={setSlugLocked}
 						/>

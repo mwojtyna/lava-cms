@@ -12,7 +12,7 @@ import {
 } from "@/src/components/ui/client/Dialog";
 import { trpc } from "@/src/utils/trpc";
 import { type EditDialogProps, type EditDialogInputs, editDialogSchema } from "../types";
-import { NameSlugInput, editUrl, getSlugFromUrl, toPath } from "../utils";
+import { NameSlugInput, editPath, getSlugFromPath, removeSlugFromPath, toPath } from "../utils";
 
 export function EditDetailsDialog(props: EditDialogProps) {
 	const mutation = trpc.pages.editPage.useMutation();
@@ -26,7 +26,7 @@ export function EditDetailsDialog(props: EditDialogProps) {
 			form.setError("slug", { message: "Groups cannot have slugs containing only '/'." });
 			return;
 		}
-		const newUrl = editUrl(props.page.url, data.slug);
+		const newUrl = editPath(props.page.url, data.slug);
 
 		mutation.mutate(
 			{
@@ -56,7 +56,7 @@ export function EditDetailsDialog(props: EditDialogProps) {
 	React.useEffect(() => {
 		if (props.open) {
 			form.setValue("name", props.page.name);
-			form.setValue("slug", getSlugFromUrl(props.page.url));
+			form.setValue("slug", getSlugFromPath(props.page.url));
 			form.clearErrors();
 
 			const values = form.getValues();
@@ -75,6 +75,7 @@ export function EditDetailsDialog(props: EditDialogProps) {
 					<form className="flex flex-col gap-4" onSubmit={form.handleSubmit(onSubmit)}>
 						<NameSlugInput
 							form={form}
+							path={removeSlugFromPath(props.page.url)}
 							slugLocked={slugLocked}
 							setSlugLocked={setSlugLocked}
 						/>

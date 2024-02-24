@@ -29,10 +29,15 @@ export function AddDialog(props: AddDialogProps) {
 		resolver: zodResolver(editDialogSchema),
 		defaultValues: {
 			name: "",
-			slug: "",
+			slug: "/",
 		},
 	});
 	const onSubmit: SubmitHandler<EditDialogInputs> = (data) => {
+		if (data.slug === "/" && props.isGroup) {
+			form.setError("slug", { message: "Groups cannot have slugs containing only '/'." });
+			return;
+		}
+
 		const url = props.group.url + (props.group.url !== "/" ? "/" : "") + data.slug.slice(1);
 		mutation.mutate(
 			{
@@ -69,9 +74,10 @@ export function AddDialog(props: AddDialogProps) {
 				</DialogHeader>
 
 				<FormProvider {...form}>
-					<form className="flex flex-col gap-4" onSubmit={form.handleSubmit(onSubmit)}>
+					<form className="space-y-4" onSubmit={form.handleSubmit(onSubmit)}>
 						<NameSlugInput
 							form={form}
+							path={props.group.url}
 							slugLocked={slugLocked}
 							setSlugLocked={setSlugLocked}
 						/>
