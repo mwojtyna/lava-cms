@@ -102,6 +102,39 @@ const resetBlockTypesCommonRule = {
 	defaultType: ELEMENT_PARAGRAPH,
 };
 
+export const components = {
+	[ELEMENT_H1]: withProps(HeadingElement, { variant: "h1" }),
+	[ELEMENT_H2]: withProps(HeadingElement, { variant: "h2" }),
+	[ELEMENT_H3]: withProps(HeadingElement, { variant: "h3" }),
+	[ELEMENT_H4]: withProps(HeadingElement, { variant: "h4" }),
+	[ELEMENT_H5]: withProps(HeadingElement, { variant: "h5" }),
+	[ELEMENT_H6]: withProps(HeadingElement, { variant: "h6" }),
+	[ELEMENT_PARAGRAPH]: ParagraphElement,
+	[ELEMENT_BLOCKQUOTE]: BlockquoteElement,
+	[ELEMENT_HR]: HrElement,
+
+	[ELEMENT_CODE_BLOCK]: CodeBlockElement,
+	[ELEMENT_CODE_LINE]: CodeLineElement,
+	[ELEMENT_CODE_SYNTAX]: CodeSyntaxLeaf,
+	[MARK_CODE]: CodeLeaf,
+
+	[MARK_BOLD]: withProps(PlateLeaf, { as: "strong" }),
+	[MARK_ITALIC]: withProps(PlateLeaf, { as: "em" }),
+	[MARK_UNDERLINE]: withProps(PlateLeaf, { as: "u" }),
+	[MARK_STRIKETHROUGH]: withProps(PlateLeaf, { as: "s" }),
+
+	[ELEMENT_LINK]: LinkElement,
+	[MARK_SUPERSCRIPT]: withProps(PlateLeaf, { as: "sup" }),
+	[MARK_SUBSCRIPT]: withProps(PlateLeaf, { as: "sub" }),
+
+	[ELEMENT_IMAGE]: ImageElement,
+
+	[ELEMENT_TABLE]: TableElement,
+	[ELEMENT_TR]: TableRowElement,
+	[ELEMENT_TD]: TableCellElement,
+	[ELEMENT_TH]: TableCellHeaderElement,
+};
+
 export const plugins = createPlugins(
 	[
 		createParagraphPlugin(),
@@ -273,40 +306,7 @@ export const plugins = createPlugins(
 	],
 	{
 		// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-		components: withPlaceholders(
-			/* withDraggables */ {
-				[ELEMENT_H1]: withProps(HeadingElement, { variant: "h1" }),
-				[ELEMENT_H2]: withProps(HeadingElement, { variant: "h2" }),
-				[ELEMENT_H3]: withProps(HeadingElement, { variant: "h3" }),
-				[ELEMENT_H4]: withProps(HeadingElement, { variant: "h4" }),
-				[ELEMENT_H5]: withProps(HeadingElement, { variant: "h5" }),
-				[ELEMENT_H6]: withProps(HeadingElement, { variant: "h6" }),
-				[ELEMENT_PARAGRAPH]: ParagraphElement,
-				[ELEMENT_BLOCKQUOTE]: BlockquoteElement,
-				[ELEMENT_HR]: HrElement,
-
-				[ELEMENT_CODE_BLOCK]: CodeBlockElement,
-				[ELEMENT_CODE_LINE]: CodeLineElement,
-				[ELEMENT_CODE_SYNTAX]: CodeSyntaxLeaf,
-				[MARK_CODE]: CodeLeaf,
-
-				[MARK_BOLD]: withProps(PlateLeaf, { as: "strong" }),
-				[MARK_ITALIC]: withProps(PlateLeaf, { as: "em" }),
-				[MARK_UNDERLINE]: withProps(PlateLeaf, { as: "u" }),
-				[MARK_STRIKETHROUGH]: withProps(PlateLeaf, { as: "s" }),
-
-				[ELEMENT_LINK]: LinkElement,
-				[MARK_SUPERSCRIPT]: withProps(PlateLeaf, { as: "sup" }),
-				[MARK_SUBSCRIPT]: withProps(PlateLeaf, { as: "sub" }),
-
-				[ELEMENT_IMAGE]: ImageElement,
-
-				[ELEMENT_TABLE]: TableElement,
-				[ELEMENT_TR]: TableRowElement,
-				[ELEMENT_TD]: TableCellElement,
-				[ELEMENT_TH]: TableCellHeaderElement,
-			},
-		),
+		components: withPlaceholders(/* withDraggables */ components),
 	},
 );
 

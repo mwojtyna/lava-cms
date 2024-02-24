@@ -8,7 +8,10 @@ import type {
 	Component,
 	PageEditorMessage,
 } from "@/app/(editor)/dashboard/pages/editor/[pageId]/types";
-import { plugins as richTextEditorPlugins } from "@/src/components/RichTextEditor";
+import {
+	plugins as richTextEditorPlugins,
+	components as richTextEditorComponents,
+} from "@/src/components/RichTextEditor";
 import type { PrivateRouter } from "@/src/trpc/routes/private/_private";
 import type { ArrayItem } from "@/src/trpc/routes/private/pages/types";
 import type { trpc } from "@/src/utils/trpc";
@@ -221,14 +224,7 @@ export const usePageEditorStore = create<PageEditorState>((set) => ({
 			arrayItemsGrouped[item.parentFieldId] = items;
 		}
 
-		// Parse stringified rich text
-		for (const comp of components.concat(nestedComponents)) {
-			for (const field of comp.fields) {
-				if (field.type === "RICH_TEXT" && typeof field.data === "string") {
-					field.data = JSON.parse(field.data) as Value as unknown as string;
-				}
-			}
-		}
+		parseStringifiedRichText(components, nestedComponents);
 
 		set({
 			components,
@@ -322,6 +318,7 @@ export const usePageEditorStore = create<PageEditorState>((set) => ({
 			// Serialize rich text
 			const editor = createPlateEditor({
 				plugins: richTextEditorPlugins,
+				components: richTextEditorComponents, // Sometimes there are problems with placeholder plugin
 			});
 			for (const component of correctedComponents.concat(state.nestedComponents)) {
 				for (const field of component.fields) {
@@ -424,6 +421,9 @@ export const usePageEditorStore = create<PageEditorState>((set) => ({
 							}),
 						);
 					},
+					onError: () => {
+						parseStringifiedRichText(state.components, state.nestedComponents);
+					},
 					onSettled: () => {
 						state.setIsSaving(false);
 					},
@@ -460,6 +460,16 @@ function areSame<T extends Editable>(original: T, current: T) {
 	}
 
 	return JSON.stringify(a) === JSON.stringify(b);
+}
+
+function parseStringifiedRichText(components: ComponentUI[], nestedComponents: ComponentUI[]) {
+	for (const comp of components.concat(nestedComponents)) {
+		for (const field of comp.fields) {
+			if (field.type === "RICH_TEXT" && typeof field.data === "string") {
+				field.data = JSON.parse(field.data) as Value as unknown as string;
+			}
+		}
+	}
 }
 
 function isAdded(editable: Editable) {
