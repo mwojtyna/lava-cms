@@ -31,10 +31,10 @@ function useAlertDialog(options: AlertDialogOptions | (() => AlertDialogOptions)
 	return {
 		open: (onConfirm) => {
 			// Set dialog properties
-			const _options = typeof options === "function" ? options() : options;
+			const newOptions = typeof options === "function" ? options() : options;
 			setState((state) => ({
 				...state,
-				..._options,
+				...newOptions,
 			}));
 
 			state.setOpen(true);

@@ -58,6 +58,7 @@ export function PagePreview(props: { baseUrl: string; pageUrl: string }) {
 					Please create a new CMS page if you want to edit it in the page editor.
 				</>
 			),
+			noMessage: undefined,
 			yesMessage: "Understood",
 			disableCloseOnBlur: true,
 		};
