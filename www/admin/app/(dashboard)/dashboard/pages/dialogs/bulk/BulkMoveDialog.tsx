@@ -54,10 +54,13 @@ export function BulkMoveDialog(props: BulkEditDialogProps) {
 
 	const onSubmit: SubmitHandler<MoveDialogInputs> = async (data) => {
 		try {
+			setLoading(true);
 			const query = await trpcFetch.pages.checkConflict.query({
 				newParentId: form.watch("newParentId"),
 				originalUrls: props.pages.map((page) => page.url),
 			});
+			setLoading(false);
+
 			if (query?.conflict) {
 				form.setError("newParentId", {
 					message: (

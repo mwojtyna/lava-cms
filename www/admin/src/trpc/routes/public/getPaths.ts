@@ -34,5 +34,5 @@ export const getPaths = publicProcedure
 			throw new TRPCError({ code: "NOT_FOUND" });
 		}
 
-		return group.children.map((child) => child.url.split("/").pop()!);
+		return group.children.map((child) => child.url.split("/").at(-1)!);
 	});

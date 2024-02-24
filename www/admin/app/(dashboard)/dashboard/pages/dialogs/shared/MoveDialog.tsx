@@ -61,7 +61,7 @@ export function MoveDialog(props: EditDialogProps) {
 						const newPath =
 							destinationUrl +
 							(destinationUrl === "/" ? "" : "/") +
-							props.page.url.split("/").pop()!;
+							props.page.url.split("/").at(-1)!;
 
 						form.setError("newParentId", {
 							message: (

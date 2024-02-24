@@ -25,7 +25,7 @@ export const checkConflict = privateProcedure
 		for (const newUrl of input.originalUrls) {
 			const existingPage = await prisma.page.findFirst({
 				where: {
-					url: { endsWith: "/" + newUrl.split("/").pop()! },
+					url: { endsWith: "/" + newUrl.split("/").at(-1)! },
 					parent_id: input.newParentId,
 				},
 			});

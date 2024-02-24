@@ -28,7 +28,7 @@ export const movePage = privateProcedure
 		await caller.pages.editPage({
 			id: input.id,
 			newName: page.name,
-			newUrl: parentGroup.url + "/" + page.url.split("/").pop()!,
+			newUrl: parentGroup.url + "/" + page.url.split("/").at(-1)!,
 		});
 		await prisma.page.update({
 			where: { id: input.id },
