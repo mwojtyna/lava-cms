@@ -3,9 +3,9 @@ import { FolderArrowDownIcon } from "@heroicons/react/24/outline";
 import React from "react";
 import { useForm, type SubmitHandler, FormProvider } from "react-hook-form";
 import {
-	type ItemParent,
+	type ItemGroup,
 	type MoveDialogInputs,
-	NewParentSelect,
+	NewGroupSelect,
 } from "@/src/components/DataTableDialogs";
 import { Button } from "@/src/components/ui/client/Button";
 import {
@@ -19,9 +19,11 @@ import { FormField, FormItem, FormControl, FormError } from "@/src/components/ui
 import { trpc } from "@/src/utils/trpc";
 
 export function MoveDialog(props: EditDialogProps) {
-	const allGroups = trpc.pages.getAllGroups.useQuery(undefined, {
+	const allGroupsQuery = trpc.pages.getAllGroups.useQuery(undefined, {
 		enabled: props.open,
-	}).data;
+	});
+	const allGroups = allGroupsQuery.data;
+
 	const groups = React.useMemo(
 		() =>
 			allGroups
@@ -37,7 +39,7 @@ export function MoveDialog(props: EditDialogProps) {
 							id: group.id,
 							name: group.name,
 							extraInfo: group.url === "" ? "/" : group.url,
-						}) satisfies ItemParent,
+						}) satisfies ItemGroup,
 				),
 		[allGroups, props.page],
 	);
@@ -103,7 +105,11 @@ export function MoveDialog(props: EditDialogProps) {
 							render={({ field }) => (
 								<FormItem>
 									<FormControl>
-										<NewParentSelect parents={groups ?? []} {...field} />
+										<NewGroupSelect
+											groups={groups ?? []}
+											loading={allGroupsQuery.isLoading}
+											{...field}
+										/>
 									</FormControl>
 									<FormError />
 								</FormItem>

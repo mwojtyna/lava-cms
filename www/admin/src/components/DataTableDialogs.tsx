@@ -3,20 +3,23 @@ import { forwardRef, type ComponentRef } from "react";
 import { Combobox } from "./Combobox";
 import { TypographyMuted } from "./ui/server/typography";
 
-export interface MoveDialogInputs {
+export type MoveDialogInputs = {
 	newParentId: string;
-}
-export interface ItemParent {
+};
+export type ItemGroup = {
 	id: string;
 	name: string;
 	extraInfo: React.ReactNode;
-}
+};
 
-interface NewParentSelectProps extends FormFieldProps<string> {
-	parents: ItemParent[];
+interface NewGroupSelectProps extends FormFieldProps<string> {
+	groups: ItemGroup[];
+	loading?: boolean;
 }
-export const NewParentSelect = forwardRef<ComponentRef<typeof Combobox>, NewParentSelectProps>(
+export const NewGroupSelect = forwardRef<ComponentRef<typeof Combobox>, NewGroupSelectProps>(
 	(props, ref) => {
+		const disabled = props.loading ? false : props.groups.length === 0;
+
 		return (
 			<Combobox
 				ref={ref}
@@ -26,10 +29,10 @@ export const NewParentSelect = forwardRef<ComponentRef<typeof Combobox>, NewPare
 					className: "min-w-[335px] w-fit max-w-[97.5vw] max-h-[47.5vh] overflow-auto",
 					placeholder: "Search groups...",
 				}}
-				placeholder="Select a group..."
+				placeholder={disabled ? "No valid groups found" : "Select a group..."}
 				notFoundContent="No groups found."
 				data={
-					props.parents.map((group) => ({
+					props.groups.map((group) => ({
 						label: <span className="flex items-baseline gap-2">{group.name} </span>,
 						description: (
 							<TypographyMuted className="text-xs">{group.extraInfo}</TypographyMuted>
@@ -38,11 +41,14 @@ export const NewParentSelect = forwardRef<ComponentRef<typeof Combobox>, NewPare
 						filterValue: group.name,
 					})) ?? []
 				}
+				loading={props.loading}
+				disabled={disabled}
+				value={props.value}
+				onChange={props.onChange}
 				deselectable
 				aria-required
-				{...props}
 			/>
 		);
 	},
 );
-NewParentSelect.displayName = "NewParentSelect";
+NewGroupSelect.displayName = "NewGroupSelect";

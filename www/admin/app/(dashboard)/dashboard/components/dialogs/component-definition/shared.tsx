@@ -7,7 +7,7 @@ import * as React from "react";
 import { z } from "zod";
 import { ArrayItemTypeSchema, ComponentFieldTypeSchema } from "@/prisma/generated/zod";
 import { Combobox } from "@/src/components/Combobox";
-import type { ItemParent } from "@/src/components/DataTableDialogs";
+import type { ItemGroup } from "@/src/components/DataTableDialogs";
 import { Button } from "@/src/components/ui/client/Button";
 import type { FormFieldProps } from "@/src/components/ui/client/Form";
 import type { PrivateRouter } from "@/src/trpc/routes/private/_private";
@@ -50,7 +50,7 @@ export type Step =
 // ---------------- FUNCTIONS ----------------
 export function groupsToComboboxEntries(
 	groups: inferRouterOutputs<PrivateRouter>["components"]["getAllGroups"],
-): ItemParent[] {
+): ItemGroup[] {
 	return groups.map((group) => ({
 		id: group.id,
 		name: group.name,

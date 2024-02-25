@@ -7,7 +7,6 @@ import * as React from "react";
 
 import { Dialog, DialogContent } from "@/src/components/ui/client/Dialog";
 import { cn } from "@/src/utils/styling";
-import { TypographyMuted } from "../server/typography";
 
 const Command = React.forwardRef<
 	React.ElementRef<typeof CommandPrimitive>,
@@ -61,7 +60,7 @@ const CommandList = React.forwardRef<
 >(({ className, ...props }, ref) => (
 	<CommandPrimitive.List
 		ref={ref}
-		className={cn("max-h-[300px] overflow-y-auto overflow-x-hidden", className)}
+		className={cn("overflow-y-auto overflow-x-hidden p-1 text-foreground", className)}
 		{...props}
 	/>
 ));
@@ -72,9 +71,11 @@ const CommandEmpty = React.forwardRef<
 	React.ElementRef<typeof CommandPrimitive.Empty>,
 	React.ComponentPropsWithoutRef<typeof CommandPrimitive.Empty>
 >((props, ref) => (
-	<TypographyMuted>
-		<CommandPrimitive.Empty ref={ref} className="py-6 text-center text-sm" {...props} />
-	</TypographyMuted>
+	<CommandPrimitive.Empty
+		ref={ref}
+		className="py-6 text-center text-sm text-muted-foreground"
+		{...props}
+	/>
 ));
 
 CommandEmpty.displayName = CommandPrimitive.Empty.displayName;
@@ -133,6 +134,10 @@ const CommandShortcut = ({ className, ...props }: React.HTMLAttributes<HTMLSpanE
 };
 CommandShortcut.displayName = "CommandShortcut";
 
+const CommandLoading = (props: React.ComponentPropsWithoutRef<typeof CommandPrimitive.Loading>) => (
+	<CommandPrimitive.Loading {...props} />
+);
+
 export {
 	Command,
 	CommandDialog,
@@ -143,4 +148,5 @@ export {
 	CommandItem,
 	CommandShortcut,
 	CommandSeparator,
+	CommandLoading,
 };

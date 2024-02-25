@@ -3,9 +3,9 @@ import { FolderArrowDownIcon } from "@heroicons/react/24/outline";
 import React from "react";
 import { useForm, type SubmitHandler, FormProvider } from "react-hook-form";
 import {
-	type ItemParent,
+	type ItemGroup,
 	type MoveDialogInputs,
-	NewParentSelect,
+	NewGroupSelect,
 } from "@/src/components/DataTableDialogs";
 import { Button } from "@/src/components/ui/client/Button";
 import {
@@ -20,9 +20,11 @@ import { TypographyList } from "@/src/components/ui/server/typography";
 import { trpc, trpcFetch } from "@/src/utils/trpc";
 
 export function BulkMoveDialog(props: BulkEditDialogProps) {
-	const allGroups = trpc.pages.getAllGroups.useQuery(undefined, {
+	const allGroupsQuery = trpc.pages.getAllGroups.useQuery(undefined, {
 		enabled: props.open,
-	}).data;
+	});
+	const allGroups = allGroupsQuery.data;
+
 	const groups = React.useMemo(
 		() =>
 			allGroups
@@ -42,7 +44,7 @@ export function BulkMoveDialog(props: BulkEditDialogProps) {
 							id: group.id,
 							name: group.name,
 							extraInfo: group.url === "" ? "/" : group.url,
-						}) satisfies ItemParent,
+						}) satisfies ItemGroup,
 				),
 		[allGroups, props.pages],
 	);
@@ -96,6 +98,8 @@ export function BulkMoveDialog(props: BulkEditDialogProps) {
 		form.clearErrors();
 	}, [props.open, form]);
 
+	console.log(form.getValues());
+
 	return (
 		<Dialog open={props.open} onOpenChange={props.setOpen}>
 			<DialogContent>
@@ -113,7 +117,11 @@ export function BulkMoveDialog(props: BulkEditDialogProps) {
 							render={({ field }) => (
 								<FormItem>
 									<FormControl>
-										<NewParentSelect parents={groups ?? []} {...field} />
+										<NewGroupSelect
+											groups={groups ?? []}
+											loading={allGroupsQuery.isLoading}
+											{...field}
+										/>
 									</FormControl>
 									<FormError />
 								</FormItem>

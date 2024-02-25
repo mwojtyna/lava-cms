@@ -9,11 +9,13 @@ import {
 	Command,
 	CommandInput,
 	CommandEmpty,
-	CommandGroup,
 	CommandItem,
+	CommandLoading,
+	CommandList,
 } from "./ui/client/Command";
 import { FormControl } from "./ui/client/Form";
 import { PopoverContent, Popover, PopoverTrigger } from "./ui/client/Popover";
+import { Loader } from "./ui/server/Loader";
 
 const getRestorableComboboxProps = (edited: boolean, restore: () => void) => ({
 	className: cn(edited && "ring-2 ring-brand ring-offset-2 ring-offset-black"),
@@ -35,6 +37,7 @@ interface ComboboxProps extends Omit<React.ComponentPropsWithoutRef<typeof Butto
 	contentProps?: React.ComponentPropsWithoutRef<typeof PopoverContent>;
 	notFoundContent: React.ReactNode;
 	deselectable?: boolean;
+	loading?: boolean;
 
 	// react-hook-form props
 	value?: string;
@@ -51,6 +54,7 @@ const Combobox = React.forwardRef<React.ComponentRef<typeof Button>, ComboboxPro
 			placeholder,
 			notFoundContent,
 			deselectable,
+			loading,
 			value,
 			onChange,
 			...props
@@ -97,11 +101,22 @@ const Combobox = React.forwardRef<React.ComponentRef<typeof Button>, ComboboxPro
 							value={search}
 							onValueChange={(value) => setSearch(value)}
 						/>
-						<CommandEmpty>{notFoundContent}</CommandEmpty>
-						<CommandGroup>
+						{!loading && <CommandEmpty>{notFoundContent}</CommandEmpty>}
+						<CommandList>
+							{loading && (
+								<div className="flex justify-center py-2 text-sm text-muted-foreground">
+									<CommandLoading>
+										Loading <Loader />
+									</CommandLoading>
+								</div>
+							)}
+
 							{data.map((item, i) => {
-								if (!item.filterValue.toLowerCase().includes(search.toLowerCase()))
+								if (
+									!item.filterValue.toLowerCase().includes(search.toLowerCase())
+								) {
 									return null;
+								}
 
 								return (
 									<CommandItem
@@ -134,7 +149,7 @@ const Combobox = React.forwardRef<React.ComponentRef<typeof Button>, ComboboxPro
 									</CommandItem>
 								);
 							})}
-						</CommandGroup>
+						</CommandList>
 					</Command>
 				</PopoverContent>
 			</Popover>

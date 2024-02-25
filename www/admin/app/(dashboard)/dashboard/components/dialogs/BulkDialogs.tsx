@@ -4,9 +4,9 @@ import * as React from "react";
 import { useForm, type SubmitHandler, FormProvider } from "react-hook-form";
 import { AlertDialog } from "@/src/components/AlertDialog";
 import {
-	type ItemParent,
+	type ItemGroup,
 	type MoveDialogInputs,
-	NewParentSelect,
+	NewGroupSelect,
 } from "@/src/components/DataTableDialogs";
 import { Button } from "@/src/components/ui/client/Button";
 import {
@@ -81,7 +81,7 @@ export function BulkMoveDialog(props: Props) {
 							true,
 						),
 				)
-				.map<ItemParent>((group) => ({
+				.map<ItemGroup>((group) => ({
 					id: group.id,
 					name: group.name,
 					extraInfo: (
@@ -132,7 +132,7 @@ export function BulkMoveDialog(props: Props) {
 							render={({ field }) => (
 								<FormItem>
 									<FormControl>
-										<NewParentSelect parents={groups ?? []} {...field} />
+										<NewGroupSelect groups={groups ?? []} {...field} />
 									</FormControl>
 								</FormItem>
 							)}

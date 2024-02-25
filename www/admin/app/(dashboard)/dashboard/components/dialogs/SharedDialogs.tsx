@@ -5,7 +5,7 @@ import { FolderArrowDownIcon, TrashIcon } from "@heroicons/react/24/outline";
 import * as React from "react";
 import { FormProvider, useForm, type SubmitHandler } from "react-hook-form";
 import { AlertDialog } from "@/src/components/AlertDialog";
-import { type MoveDialogInputs, NewParentSelect } from "@/src/components/DataTableDialogs";
+import { type MoveDialogInputs, NewGroupSelect } from "@/src/components/DataTableDialogs";
 import { Button } from "@/src/components/ui/client/Button";
 import {
 	DialogHeader,
@@ -60,9 +60,11 @@ export function MoveDialog(props: Props) {
 		? trpc.components.editGroup.useMutation()
 		: trpc.components.editComponentDefinition.useMutation();
 
-	const allGroups = trpc.components.getAllGroups.useQuery(undefined, {
+	const allGroupsQuery = trpc.components.getAllGroups.useQuery(undefined, {
 		enabled: props.open,
-	}).data;
+	});
+	const allGroups = allGroupsQuery.data;
+
 	const groups = React.useMemo(
 		() =>
 			groupsToComboboxEntries(
@@ -103,7 +105,11 @@ export function MoveDialog(props: Props) {
 							render={({ field }) => (
 								<FormItem>
 									<FormControl>
-										<NewParentSelect parents={groups ?? []} {...field} />
+										<NewGroupSelect
+											groups={groups ?? []}
+											loading={allGroupsQuery.isLoading}
+											{...field}
+										/>
 									</FormControl>
 								</FormItem>
 							)}
