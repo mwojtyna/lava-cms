@@ -1,7 +1,11 @@
 "use client";
 
 import React, { useState } from "react";
-import { AlertDialogContext, type AlertDialogState } from "@/src/hooks/useAlertDialog";
+import {
+	AlertDialogContext,
+	defaultOptions,
+	type AlertDialogState,
+} from "@/src/hooks/useAlertDialog";
 import { AlertDialog } from "../AlertDialog";
 
 export function AlertDialogProvider({ children }: { children: React.ReactNode }) {
@@ -12,14 +16,7 @@ export function AlertDialogProvider({ children }: { children: React.ReactNode })
 	const [state, setState] = useState<AlertDialogState>({
 		setOpen,
 		setOnSubmit,
-
-		className: undefined,
-		title: "Title",
-		description: "Description",
-		yesMessage: "Yes",
-		noMessage: undefined,
-		icon: null,
-		disableCloseOnBlur: undefined,
+		...defaultOptions,
 	});
 
 	return (

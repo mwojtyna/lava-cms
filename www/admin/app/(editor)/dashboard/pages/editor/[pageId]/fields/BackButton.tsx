@@ -9,12 +9,7 @@ import { useAlertDialog } from "@/src/hooks/useAlertDialog";
 
 export function BackButton() {
 	const router = useRouter();
-	const alertDialog = useAlertDialog({
-		title: "Discard changes?",
-		description: "Are you sure you want to discard your changes?",
-		yesMessage: "Discard",
-		noMessage: "Cancel",
-	});
+	const alertDialog = useAlertDialog();
 
 	return (
 		<ActionIcon
@@ -28,9 +23,15 @@ export function BackButton() {
 			}}
 			onClick={() => {
 				if (usePageEditorStore.getState().isDirty) {
-					alertDialog.open(() => {
-						router.push("/dashboard/pages");
-					});
+					alertDialog.open(
+						{
+							title: "Discard changes?",
+							description: "Are you sure you want to discard your changes?",
+							yesMessage: "Discard",
+							noMessage: "Cancel",
+						},
+						() => router.push("/dashboard/pages"),
+					);
 					return;
 				}
 				router.push("/dashboard/pages");

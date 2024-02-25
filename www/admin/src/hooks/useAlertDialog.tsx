@@ -21,31 +21,37 @@ const AlertDialogContext = createContext<
 	[AlertDialogState, React.Dispatch<React.SetStateAction<AlertDialogState>>] | null
 >(null);
 
-function useAlertDialog(options: AlertDialogOptions | (() => AlertDialogOptions)): {
-	open: (onYes: () => void) => void;
+const defaultOptions: AlertDialogOptions = {
+	className: undefined,
+	title: "Title",
+	description: "Description",
+	yesMessage: "Yes",
+	noMessage: undefined,
+	icon: null,
+	disableCloseOnBlur: undefined,
+};
+
+function useAlertDialog(): {
+	open: (options: AlertDialogOptions | undefined, onYes: () => void) => void;
 } {
 	const context = useContext(AlertDialogContext);
 	const state = context![0];
 	const setState = context![1];
 
 	return {
-		open: (onConfirm) => {
+		open: (options, onYes) => {
 			// Set dialog properties
-			const newOptions = typeof options === "function" ? options() : options;
-			setState((state) => ({
-				...state,
-				...newOptions,
-			}));
+			setState((state) => ({ ...state, ...defaultOptions, ...options }));
 
 			state.setOpen(true);
 			state.setOnSubmit(() => {
 				return () => {
 					state.setOpen(false);
-					onConfirm();
+					onYes();
 				};
 			});
 		},
 	};
 }
 
-export { useAlertDialog, AlertDialogContext, type AlertDialogState };
+export { useAlertDialog, AlertDialogContext, type AlertDialogState, defaultOptions };

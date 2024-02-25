@@ -2,7 +2,7 @@
 
 import type { ComponentsTableComponentDef } from "../../ComponentsTable";
 import type { inferRouterInputs } from "@trpc/server";
-import { PencilSquareIcon } from "@heroicons/react/24/outline";
+import { ExclamationTriangleIcon, PencilSquareIcon } from "@heroicons/react/24/outline";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useHotkeys, useOs, useWindowEvent } from "@mantine/hooks";
 import * as React from "react";
@@ -42,14 +42,15 @@ export function EditComponentDefDialog(props: Props) {
 		},
 	]);
 
-	const { setItem, fields, originalFields, fieldsDirty } = useComponentsTableDialogsStore(
-		(state) => ({
+	const { setItem, fields, originalFields, fieldsDirty, typeChanged, setTypeChanged } =
+		useComponentsTableDialogsStore((state) => ({
 			setItem: state.setItem,
 			fields: state.fields,
 			originalFields: state.originalFields,
 			fieldsDirty: state.fieldsDirty,
-		}),
-	);
+			typeChanged: state.typeChanged,
+			setTypeChanged: state.setTypeChanged,
+		}));
 	const editMutation = trpc.components.editComponentDefinition.useMutation();
 
 	const form = useForm<ComponentDefEditorInputs>({
@@ -98,78 +99,92 @@ export function EditComponentDefDialog(props: Props) {
 			.filter((f) => f.diff === "deleted")
 			.map((f) => f.id);
 
-		editMutation.mutate(
-			{
-				id: props.componentDef.id,
-				newName: data.name,
-				addedFields,
-				editedFields,
-				deletedFieldIds,
-			},
-			{
-				// `fidToBid` is a map of frontend ids to backend ids
-				onSuccess: async (fidToBid) => {
-					setSteps((steps) =>
-						steps.map((step) =>
-							step.name === "field-definition"
-								? {
-										...step,
-										fieldDef: {
-											...step.fieldDef,
-											id: fidToBid[step.fieldDef.id] ?? step.fieldDef.id,
-										},
-								  }
-								: step,
-						),
-					);
-
-					const updated = await trpcFetch.components.getComponentDefinition.query({
-						id: props.componentDef.id,
-					});
-					setItem({
-						id: updated.id,
-						name: updated.name,
-						instances: props.componentDef.instances,
-						fieldDefinitions: updated.field_definitions,
-						lastUpdate: updated.last_update,
-						parentGroupId: updated.group_id,
-						isGroup: false,
-					});
-					form.reset(form.getValues());
-
-					toast({
-						title: "Success",
-						description: "Component definition updated.",
-					});
+		if (typeChanged) {
+			alertDialog.open(
+				{
+					title: "Warning!",
+					description:
+						"Changing the type of a field will clear its value across all instances. Are you sure you want to continue?",
+					yesMessage: "I'm sure",
+					noMessage: "Cancel",
+					icon: <ExclamationTriangleIcon className="w-6 text-destructive-foreground" />,
 				},
-				// Can't extract the whole handler to a shared function
-				// because the type of `err` is impossible to specify
-				onError: (err) => {
-					if (err.data?.code === "CONFLICT") {
-						const group = JSON.parse(
-							err.message,
-						) as EditComponentDefinitionErrorMessage;
+				mutate,
+			);
+		} else {
+			mutate();
+		}
 
-						form.setError("name", {
-							type: "manual",
-							message: (
-								<ComponentDefinitionNameError name={data.name} group={group} />
-							) as unknown as string,
+		function mutate() {
+			editMutation.mutate(
+				{
+					id: props.componentDef.id,
+					newName: data.name,
+					addedFields,
+					editedFields,
+					deletedFieldIds,
+				},
+				{
+					// `fidToBid` is a map of frontend ids to backend ids
+					onSuccess: async (fidToBid) => {
+						setSteps((steps) =>
+							steps.map((step) =>
+								step.name === "field-definition"
+									? {
+											...step,
+											fieldDef: {
+												...step.fieldDef,
+												id: fidToBid[step.fieldDef.id] ?? step.fieldDef.id,
+											},
+									  }
+									: step,
+							),
+						);
+
+						const updated = await trpcFetch.components.getComponentDefinition.query({
+							id: props.componentDef.id,
 						});
-					}
+						setItem({
+							id: updated.id,
+							name: updated.name,
+							instances: props.componentDef.instances,
+							fieldDefinitions: updated.field_definitions,
+							lastUpdate: updated.last_update,
+							parentGroupId: updated.group_id,
+							isGroup: false,
+						});
+						form.reset(form.getValues());
+
+						toast({
+							title: "Success",
+							description: "Component definition updated.",
+						});
+						setTypeChanged(false);
+					},
+					// Can't extract the whole handler to a shared function
+					// because the type of `err` is impossible to specify
+					onError: (err) => {
+						if (err.data?.code === "CONFLICT") {
+							const group = JSON.parse(
+								err.message,
+							) as EditComponentDefinitionErrorMessage;
+
+							form.setError("name", {
+								type: "manual",
+								message: (
+									<ComponentDefinitionNameError name={data.name} group={group} />
+								) as unknown as string,
+							});
+						}
+					},
 				},
-			},
-		);
+			);
+		}
 	};
 
 	const anyDirty = form.formState.isDirty || fieldsDirty;
 	const canSubmit = props.open && form.formState.isValid && anyDirty;
-	const alertDialog = useAlertDialog({
-		title: "Discard changes?",
-		description: "Are you sure you want to discard your changes?",
-		yesMessage: "Discard",
-		noMessage: "Cancel",
-	});
+	const alertDialog = useAlertDialog();
 
 	// Reset when dialog is opened
 	React.useEffect(() => {
@@ -209,7 +224,15 @@ export function EditComponentDefDialog(props: Props) {
 		if (!anyDirty) {
 			props.setOpen(value);
 		} else {
-			alertDialog.open(() => props.setOpen(false));
+			alertDialog.open(
+				{
+					title: "Discard changes?",
+					description: "Are you sure you want to discard your changes?",
+					yesMessage: "Discard",
+					noMessage: "Cancel",
+				},
+				() => props.setOpen(false),
+			);
 		}
 	}
 

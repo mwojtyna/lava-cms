@@ -84,12 +84,7 @@ export function DuplicateComponentDefDialog(props: Props) {
 
 	const anyDirty = form.formState.isDirty || fieldsDirty;
 	const canSubmit = props.open && form.formState.isValid && anyDirty;
-	const alertDialog = useAlertDialog({
-		title: "Discard changes?",
-		description: "Are you sure you want to discard your changes?",
-		yesMessage: "Discard",
-		noMessage: "Cancel",
-	});
+	const alertDialog = useAlertDialog();
 
 	// Reset when dialog is opened
 	React.useEffect(() => {
@@ -115,7 +110,15 @@ export function DuplicateComponentDefDialog(props: Props) {
 		if (!anyDirty) {
 			props.setOpen(value);
 		} else {
-			alertDialog.open(() => props.setOpen(false));
+			alertDialog.open(
+				{
+					title: "Discard changes?",
+					description: "Are you sure you want to discard your changes?",
+					yesMessage: "Discard",
+					noMessage: "Cancel",
+				},
+				() => props.setOpen(false),
+			);
 		}
 	}
 

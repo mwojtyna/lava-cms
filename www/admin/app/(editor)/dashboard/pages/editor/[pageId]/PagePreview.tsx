@@ -38,31 +38,32 @@ export function PagePreview(props: { baseUrl: string; pageUrl: string }) {
 	const { searchParams, setSearchParams } = useSearchParams({
 		onChanged: (params) => {
 			if (params.has("error")) {
-				alert.open(() => setSearchParams({ error: "" }));
+				const url = searchParams.get("error")!;
+				alertDialog.open(
+					{
+						className: "max-w-xl",
+						title: `Page not found`,
+						description: (
+							// Parent element is <p>
+							<>
+								The HTML page you are trying to access exists, but no CMS page was
+								found with the path assigned to{" "}
+								<span className="text-accent-foreground">{url}</span>. <br />
+								Please create a new CMS page if you want to edit it in the page
+								editor.
+							</>
+						),
+						yesMessage: "Understood",
+						disableCloseOnBlur: true,
+					},
+					() => setSearchParams({ error: "" }),
+				);
 			}
 		},
 		removeWhenValueIsEmptyString: true,
 		replace: true,
 	});
-	const alert = useAlertDialog(() => {
-		const url = searchParams.get("error")!;
-		return {
-			className: "max-w-xl",
-			title: `Page not found`,
-			description: (
-				// Parent element is <p>
-				<>
-					The HTML page you are trying to access exists, but no CMS page was found with
-					the path assigned to <span className="text-accent-foreground">{url}</span>.{" "}
-					<br />
-					Please create a new CMS page if you want to edit it in the page editor.
-				</>
-			),
-			noMessage: undefined,
-			yesMessage: "Understood",
-			disableCloseOnBlur: true,
-		};
-	});
+	const alertDialog = useAlertDialog();
 
 	// Init bridge when iframe loaded and again when component is mounted
 	const initIframeBridge = React.useCallback(() => {

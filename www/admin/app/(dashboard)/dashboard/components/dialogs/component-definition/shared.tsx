@@ -19,7 +19,8 @@ export const fieldDefinitionUISchema = z.object({
 	id: z.string().cuid(),
 	name: z
 		.string()
-		.regex(nameRegex, { message: "Only letters and underscores allowed!" })
+		.regex(/^[a-zA-Z]/, { message: "The first character must be a letter." })
+		.regex(nameRegex, { message: "Only numbers, letters, and underscores allowed." })
 		.min(1, { message: " " }),
 	displayName: z.string().min(1, { message: " " }),
 	type: ComponentFieldTypeSchema,

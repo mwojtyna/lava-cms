@@ -12,6 +12,9 @@ interface ComponentsTableDialogsState {
 	item: ComponentsTableItem | null;
 	setItem: (item: ComponentsTableItem) => void;
 
+	typeChanged: boolean;
+	setTypeChanged: (value: boolean) => void;
+
 	fieldsDirty: boolean;
 	fields: FieldDefinitionUI[];
 	originalFields: FieldDefinitionUI[];
@@ -47,6 +50,9 @@ const useComponentsTableDialogsStore = create<ComponentsTableDialogsState>((set)
 				fieldsDirty: false,
 			};
 		}),
+
+	typeChanged: false,
+	setTypeChanged: (value) => set({ typeChanged: value }),
 
 	fieldsDirty: false,
 	fields: [],

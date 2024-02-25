@@ -36,11 +36,14 @@ interface FieldDefEditorProps {
 	dialogType: DialogType;
 }
 export function FieldDefEditor(props: FieldDefEditorProps) {
-	const { setFields, originalFields } = useComponentsTableDialogsStore((state) => ({
-		fields: state.fields,
-		setFields: state.setFields,
-		originalFields: state.originalFields,
-	}));
+	const { setFields, originalFields, setTypeChanged } = useComponentsTableDialogsStore(
+		(state) => ({
+			fields: state.fields,
+			setFields: state.setFields,
+			originalFields: state.originalFields,
+			setTypeChanged: state.setTypeChanged,
+		}),
+	);
 	// Can be undefined if the field was just added in an 'add' type dialog
 	const originalField = useMemo(
 		() => originalFields.find((f) => f.id === props.step.fieldDef.id),
@@ -53,11 +56,20 @@ export function FieldDefEditor(props: FieldDefEditorProps) {
 			name: props.step.fieldDef.name,
 			displayName: props.step.fieldDef.displayName,
 			type: props.step.fieldDef.type,
-			arrayItemType: props.step.fieldDef.arrayItemType ?? "TEXT",
+			arrayItemType: props.step.fieldDef.arrayItemType,
 		},
 	});
 	const onSubmit: SubmitHandler<Inputs> = useCallback(
 		(data) => {
+			// Don't change this `if`, this is exactly how it should work
+			if (data.type !== "COLLECTION") {
+				// Change this to null for the `setTypeChanged` later
+				data.arrayItemType = null;
+			} else if (data.type === "COLLECTION" && data.arrayItemType === null) {
+				// If the user changes the type to COLLECTION, set initial arrayItemType
+				form.setValue("arrayItemType", originalField?.arrayItemType ?? "TEXT");
+			}
+
 			// Update step name
 			props.setSteps((steps) =>
 				steps.map<Step>((step) =>
@@ -90,8 +102,15 @@ export function FieldDefEditor(props: FieldDefEditorProps) {
 						: f,
 				),
 			);
+
+			if (originalField) {
+				setTypeChanged(
+					data.type !== originalField.type ||
+						data.arrayItemType !== originalField.arrayItemType,
+				);
+			}
 		},
-		[props, setFields],
+		[form, originalField, props, setFields, setTypeChanged],
 	);
 
 	useEffect(() => {
