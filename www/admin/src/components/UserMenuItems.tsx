@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { DropdownMenuItem } from "@/src/components/ui/client/DropdownMenu";
 import { Loader } from "@/src/components/ui/server/Loader";
 import { useColorThemeStore } from "@/src/data/stores/dashboard";
-import { trpc, type Meta } from "@/src/utils/trpc";
+import { trpc, type ClientMeta } from "@/src/utils/trpc";
 
 export const ThemeSwitchItem = () => {
 	const { colorTheme, setColorTheme } = useColorThemeStore((state) => ({
@@ -25,7 +25,7 @@ export const LogoutItem = () => {
 	const mutation = trpc.auth.signOut.useMutation({
 		meta: {
 			noInvalidate: true,
-		} satisfies Meta,
+		} satisfies ClientMeta,
 	});
 	const router = useRouter();
 

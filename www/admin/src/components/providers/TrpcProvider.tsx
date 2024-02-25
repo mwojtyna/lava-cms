@@ -30,21 +30,23 @@ export function TrpcProvider({ children }: { children: React.ReactNode }) {
 				},
 			},
 			queryCache: new QueryCache({
-				onError: (_, query) => {
-					if (query.meta?.errorMessage) {
+				onError: (err) => {
+					const error = err as { data?: { httpStatus: number } };
+					if (error.data?.httpStatus === 500) {
 						toastError({
 							title: "Error",
-							description: query.meta.errorMessage as string,
+							description: "Failed to fetch data.",
 						});
 					}
 				},
 			}),
 			mutationCache: new MutationCache({
-				onError: (_, __, ___, mutation) => {
-					if (mutation.meta?.errorMessage) {
+				onError: (err) => {
+					const error = err as { data?: { httpStatus: number } };
+					if (error.data?.httpStatus === 500) {
 						toastError({
 							title: "Error",
-							description: mutation.meta.errorMessage as string,
+							description: "Failed to perform action.",
 						});
 					}
 				},

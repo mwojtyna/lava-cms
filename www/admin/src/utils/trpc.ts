@@ -5,7 +5,7 @@ import { env } from "@/src/env/client.mjs";
 import type { PrivateRouter } from "@/src/trpc/routes/private/_private";
 import "client-only";
 
-export interface Meta {
+export interface ClientMeta {
 	noInvalidate?: boolean;
 }
 
@@ -14,7 +14,7 @@ export const trpc = createTRPCReact<PrivateRouter>({
 		useMutation: {
 			onSuccess: async (opts) => {
 				await opts.originalFn();
-				const meta = opts.meta as Meta;
+				const meta = opts.meta as ClientMeta;
 				if (!meta.noInvalidate) {
 					await opts.queryClient.invalidateQueries();
 				}

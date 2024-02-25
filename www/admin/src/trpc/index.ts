@@ -5,11 +5,11 @@ import { prisma } from "@/prisma/client";
 import { auth } from "@/src/auth";
 import { env } from "../env/server.mjs";
 
-export interface Meta {
+export interface ServerMeta {
 	noAuth: boolean;
 }
 
-const t = initTRPC.meta<Meta>().create({ transformer: superjson });
+const t = initTRPC.meta<ServerMeta>().create({ transformer: superjson });
 
 export const router = t.router;
 
