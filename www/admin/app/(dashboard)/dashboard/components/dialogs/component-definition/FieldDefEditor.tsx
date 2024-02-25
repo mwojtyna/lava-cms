@@ -7,6 +7,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useMemo, useCallback, useEffect } from "react";
 import { useForm, type SubmitHandler, FormProvider } from "react-hook-form";
 import { getRestorableComboboxProps } from "@/src/components/Combobox";
+import { InfoTooltip } from "@/src/components/InfoTooltip";
 import { ActionIcon } from "@/src/components/ui/client/ActionIcon";
 import {
 	FormField,
@@ -126,7 +127,13 @@ export function FieldDefEditor(props: FieldDefEditorProps) {
 					name="displayName"
 					render={({ field: formField }) => (
 						<FormItem>
-							<FormLabel>Display name</FormLabel>
+							<FormLabel>
+								Display name&nbsp;
+								<InfoTooltip>
+									Only used for displaying a more readable name for this field in
+									the page editor
+								</InfoTooltip>
+							</FormLabel>
 							<FormControl>
 								<Input
 									{...formField}
@@ -151,7 +158,13 @@ export function FieldDefEditor(props: FieldDefEditorProps) {
 					name="name"
 					render={({ field: formField }) => (
 						<FormItem>
-							<FormLabel>Name</FormLabel>
+							<FormLabel>
+								Name&nbsp;
+								<InfoTooltip>
+									Used for identifying this field when your website is fetching
+									data from the CMS
+								</InfoTooltip>
+							</FormLabel>
 							<FormControl>
 								<Input
 									{...formField}
