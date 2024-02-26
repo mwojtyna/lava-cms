@@ -1,4 +1,4 @@
-import { setCookie } from "cookies-next";
+import Cookies from "js-cookie";
 import { create } from "zustand";
 import { permanentCookieOptions, type ColorTheme, type CookieName } from "@/src/utils/cookies";
 import "client-only";
@@ -20,7 +20,7 @@ const useColorThemeStore = create<ColorThemeState>((set) => ({
 	colorTheme: undefined,
 	setColorTheme: (theme) => {
 		set({ colorTheme: theme });
-		setCookie("color-theme" satisfies CookieName, theme, permanentCookieOptions);
+		Cookies.set("color-theme" satisfies CookieName, theme, permanentCookieOptions);
 	},
 }));
 

@@ -219,9 +219,6 @@ importers:
       cmdk:
         specifier: ^0.2.0
         version: 0.2.0(@types/react@18.2.38)(react-dom@18.2.0)(react@18.2.0)
-      cookies-next:
-        specifier: ^4.1.0
-        version: 4.1.0
       cuid:
         specifier: ^3.0.0
         version: 3.0.0
@@ -231,6 +228,9 @@ importers:
       dotenv-cli:
         specifier: ^7.3.0
         version: 7.3.0
+      js-cookie:
+        specifier: ^3.0.5
+        version: 3.0.5
       language-tags:
         specifier: ^1.0.9
         version: 1.0.9
@@ -313,6 +313,9 @@ importers:
       '@types/bcrypt':
         specifier: ^5.0.2
         version: 5.0.2
+      '@types/js-cookie':
+        specifier: ^3.0.6
+        version: 3.0.6
       '@types/language-tags':
         specifier: ^1.0.4
         version: 1.0.4
@@ -3586,10 +3589,6 @@ packages:
       '@types/node': 20.9.4
     dev: true
 
-  /@types/cookie@0.4.1:
-    resolution: {integrity: sha512-XW/Aa8APYr6jSVVA1y/DEIZX0/GMKLEVekNG727R8cs56ahETkRAy/3DR7+fJyh7oUgGwNQaRfXCun0+KbWY7Q==}
-    dev: false
-
   /@types/cross-spawn@6.0.5:
     resolution: {integrity: sha512-wsIMP68FvGXk+RaWhraz6Xp4v7sl4qwzHAmtPaJEN2NRTXXI9LtFawUpeTsBNL/pd6QoLStdytCaAyiK7AEd/Q==}
     dependencies:
@@ -3612,6 +3611,10 @@ packages:
   /@types/is-hotkey@0.1.10:
     resolution: {integrity: sha512-RvC8KMw5BCac1NvRRyaHgMMEtBaZ6wh0pyPTBu7izn4Sj/AX9Y4aXU5c7rX8PnM/knsuUpC1IeoBkANtxBypsQ==}
     dev: false
+
+  /@types/js-cookie@3.0.6:
+    resolution: {integrity: sha512-wkw9yd1kEXOPnvEeEV1Go1MmxtBJL0RR79aOTAApecWFVu7w0NNXNqhcWgvw2YgZDYadliXkl14pa3WXw5jlCQ==}
+    dev: true
 
   /@types/json-schema@7.0.15:
     resolution: {integrity: sha512-5+fP8P8MFNC+AyZCDxrB2pkZFPGzqQWUzpSeuuVLvm8VMcorNYavBqoFcxK8bQz4Qsbn4oUEEem4wDLfcysGHA==}
@@ -3647,10 +3650,6 @@ packages:
     resolution: {integrity: sha512-ABoYdNQ/kBSsLvZAekMhIPMQ3YUZvavStpKYs7BjLLuKVmIMA0LUgZ7b54zzuWJRbHF80v1cNf4r90Vd6eMQDg==}
     dependencies:
       '@types/unist': 2.0.10
-
-  /@types/node@16.18.64:
-    resolution: {integrity: sha512-TiY2gIDob8+QOPIcVpS0ZY+H1DVTfplBW6UgL2b4gOYbigIlKVIh6Lcv+7YDUciUTqhVLG91PrZBXW10IoBhtw==}
-    dev: false
 
   /@types/node@20.9.4:
     resolution: {integrity: sha512-wmyg8HUhcn6ACjsn8oKYjkN/zUzQeNtMy44weTJSM6p4MMzEOuKbA3OjJ267uPCOW7Xex9dyrNTful8XTQYoDA==}
@@ -5720,22 +5719,9 @@ packages:
   /convert-source-map@2.0.0:
     resolution: {integrity: sha512-Kvp459HrV2FEJ1CAsi1Ku+MY3kasH19TFykTz2xWmMeq6bk2NU3XXvfJ+Q61m0xktWwt+1HSYf3JZsTms3aRJg==}
 
-  /cookie@0.4.2:
-    resolution: {integrity: sha512-aSWTXFzaKWkvHO1Ny/s+ePFpvKsPnjc551iI41v3ny/ow6tBG5Vd+FuqGNhh1LxOmVzOlGUriIlOaokOvhaStA==}
-    engines: {node: '>= 0.6'}
-    dev: false
-
   /cookie@0.6.0:
     resolution: {integrity: sha512-U71cyTamuh1CRNCfpGY6to28lxvNwPG4Guz/EVjgf3Jmzv0vlDp1atT9eS5dDjMYHucpHbWns6Lwf3BKz6svdw==}
     engines: {node: '>= 0.6'}
-
-  /cookies-next@4.1.0:
-    resolution: {integrity: sha512-BREVc4TJT4NwXfyKjdjnYFXM6iRns+MYpCd34ClXuYqeisXnkPkbq7Ok9xaqi9mHmV6H2rwPE+p3EpMz4pF/kQ==}
-    dependencies:
-      '@types/cookie': 0.4.1
-      '@types/node': 16.18.64
-      cookie: 0.4.2
-    dev: false
 
   /copy-anything@3.0.5:
     resolution: {integrity: sha512-yCEafptTtb4bk7GLEQoM8KVJpxAfdBJYaXyzQEgQQQgYrZiDp8SJmGKlYza6CYjEDNstAdNdKA3UuoULlEbS6w==}
@@ -7696,6 +7682,11 @@ packages:
     resolution: {integrity: sha512-34wB/Y7MW7bzjKRjUKTa46I2Z7eV62Rkhva+KkopW7Qvv/OSWBqvkSY7vusOPrNuZcUG3tApvdVgNB8POj3SPw==}
     engines: {node: '>=10'}
     dev: true
+
+  /js-cookie@3.0.5:
+    resolution: {integrity: sha512-cEiJEAEoIbWfCZYKWhVwFuvPX1gETRYPw6LlaTKoxD3s2AkXzkCjnp6h0V77ozyqj0jakteJ4YqDJT830+lVGw==}
+    engines: {node: '>=14'}
+    dev: false
 
   /js-tokens@4.0.0:
     resolution: {integrity: sha512-RdJUflcE3cUzKiMqQgsCu06FPu9UdIJO0beYbPhHN4k6apgJtifcoCtT9bcxOpYBtpD2kCM6Sbzg4CausW/PKQ==}

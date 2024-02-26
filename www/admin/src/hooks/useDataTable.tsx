@@ -11,7 +11,7 @@ import {
 	type ColumnDef,
 	functionalUpdate,
 } from "@tanstack/react-table";
-import { setCookie } from "cookies-next";
+import Cookies from "js-cookie";
 import * as React from "react";
 import {
 	getJsonCookie,
@@ -82,7 +82,7 @@ export function useDataTable<T>(options: Options<T>) {
 		onSortingChange: (updater) => {
 			const newSorting = functionalUpdate(updater, sorting);
 			setSorting(newSorting);
-			setCookie(
+			Cookies.set(
 				options.cookie.name,
 				JSON.stringify({ pageSize: pagination.pageSize, ...newSorting[0] } as TableCookie),
 				permanentCookieOptions,
@@ -94,7 +94,7 @@ export function useDataTable<T>(options: Options<T>) {
 			setSearchParams({
 				pageIndex: newPagination.pageIndex === 0 ? undefined : newPagination.pageIndex,
 			} satisfies TableSearchParams);
-			setCookie(
+			Cookies.set(
 				options.cookie.name,
 				JSON.stringify({ ...sorting[0], pageSize: newPagination.pageSize } as TableCookie),
 				permanentCookieOptions,
