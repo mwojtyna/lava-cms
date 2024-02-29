@@ -16,7 +16,7 @@ export const ColorThemeStoreProvider = ({
 	children: React.ReactNode;
 	colorTheme: ColorTheme | null;
 }) => {
-	const storeRef = useRef<StoreApi<ColorThemeState>>();
+	const storeRef = useRef<StoreApi<ColorThemeState> | null>(null);
 	if (!storeRef.current) {
 		storeRef.current = createColorThemeStore(colorTheme);
 	}

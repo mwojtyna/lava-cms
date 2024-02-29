@@ -1,5 +1,5 @@
+import * as argon2 from "argon2";
 import { cookies } from "next/headers";
-import { Bcrypt } from "oslo/password";
 import { z } from "zod";
 import { prisma } from "@/prisma/client";
 import { auth } from "@/src/auth";
@@ -15,7 +15,12 @@ export const signUp = privateProcedure
 		}),
 	)
 	.mutation(async ({ input }) => {
-		const hashedPassword = await new Bcrypt().hash(input.password);
+		const hashedPassword = await argon2.hash(input.password, {
+			type: argon2.argon2id,
+			memoryCost: 19 * 1024, // 19MiB
+			timeCost: 2,
+			parallelism: 1,
+		});
 		const newUser = await prisma.adminUser.create({
 			data: {
 				name: input.name,

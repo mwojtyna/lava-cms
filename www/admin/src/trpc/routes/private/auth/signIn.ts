@@ -1,6 +1,6 @@
 import { TRPCError } from "@trpc/server";
+import * as argon2 from "argon2";
 import { cookies } from "next/headers";
-import { Bcrypt } from "oslo/password";
 import { z } from "zod";
 import { prisma } from "@/prisma/client";
 import { auth } from "@/src/auth";
@@ -16,10 +16,8 @@ export const signIn = privateProcedure
 	)
 	.mutation(async ({ input }) => {
 		const existingUser = await prisma.adminUser.findUnique({ where: { email: input.email } });
-		const passwordMatches = await new Bcrypt().verify(
-			existingUser?.password ?? "",
-			input.password,
-		);
+		const hashed = existingUser?.password ?? "";
+		const passwordMatches = await argon2.verify(hashed.normalize("NFKC"), input.password);
 		if (!passwordMatches || !existingUser) {
 			throw new TRPCError({ code: "UNAUTHORIZED" });
 		}
