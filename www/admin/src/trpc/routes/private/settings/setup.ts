@@ -17,7 +17,7 @@ export const setup = privateProcedure.mutation(async () => {
 
 	await prisma.settingsConnection.create({
 		data: {
-			development_url: "http://localhost:3000",
+			development_url: "http://localhost:3000/",
 			token: randomString(),
 		},
 	});
