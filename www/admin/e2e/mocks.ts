@@ -6,6 +6,7 @@ export const userMock: AdminUser = {
 	name: "John",
 	last_name: "Doe",
 	email: "johndoe@domain.com",
+	password: "$2b$10$ZVGT1G/c.WqZHa9UpSBTEeDRuL6sd/.k.RgPGE0YaZuPDdaV3Oe1G",
 };
 export const userPasswordDecrypted = "Zaq1@wsx";
 
@@ -24,21 +25,10 @@ export async function createMockUser() {
 		prisma.adminUser.create({
 			data: userMock,
 		}),
-		prisma.adminKey.create({
-			data: {
-				id: `email:${userMock.email}`,
-				hashed_password: "$2b$10$ZVGT1G/c.WqZHa9UpSBTEeDRuL6sd/.k.RgPGE0YaZuPDdaV3Oe1G",
-				user_id: userMock.id,
-			},
-		}),
 	]);
 
 	return userMock;
 }
 export async function deleteMockUser() {
-	await prisma.$transaction([
-		prisma.adminUser.deleteMany(),
-		prisma.adminSession.deleteMany(),
-		prisma.adminKey.deleteMany(),
-	]);
+	await prisma.$transaction([prisma.adminUser.deleteMany(), prisma.adminSession.deleteMany()]);
 }

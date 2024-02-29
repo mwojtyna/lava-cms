@@ -1,6 +1,8 @@
 import { TRPCError } from "@trpc/server";
-import cuid from "cuid";
+import { cookies } from "next/headers";
+import { Bcrypt } from "oslo/password";
 import { z } from "zod";
+import { prisma } from "@/prisma/client";
 import { auth } from "@/src/auth";
 import { privateProcedure } from "@/src/trpc";
 
@@ -12,17 +14,17 @@ export const signIn = privateProcedure
 			password: z.string(),
 		}),
 	)
-	.mutation(async ({ input, ctx }) => {
-		try {
-			const key = await auth.useKey("email", input.email, input.password);
-			const session = await auth.createSession({
-				sessionId: cuid(),
-				userId: key.userId,
-				attributes: {},
-			});
-			ctx.setSession(session);
-			await auth.deleteDeadUserSessions(key.userId);
-		} catch (error) {
+	.mutation(async ({ input }) => {
+		const existingUser = await prisma.adminUser.findUnique({ where: { email: input.email } });
+		const passwordMatches = await new Bcrypt().verify(
+			existingUser?.password ?? "",
+			input.password,
+		);
+		if (!passwordMatches || !existingUser) {
 			throw new TRPCError({ code: "UNAUTHORIZED" });
 		}
+
+		const session = await auth.createSession(existingUser.id, {});
+		const sessionCookie = auth.createSessionCookie(session.id);
+		cookies().set(sessionCookie.name, sessionCookie.value, sessionCookie.attributes);
 	});

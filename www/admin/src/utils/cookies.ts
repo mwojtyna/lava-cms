@@ -1,4 +1,3 @@
-import type { CookieAttributes } from "js-cookie";
 import Cookies from "js-cookie";
 import { z } from "zod";
 
@@ -16,7 +15,7 @@ export function getJsonCookie<T>(name: CookieName, fallback: T) {
 
 	return JSON.parse(cookie) as T;
 }
-export const permanentCookieOptions: CookieAttributes = {
+export const permanentCookieOptions: Cookies.CookieAttributes = {
 	expires: new Date(2100, 11),
 	sameSite: "strict",
 	path: "/admin",

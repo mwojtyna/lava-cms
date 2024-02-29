@@ -20,7 +20,7 @@ export function useSearchParams(options?: Options): {
 } {
 	const router = useRouter();
 	const pathname = usePathname();
-	const searchParams = useNextSearchParams()!;
+	const searchParams = useNextSearchParams();
 
 	React.useEffect(
 		() => {

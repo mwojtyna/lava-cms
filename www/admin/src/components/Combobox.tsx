@@ -32,9 +32,13 @@ type ComboboxData = Array<{
 	description: React.ReactNode;
 	filterValue: string;
 }>;
+type ContentProps = { placeholder?: string } & React.ComponentPropsWithoutRef<
+	typeof PopoverContent
+>;
 interface ComboboxProps extends Omit<React.ComponentPropsWithoutRef<typeof Button>, "onChange"> {
 	data: ComboboxData;
-	contentProps?: React.ComponentPropsWithoutRef<typeof PopoverContent>;
+	contentProps?: ContentProps;
+	placeholder?: React.ReactNode;
 	notFoundContent: React.ReactNode;
 	deselectable?: boolean;
 	loading?: boolean;

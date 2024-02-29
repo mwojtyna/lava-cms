@@ -103,7 +103,7 @@ export function Inspector(props: Props) {
 	const [animStyles, animation] = useSpring(() => animationOpen);
 	// Run animation on initial render
 	useEffect(() => {
-		animation.start(animationOpen);
+		void animation.start(animationOpen);
 	}, [animation]);
 
 	async function addComponent(id: string) {
@@ -163,7 +163,7 @@ export function Inspector(props: Props) {
 								className="gap-1 font-normal text-muted-foreground"
 								onClick={() => {
 									// Run animation when going back to components list
-									animation.start(animationOpen);
+									void animation.start(animationOpen);
 									setSteps([{ name: "components" }]);
 								}}
 							>
@@ -204,7 +204,7 @@ export function Inspector(props: Props) {
 										...c,
 										diff: "none",
 										reordered: false,
-								  }))
+									}))
 						}
 						openAddComponentDialog={() => setOpenAdd(true)}
 						getComponent={getComponent}
@@ -242,7 +242,7 @@ function Step(props: StepProps) {
 	useEffect(() => {
 		// Weird condition to avoid running the animation after save (because id in step changes from frontend's to backend's)
 		if (prevIsSaving === isSaving) {
-			animation.start(animationOpen);
+			void animation.start(animationOpen);
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [props.step]);

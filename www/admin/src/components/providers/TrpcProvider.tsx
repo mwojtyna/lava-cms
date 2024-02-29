@@ -3,7 +3,7 @@
 import { MutationCache, QueryCache, QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { httpBatchLink, loggerLink } from "@trpc/client";
 import { useState } from "react";
-import superjson from "superjson";
+import { SuperJSON } from "superjson";
 import { env } from "@/src/env/client.mjs";
 import { useToast } from "@/src/hooks/useToast";
 import { trpc } from "@/src/utils/trpc";
@@ -19,7 +19,7 @@ export function TrpcProvider({ children }: { children: React.ReactNode }) {
 					url: "/admin/api/private",
 				}),
 			],
-			transformer: superjson,
+			transformer: SuperJSON,
 		}),
 	);
 	const [queryClient] = useState(

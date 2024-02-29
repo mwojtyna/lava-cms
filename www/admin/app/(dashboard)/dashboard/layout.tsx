@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
-import { getCurrentUser } from "@/src/auth";
+import { validateRequest } from "@/src/auth";
 import { PageTitle } from "@/src/components/PageTitle";
 import { navMenuRoutes } from "@/src/data/routes/navMenu";
 import { NavMenu } from "./NavMenu";
@@ -7,7 +7,8 @@ import { NavMenu } from "./NavMenu";
 export const dynamic = "force-dynamic";
 
 export default async function Dashboard({ children }: { children: React.ReactNode }) {
-	if (!(await getCurrentUser())) {
+	const { session } = await validateRequest();
+	if (!session) {
 		redirect("/signin");
 	}
 

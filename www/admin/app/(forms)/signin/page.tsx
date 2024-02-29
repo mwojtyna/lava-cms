@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
-import { getCurrentUser } from "@/src/auth";
+import { validateRequest } from "@/src/auth";
 import { caller } from "@/src/trpc/routes/private/_private";
 import { SignInForm } from "./SignInForm";
 
@@ -10,11 +10,12 @@ export const metadata: Metadata = {
 
 export default async function SignIn() {
 	const { reason } = await caller.auth.setupRequired();
-
 	if (reason) {
 		redirect("/setup");
 	}
-	if (await getCurrentUser()) {
+
+	const { session } = await validateRequest();
+	if (session) {
 		redirect("/dashboard");
 	}
 

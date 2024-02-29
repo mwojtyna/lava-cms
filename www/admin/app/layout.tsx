@@ -3,8 +3,8 @@ import { Inter, Poppins } from "next/font/google";
 import { cookies } from "next/headers";
 import { Body } from "@/src/components/Body";
 import { AlertDialogProvider } from "@/src/components/providers/AlertDialogProvider";
+import { ColorThemeStoreProvider } from "@/src/components/providers/ColorThemeStoreProvider";
 import { TrpcProvider } from "@/src/components/providers/TrpcProvider";
-import { ZustandProvider } from "@/src/components/providers/ZustandProvider";
 import { Toaster } from "@/src/components/ui/client/Toaster";
 import { TooltipProvider } from "@/src/components/ui/client/Tooltip";
 import { colorThemeSchema, type CookieName } from "@/src/utils/cookies";
@@ -31,12 +31,12 @@ const headerFont = Poppins({
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
 	const colorTheme = await colorThemeSchema
-		.optional()
-		.parseAsync(cookies().get("color-theme" satisfies CookieName)?.value);
+		.nullable()
+		.parseAsync(cookies().get("color-theme" satisfies CookieName)?.value ?? null);
 
 	return (
 		<html lang="en-US">
-			<ZustandProvider colorTheme={colorTheme}>
+			<ColorThemeStoreProvider colorTheme={colorTheme}>
 				<AlertDialogProvider>
 					<Body fonts={[regularFont, headerFont]}>
 						<TooltipProvider delayDuration={0}>
@@ -46,7 +46,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
 						<Toaster />
 					</Body>
 				</AlertDialogProvider>
-			</ZustandProvider>
+			</ColorThemeStoreProvider>
 		</html>
 	);
 }

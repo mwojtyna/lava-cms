@@ -24,7 +24,12 @@ export function PagePreview(props: { baseUrl: string; pageUrl: string }) {
 	const { width: windowWidth } = useViewportSize();
 	const [width, setWidth] = React.useState(MIN_WIDTH * 3);
 	const [preferredWidth, setPreferredWidth] = React.useState(width);
-	const { ref: wrapperRef, width: wrapperWidth } = useElementSize();
+	const { ref: wrapperRef, width: wrapperWidth } = useElementSize<HTMLDivElement>() as {
+		// Shitty types
+		ref: React.MutableRefObject<HTMLDivElement>;
+		width: number;
+		height: number;
+	};
 	const maxWidth = wrapperWidth - HANDLES_WIDTH;
 	const initialWidthSet = React.useRef(false);
 

@@ -29,5 +29,10 @@ const config = {
 			permanent: true,
 		},
 	],
+	// eslint-disable-next-line @typescript-eslint/no-unsafe-return
+	webpack: (config) => ({
+		...config,
+		externals: ["@node-rs/argon2", "@node-rs/bcrypt"],
+	}),
 };
 export default config;

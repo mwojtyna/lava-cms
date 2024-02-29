@@ -84,7 +84,10 @@ export function useDataTable<T>(options: Options<T>) {
 			setSorting(newSorting);
 			Cookies.set(
 				options.cookie.name,
-				JSON.stringify({ pageSize: pagination.pageSize, ...newSorting[0] } as TableCookie),
+				JSON.stringify({
+					pageSize: pagination.pageSize,
+					...newSorting[0],
+				} as TableCookie),
 				permanentCookieOptions,
 			);
 		},

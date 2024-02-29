@@ -1,6 +1,5 @@
 import type { BrowserContextOptions, Browser, BrowserContext } from "@playwright/test";
 import fs from "node:fs";
-import { DEFAULT_SESSION_COOKIE_NAME } from "lucia";
 import {
 	createMockUser,
 	deleteMockUser,
@@ -10,6 +9,7 @@ import {
 	seoSettingsMock,
 } from "@/e2e/mocks";
 import { prisma } from "@/prisma/client";
+import { DEFAULT_SESSION_COOKIE_NAME } from "@/src/auth";
 
 const STORAGE_STATE_PATH = "./e2e/storageState.json";
 
@@ -98,9 +98,8 @@ export async function getAuthedContext(browser: Browser): Promise<BrowserContext
 		await prisma.adminSession.create({
 			data: {
 				id: cookies.find((cookie) => cookie.name === DEFAULT_SESSION_COOKIE_NAME)!.value,
-				user_id: userMock.id,
-				active_expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7).getTime(),
-				idle_expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7).getTime(),
+				userId: userMock.id,
+				expiresAt: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7),
 			},
 		});
 

@@ -19,38 +19,28 @@ datasource db {
 }
 
 model AdminUser {
-    id        String @id @unique
+    id        String @id @default(cuid())
     name      String
     last_name String
     email     String @unique
+    password  String
 
-    auth_session AdminSession[]
-    auth_key     AdminKey[]
+    adminSessions AdminSession[]
 
     @@map("admin_user")
 }
 
 model AdminSession {
-    id             String @id @unique
-    user_id        String
-    active_expires BigInt
-    idle_expires   BigInt
+    // Names have to be like this because of lucia-auth
+    id        String   @id
+    userId    String   @map("user_id")
+    expiresAt DateTime @map("expires_at")
 
-    user AdminUser @relation(references: [id], fields: [user_id], onDelete: Cascade)
+    // Has to be this name https://github.com/lucia-auth/lucia/issues/1411
+    adminUser AdminUser @relation(references: [id], fields: [userId], onDelete: Cascade)
 
-    @@index([user_id])
+    @@index([userId])
     @@map("admin_session")
-}
-
-model AdminKey {
-    id              String  @id @unique
-    hashed_password String?
-    user_id         String
-
-    user AdminUser @relation(references: [id], fields: [user_id], onDelete: Cascade)
-
-    @@index([user_id])
-    @@map("admin_key")
 }
 
 model SettingsSeo {

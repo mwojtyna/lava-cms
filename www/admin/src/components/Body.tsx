@@ -2,8 +2,8 @@
 
 import type { NextFontWithVariable } from "next/dist/compiled/@next/font";
 import * as React from "react";
+import { useColorThemeStore } from "@/src/data/stores/colorTheme";
 import { cn } from "@/src/utils/styling";
-import { useColorThemeStore } from "../data/stores/dashboard";
 
 interface Props extends React.ComponentPropsWithRef<"body"> {
 	fonts: NextFontWithVariable[];

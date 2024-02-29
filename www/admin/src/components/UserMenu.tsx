@@ -1,4 +1,4 @@
-import { getCurrentUser } from "@/src/auth";
+import { validateRequest } from "@/src/auth";
 import { Avatar, AvatarFallback } from "@/src/components/ui/client/Avatar";
 import {
 	DropdownMenu,
@@ -16,7 +16,7 @@ interface Props {
 	small?: boolean;
 }
 export async function UserMenu(props: Props) {
-	const user = await getCurrentUser();
+	const { user } = await validateRequest();
 
 	return (
 		<DropdownMenu>

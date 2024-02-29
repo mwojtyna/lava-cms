@@ -27,12 +27,12 @@
 		"prepublishOnly": "pnpm run lint && pnpm run build --minify"
 	},
 	"dependencies": {
-		"@trpc/client": "^10.44.1",
+		"@trpc/client": "^10.45.1",
 		"superjson": "^2.2.1"
 	},
 	"devDependencies": {
 		"@lavacms/types": "workspace:*",
-		"@tsconfig/strictest": "^2.0.2",
+		"@tsconfig/strictest": "^2.0.3",
 		"eslint-config-package": "workspace:*"
 	}
 }

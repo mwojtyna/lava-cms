@@ -98,8 +98,6 @@ export function BulkMoveDialog(props: BulkEditDialogProps) {
 		form.clearErrors();
 	}, [props.open, form]);
 
-	console.log(form.getValues());
-
 	return (
 		<Dialog open={props.open} onOpenChange={props.setOpen}>
 			<DialogContent>

@@ -1,11 +1,13 @@
-/// <reference types="lucia" />
+import type { Auth } from "../auth";
+import type { AdminUser } from "@prisma/client";
 
-declare namespace Lucia {
-	type Auth = import("@/src/auth").Auth;
-
-	type DatabaseUserAttributes = {
-		name: string;
-		last_name: string;
-		email: string;
-	};
+declare module "lucia" {
+	interface Register {
+		Lucia: Auth;
+		DatabaseSessionAttributes: DatabaseSessionAttributes;
+		DatabaseUserAttributes: DatabaseUserAttributes;
+	}
 }
+
+type DatabaseUserAttributes = Pick<AdminUser, "email" | "name" | "last_name">;
+type DatabaseSessionAttributes = Record<string, never>;

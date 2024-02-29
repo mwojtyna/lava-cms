@@ -50,17 +50,12 @@ export function SignUpForm() {
 	const router = useRouter();
 
 	const signUpMutation = trpc.auth.signUp.useMutation();
-	const signInMutation = trpc.auth.signIn.useMutation();
 
 	const form = useForm<Inputs>({ resolver: zodResolver(inputSchema) });
 	const onSubmit: SubmitHandler<Inputs> = async (data) => {
 		await signUpMutation.mutateAsync({
 			name: data.name,
 			lastName: data.lastName,
-			email: data.email,
-			password: data.password,
-		});
-		await signInMutation.mutateAsync({
 			email: data.email,
 			password: data.password,
 		});
