@@ -14,13 +14,18 @@ const t = initTRPC.meta<ServerMeta>().create({ transformer: SuperJSON });
 export const router = t.router;
 
 export const privateAuth = t.middleware(async (opts) => {
-	if (headers().has("Referer")) {
-		// "Origin" header is sometimes null
-		const origin = new URL(headers().get("Referer")!).host;
+	// CSRF protection
+	if (opts.type === "mutation") {
+		if (!headers().has("Referer") && !headers().has("Origin")) {
+			throw new TRPCError({
+				code: "FORBIDDEN",
+			});
+		}
+
+		const origin = new URL(headers().get("Referer") ?? headers().get("Origin")!).host;
 		if (env.VERCEL_URL !== origin) {
 			throw new TRPCError({
 				code: "FORBIDDEN",
-				message: `VERCEL_URL "${env.VERCEL_URL}" and actual hostname "${origin}" don't match!`,
 			});
 		}
 	}
