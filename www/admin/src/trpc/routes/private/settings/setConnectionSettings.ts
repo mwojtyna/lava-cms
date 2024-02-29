@@ -1,11 +1,12 @@
 import { z } from "zod";
 import { prisma } from "@/prisma/client";
 import { privateProcedure } from "@/src/trpc";
+import { devUrlRegex } from "@/src/utils/regex";
 
 export const setConnectionSettings = privateProcedure
 	.input(
 		z.object({
-			developmentUrl: z.string().endsWith("/"),
+			developmentUrl: z.string().regex(devUrlRegex).endsWith("/"),
 		}),
 	)
 	.mutation(async ({ input }) => {

@@ -26,13 +26,14 @@ import {
 } from "@/src/components/ui/server/Card";
 import { Loader } from "@/src/components/ui/server/Loader";
 import { useToast } from "@/src/hooks/useToast";
+import { devUrlRegex } from "@/src/utils/regex";
 import { trpc } from "@/src/utils/trpc";
 
 const schema = z.object({
 	developmentUrl: z
 		.string()
 		.min(1, " ")
-		.regex(/^https?:\/\/.*/, "Must include protocol")
+		.regex(devUrlRegex, "Must include protocol")
 		.url()
 		.endsWith("/", "Must end with a slash"),
 });
