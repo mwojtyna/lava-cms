@@ -7,9 +7,9 @@ import {
 	userMock,
 	userPasswordDecrypted,
 	seoSettingsMock,
+	DEFAULT_SESSION_COOKIE_NAME,
 } from "@/e2e/mocks";
 import { prisma } from "@/prisma/client";
-import { DEFAULT_SESSION_COOKIE_NAME } from "@/src/auth";
 
 const STORAGE_STATE_PATH = "./e2e/storageState.json";
 

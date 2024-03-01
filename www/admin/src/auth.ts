@@ -4,8 +4,7 @@ import { cookies } from "next/headers";
 import { cache } from "react";
 import { prisma } from "@/prisma/client";
 import { env } from "@/src/env/server.mjs";
-
-export const DEFAULT_SESSION_COOKIE_NAME = "auth_session";
+import "server-only";
 
 const prismaAdapter = new PrismaAdapter(prisma.adminSession, prisma.adminUser);
 export const auth = new Lucia(prismaAdapter, {

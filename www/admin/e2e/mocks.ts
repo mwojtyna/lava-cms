@@ -1,6 +1,8 @@
 import type { AdminUser, SettingsConnection, SettingsSeo } from "@prisma/client";
 import { prisma } from "@/prisma/client";
 
+export const DEFAULT_SESSION_COOKIE_NAME = "auth_session";
+
 export const userMock: AdminUser = {
 	id: "pvelcizx9an5cufryuh85wd0",
 	name: "John",

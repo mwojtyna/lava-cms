@@ -1,8 +1,7 @@
 import { expect } from "@playwright/test";
 import { prisma } from "@/prisma/client";
-import { DEFAULT_SESSION_COOKIE_NAME } from "@/src/auth";
 import { test } from "./fixtures";
-import { connectionSettingsMock, seoSettingsMock } from "./mocks";
+import { DEFAULT_SESSION_COOKIE_NAME, connectionSettingsMock, seoSettingsMock } from "./mocks";
 
 test.beforeAll(async () => {
 	await prisma.settingsSeo.create({
