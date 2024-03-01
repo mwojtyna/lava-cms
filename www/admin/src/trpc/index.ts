@@ -16,13 +16,13 @@ export const router = t.router;
 export const privateAuth = t.middleware(async (opts) => {
 	// CSRF protection
 	if (opts.type === "mutation") {
-		if (!headers().has("Referer") && !headers().has("Origin")) {
+		if (!headers().has("Origin") && !headers().has("Referer")) {
 			throw new TRPCError({
 				code: "FORBIDDEN",
 			});
 		}
 
-		const origin = new URL(headers().get("Referer") ?? headers().get("Origin")!).host;
+		const origin = new URL(headers().get("Origin") ?? headers().get("Referer")!).host;
 		if (env.VERCEL_URL !== origin) {
 			throw new TRPCError({
 				code: "FORBIDDEN",

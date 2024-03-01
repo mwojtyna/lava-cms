@@ -7,6 +7,7 @@ import { env } from "@/src/env/server.mjs";
 import "server-only";
 
 const prismaAdapter = new PrismaAdapter(prisma.adminSession, prisma.adminUser);
+
 export const auth = new Lucia(prismaAdapter, {
 	getUserAttributes: (databaseUserAttributes) => ({
 		email: databaseUserAttributes.email,
