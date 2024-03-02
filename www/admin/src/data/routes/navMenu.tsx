@@ -12,6 +12,7 @@ export const navMenuRoutes: NavMenuRoute[] = [
 		path: "/dashboard",
 		description: "Lorem ipsum",
 		icon: <HomeIcon className="w-5" />,
+		disabled: true,
 	},
 	{
 		label: "Pages",

@@ -22,7 +22,11 @@ export function NavMenuItem({ routes, route, small }: Props) {
 	return (
 		<Tooltip>
 			<TooltipTrigger asChild>
-				<Link href={route.path} tabIndex={-1}>
+				<Link
+					href={route.path}
+					tabIndex={-1}
+					className={cn(route.disabled && "pointer-events-none opacity-50")}
+				>
 					<Button
 						// Wait for the button to highlight before navigating (better UX)
 						onClick={() => setTimeout(() => setOpen(false))}

@@ -38,7 +38,7 @@ export function SignInForm() {
 	});
 	const onSubmit: SubmitHandler<Inputs> = (data) => {
 		mutation.mutate(data, {
-			onSuccess: () => router.replace("/dashboard"),
+			onSuccess: () => router.replace("/dashboard/pages"),
 			onError: (err) => {
 				if (err.data?.code === "UNAUTHORIZED") {
 					form.setError("root", {

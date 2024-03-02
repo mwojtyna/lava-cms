@@ -156,7 +156,6 @@ test.describe("setup website step", () => {
 		await page.base.locator("button[type='submit']").click();
 		await page.base.waitForURL(/dashboard/);
 
-		expect(page.base.url()).toMatch(/dashboard/);
 		await expect(page.base.locator("#content").first()).toBeInViewport();
 		await expect(prisma.settingsSeo.findFirstOrThrow()).resolves.toMatchObject({
 			title: seoSettingsMock.title,

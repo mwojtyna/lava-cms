@@ -20,7 +20,7 @@ export default async function Pages({ searchParams }: { searchParams: TableSearc
 	return (
 		<PagesTable
 			data={{ pages: data.pages, breadcrumbs: [] }}
-			group={rootGroup!}
+			group={rootGroup}
 			pagination={searchParams}
 			cookie={cookie}
 		/>

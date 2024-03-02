@@ -1,4 +1,5 @@
-import { expect, test } from "@playwright/test";
+import { expect } from "@playwright/test";
+import { test } from "@/e2e/fixtures";
 import { createMockUser, deleteMockUser, userMock, userPasswordDecrypted } from "@/e2e/mocks";
 import { prisma } from "@/prisma/client";
 
@@ -96,14 +97,16 @@ test("shows error when email invalid", async ({ page }) => {
 	await expect(page.locator("text=The e-mail you provided is invalid.")).toBeInViewport();
 });
 
-test("signs in when credentials are valid", async ({ page }) => {
+test("signs in when credentials are valid", async ({ authedPage: page }) => {
+	// We need authedPage for properly initializing all required data in the database
+	await page.base.context().clearCookies();
+
 	await page.goto("/admin/signin");
-	await page.locator("input[type='email']").type(userMock.email);
-	await page.locator("input[type='password']").type(userPasswordDecrypted);
-	await page.locator("button[type='submit']").click();
+	await page.base.locator("input[type='email']").fill(userMock.email);
+	await page.base.locator("input[type='password']").fill(userPasswordDecrypted);
+	await page.base.locator("button[type='submit']").click();
 
-	await page.waitForURL(/\/admin\/dashboard/);
+	await page.base.waitForURL(/\/admin\/dashboard/);
 
-	expect(page.url()).toMatch(/\/admin\/dashboard/);
-	await expect(page.locator("#content").first()).toBeInViewport();
+	await expect(page.base.locator("#content").first()).toBeInViewport();
 });

@@ -6,10 +6,10 @@ import { privateProcedure } from "@/src/trpc";
 
 export const getGroup = privateProcedure
 	.input(z.object({ id: z.string().cuid() }).nullish())
-	.query(async ({ input }): Promise<Page | null> => {
+	.query(async ({ input }): Promise<Page> => {
 		// Get root group if no input is provided
 		if (!input) {
-			return prisma.page.findFirst({
+			return prisma.page.findFirstOrThrow({
 				where: {
 					parent_id: null,
 				},

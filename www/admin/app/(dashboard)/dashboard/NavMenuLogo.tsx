@@ -13,7 +13,7 @@ export function NavMenuLogo({ version, font }: { version: string; font: NextFont
 	return (
 		<Link
 			onClick={() => setTimeout(() => setIsOpen(false))}
-			href="/dashboard"
+			href="/dashboard/pages"
 			className="mb-8 flex items-center justify-center gap-2"
 			aria-label="Logo link"
 		>

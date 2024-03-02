@@ -31,7 +31,7 @@ test.describe("/setup", () => {
 		authedPage: page,
 	}) => {
 		await page.goto("/admin/setup");
-		expect(page.base.url()).toMatch(/\/admin\/dashboard$/);
+		expect(page.base.url()).toMatch(/\/admin\/dashboard\/pages$/);
 		await expect(page.base.locator("#content").first()).toBeInViewport();
 	});
 	test("redirects to /signin if not signed in and accessing /setup", async ({ page }) => {
@@ -61,13 +61,13 @@ test.describe("/signin", () => {
 		authedPage: page,
 	}) => {
 		await page.goto("/admin/signin");
-		expect(page.base.url()).toMatch(/\/admin\/dashboard$/);
+		expect(page.base.url()).toMatch(/\/admin\/dashboard\/pages$/);
 		await expect(page.base.locator("#content").first()).toBeInViewport();
 	});
 });
 
 test("redirects to dashboard when user is signed in", async ({ authedPage: page }) => {
 	await page.goto("/admin");
-	expect(page.base.url()).toMatch(/\/admin\/dashboard$/);
+	expect(page.base.url()).toMatch(/\/admin\/dashboard\/pages$/);
 	await expect(page.base.locator("#content").first()).toBeInViewport();
 });

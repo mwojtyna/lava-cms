@@ -1,10 +1,13 @@
 import type { Metadata } from "next";
+import { RedirectType, redirect } from "next/navigation";
 
 export const metadata: Metadata = {
 	title: "Dashboard - Lava CMS",
 };
 
 function Dashboard() {
+	redirect("/dashboard/pages", RedirectType.replace);
+
 	return (
 		<>
 			Lorem ipsum dolor sit amet consectetur adipisicing elit. Fuga amet velit autem, dolore

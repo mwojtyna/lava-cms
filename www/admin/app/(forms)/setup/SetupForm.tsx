@@ -33,7 +33,7 @@ export function SetupForm() {
 		setSeoSettingsMutation.mutate(data, {
 			onSuccess: async () => {
 				await setupMutation.mutateAsync();
-				router.replace("/dashboard");
+				router.replace("/dashboard/pages");
 			},
 			onError: (err) => {
 				if (err.data?.code === "BAD_REQUEST") {

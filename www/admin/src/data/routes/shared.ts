@@ -3,6 +3,7 @@ export interface Route {
 	path: string;
 	icon?: React.ReactNode;
 	hasChildren?: boolean;
+	disabled?: boolean;
 }
 
 export function getRoute<T extends Route>(path: string, routes: T[]): T | undefined {
