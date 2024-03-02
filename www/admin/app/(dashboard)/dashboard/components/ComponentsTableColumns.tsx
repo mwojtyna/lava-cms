@@ -242,8 +242,10 @@ function ComponentInstancePopover({ item }: { item: ComponentsTableItem }) {
 				<span>{label}</span>
 			) : (
 				<>
-					<PopoverTrigger className="hover:text-accent-foreground">
-						{label}
+					<PopoverTrigger asChild>
+						<Button className="font-normal text-muted-foreground" variant={"link"}>
+							{label}
+						</Button>
 					</PopoverTrigger>
 					<PopoverContent className="p-0">
 						<ul>
