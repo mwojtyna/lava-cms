@@ -528,6 +528,7 @@ test.describe("field definition", () => {
 
 		await dialog.locator("button[type='submit']").click();
 		await page.base.waitForResponse("**/api/private/components.editComponentDefinition**");
+		await page.base.waitForTimeout(100); // Webkit moment XD
 		await dialog.getByTestId("close-btn").click();
 
 		const addedCompDef = await prisma.componentDefinition.findFirst({

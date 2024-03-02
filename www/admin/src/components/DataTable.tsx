@@ -56,7 +56,7 @@ export function DataTable<T>(props: Props<T>) {
 										: flexRender(
 												header.column.columnDef.header,
 												header.getContext(),
-										  )}
+											)}
 								</TableHead>
 							))}
 						</TableRow>
@@ -75,6 +75,7 @@ export function DataTable<T>(props: Props<T>) {
 											i > 0 && "text-muted-foreground",
 											i === cells.length - 1 && "py-0",
 										)}
+										suppressHydrationWarning
 									>
 										{flexRender(cell.column.columnDef.cell, cell.getContext())}
 									</TableCell>

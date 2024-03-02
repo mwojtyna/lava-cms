@@ -32,7 +32,7 @@ test("when pressing the switch, cookie and theme are updated", async ({ page, co
 	expect(await getCookie(context)).toBeUndefined();
 
 	await page.emulateMedia({ colorScheme: "light" });
-	await page.goto("/admin/setup");
+	await page.goto("/admin/setup", { waitUntil: "networkidle" });
 
 	const themeSwitch = page.getByTestId(TEST_ID);
 
@@ -59,7 +59,7 @@ test("automatically switches to light theme and sets cookie if it is the preferr
 	expect(await getCookie(context)).toBe(undefined);
 
 	await page.emulateMedia({ colorScheme: "light" });
-	await page.goto("/admin/setup");
+	await page.goto("/admin/setup", { waitUntil: "networkidle" });
 
 	const colorScheme = await getColorScheme(page);
 	expect(colorScheme).toBe("light");
@@ -72,7 +72,7 @@ test("automatically switches to dark theme and sets cookie if it is the preferre
 	expect(await getCookie(context)).toBe(undefined);
 
 	await page.emulateMedia({ colorScheme: "dark" });
-	await page.goto("/admin/setup");
+	await page.goto("/admin/setup", { waitUntil: "networkidle" });
 
 	const colorScheme = await getColorScheme(page);
 	expect(colorScheme).toBe("dark");

@@ -22,7 +22,7 @@ test("seo settings displayed", async ({ authedPage: page }) => {
 	);
 });
 test("seo settings updates", async ({ authedPage: page }) => {
-	await page.goto("/admin/dashboard/settings");
+	await page.goto("/admin/dashboard/settings", { waitUntil: "networkidle" });
 
 	const element = page.base.getByTestId(TEST_ID);
 	await element.locator("input[type='text']").first().fill("My new website");
