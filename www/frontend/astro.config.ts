@@ -4,19 +4,23 @@ import { lavaCmsAstro } from "@lavacms/astro";
 
 const { CMS_TOKEN } = loadEnv(import.meta.env.MODE, process.cwd(), "") as ImportMetaEnv;
 
-// https://astro.build/config
 export default defineConfig({
 	server: {
 		host: true,
 	},
 	integrations: [
 		lavaCmsAstro({
-			url: "http://localhost:3001/admin",
+			url: "http://localhost:8080/admin",
 			token: CMS_TOKEN,
 			log: import.meta.env.DEV,
 			components: {
-				Card: "/src/components/Card.astro",
-				"Parent Card": "/src/components/ParentCard.astro",
+				Author: "./src/components/Author.astro",
+				Button: "./src/components/Button.astro",
+				Quote: "./src/components/Quote.astro",
+				Random: "./src/components/Random.astro",
+				"Array test": "./src/components/Array test.astro",
+				"Array test 2": "./src/components/Array test 2.astro",
+				Paragraph: "./src/components/Paragraph.astro",
 			},
 			enableFallbackComponent: true,
 		}),

@@ -1,6 +1,6 @@
 {
 	"name": "@lavacms/core",
-	"version": "0.1.0",
+	"version": "0.2.0",
 	"type": "module",
 	"description": "Core methods for Lava CMS API clients",
 	"main": "dist/index.js",
@@ -11,7 +11,7 @@
 	"license": "MIT",
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/matijas-05/lava-cms.git",
+		"url": "git+https://github.com/matijas-05/lava-cms.git",
 		"directory": "www/packages/core"
 	},
 	"keywords": [
@@ -27,12 +27,12 @@
 		"prepublishOnly": "pnpm run lint && pnpm run build --minify"
 	},
 	"dependencies": {
-		"@trpc/client": "^10.38.4",
-		"superjson": "^1.13.1"
+		"@trpc/client": "^10.45.1",
+		"superjson": "^2.2.1"
 	},
 	"devDependencies": {
 		"@lavacms/types": "workspace:*",
-		"@tsconfig/strictest": "^2.0.2",
+		"@tsconfig/strictest": "^2.0.3",
 		"eslint-config-package": "workspace:*"
 	}
 }

@@ -3,7 +3,7 @@ name: lava-cms
 services:
   postgres:
     container_name: postgres
-    image: postgres:15.3-alpine
+    image: postgres:16.1-alpine
     environment:
       - POSTGRES_USER=admin
       - POSTGRES_PASSWORD=admin
@@ -11,10 +11,11 @@ services:
       - pgdata:/var/lib/postgresql/data
     ports:
       - 5432:5432
+    entrypoint: docker-entrypoint.sh -c 'shared_buffers=256MB' -c 'max_connections=200'
 
   pgadmin:
     container_name: pgadmin
-    image: dpage/pgadmin4:7.4
+    image: dpage/pgadmin4:8.3
     environment:
       - PGADMIN_DEFAULT_EMAIL=admin@admin.com
       - PGADMIN_DEFAULT_PASSWORD=admin
@@ -25,7 +26,7 @@ services:
 
   nginx:
     container_name: nginx
-    image: nginx:1.25.1-alpine
+    image: nginx:1.25.3-alpine
     volumes:
       - ./nginx.conf:/etc/nginx/nginx.conf
     ports:

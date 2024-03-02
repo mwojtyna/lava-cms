@@ -2,5 +2,8 @@
 	"name": "eslint-config-package",
 	"private": true,
 	"type": "commonjs",
-	"main": "index.js"
+	"main": "index.js",
+	"devDependencies": {
+		"eslint-plugin-import": "^2.29.1"
+	}
 }

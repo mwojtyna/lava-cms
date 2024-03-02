@@ -1,13 +1,12 @@
 "use client";
 
-import * as React from "react";
 import type { DialogProps } from "@radix-ui/react-dialog";
-import { Command as CommandPrimitive } from "cmdk";
 import { MagnifyingGlassIcon } from "@heroicons/react/20/solid";
+import { Command as CommandPrimitive } from "cmdk";
+import * as React from "react";
 
-import { cn } from "@admin/src/utils/styling";
-import { Dialog, DialogContent } from "@admin/src/components/ui/client";
-import { TypographyMuted } from "../server";
+import { Dialog, DialogContent } from "@/src/components/ui/client/Dialog";
+import { cn } from "@/src/utils/styling";
 
 const Command = React.forwardRef<
 	React.ElementRef<typeof CommandPrimitive>,
@@ -17,7 +16,7 @@ const Command = React.forwardRef<
 		ref={ref}
 		className={cn(
 			"flex h-full w-full flex-col overflow-hidden rounded-md bg-popover text-popover-foreground",
-			className
+			className,
 		)}
 		{...props}
 	/>
@@ -46,7 +45,7 @@ const CommandInput = React.forwardRef<
 			ref={ref}
 			className={cn(
 				"placeholder:text-foreground-muted flex h-11 w-full rounded-md bg-transparent py-3 text-sm outline-none disabled:cursor-not-allowed disabled:opacity-50",
-				className
+				className,
 			)}
 			{...props}
 		/>
@@ -61,7 +60,7 @@ const CommandList = React.forwardRef<
 >(({ className, ...props }, ref) => (
 	<CommandPrimitive.List
 		ref={ref}
-		className={cn("max-h-[300px] overflow-y-auto overflow-x-hidden", className)}
+		className={cn("overflow-y-auto overflow-x-hidden p-1 text-foreground", className)}
 		{...props}
 	/>
 ));
@@ -72,9 +71,11 @@ const CommandEmpty = React.forwardRef<
 	React.ElementRef<typeof CommandPrimitive.Empty>,
 	React.ComponentPropsWithoutRef<typeof CommandPrimitive.Empty>
 >((props, ref) => (
-	<TypographyMuted>
-		<CommandPrimitive.Empty ref={ref} className="py-6 text-center text-sm" {...props} />
-	</TypographyMuted>
+	<CommandPrimitive.Empty
+		ref={ref}
+		className="py-6 text-center text-sm text-muted-foreground"
+		{...props}
+	/>
 ));
 
 CommandEmpty.displayName = CommandPrimitive.Empty.displayName;
@@ -87,7 +88,7 @@ const CommandGroup = React.forwardRef<
 		ref={ref}
 		className={cn(
 			"overflow-hidden p-1 text-foreground [&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:py-1.5 [&_[cmdk-group-heading]]:text-xs [&_[cmdk-group-heading]]:font-medium [&_[cmdk-group-heading]]:text-muted-foreground",
-			className
+			className,
 		)}
 		{...props}
 	/>
@@ -114,8 +115,8 @@ const CommandItem = React.forwardRef<
 	<CommandPrimitive.Item
 		ref={ref}
 		className={cn(
-			"relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none aria-selected:bg-accent aria-selected:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
-			className
+			"relative flex cursor-pointer select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none aria-selected:bg-accent aria-selected:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
+			className,
 		)}
 		{...props}
 	/>
@@ -133,6 +134,10 @@ const CommandShortcut = ({ className, ...props }: React.HTMLAttributes<HTMLSpanE
 };
 CommandShortcut.displayName = "CommandShortcut";
 
+const CommandLoading = (props: React.ComponentPropsWithoutRef<typeof CommandPrimitive.Loading>) => (
+	<CommandPrimitive.Loading {...props} />
+);
+
 export {
 	Command,
 	CommandDialog,
@@ -143,4 +148,5 @@ export {
 	CommandItem,
 	CommandShortcut,
 	CommandSeparator,
+	CommandLoading,
 };

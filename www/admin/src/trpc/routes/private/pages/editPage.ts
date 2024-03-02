@@ -1,9 +1,9 @@
-import { z } from "zod";
-import { TRPCError } from "@trpc/server";
-import { prisma } from "@admin/prisma/client";
-import { privateProcedure } from "@admin/src/trpc";
-import { urlRegex } from "@admin/src/trpc/regex";
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
+import { TRPCError } from "@trpc/server";
+import { z } from "zod";
+import { prisma } from "@/prisma/client";
+import { privateProcedure } from "@/src/trpc";
+import { urlRegex } from "@/src/utils/regex";
 
 export const editPage = privateProcedure
 	.input(
@@ -11,7 +11,7 @@ export const editPage = privateProcedure
 			id: z.string().cuid(),
 			newName: z.string(),
 			newUrl: z.string().regex(urlRegex),
-		})
+		}),
 	)
 	.mutation(async ({ input }) => {
 		const page = await prisma.page.findFirst({
@@ -32,7 +32,7 @@ export const editPage = privateProcedure
 						last_update: new Date(),
 					},
 				}),
-				prisma.$executeRaw`UPDATE frontend.page SET "url" = REPLACE("url", ${page.url} || '/', ${input.newUrl} || '/'), "last_update" = Now() WHERE "url" LIKE ${page.url} || '/%';`,
+				prisma.$executeRaw`UPDATE page SET "url" = REPLACE("url", ${page.url} || '/', ${input.newUrl} || '/'), "last_update" = Now() WHERE "url" LIKE ${page.url} || '/%';`,
 			]);
 		} catch (error) {
 			if (error instanceof PrismaClientKnownRequestError) {

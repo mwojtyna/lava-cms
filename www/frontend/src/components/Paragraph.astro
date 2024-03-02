@@ -1,0 +1,25 @@
+---
+interface Props {
+	cms: {
+		content: string;
+	};
+}
+const { cms } = Astro.props;
+---
+
+<div id="paragraph" set:html={cms.content} />
+
+<style>
+	#paragraph {
+		border: 1px solid red;
+
+		img {
+			max-width: 30rem;
+		}
+
+		table,
+		td {
+			border: 1px solid black;
+		}
+	}
+</style>

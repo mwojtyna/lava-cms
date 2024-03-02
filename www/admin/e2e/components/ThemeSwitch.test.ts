@@ -1,6 +1,5 @@
 import { test, expect, type BrowserContext } from "@playwright/test";
-import { type ColorTheme, colorThemeSchema } from "@admin/src/utils/cookies";
-import type { CookieName } from "@admin/src/utils/cookies";
+import { type ColorTheme, type CookieName, colorThemeSchema } from "@/src/utils/cookies";
 import { getColorScheme } from "../utils";
 
 const TEST_ID = "theme-switch";
@@ -33,7 +32,7 @@ test("when pressing the switch, cookie and theme are updated", async ({ page, co
 	expect(await getCookie(context)).toBeUndefined();
 
 	await page.emulateMedia({ colorScheme: "light" });
-	await page.goto("/admin/setup");
+	await page.goto("/admin/setup", { waitUntil: "networkidle" });
 
 	const themeSwitch = page.getByTestId(TEST_ID);
 
@@ -60,7 +59,7 @@ test("automatically switches to light theme and sets cookie if it is the preferr
 	expect(await getCookie(context)).toBe(undefined);
 
 	await page.emulateMedia({ colorScheme: "light" });
-	await page.goto("/admin/setup");
+	await page.goto("/admin/setup", { waitUntil: "networkidle" });
 
 	const colorScheme = await getColorScheme(page);
 	expect(colorScheme).toBe("light");
@@ -73,7 +72,7 @@ test("automatically switches to dark theme and sets cookie if it is the preferre
 	expect(await getCookie(context)).toBe(undefined);
 
 	await page.emulateMedia({ colorScheme: "dark" });
-	await page.goto("/admin/setup");
+	await page.goto("/admin/setup", { waitUntil: "networkidle" });
 
 	const colorScheme = await getColorScheme(page);
 	expect(colorScheme).toBe("dark");
@@ -97,22 +96,38 @@ test("when changing the preferred system theme, the website theme is updated", a
 	expect(await getColorScheme(page)).toBe("dark");
 	expect(await getCookie(context)).toBe("dark");
 });
-test("when cookie disagrees with preferred theme, cookie takes precedence", async ({
-	page,
-	context,
-}) => {
-	await context.addCookies([
-		{
-			name: "color-theme" satisfies CookieName,
-			value: "dark",
-			sameSite: "Lax",
-			domain: "localhost",
-			path: "/",
-		},
-	]);
-	await page.emulateMedia({ colorScheme: "light" });
-	await page.goto("/admin/setup");
 
-	expect(await getColorScheme(page)).toBe("dark");
-	expect(await getCookie(context)).toBe("dark");
+test.describe("when cookie disagrees with preferred theme, cookie takes precedence", () => {
+	test("cookie: dark, system: light", async ({ page, context }) => {
+		await context.addCookies([
+			{
+				name: "color-theme" satisfies CookieName,
+				value: "dark",
+				sameSite: "Lax",
+				domain: "localhost",
+				path: "/admin",
+			},
+		]);
+		await page.emulateMedia({ colorScheme: "light" });
+		await page.goto("/admin/setup");
+
+		expect(await getColorScheme(page)).toBe("dark");
+		expect(await getCookie(context)).toBe("dark");
+	});
+	test("cookie: light, system: dark", async ({ page, context }) => {
+		await context.addCookies([
+			{
+				name: "color-theme" satisfies CookieName,
+				value: "light",
+				sameSite: "Lax",
+				domain: "localhost",
+				path: "/admin",
+			},
+		]);
+		await page.emulateMedia({ colorScheme: "light" });
+		await page.goto("/admin/setup");
+
+		expect(await getColorScheme(page)).toBe("light");
+		expect(await getCookie(context)).toBe("light");
+	});
 });

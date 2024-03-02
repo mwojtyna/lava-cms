@@ -1,0 +1,18 @@
+---
+interface Props {
+	cms: {
+		random_value: string;
+	};
+}
+
+const { cms } = Astro.props;
+---
+
+<p>{cms.random_value}</p>
+
+<style>
+	p {
+		color: red;
+		border: 1px solid red;
+	}
+</style>

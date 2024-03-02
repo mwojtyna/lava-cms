@@ -1,9 +1,9 @@
-import { prisma } from "@admin/prisma/client";
 import type { Page } from "@prisma/client";
-import { privateProcedure } from "@admin/src/trpc";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
-import type { Breadcrumb } from "@admin/src/components/DataTable";
+import { prisma } from "@/prisma/client";
+import type { Breadcrumb } from "@/src/components/DataTable";
+import { privateProcedure } from "@/src/trpc";
 
 export const getGroupContents = privateProcedure
 	.input(z.object({ id: z.string() }).nullish())
@@ -14,9 +14,9 @@ export const getGroupContents = privateProcedure
 				breadcrumbs: [],
 				pages: await prisma.page
 					.findFirst({ where: { parent_id: null } })
-					.then((rootGroup) => {
-						return prisma.page.findMany({ where: { parent_id: rootGroup!.id } });
-					}),
+					.then((rootGroup) =>
+						prisma.page.findMany({ where: { parent_id: rootGroup!.id } }),
+					),
 			};
 		}
 
@@ -40,33 +40,33 @@ export const getGroupContents = privateProcedure
 
 async function getBreadcrumbs(page: Page): Promise<Breadcrumb[]> {
 	const breadcrumbs = await prisma.$queryRaw<Breadcrumb[]>`
-		WITH RECURSIVE breadcrumbs AS (
-  	  	  SELECT
-    		id,
-    		name,
-    		parent_id
-  	  	  FROM
-    		frontend.page
-  	  	  WHERE
-    		id = ${page.id}
-  	  	  UNION
-  	  	  SELECT
-    		p.id,
-    		p.name,
-    		p.parent_id
-  	  	  FROM
-    		frontend.page p
-  	  	  INNER JOIN
-    		breadcrumbs bc
-  	  	  ON
-    		p.id = bc.parent_id
-  	  	  WHERE p.parent_id IS NOT NULL
-		)
-		SELECT
-  	  	  id,
-  	  	  name
-		FROM
-  	  	  breadcrumbs;
+	WITH RECURSIVE breadcrumbs AS (
+  	  SELECT
+    	id,
+    	name,
+    	parent_id
+  	  FROM
+    	page
+  	  WHERE
+    	id = ${page.id}
+  	  UNION
+  	  SELECT
+    	p.id,
+    	p.name,
+    	p.parent_id
+  	  FROM
+    	page p
+  	  INNER JOIN
+    	breadcrumbs bc
+  	  ON
+    	p.id = bc.parent_id
+  	  WHERE p.parent_id IS NOT NULL
+	)
+	SELECT
+  	  id,
+  	  name
+	FROM
+  	  breadcrumbs;
 `;
 
 	return breadcrumbs.reverse();

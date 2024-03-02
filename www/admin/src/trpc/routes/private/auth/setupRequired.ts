@@ -1,11 +1,11 @@
-import { privateProcedure } from "@admin/src/trpc";
-import { prisma } from "@admin/prisma/client";
+import { prisma } from "@/prisma/client";
+import { privateProcedure } from "@/src/trpc";
 
 export const setupRequired = privateProcedure
 	.meta({ noAuth: true })
 	.query(async (): Promise<{ reason: "no-user" | "no-config" | null }> => {
-		const user = await prisma.user.findFirst();
-		const config = await prisma.config.findFirst();
+		const user = await prisma.adminUser.findFirst();
+		const config = await prisma.settingsSeo.findFirst();
 
 		if (!user) {
 			return { reason: "no-user" };

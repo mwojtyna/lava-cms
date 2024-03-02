@@ -1,48 +1,55 @@
+import { PrismaAdapter } from "@lucia-auth/adapter-prisma";
+import { Lucia, type Session, type User } from "lucia";
 import { cookies } from "next/headers";
-import { lucia, type User } from "lucia";
-import { nextjs } from "lucia/middleware";
-import { prisma } from "@lucia-auth/adapter-prisma";
-import "lucia/polyfill/node";
-import bcrypt from "bcrypt";
-import { prisma as prismaClient } from "@admin/prisma/client";
-import { env } from "@admin/src/env/server.mjs";
-import { url } from "./utils/server";
+import { cache } from "react";
+import { prisma } from "@/prisma/client";
+import { env } from "@/src/env/server.mjs";
+import "server-only";
 
-export const auth = lucia({
-	adapter: prisma(prismaClient, {
-		user: "user",
-		session: "session",
-		key: "key",
+const prismaAdapter = new PrismaAdapter(prisma.adminSession, prisma.adminUser);
+
+export const auth = new Lucia(prismaAdapter, {
+	getUserAttributes: (databaseUserAttributes) => ({
+		email: databaseUserAttributes.email,
+		name: databaseUserAttributes.name,
+		lastName: databaseUserAttributes.last_name,
 	}),
-	env: env.NODE_ENV !== "production" ? "DEV" : "PROD", // DEV means http, PROD means https
-	middleware: nextjs(),
-	getUserAttributes: (user) => ({
-		name: user.name,
-		lastName: user.last_name,
-		email: user.email,
-	}),
-	passwordHash: {
-		generate: (password) => bcrypt.hash(password, 10),
-		validate: (password, hash) => bcrypt.compare(password, hash),
-	},
-	// Session is active for 1 day
-	// after that there is 2 weeks time when the user can re-activate the session
-	// after that the session expires
 	sessionCookie: {
-		// Expires set to `false` means the cookie will expire in a year
-		// otherwise the cookie itself will expire in 1 day, and won't extend
-		// its expiration date when the session is re-activated
 		expires: false,
-		attributes: { sameSite: "strict", path: "/admin" },
+		attributes: {
+			path: "/admin",
+			sameSite: "strict",
+			secure: env.NODE_ENV === "production",
+		},
 	},
-	allowedRequestOrigins: [url()],
 });
 
-export const getCurrentUser = async (): Promise<User | undefined> => {
-	const authReq = auth.handleRequest({ request: null, cookies });
-	const session = await authReq.validate();
+export const validateRequest = cache(
+	async (): Promise<{ user: User; session: Session } | { user: null; session: null }> => {
+		const sessionId = cookies().get(auth.sessionCookieName)?.value ?? null;
+		if (!sessionId) {
+			return {
+				user: null,
+				session: null,
+			};
+		}
 
-	return session?.user;
-};
+		const result = await auth.validateSession(sessionId);
+		try {
+			if (result.session?.fresh) {
+				const sessionCookie = auth.createSessionCookie(result.session.id);
+				cookies().set(sessionCookie.name, sessionCookie.value, sessionCookie.attributes);
+			}
+			if (!result.session) {
+				const sessionCookie = auth.createBlankSessionCookie();
+				cookies().set(sessionCookie.name, sessionCookie.value, sessionCookie.attributes);
+			}
+		} catch {
+			// next.js throws when you attempt to set cookie when rendering page
+		}
+
+		return result;
+	},
+);
 
 export type Auth = typeof auth;

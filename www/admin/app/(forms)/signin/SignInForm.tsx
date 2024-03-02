@@ -6,26 +6,26 @@ import {
 	ExclamationCircleIcon,
 	ArrowRightOnRectangleIcon,
 } from "@heroicons/react/24/outline";
-import { type SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
+import { type SubmitHandler, useForm } from "react-hook-form";
 import { z } from "zod";
-import { Alert, AlertTitle } from "@admin/src/components/ui/server";
+import { Button } from "@/src/components/ui/client/Button";
 import {
-	Input,
-	Button,
 	FormField,
 	FormItem,
 	FormLabel,
 	FormControl,
 	FormError,
-} from "@admin/src/components/ui/client";
+} from "@/src/components/ui/client/Form";
+import { Input } from "@/src/components/ui/client/Input";
+import { Alert, AlertTitle } from "@/src/components/ui/server/Alert";
+import { trpc } from "@/src/utils/trpc";
 import { SinglePageForm } from "../SinglePageForm";
-import { trpc } from "@admin/src/utils/trpc";
 
 const schema = z.object({
-	email: z.string().nonempty(" ").email("The e-mail you provided is invalid."),
-	password: z.string().nonempty(),
+	email: z.string().min(1, " ").email("The e-mail you provided is invalid."),
+	password: z.string().min(1),
 });
 type Inputs = z.infer<typeof schema>;
 

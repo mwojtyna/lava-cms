@@ -1,13 +1,13 @@
 import { expect } from "@playwright/test";
-import { prisma } from "@admin/prisma/client";
-import { test } from "@admin/e2e/fixtures";
+import { test } from "@/e2e/fixtures";
 import {
 	createMockUser,
 	deleteMockUser,
 	userMock,
 	userPasswordDecrypted,
-	websiteSettingsMock,
-} from "@admin/e2e/mocks";
+	seoSettingsMock,
+} from "@/e2e/mocks";
+import { prisma } from "@/prisma/client";
 
 test.describe("sign up step", () => {
 	test.afterAll(async () => {
@@ -103,10 +103,10 @@ test.describe("setup website step", () => {
 	});
 	test.afterAll(async () => {
 		await deleteMockUser();
-		await prisma.config.deleteMany();
+		await prisma.settingsSeo.deleteMany();
 		await prisma.page.deleteMany();
 		await prisma.componentDefinitionGroup.deleteMany();
-		await prisma.token.deleteMany();
+		await prisma.settingsConnection.deleteMany();
 	});
 
 	test("light theme visual comparison", async ({ page }) => {
@@ -126,13 +126,19 @@ test.describe("setup website step", () => {
 		await expect(page).toHaveScreenshot();
 	});
 
-	test("shows error when language code invalid", async ({ page }) => {
-		await page.goto("/admin/setup");
-		await page.locator("input[type='text']").first().type(websiteSettingsMock.title);
+	test("shows error when language code invalid", async ({ authedPage: page }) => {
+		// authedPage fixture automatically creates a config and a Root page
+		// we don't want that for this test because if it exists
+		// then it will redirect to /dashboard
+		await prisma.settingsSeo.deleteMany();
+		await prisma.page.deleteMany();
 
-		const languageInput = page.locator("input[type='text']").nth(1);
+		await page.goto("/admin/setup");
+		await page.base.locator("input[type='text']").first().type(seoSettingsMock.title);
+
+		const languageInput = page.base.locator("input[type='text']").nth(1);
 		await languageInput.type("invalid");
-		await page.locator("button[type='submit']").click();
+		await page.base.locator("button[type='submit']").click();
 
 		await expect(languageInput).toHaveAttribute("aria-invalid", "true");
 	});
@@ -141,21 +147,21 @@ test.describe("setup website step", () => {
 		// authedPage fixture automatically creates a config and a Root page
 		// we don't want that for this test because if it exists
 		// then it will redirect to /dashboard
-		await prisma.config.deleteMany();
+		await prisma.settingsSeo.deleteMany();
 		await prisma.page.deleteMany();
 
 		await page.goto("/admin/setup");
-		await page.base.locator("input[type='text']").first().type(websiteSettingsMock.title);
-		await page.base.locator("input[type='text']").nth(1).type(websiteSettingsMock.language);
+		await page.base.locator("input[type='text']").first().type(seoSettingsMock.title);
+		await page.base.locator("input[type='text']").nth(1).type(seoSettingsMock.language);
 		await page.base.locator("button[type='submit']").click();
 		await page.base.waitForURL(/dashboard/);
 
 		expect(page.base.url()).toMatch(/dashboard/);
 		await expect(page.base.locator("#content").first()).toBeInViewport();
-		await expect(prisma.config.findFirstOrThrow()).resolves.toMatchObject({
-			title: websiteSettingsMock.title,
+		await expect(prisma.settingsSeo.findFirstOrThrow()).resolves.toMatchObject({
+			title: seoSettingsMock.title,
 			description: "",
-			language: websiteSettingsMock.language,
-		} satisfies typeof websiteSettingsMock);
+			language: seoSettingsMock.language,
+		} satisfies typeof seoSettingsMock);
 	});
 });

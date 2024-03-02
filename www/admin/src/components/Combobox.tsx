@@ -1,20 +1,30 @@
 "use client";
 
+import { ArrowUturnLeftIcon, CheckIcon, ChevronUpDownIcon } from "@heroicons/react/20/solid";
 import * as React from "react";
-import { CheckIcon, ChevronUpDownIcon } from "@heroicons/react/20/solid";
-import { cn } from "@admin/src/utils/styling";
+import { cn } from "@/src/utils/styling";
+import { ActionIcon } from "./ui/client/ActionIcon";
+import { Button } from "./ui/client/Button";
 import {
-	Button,
 	Command,
-	CommandEmpty,
-	CommandGroup,
 	CommandInput,
+	CommandEmpty,
 	CommandItem,
-	FormControl,
-	Popover,
-	PopoverContent,
-	PopoverTrigger,
-} from "@admin/src/components/ui/client";
+	CommandLoading,
+	CommandList,
+} from "./ui/client/Command";
+import { FormControl } from "./ui/client/Form";
+import { PopoverContent, Popover, PopoverTrigger } from "./ui/client/Popover";
+import { Loader } from "./ui/server/Loader";
+
+const getRestorableComboboxProps = (edited: boolean, restore: () => void) => ({
+	className: cn(edited && "ring-2 ring-brand ring-offset-2 ring-offset-black"),
+	restoreButton: edited ? (
+		<ActionIcon variant={"simple"} onClick={restore} tooltip="Restore">
+			<ArrowUturnLeftIcon className="w-5" />
+		</ActionIcon>
+	) : null,
+});
 
 type ComboboxData = Array<{
 	value: string;
@@ -22,10 +32,16 @@ type ComboboxData = Array<{
 	description: React.ReactNode;
 	filterValue: string;
 }>;
+type ContentProps = { placeholder?: string } & React.ComponentPropsWithoutRef<
+	typeof PopoverContent
+>;
 interface ComboboxProps extends Omit<React.ComponentPropsWithoutRef<typeof Button>, "onChange"> {
 	data: ComboboxData;
-	contentProps?: React.ComponentPropsWithoutRef<typeof PopoverContent>;
+	contentProps?: ContentProps;
+	placeholder?: React.ReactNode;
 	notFoundContent: React.ReactNode;
+	deselectable?: boolean;
+	loading?: boolean;
 
 	// react-hook-form props
 	value?: string;
@@ -35,7 +51,18 @@ interface ComboboxProps extends Omit<React.ComponentPropsWithoutRef<typeof Butto
 }
 const Combobox = React.forwardRef<React.ComponentRef<typeof Button>, ComboboxProps>(
 	(
-		{ data, className, contentProps, placeholder, notFoundContent, value, onChange, ...props },
+		{
+			data,
+			className,
+			contentProps,
+			placeholder,
+			notFoundContent,
+			deselectable,
+			loading,
+			value,
+			onChange,
+			...props
+		},
 		ref,
 	) => {
 		const [open, setOpen] = React.useState(false);
@@ -78,11 +105,22 @@ const Combobox = React.forwardRef<React.ComponentRef<typeof Button>, ComboboxPro
 							value={search}
 							onValueChange={(value) => setSearch(value)}
 						/>
-						<CommandEmpty>{notFoundContent}</CommandEmpty>
-						<CommandGroup>
+						{!loading && <CommandEmpty>{notFoundContent}</CommandEmpty>}
+						<CommandList>
+							{loading && (
+								<div className="flex justify-center py-2 text-sm text-muted-foreground">
+									<CommandLoading>
+										Loading <Loader />
+									</CommandLoading>
+								</div>
+							)}
+
 							{data.map((item, i) => {
-								if (!item.filterValue.toLowerCase().includes(search.toLowerCase()))
+								if (
+									!item.filterValue.toLowerCase().includes(search.toLowerCase())
+								) {
 									return null;
+								}
 
 								return (
 									<CommandItem
@@ -92,7 +130,13 @@ const Combobox = React.forwardRef<React.ComponentRef<typeof Button>, ComboboxPro
 											// We don't use the provided value from onSelect because it's automatically
 											// inferred from the textContent of <CommandItem> and not the value prop
 											// for some stupid reason
-											onChange?.(item.value === value ? "" : item.value);
+											onChange?.(
+												deselectable
+													? item.value === value
+														? ""
+														: item.value
+													: item.value,
+											);
 											setOpen(false);
 										}}
 									>
@@ -109,7 +153,7 @@ const Combobox = React.forwardRef<React.ComponentRef<typeof Button>, ComboboxPro
 									</CommandItem>
 								);
 							})}
-						</CommandGroup>
+						</CommandList>
 					</Command>
 				</PopoverContent>
 			</Popover>
@@ -118,4 +162,4 @@ const Combobox = React.forwardRef<React.ComponentRef<typeof Button>, ComboboxPro
 );
 Combobox.displayName = "Combobox";
 
-export { Combobox, type ComboboxData };
+export { Combobox, type ComboboxData, getRestorableComboboxProps };

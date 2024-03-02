@@ -1,51 +1,73 @@
+import {
+	useRouter,
+	useSearchParams as useNextSearchParams,
+	usePathname,
+	type ReadonlyURLSearchParams,
+} from "next/navigation";
 import * as React from "react";
-import { useRouter } from "next/navigation";
-import { useSearchParams as useNextSearchParams } from "next/navigation";
-import { usePathname } from "next/navigation";
+import "client-only";
 
-interface Callbacks {
-	onChanged?: (value: URLSearchParams) => void;
+interface Options {
+	onChanged?: (value: ReadonlyURLSearchParams) => void;
+	removeWhenValueIsEmptyString?: boolean;
+	/** Uses `router.replace()` instead of `router.push()` */
+	replace?: boolean;
 }
 
-export const useSearchParams = (callbacks?: Callbacks) => {
+export function useSearchParams(options?: Options): {
+	searchParams: ReadonlyURLSearchParams;
+	setSearchParams: (values: Record<string, unknown>) => void;
+} {
 	const router = useRouter();
 	const pathname = usePathname();
-	const searchParams = useNextSearchParams()!;
+	const searchParams = useNextSearchParams();
 
 	React.useEffect(
 		() => {
-			callbacks?.onChanged?.(new URLSearchParams(searchParams.toString()));
+			options?.onChanged?.(searchParams);
 		},
-		// If we include callbacks in the dependency array, it will call it infinitely
+		// If we include options in the dependency array, it will call it infinitely
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 		[searchParams],
 	);
 
-	const setSearchParams = React.useCallback(
-		(values: Record<string, unknown>) => {
-			const queryString = createQueryString(values);
-			// If the query string is empty, remove it from the URL
-			if (queryString === "") {
-				router.push(pathname);
-				return;
-			}
-			router.push(`${pathname}?${queryString}`);
+	function navigate(href: string) {
+		if (options?.replace) {
+			router.replace(href);
+		} else {
+			router.push(href);
+		}
+	}
+	function setSearchParams(values: Record<string, unknown>) {
+		const queryString = createQueryString(values);
 
-			// Get a new searchParams string by merging the current
-			// searchParams with a provided key/value pair
-			function createQueryString(values: Record<string, unknown>) {
-				const params = new URLSearchParams(searchParams.toString());
+		// If the query string is empty, remove it from the URL
+		if (queryString === "") {
+			navigate(pathname);
+			return;
+		}
+		navigate(`${pathname}?${queryString}`);
 
-				for (const [key, value] of Object.entries(values)) {
-					if (value !== undefined) params.set(key, value as string);
-					else params.delete(key);
+		// Get a new searchParams string by merging the current
+		// searchParams with a provided key/value pair
+		function createQueryString(values: Record<string, unknown>) {
+			const params = new URLSearchParams(searchParams.toString());
+
+			for (const [key, value] of Object.entries(values)) {
+				if (value !== undefined) {
+					if (options?.removeWhenValueIsEmptyString && value === "") {
+						params.delete(key);
+					} else {
+						params.set(key, value as string);
+					}
+				} else {
+					params.delete(key);
 				}
-
-				return params.toString();
 			}
-		},
-		[pathname, router, searchParams],
-	);
+
+			return params.toString();
+		}
+	}
 
 	return { searchParams, setSearchParams };
-};
+}

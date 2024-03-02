@@ -1,13 +1,16 @@
 "use client";
 
-import { useState } from "react";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { MutationCache, QueryCache, QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { httpBatchLink, loggerLink } from "@trpc/client";
-import SuperJSON from "superjson";
-import { trpc } from "@admin/src/utils/trpc";
-import { env } from "@admin/src/env/client.mjs";
+import { useState } from "react";
+import { SuperJSON } from "superjson";
+import { env } from "@/src/env/client.mjs";
+import { useToast } from "@/src/hooks/useToast";
+import { trpc } from "@/src/utils/trpc";
 
 export function TrpcProvider({ children }: { children: React.ReactNode }) {
+	const { toastError } = useToast();
+
 	const [trpcClient] = useState(
 		trpc.createClient({
 			links: [
@@ -26,6 +29,28 @@ export function TrpcProvider({ children }: { children: React.ReactNode }) {
 					refetchOnWindowFocus: false,
 				},
 			},
+			queryCache: new QueryCache({
+				onError: (err) => {
+					const error = err as { data?: { httpStatus: number } };
+					if (error.data?.httpStatus === 500) {
+						toastError({
+							title: "Error",
+							description: "Failed to fetch data.",
+						});
+					}
+				},
+			}),
+			mutationCache: new MutationCache({
+				onError: (err) => {
+					const error = err as { data?: { httpStatus: number } };
+					if (error.data?.httpStatus === 500) {
+						toastError({
+							title: "Error",
+							description: "Failed to perform action.",
+						});
+					}
+				},
+			}),
 		}),
 	);
 

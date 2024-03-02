@@ -1,6 +1,6 @@
-import { prisma } from "@admin/prisma/client";
-import { privateProcedure } from "@admin/src/trpc";
 import { z } from "zod";
+import { prisma } from "@/prisma/client";
+import { privateProcedure } from "@/src/trpc";
 
 export const deleteGroup = privateProcedure
 	.input(

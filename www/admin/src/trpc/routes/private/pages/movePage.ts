@@ -1,7 +1,7 @@
-import { z } from "zod";
 import { TRPCError } from "@trpc/server";
-import { prisma } from "@admin/prisma/client";
-import { privateProcedure } from "@admin/src/trpc";
+import { z } from "zod";
+import { prisma } from "@/prisma/client";
+import { privateProcedure } from "@/src/trpc";
 import { caller } from "../_private";
 
 export const movePage = privateProcedure
@@ -28,7 +28,7 @@ export const movePage = privateProcedure
 		await caller.pages.editPage({
 			id: input.id,
 			newName: page.name,
-			newUrl: parentGroup.url + "/" + page.url.split("/").pop()!,
+			newUrl: parentGroup.url + "/" + page.url.split("/").at(-1)!,
 		});
 		await prisma.page.update({
 			where: { id: input.id },

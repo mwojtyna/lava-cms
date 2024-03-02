@@ -1,42 +1,37 @@
-import { prisma } from "@admin/prisma/client";
-import type { User, Config } from "@prisma/client";
+import type { AdminUser, SettingsConnection, SettingsSeo } from "@prisma/client";
+import { prisma } from "@/prisma/client";
 
-export const userMock: User = {
+export const DEFAULT_SESSION_COOKIE_NAME = "auth_session";
+
+export const userMock: AdminUser = {
 	id: "pvelcizx9an5cufryuh85wd0",
 	name: "John",
 	last_name: "Doe",
 	email: "johndoe@domain.com",
+	password:
+		"$argon2id$v=19$m=19456,t=2,p=1$GjBaRth7cLqIlfbacMIRMg$66ix1L+bMvh1CLNGG/QEMKR3B6llsf/TFblQsrjkKiE",
 };
 export const userPasswordDecrypted = "Zaq1@wsx";
 
-export const websiteSettingsMock: Omit<Config, "id"> = {
+export const seoSettingsMock: Omit<SettingsSeo, "id"> = {
 	title: "My website",
 	description: "My website description",
 	language: "en",
 };
-
-export const tokenMock = "Rdt9DZz45guRCk6d9S8dASl9pSIXeqyh";
+export const connectionSettingsMock: Omit<SettingsConnection, "id"> = {
+	token: "Rdt9DZz45guRCk6d9S8dASl9pSIXeqyh",
+	development_url: "http://localhost:3000",
+};
 
 export async function createMockUser() {
 	await prisma.$transaction([
-		prisma.user.create({
+		prisma.adminUser.create({
 			data: userMock,
-		}),
-		prisma.key.create({
-			data: {
-				id: `email:${userMock.email}`,
-				hashed_password: "$2b$10$ZVGT1G/c.WqZHa9UpSBTEeDRuL6sd/.k.RgPGE0YaZuPDdaV3Oe1G",
-				user_id: userMock.id,
-			},
 		}),
 	]);
 
 	return userMock;
 }
 export async function deleteMockUser() {
-	await prisma.$transaction([
-		prisma.user.deleteMany(),
-		prisma.session.deleteMany(),
-		prisma.key.deleteMany(),
-	]);
+	await prisma.$transaction([prisma.adminUser.deleteMany(), prisma.adminSession.deleteMany()]);
 }

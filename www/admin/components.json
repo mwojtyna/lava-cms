@@ -5,11 +5,11 @@
 	"tailwind": {
 		"config": "tailwind.config.ts",
 		"css": "src/styles/globals.css",
-		"baseColor": "slate",
+		"baseColor": "gray",
 		"cssVariables": true
 	},
 	"aliases": {
-		"components": "@admin/src/components",
-		"utils": "@admin/src/utils/styling"
+		"components": "@/src/components",
+		"utils": "@/src/utils/styling"
 	}
 }

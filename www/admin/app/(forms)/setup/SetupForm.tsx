@@ -1,28 +1,23 @@
 "use client";
 
+import { ArrowRightIcon } from "@heroicons/react/20/solid";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { type SubmitHandler, useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { ArrowRightIcon } from "@heroicons/react/20/solid";
-import { InfoTooltip } from "@admin/src/components";
-import {
-	Button,
-	FormControl,
-	FormField,
-	FormItem,
-	FormLabel,
-	Input,
-	Textarea,
-} from "@admin/src/components/ui/client";
-import { TypographyCode } from "@admin/src/components/ui/server";
+import { InfoTooltip } from "@/src/components/InfoTooltip";
+import { Button } from "@/src/components/ui/client/Button";
+import { FormField, FormItem, FormLabel, FormControl } from "@/src/components/ui/client/Form";
+import { Input } from "@/src/components/ui/client/Input";
+import { Textarea } from "@/src/components/ui/client/Textarea";
+import { TypographyCode } from "@/src/components/ui/server/typography";
+import { trpc } from "@/src/utils/trpc";
 import { SinglePageForm } from "../SinglePageForm";
-import { trpc } from "@admin/src/utils/trpc";
 
 const schema = z.object({
-	title: z.string().nonempty(),
+	title: z.string().min(1),
 	description: z.string(),
-	language: z.string().nonempty(),
+	language: z.string().min(1),
 });
 
 type Inputs = z.infer<typeof schema>;
@@ -30,12 +25,12 @@ type Inputs = z.infer<typeof schema>;
 export function SetupForm() {
 	const router = useRouter();
 
-	const setConfigMutation = trpc.config.setConfig.useMutation();
-	const setupMutation = trpc.config.setup.useMutation();
+	const setSeoSettingsMutation = trpc.settings.setSeoSettings.useMutation();
+	const setupMutation = trpc.settings.setup.useMutation();
 
 	const form = useForm<Inputs>({ resolver: zodResolver(schema) });
 	const onSubmit: SubmitHandler<Inputs> = (data) => {
-		setConfigMutation.mutate(data, {
+		setSeoSettingsMutation.mutate(data, {
 			onSuccess: async () => {
 				await setupMutation.mutateAsync();
 				router.replace("/dashboard");
@@ -63,7 +58,7 @@ export function SetupForm() {
 					size="lg"
 					icon={<ArrowRightIcon className="w-5" />}
 					className="ml-auto shadow-lg shadow-primary/25"
-					loading={setConfigMutation.isLoading || setupMutation.isLoading}
+					loading={setSeoSettingsMutation.isLoading || setupMutation.isLoading}
 				>
 					Finish
 				</Button>

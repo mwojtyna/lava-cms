@@ -1,12 +1,6 @@
 "use client";
 
-import Link from "next/link";
-import {
-	flexRender,
-	type ColumnDef,
-	type Table as TableType,
-	type Column,
-} from "@tanstack/react-table";
+import { ChevronDownIcon, ChevronUpDownIcon, ChevronUpIcon } from "@heroicons/react/20/solid";
 import {
 	HomeIcon,
 	ChevronRightIcon,
@@ -16,25 +10,18 @@ import {
 	FolderIcon,
 } from "@heroicons/react/24/outline";
 import {
-	Table,
-	TableHeader,
-	TableRow,
-	TableHead,
-	TableBody,
-	TableCell,
-	Stepper,
-} from "./ui/server";
+	flexRender,
+	type ColumnDef,
+	type Table as TableType,
+	type Column,
+} from "@tanstack/react-table";
+import Link from "next/link";
 import { cn } from "../utils/styling";
-import {
-	ActionIcon,
-	Button,
-	Select,
-	SelectContent,
-	SelectItem,
-	SelectTrigger,
-	SelectValue,
-} from "./ui/client";
-import { ChevronDownIcon, ChevronUpDownIcon, ChevronUpIcon } from "@heroicons/react/20/solid";
+import { ActionIcon } from "./ui/client/ActionIcon";
+import { Button } from "./ui/client/Button";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/client/Select";
+import { Stepper } from "./ui/server/Stepper";
+import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "./ui/server/Table";
 
 export const dateFormatOptions: Intl.DateTimeFormatOptions = {
 	year: "numeric",
@@ -69,7 +56,7 @@ export function DataTable<T>(props: Props<T>) {
 										: flexRender(
 												header.column.columnDef.header,
 												header.getContext(),
-										  )}
+											)}
 								</TableHead>
 							))}
 						</TableRow>
@@ -88,6 +75,7 @@ export function DataTable<T>(props: Props<T>) {
 											i > 0 && "text-muted-foreground",
 											i === cells.length - 1 && "py-0",
 										)}
+										suppressHydrationWarning
 									>
 										{flexRender(cell.column.columnDef.cell, cell.getContext())}
 									</TableCell>
@@ -122,7 +110,8 @@ export function DataTableBreadcrumbs<T extends Breadcrumb>({
 		<>
 			{breadcrumbs.length > 0 && (
 				<Stepper
-					className="-mb-2"
+					className="-mb-2 overflow-x-auto"
+					firstIsIcon
 					steps={[
 						<Link key={0} href={rootUrl}>
 							<ActionIcon className="-mr-2">
@@ -139,9 +128,7 @@ export function DataTableBreadcrumbs<T extends Breadcrumb>({
 								)}
 								asChild
 							>
-								<Link key={i} href={`${rootUrl}/${breadcrumb.id}`}>
-									{breadcrumb.name}
-								</Link>
+								<Link href={`${rootUrl}/${breadcrumb.id}`}>{breadcrumb.name}</Link>
 							</Button>
 						)),
 					]}

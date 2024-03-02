@@ -1,5 +1,5 @@
 import * as React from "react";
-import { cn } from "@admin/src/utils/styling";
+import { cn } from "@/src/utils/styling";
 
 const Table = React.forwardRef<HTMLTableElement, React.HTMLAttributes<HTMLTableElement>>(
 	({ className, ...props }, ref) => (
@@ -10,7 +10,7 @@ const Table = React.forwardRef<HTMLTableElement, React.HTMLAttributes<HTMLTableE
 				{...props}
 			/>
 		</div>
-	)
+	),
 );
 Table.displayName = "Table";
 
@@ -48,11 +48,11 @@ const TableRow = React.forwardRef<HTMLTableRowElement, React.HTMLAttributes<HTML
 			ref={ref}
 			className={cn(
 				"border-b transition-colors hover:bg-accent/70 data-[state=selected]:bg-muted",
-				className
+				className,
 			)}
 			{...props}
 		/>
-	)
+	),
 );
 TableRow.displayName = "TableRow";
 
@@ -64,7 +64,7 @@ const TableHead = React.forwardRef<
 		ref={ref}
 		className={cn(
 			"h-12 px-4 text-left align-middle font-semibold [&:has([role=checkbox])]:pr-0",
-			className
+			className,
 		)}
 		{...props}
 	/>

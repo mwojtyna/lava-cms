@@ -19,9 +19,10 @@ export class AuthedPage {
 	async goto(url: string, options?: Parameters<Page["goto"]>[1]) {
 		await this.base.goto(
 			url,
-			this.browser.browserType().name() === "webkit"
-				? { waitUntil: "networkidle", ...options }
-				: options,
+			options,
+			// this.browser.browserType().name() === "webkit"
+			// 	? { waitUntil: "networkidle", ...options }
+			// 	: options,
 		);
 	}
 }

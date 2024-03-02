@@ -4,14 +4,15 @@ module.exports = {
 		"next/core-web-vitals",
 		"plugin:@typescript-eslint/recommended-type-checked",
 		"plugin:@typescript-eslint/stylistic-type-checked",
+		"plugin:import/recommended",
+		"plugin:import/typescript",
 	],
-	plugins: ["@typescript-eslint"],
 	parser: "@typescript-eslint/parser",
 	parserOptions: {
 		project: true,
 		tsconfigRootDir: __dirname,
 	},
-	ignorePatterns: [".eslintrc.cjs", "playwright-report"],
+	ignorePatterns: [".eslintrc.cjs", "playwright-report", "generated"],
 	rules: {
 		"@typescript-eslint/no-non-null-assertion": "off",
 		"@typescript-eslint/consistent-type-imports": "warn",
@@ -24,6 +25,31 @@ module.exports = {
 		"@typescript-eslint/consistent-type-definitions": "off",
 		"@typescript-eslint/array-type": "off",
 		"@typescript-eslint/prefer-nullish-coalescing": ["error", { ignoreConditionalTests: true }],
+		"import/order": [
+			"warn",
+			{
+				groups: [
+					"type",
+					"builtin",
+					"external",
+					"internal",
+					"parent",
+					"sibling",
+					"index",
+					"object",
+				],
+				pathGroups: [
+					{
+						pattern: "@/**",
+						group: "internal",
+					},
+				],
+				alphabetize: {
+					order: "asc",
+					caseInsensitive: true,
+				},
+			},
+		],
 	},
 	overrides: [
 		{
