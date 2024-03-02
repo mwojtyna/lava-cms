@@ -18,19 +18,19 @@ jobs:
         uses: actions/checkout@v4.1.1
 
       - name: Setup Node.js environment
-        uses: actions/setup-node@v4.0.0
+        uses: actions/setup-node@v4.0.2
         with:
           node-version-file: ".nvmrc"
 
       - name: Setup pnpm
-        uses: pnpm/action-setup@v2.4.0
+        uses: pnpm/action-setup@v3.0.0
         id: pnpm-install
         with:
           version: 8
           run_install: false
 
       - name: Setup pnpm cache
-        uses: actions/cache@v3.3.2
+        uses: actions/cache@v4.0.0
         with:
           path: ${{ github.workspace }}/.pnpm-store/v3
           key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
@@ -45,12 +45,12 @@ jobs:
       - name: Setup postgres
         run: |
           cp .env.test .env
-          docker run -p 5432:5432 -e POSTGRES_USER=admin -e POSTGRES_PASSWORD=admin -d postgres:15.3-alpine
+          docker compose up postgres -d
           sleep 5
           pnpm db:push
 
       - name: Setup Next.js cache
-        uses: actions/cache@v3.3.2
+        uses: actions/cache@v4.0.0
         with:
           # See here for caching with `yarn` https://github.com/actions/cache/blob/main/examples.md#node---yarn or you can leverage caching with actions/setup-node https://github.com/actions/setup-node
           path: ${{ github.workspace }}/www/admin/.next/cache
@@ -68,7 +68,7 @@ jobs:
         run: CI=true pnpm e2e --project ${{ inputs.browser }}
 
       - name: Upload report
-        uses: actions/upload-artifact@v3.1.3
+        uses: actions/upload-artifact@v4.3.1
         if: always()
         with:
           name: playwright-${{ inputs.browser }}-report
