@@ -2,12 +2,13 @@ import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import { prisma } from "@/prisma/client";
 import { privateProcedure } from "@/src/trpc";
+import { displayNameRegex } from "@/src/utils/regex";
 import { fieldDefSchema } from "./types";
 
 export const addComponentDefinition = privateProcedure
 	.input(
 		z.object({
-			name: z.string(),
+			name: z.string().regex(displayNameRegex),
 			groupId: z.string().cuid(),
 			fields: z.array(fieldDefSchema),
 		}),

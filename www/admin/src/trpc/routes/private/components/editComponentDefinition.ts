@@ -3,6 +3,7 @@ import { z } from "zod";
 import { prisma } from "@/prisma/client";
 import { getInitialValue } from "@/src/data/stores/utils";
 import { privateProcedure } from "@/src/trpc";
+import { displayNameRegex } from "@/src/utils/regex";
 import { fieldDefSchema } from "./types";
 
 export type EditComponentDefinitionErrorMessage = {
@@ -14,7 +15,7 @@ export const editComponentDefinition = privateProcedure
 	.input(
 		z.object({
 			id: z.string().cuid(),
-			newName: z.string().optional(),
+			newName: z.string().regex(displayNameRegex).optional(),
 			newGroupId: z.string().cuid().optional(),
 			addedFields: z.array(fieldDefSchema.extend({ id: z.string().cuid() })).optional(),
 			editedFields: z

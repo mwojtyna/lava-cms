@@ -3,12 +3,12 @@ import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import { prisma } from "@/prisma/client";
 import { privateProcedure } from "@/src/trpc";
-import { urlRegex } from "@/src/utils/regex";
+import { displayNameRegex, urlRegex } from "@/src/utils/regex";
 
 export const addPage = privateProcedure
 	.input(
 		z.object({
-			name: z.string(),
+			name: z.string().regex(displayNameRegex),
 			url: z.string().regex(urlRegex),
 			parentId: z.string().cuid().nullable(),
 			isGroup: z.boolean(),

@@ -1,5 +1,6 @@
 import type { Page } from "@prisma/client";
 import { z } from "zod";
+import { displayNameRegex } from "@/src/utils/regex";
 import { toPath } from "./utils";
 
 export interface EditDialogProps {
@@ -15,7 +16,7 @@ export interface BulkEditDialogProps {
 }
 
 export const editDialogSchema = z.object({
-	name: z.string().min(1),
+	name: z.string().regex(displayNameRegex, { message: " " }),
 	slug: z
 		.string({ required_error: " " })
 		.min(1, { message: " " })

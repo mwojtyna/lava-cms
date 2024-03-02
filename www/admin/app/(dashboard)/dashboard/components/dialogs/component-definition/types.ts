@@ -1,14 +1,14 @@
 import type { ComponentsTableComponentDef } from "../../ComponentsTable";
 import { z } from "zod";
 import { ComponentFieldTypeSchema, ArrayItemTypeSchema } from "@/prisma/generated/zod";
-import { nameRegex } from "@/src/utils/regex";
+import { systemNameRegex } from "@/src/utils/regex";
 
 export const fieldDefinitionUISchema = z.object({
 	id: z.string().cuid(),
 	name: z
 		.string()
 		.regex(/^[a-zA-Z]/, { message: "The first character must be a letter." })
-		.regex(nameRegex, { message: "Only numbers, letters, and underscores allowed." })
+		.regex(systemNameRegex, { message: "Only numbers, letters, and underscores allowed." })
 		.min(1, { message: " " }),
 	displayName: z.string().min(1, { message: " " }),
 	type: ComponentFieldTypeSchema,

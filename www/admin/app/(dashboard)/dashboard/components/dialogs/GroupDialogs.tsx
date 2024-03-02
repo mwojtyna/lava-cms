@@ -21,6 +21,7 @@ import {
 	FormError,
 } from "@/src/components/ui/client/Form";
 import { Input } from "@/src/components/ui/client/Input";
+import { displayNameRegex } from "@/src/utils/regex";
 import { trpc } from "@/src/utils/trpc";
 
 interface Props {
@@ -29,7 +30,7 @@ interface Props {
 }
 
 const addGroupDialogSchema = z.object({
-	name: z.string().min(1, { message: " " }),
+	name: z.string().regex(displayNameRegex, { message: " " }),
 });
 type AddGroupDialogInputs = z.infer<typeof addGroupDialogSchema>;
 
@@ -96,7 +97,7 @@ export function AddGroupDialog(props: AddGroupDialogProps) {
 }
 
 const editGroupDialogSchema = z.object({
-	name: z.string().min(1, { message: " " }),
+	name: z.string().regex(displayNameRegex, { message: " " }),
 });
 type EditGroupDialogInputs = z.infer<typeof editGroupDialogSchema>;
 

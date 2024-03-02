@@ -14,13 +14,11 @@ import {
 import { Input, getRestorableInputProps } from "@/src/components/ui/client/Input";
 import { SheetHeader, SheetTitle } from "@/src/components/ui/client/Sheet";
 import { TypographyMuted } from "@/src/components/ui/server/typography";
+import { displayNameRegex } from "@/src/utils/regex";
 import { AddFieldDefs, FieldDefs } from "./FieldDefinitions";
 
 export const componentDefEditorInputsSchema = z.object({
-	name: z
-		.string()
-		.min(1, { message: " " })
-		.refine((name) => name.trim() !== "", { message: " " }),
+	name: z.string().regex(displayNameRegex, { message: " " }),
 });
 export type ComponentDefEditorInputs = z.infer<typeof componentDefEditorInputsSchema>;
 
