@@ -151,27 +151,6 @@ export const editComponentDefinition = privateProcedure
 					}
 				});
 				await Promise.all(editedInstanceFields);
-
-				await tx.componentDefinition.update({
-					where: { id: input.id },
-					data: {
-						name: input.newName,
-						group_id: input.newGroupId,
-						field_definitions: {
-							updateMany: input.editedFields?.map((field) => ({
-								where: { id: field.id },
-								data: {
-									name: field.name,
-									display_name: field.displayName,
-									type: field.type,
-									array_item_type: field.arrayItemType,
-									order: field.order,
-								},
-							})),
-						},
-						last_update: new Date(),
-					},
-				});
 			}
 
 			if (input.deletedFieldIds) {
@@ -179,6 +158,27 @@ export const editComponentDefinition = privateProcedure
 					where: { id: { in: input.deletedFieldIds } },
 				});
 			}
+
+			await tx.componentDefinition.update({
+				where: { id: input.id },
+				data: {
+					name: input.newName,
+					group_id: input.newGroupId,
+					field_definitions: {
+						updateMany: input.editedFields?.map((field) => ({
+							where: { id: field.id },
+							data: {
+								name: field.name,
+								display_name: field.displayName,
+								type: field.type,
+								array_item_type: field.arrayItemType,
+								order: field.order,
+							},
+						})),
+					},
+					last_update: new Date(),
+				},
+			});
 		});
 
 		return addedCompDefIds;
