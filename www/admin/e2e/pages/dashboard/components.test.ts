@@ -53,8 +53,8 @@ async function fillEditCompDefDialog(page: Page, name?: string, fields?: FieldDe
 		await dialog.locator("input[name='name']").nth(1).fill(field.name);
 		await dialog.getByRole("combobox").click();
 		await page
-			.getByRole("group")
-			.locator(`div[data-value='${field.type.toLowerCase()}']`)
+			.getByRole("listbox")
+			.locator(`div[data-value='${field.type.toLowerCase().replaceAll(" ", "_")}']`)
 			.click();
 		await dialog.locator("button[type='button']", { hasText: "Add" }).click();
 	}
@@ -117,7 +117,7 @@ async function editFieldDef(
 			.click();
 	}
 
-	if (save === undefined || save === true) {
+	if (save) {
 		await editFieldDefStep.locator("button[type='submit']").click();
 		// If type changed warning dialog appears, confirm it
 		if ((await page.getByRole("dialog").count()) > 1) {
@@ -485,16 +485,14 @@ test.describe("field definition", () => {
 		await page.goto(URL);
 
 		await selectAction(page.base, 0, "Edit");
-		const dialog = page.base.getByRole("dialog");
-		const fieldDef = await editFieldDef(page.base, 0, "Switch", "SWITCH");
+		const fieldDefCard = await editFieldDef(page.base, 0, "Switch", "SWITCH");
 
-		await expect(fieldDef).toHaveAttribute("data-test-diff", "edited");
+		await expect(fieldDefCard).toHaveAttribute("data-test-diff", "edited");
+		await checkFieldDefs(page.base, [{ name: "Switch", type: "SWITCH" }]);
 
-		await fieldDef.getByTestId("restore-field-btn").click();
+		await fieldDefCard.getByTestId("restore-field-btn").click();
+		await page.base.getByRole("dialog").getByTestId("close-btn").click();
 		await checkFieldDefs(page.base, originalComp.field_definitions);
-
-		await dialog.locator("button[type='submit']").click();
-		await dialog.waitFor({ state: "hidden" });
 
 		const editedButRestoredCompDef = await prisma.componentDefinition.findFirst({
 			include: {
@@ -509,55 +507,6 @@ test.describe("field definition", () => {
 
 		await selectAction(page.base, 0, "Edit");
 		await checkFieldDefs(page.base, editedButRestoredCompDef!.field_definitions);
-	});
-	test("edits field definition but cancels edit", async ({ authedPage: page }) => {
-		const rootGroup = await prisma.componentDefinitionGroup.findFirst();
-		const originalComp = await prisma.componentDefinition.create({
-			data: {
-				name: "Test",
-				group_id: rootGroup!.id,
-				field_definitions: {
-					createMany: {
-						data: [
-							{
-								name: "Label",
-								display_name: "Label",
-								type: "TEXT",
-								order: 0,
-							},
-						],
-					},
-				},
-			},
-			include: {
-				field_definitions: true,
-			},
-		});
-		await page.goto(URL);
-
-		await selectAction(page.base, 0, "Edit");
-		const dialog = page.base.getByRole("dialog");
-
-		const fieldDef = await editFieldDef(page.base, 0, "Switch", "SWITCH", false);
-		await fieldDef.getByTestId("cancel-field-btn").click();
-		await checkFieldDefs(page.base, originalComp.field_definitions);
-
-		await dialog.locator("button[type='submit']").click();
-		await dialog.waitFor({ state: "hidden" });
-
-		const editedButCancelledCompDef = await prisma.componentDefinition.findFirst({
-			include: {
-				field_definitions: {
-					orderBy: { order: "asc" },
-				},
-			},
-		});
-		expect(editedButCancelledCompDef!.field_definitions).toMatchObject(
-			originalComp.field_definitions,
-		);
-
-		await selectAction(page.base, 0, "Edit");
-		await checkFieldDefs(page.base, editedButCancelledCompDef!.field_definitions);
 	});
 
 	test("adds field definition", async ({ authedPage: page }) => {
@@ -578,7 +527,8 @@ test.describe("field definition", () => {
 		await expect(fieldDef).toHaveAttribute("data-test-diff", "added");
 
 		await dialog.locator("button[type='submit']").click();
-		await dialog.waitFor({ state: "hidden" });
+		await page.base.waitForResponse("**/api/private/components.editComponentDefinition**");
+		await dialog.getByTestId("close-btn").click();
 
 		const addedCompDef = await prisma.componentDefinition.findFirst({
 			include: {
@@ -656,7 +606,8 @@ test.describe("field definition", () => {
 
 		const dialog = page.base.getByRole("dialog");
 		await dialog.locator("button[type='submit']").click();
-		await dialog.waitFor({ state: "hidden" });
+		await page.base.waitForResponse("**/api/private/components.editComponentDefinition**");
+		await dialog.getByTestId("close-btn").click();
 
 		const editedCompDef = await prisma.componentDefinition.findFirst({
 			include: {
@@ -713,8 +664,8 @@ test.describe("field definition", () => {
 		await expect(fieldDef).not.toHaveAttribute("data-test-diff", "deleted");
 
 		const dialog = page.base.getByRole("dialog");
-		await dialog.locator("button[type='submit']").click();
-		await dialog.waitFor({ state: "hidden" });
+		await expect(dialog.locator("button[type='submit']")).toBeDisabled();
+		await dialog.getByTestId("close-btn").click();
 
 		const editedCompDef = await prisma.componentDefinition.findFirst({
 			include: {
@@ -754,16 +705,23 @@ test.describe("field definition", () => {
 		await page.goto(URL);
 
 		await selectAction(page.base, 0, "Edit");
-		const fieldDef = await editFieldDef(page.base, 0, "Switch", "SWITCH");
-		await fieldDef.getByTestId("delete-field-btn").click();
-		await expect(fieldDef).toHaveAttribute("data-test-diff", "deleted");
+		await editFieldDef(page.base, 0, "Switch", "SWITCH");
+		const fieldDefCard = getFieldDefCard(page.base, 0);
+		await fieldDefCard.getByTestId("restore-field-btn").click();
+		await expect(fieldDefCard).toHaveAttribute("data-test-diff", "none");
 
-		await fieldDef.getByTestId("restore-field-btn").click();
-		await expect(fieldDef).toHaveAttribute("data-test-diff", "edited");
-		await checkFieldDefs(page.base, [{ name: "Switch", type: "SWITCH" }]);
+		await fieldDefCard.getByTestId("delete-field-btn").click();
+		await expect(fieldDefCard).toHaveAttribute("data-test-diff", "deleted");
+		await fieldDefCard.getByTestId("restore-field-btn").click();
+		await expect(fieldDefCard).toHaveAttribute("data-test-diff", "none");
 
-		await fieldDef.getByTestId("restore-field-btn").click();
-		await expect(fieldDef).not.toHaveAttribute("data-test-diff", "edited");
+		await checkFieldDefs(page.base, [
+			{
+				name: originalComp.field_definitions[0]!.name,
+				type: originalComp.field_definitions[0]!.type,
+			},
+		]);
+
 		await checkFieldDefs(page.base, originalComp.field_definitions);
 	});
 
@@ -818,7 +776,7 @@ test.describe("field definition", () => {
 
 		const dialog = page.base.getByRole("dialog");
 		await dialog.locator("button[type='submit']").click();
-		await dialog.waitFor({ state: "hidden" });
+		await page.base.waitForResponse("**/api/private/components.editComponentDefinition**");
 
 		const reorderedCompDef = await prisma.componentDefinition.findFirst({
 			include: {
