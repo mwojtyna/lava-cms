@@ -1,10 +1,9 @@
 "use client";
 
-import * as React from "react";
-import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline";
+import { ArrowUturnLeftIcon, EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline";
 import { type VariantProps, cva } from "class-variance-authority";
-import { cn } from "@admin/src/utils/styling";
-import { Tooltip, TooltipContent, TooltipTrigger } from "../client";
+import * as React from "react";
+import { cn } from "@/src/utils/styling";
 import { ActionIcon } from "./ActionIcon";
 
 const inputVariants = cva(
@@ -16,12 +15,30 @@ const inputVariants = cva(
 				md: "h-10 text-sm",
 				lg: "h-11 text-base",
 			},
+			variant: {
+				default:
+					"border border-input ring-offset-background focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
+				ghost: "border-none focus-visible:ring-transparent",
+			},
 		},
 		defaultVariants: {
 			size: "md",
+			variant: "default",
 		},
 	},
 );
+
+const getRestorableInputProps = (edited: boolean, restore: () => void): InputProps => ({
+	inputClassName: cn("transition-colors", edited && "border-b-brand"),
+	rightButton: {
+		iconOn: <ArrowUturnLeftIcon className="w-4" />,
+		iconOff: null,
+		tooltip: "Restore",
+		onClick: restore,
+		state: edited,
+		setState: null,
+	},
+});
 
 interface InputProps
 	extends Omit<React.InputHTMLAttributes<HTMLInputElement>, "children" | "size">,
@@ -31,7 +48,7 @@ interface InputProps
 	rightButton?: {
 		iconOn: React.ReactNode;
 		iconOff: React.ReactNode;
-		tooltip: React.ReactNode;
+		tooltip: string;
 		state: boolean;
 	} & (
 		| {
@@ -49,15 +66,17 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
 		const [passwordVisible, setPasswordVisible] = React.useState(false);
 
 		return (
-			<div className={cn("relative flex w-full items-center justify-center", className)}>
+			<div
+				className={cn("relative flex h-fit w-full items-center justify-center", className)}
+			>
 				{icon && <div className="absolute left-3 w-5">{icon}</div>}
 
 				<input
 					type={type === "password" ? (passwordVisible ? "text" : "password") : type}
 					className={cn(
-						inputVariants({ size }),
+						inputVariants({ className: inputClassName, size }),
+						"pr-10",
 						icon && "pl-10",
-						inputClassName,
 						// Fix for red borders not showing up when form is invalid
 						className?.includes("border-destructive") && "border-destructive",
 					)}
@@ -79,28 +98,22 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
 						)}
 					</ActionIcon>
 				) : (
-					rightButton && (
-						<Tooltip>
-							<TooltipTrigger asChild>
-								<ActionIcon
-									className="absolute right-1.5 bg-background"
-									onClick={() => {
-										if (!rightButton.onClick) {
-											rightButton.setState(!rightButton.state);
-										} else {
-											rightButton.onClick();
-										}
-									}}
-									size={size}
-								>
-									{rightButton.state ? rightButton.iconOn : rightButton.iconOff}
-								</ActionIcon>
-							</TooltipTrigger>
-
-							<TooltipContent className="font-sans">
-								{rightButton.tooltip}
-							</TooltipContent>
-						</Tooltip>
+					rightButton &&
+					(rightButton.state ? rightButton.iconOn : rightButton.iconOff) && (
+						<ActionIcon
+							className="absolute right-1.5 bg-background"
+							onClick={() => {
+								if (!rightButton.onClick) {
+									rightButton.setState(!rightButton.state);
+								} else {
+									rightButton.onClick();
+								}
+							}}
+							size={size}
+							tooltip={rightButton.tooltip}
+						>
+							{rightButton.state ? rightButton.iconOn : rightButton.iconOff}
+						</ActionIcon>
 					)
 				)}
 			</div>
@@ -109,4 +122,4 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
 );
 Input.displayName = "Input";
 
-export { Input };
+export { Input, getRestorableInputProps, inputVariants };

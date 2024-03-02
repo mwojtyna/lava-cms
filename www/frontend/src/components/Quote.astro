@@ -1,0 +1,19 @@
+---
+import type { CmsComponent } from "@lavacms/astro";
+import LavaCmsComponent from "@lavacms/astro/LavaCmsComponent.astro";
+
+interface Props {
+	cms: {
+		content: string;
+		author: CmsComponent | null;
+	};
+}
+const { cms } = Astro.props;
+---
+
+<figure>
+	<cite>{cms.content}</cite>
+	<figcaption style="padding-top: 1rem">
+		{cms.author && <LavaCmsComponent component={cms.author} />}
+	</figcaption>
+</figure>

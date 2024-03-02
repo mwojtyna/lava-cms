@@ -1,15 +1,15 @@
 import type { BrowserContextOptions, Browser, BrowserContext } from "@playwright/test";
 import fs from "node:fs";
-import { prisma } from "@admin/prisma/client";
 import {
 	createMockUser,
 	deleteMockUser,
-	tokenMock,
+	connectionSettingsMock,
 	userMock,
 	userPasswordDecrypted,
-	websiteSettingsMock,
-} from "@admin/e2e/mocks";
-import { DEFAULT_SESSION_COOKIE_NAME } from "lucia";
+	seoSettingsMock,
+	DEFAULT_SESSION_COOKIE_NAME,
+} from "@/e2e/mocks";
+import { prisma } from "@/prisma/client";
 
 const STORAGE_STATE_PATH = "./e2e/storageState.json";
 
@@ -42,7 +42,7 @@ export async function saveAuthedContext(browser: Browser) {
 	// Delete session that was created when signed in
 	// to prevent prisma error when creating session
 	// during fixture execution
-	await prisma.session.deleteMany();
+	await prisma.adminSession.deleteMany();
 }
 
 export async function getAuthedContext(browser: Browser): Promise<BrowserContext> {
@@ -51,13 +51,14 @@ export async function getAuthedContext(browser: Browser): Promise<BrowserContext
 	await deleteMockUser();
 	await createMockUser();
 
-	if (!(await prisma.config.findFirst())) {
-		await prisma.config.create({
-			data: {
-				...websiteSettingsMock,
-			},
+	if (!(await prisma.settingsSeo.findFirst())) {
+		await prisma.settingsSeo.create({
+			data: seoSettingsMock,
 		});
 	}
+	await prisma.settingsConnection.create({
+		data: connectionSettingsMock,
+	});
 
 	await prisma.page.deleteMany();
 	await prisma.page.create({
@@ -74,12 +75,6 @@ export async function getAuthedContext(browser: Browser): Promise<BrowserContext
 		data: {
 			name: "Root",
 			parent_group_id: null,
-		},
-	});
-
-	await prisma.token.create({
-		data: {
-			token: tokenMock,
 		},
 	});
 
@@ -100,12 +95,11 @@ export async function getAuthedContext(browser: Browser): Promise<BrowserContext
 			(cookie) => cookie.expires !== -1 && cookie.expires * 1000 < Date.now(),
 		);
 
-		await prisma.session.create({
+		await prisma.adminSession.create({
 			data: {
 				id: cookies.find((cookie) => cookie.name === DEFAULT_SESSION_COOKIE_NAME)!.value,
-				user_id: userMock.id,
-				active_expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7).getTime(),
-				idle_expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7).getTime(),
+				userId: userMock.id,
+				expiresAt: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7),
 			},
 		});
 
@@ -124,12 +118,12 @@ export async function getAuthedContext(browser: Browser): Promise<BrowserContext
 
 export async function cleanUpAuthedContext(context: BrowserContext) {
 	await deleteMockUser();
-	if (await prisma.config.findFirst()) {
-		await prisma.config.deleteMany();
+	if (await prisma.settingsSeo.findFirst()) {
+		await prisma.settingsSeo.deleteMany();
 	}
 	await prisma.page.deleteMany();
 	await prisma.componentDefinitionGroup.deleteMany();
-	await prisma.token.deleteMany();
+	await prisma.settingsConnection.deleteMany();
 
 	await context.close();
 }

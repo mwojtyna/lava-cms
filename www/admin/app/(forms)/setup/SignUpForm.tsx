@@ -1,30 +1,30 @@
 "use client";
 
-import { useRouter } from "next/navigation";
-import { EnvelopeIcon, LockClosedIcon, UserIcon } from "@heroicons/react/24/outline";
 import { ArrowRightIcon } from "@heroicons/react/20/solid";
-import { type SubmitHandler, useForm } from "react-hook-form";
+import { EnvelopeIcon, LockClosedIcon, UserIcon } from "@heroicons/react/24/outline";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useRouter } from "next/navigation";
+import { type SubmitHandler, useForm } from "react-hook-form";
 import { z } from "zod";
+import { Button } from "@/src/components/ui/client/Button";
 import {
-	Button,
-	FormControl,
-	FormError,
 	FormField,
 	FormItem,
 	FormLabel,
-	Input,
-} from "@admin/src/components/ui/client";
+	FormControl,
+	FormError,
+} from "@/src/components/ui/client/Form";
+import { Input } from "@/src/components/ui/client/Input";
+import { trpc } from "@/src/utils/trpc";
 import { SinglePageForm } from "../SinglePageForm";
-import { trpc } from "@admin/src/utils/trpc";
 
 const inputSchema = z
 	.object({
-		name: z.string().nonempty(),
-		lastName: z.string().nonempty(),
+		name: z.string().min(1),
+		lastName: z.string().min(1),
 		email: z
 			.string()
-			.nonempty({ message: " " })
+			.min(1, { message: " " })
 			.email({ message: "The e-mail you provided is invalid." }),
 		password: z
 			.string({ required_error: " " })
@@ -50,17 +50,12 @@ export function SignUpForm() {
 	const router = useRouter();
 
 	const signUpMutation = trpc.auth.signUp.useMutation();
-	const signInMutation = trpc.auth.signIn.useMutation();
 
-	const form = useForm<Inputs>({ mode: "onSubmit", resolver: zodResolver(inputSchema) });
+	const form = useForm<Inputs>({ resolver: zodResolver(inputSchema) });
 	const onSubmit: SubmitHandler<Inputs> = async (data) => {
 		await signUpMutation.mutateAsync({
 			name: data.name,
 			lastName: data.lastName,
-			email: data.email,
-			password: data.password,
-		});
-		await signInMutation.mutateAsync({
 			email: data.email,
 			password: data.password,
 		});

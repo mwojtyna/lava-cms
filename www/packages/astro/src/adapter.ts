@@ -1,9 +1,10 @@
+import type { ClientConfigBase } from "@lavacms/core";
 import type { AstroIntegration } from "astro";
-import type { LavaCms } from "@lavacms/core";
+import bridgeScript from "./bridge";
 import { vitePluginLavaCmsComponents } from "./vite-plugin-lavacms-components";
 import { vitePluginLavaCmsConfig } from "./vite-plugin-lavacms-config";
 
-export interface ClientConfigAstro extends LavaCms.ClientConfigBase {
+export interface ClientConfigAstro extends ClientConfigBase {
 	/**
 	 * Assign CMS component name to an Astro component path
 	 * @example
@@ -27,17 +28,9 @@ export interface ClientConfigAstro extends LavaCms.ClientConfigBase {
 
 export function lavaCmsAstro(config: ClientConfigAstro): AstroIntegration {
 	return {
-		name: "lava-cms",
+		name: "@lavacms/astro",
 		hooks: {
-			"astro:config:setup": ({ updateConfig, injectScript, config: astroConfig }) => {
-				if (astroConfig.output !== "static") {
-					injectScript(
-						"page-ssr",
-						`throw new Error("Lava CMS Astro adapter doesn't support SSR");`
-					);
-					return;
-				}
-
+			"astro:config:setup": ({ updateConfig, injectScript }) => {
 				injectScript(
 					"page-ssr",
 					`
@@ -48,8 +41,12 @@ export function lavaCmsAstro(config: ClientConfigAstro): AstroIntegration {
 						log: ${config.log ? "true" : "false"},
 					});
 					globalThis.client = client;
-					`
+					`,
 				);
+
+				if (process.env.NODE_ENV !== "production") {
+					injectScript("page", bridgeScript);
+				}
 
 				updateConfig({
 					vite: {
@@ -57,6 +54,22 @@ export function lavaCmsAstro(config: ClientConfigAstro): AstroIntegration {
 							vitePluginLavaCmsConfig(config),
 							vitePluginLavaCmsComponents(config.components),
 						],
+					},
+				});
+			},
+			"astro:config:done": ({ setAdapter }) => {
+				setAdapter({
+					name: "@lavacms/astro",
+					supportedAstroFeatures: {
+						staticOutput: "stable",
+						serverOutput: "unsupported",
+						hybridOutput: "unsupported",
+						assets: {
+							supportKind: "stable",
+							isSharpCompatible: true,
+							isSquooshCompatible: true,
+						},
+						i18nDomains: "stable",
 					},
 				});
 			},

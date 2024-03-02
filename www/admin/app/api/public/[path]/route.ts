@@ -1,5 +1,5 @@
 import { fetchRequestHandler } from "@trpc/server/adapters/fetch";
-import { publicRouter } from "@admin/src/trpc/routes/public/_public";
+import { publicRouter } from "@/src/trpc/routes/public/_public";
 
 const handler = async (req: Request) =>
 	fetchRequestHandler({

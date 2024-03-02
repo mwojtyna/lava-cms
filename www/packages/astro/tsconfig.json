@@ -1,8 +1,11 @@
 {
 	"compilerOptions": {
 		"jsx": "preserve",
-		"noImplicitReturns": false
+		"noImplicitReturns": false,
+		"allowImportingTsExtensions": false,
+		"declaration": true,
+		"declarationDir": "./dist"
 	},
-	"exclude": ["dist"],
+	"exclude": ["./dist"],
 	"extends": "astro/tsconfigs/strictest"
 }

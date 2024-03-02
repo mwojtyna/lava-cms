@@ -1,5 +1,7 @@
-import * as React from "react";
+"use client";
+
 import { Slot } from "@radix-ui/react-slot";
+import * as React from "react";
 import {
 	Controller,
 	type ControllerProps,
@@ -9,9 +11,9 @@ import {
 	FormProvider,
 	useFormContext,
 } from "react-hook-form";
-import { cn } from "@admin/src/utils/styling";
-import { Label } from "@admin/src/components/ui/client";
-import { TypographyMuted } from "../server";
+import { Label } from "@/src/components/ui/client/Label";
+import { cn } from "@/src/utils/styling";
+import { TypographyMuted } from "../server/typography";
 
 interface FormFieldProps<T> {
 	value: T;
@@ -140,7 +142,13 @@ const FormError = React.forwardRef<
 >(({ className, children, ...props }, ref) => {
 	const { error, formMessageId } = useFormField();
 
-	if (error === undefined) {
+	// Check if error.message.trim is a function because it isn't if passing a React component
+	if (
+		error === undefined ||
+		(error.message !== undefined &&
+			typeof error.message.trim === "function" &&
+			error.message.trim() === "")
+	) {
 		return null;
 	}
 
@@ -155,7 +163,7 @@ const FormError = React.forwardRef<
 		</span>
 	);
 });
-FormError.displayName = "FormMessage";
+FormError.displayName = "FormError";
 
 export {
 	useFormField,

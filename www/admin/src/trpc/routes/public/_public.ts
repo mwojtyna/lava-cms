@@ -1,10 +1,10 @@
-import { router } from "@admin/src/trpc";
-import { getConfig } from "./getConfig";
+import { router } from "@/src/trpc";
+import { getHead } from "./getHead";
 import { getPage } from "./getPage";
 import { getPaths } from "./getPaths";
 
 export const publicRouter = router({
-	getConfig,
+	getHead,
 	getPage,
 	getPaths,
 });

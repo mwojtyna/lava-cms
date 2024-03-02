@@ -1,43 +1,61 @@
-import { TrashIcon } from "@heroicons/react/24/outline";
+import { cn } from "../utils/styling";
+import { Button } from "./ui/client/Button";
 import {
 	Dialog,
 	DialogContent,
 	DialogTitle,
 	DialogDescription,
-} from "@admin/src/components/ui/client";
-import { DialogHeader, DialogFooter, Button } from "./ui/client";
+	DialogHeader,
+	DialogFooter,
+} from "./ui/client/Dialog";
 
-interface Props {
-	icon: React.ReactNode;
+export interface AlertDialogProps {
+	className?: string;
+	icon?: React.ReactNode;
 	title: React.ReactNode;
 	description: React.ReactNode;
-	yesMessage: string;
-	noMessage: string;
-	loading: boolean;
+	yesMessage: React.ReactNode;
+	noMessage?: React.ReactNode;
+	loading?: boolean;
+	disableCloseOnBlur?: boolean;
+
 	onSubmit: () => void;
+	onCancel?: () => void;
 
 	open: boolean;
 	setOpen: (value: boolean) => void;
 }
 
-export function AlertDialog(props: Props) {
+export function AlertDialog(props: AlertDialogProps) {
 	return (
 		<Dialog open={props.open} onOpenChange={props.setOpen}>
-			<DialogContent className="max-w-md" withCloseButton={false}>
+			<DialogContent
+				className={cn("max-w-md", props.className)}
+				withCloseButton={false}
+				{...(props.disableCloseOnBlur && { onInteractOutside: (e) => e.preventDefault() })}
+			>
 				<DialogHeader>
 					<DialogTitle>{props.title}</DialogTitle>
 					<DialogDescription>{props.description}</DialogDescription>
 				</DialogHeader>
 
 				<DialogFooter>
-					<Button variant={"ghost"} onClick={() => props.setOpen(false)}>
-						{props.noMessage}
-					</Button>
+					{props.noMessage && (
+						<Button
+							variant={"ghost"}
+							onClick={() => {
+								props.onCancel?.();
+								props.setOpen(false);
+							}}
+						>
+							{props.noMessage}
+						</Button>
+					)}
 					<Button
 						loading={props.loading}
 						type="submit"
-						variant={"destructive"}
-						icon={<TrashIcon className="w-5" />}
+						variant={props.noMessage ? "destructive" : "default"}
+						icon={props.icon}
 						onClick={props.onSubmit}
 					>
 						{props.yesMessage}

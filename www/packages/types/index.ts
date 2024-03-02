@@ -1,1 +1,7 @@
-export type { PublicRouter } from "@admin/src/trpc/routes/public/_public";
+export type { PublicRouter } from "@/src/trpc/routes/public/_public";
+export type { CmsPage, CmsComponent, FieldContent } from "@/src/trpc/routes/public/types";
+
+export type {
+	PageEditorMessage,
+	IframeMessage,
+} from "@/app/(editor)/dashboard/pages/editor/[pageId]/types";

@@ -1,23 +1,21 @@
-import { generateRandomString } from "lucia/utils";
-import { privateProcedure } from "@admin/src/trpc";
-import { prisma } from "@admin/prisma/client";
+import { alphabet, generateRandomString } from "oslo/crypto";
+import { prisma } from "@/prisma/client";
+import { privateProcedure } from "@/src/trpc";
 
 export const generateToken = privateProcedure.mutation(async () => {
-	const token = generateRandomString(
-		32,
-		"0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz",
-	);
-	const storedToken = await prisma.token.findFirst();
+	const token = randomString();
+	const storedToken = await prisma.settingsConnection.findFirst();
 
-	await prisma.token.upsert({
+	await prisma.settingsConnection.update({
 		where: {
 			id: storedToken?.id ?? "",
 		},
-		create: {
-			token,
-		},
-		update: {
+		data: {
 			token,
 		},
 	});
 });
+
+export function randomString() {
+	return generateRandomString(32, alphabet("a-z", "A-Z", "0-9"));
+}

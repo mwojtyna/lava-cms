@@ -1,5 +1,5 @@
-import type { Plugin } from "vite";
 import type { ClientConfigAstro } from "./adapter";
+import type { Plugin } from "vite";
 
 export function vitePluginLavaCmsConfig(config: ClientConfigAstro): Plugin {
 	const virtualModuleId = "virtual:lavacms-config";

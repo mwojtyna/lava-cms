@@ -1,6 +1,6 @@
+import type { ClientConfigAstro } from "./adapter";
 import type { Plugin } from "vite";
 import camelcase from "camelcase";
-import type { ClientConfigAstro } from "./adapter";
 
 export function vitePluginLavaCmsComponents(components: ClientConfigAstro["components"]): Plugin {
 	const virtualModuleId = "virtual:lavacms-components";
@@ -15,6 +15,10 @@ export function vitePluginLavaCmsComponents(components: ClientConfigAstro["compo
 		},
 		async load(id) {
 			if (id === resolvedVirtualModuleId) {
+				if (components === undefined || Object.values(components).length === 0) {
+					throw new Error(`No CMS components are registered in Astro config`);
+				}
+
 				const imports: string[] = [];
 
 				for (const [name, path] of Object.entries(components)) {
@@ -22,20 +26,16 @@ export function vitePluginLavaCmsComponents(components: ClientConfigAstro["compo
 
 					if (!resolvedId) {
 						throw new Error(
-							`Astro component could not be found for CMS component "${name}"! Does "${path}" exist?`
+							`Astro component could not be found for CMS component "${name}"! Does "${path}" exist?`,
 						);
 					} else {
 						imports.push(`import ${camelcase(name)} from "${resolvedId.id}"`);
 					}
 				}
 
-				if (!Object.values(components).length) {
-					throw new Error(`No CMS components are registered in Astro config`);
-				} else {
-					return `${imports.join(";")}; export default {${Object.keys(components)
-						.map((name) => camelcase(name))
-						.join(",")}}`;
-				}
+				return `${imports.join(";")}; export default {${Object.keys(components)
+					.map((name) => camelcase(name))
+					.join(",")}}`;
 			}
 		},
 	};

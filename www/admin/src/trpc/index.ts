@@ -1,47 +1,50 @@
-import { cookies, headers } from "next/headers";
 import { TRPCError, initTRPC } from "@trpc/server";
-import SuperJSON from "superjson";
-import { auth } from "@admin/src/auth";
-import { prisma } from "@admin/prisma/client";
+import { headers } from "next/headers";
+import { SuperJSON } from "superjson";
+import { prisma } from "@/prisma/client";
+import { auth, validateRequest } from "@/src/auth";
+import { env } from "../env/server.mjs";
 
-export interface Meta {
+export interface ServerMeta {
 	noAuth: boolean;
 }
 
-const t = initTRPC.meta<Meta>().create({ transformer: SuperJSON });
+const t = initTRPC.meta<ServerMeta>().create({ transformer: SuperJSON });
 
 export const router = t.router;
 
 export const privateAuth = t.middleware(async (opts) => {
-	const authReq = auth.handleRequest({
-		request: null,
-		cookies,
-	});
-	const session = await authReq.validate();
-	const ctx = {
-		setSession: authReq.setSession,
-		session,
-	};
+	// CSRF protection
+	if (opts.type === "mutation") {
+		if (!headers().has("Origin") && !headers().has("Referer")) {
+			throw new TRPCError({ code: "FORBIDDEN" });
+		}
 
-	if (opts.meta?.noAuth || (await prisma.config.count()) === 0) {
-		return opts.next({ ctx });
+		const origin = new URL(headers().get("Origin") ?? headers().get("Referer")!).host;
+		if (env.VERCEL_URL !== origin) {
+			throw new TRPCError({ code: "FORBIDDEN" });
+		}
 	}
 
+	if (opts.meta?.noAuth || (await prisma.adminUser.count()) === 0) {
+		return opts.next();
+	}
+
+	const { session } = await validateRequest();
 	if (!session) {
 		throw new TRPCError({ code: "UNAUTHORIZED" });
 	}
 
-	return opts.next({
-		ctx,
-	});
+	return opts.next();
 });
 export const publicAuth = t.middleware(async (opts) => {
-	const token = auth.readBearerToken(headers().get("Authorization"));
-	if (!token) {
+	const authHeader = headers().get("Authorization");
+	if (!authHeader) {
 		throw new TRPCError({ code: "UNAUTHORIZED" });
 	}
 
-	if (token !== (await prisma.token.findFirst())?.token) {
+	const cookieToken = auth.readBearerToken(authHeader);
+	if (!cookieToken || cookieToken !== (await prisma.settingsConnection.findFirst())?.token) {
 		throw new TRPCError({ code: "UNAUTHORIZED" });
 	}
 

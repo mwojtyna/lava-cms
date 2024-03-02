@@ -1,6 +1,6 @@
 import { expect } from "@playwright/test";
-import { test } from "@admin/e2e/fixtures";
-import { tokenMock } from "@admin/e2e/mocks";
+import { test } from "@/e2e/fixtures";
+import { connectionSettingsMock } from "@/e2e/mocks";
 
 const TEST_ID = "connection-form";
 
@@ -16,14 +16,15 @@ test("copies token into clipboard and changes into check mark", async ({
 }) => {
 	await page.goto("/admin/dashboard/settings/connection");
 
-	const copyButton = page.base.getByTestId(TEST_ID).getByRole("button").first();
+	const copyButton = page.base.getByTestId(TEST_ID).getByRole("button").nth(1);
 	const icon = await copyButton.locator("svg").innerHTML();
 	await copyButton.click();
 
-	// Firefox doesn't implement clipboard.readText() API, Webkit throws error when headless
-	if (browserName === "chromium" || (browserName !== "firefox" && !headless)) {
+	// Firefox doesn't implement clipboard.readText() API (which we use for checking if token was copied),
+	// Webkit throws permission error when headless
+	if (browserName === "chromium" || (browserName === "webkit" && !headless)) {
 		expect(await page.base.evaluate(async () => await navigator.clipboard.readText())).toBe(
-			tokenMock,
+			connectionSettingsMock.token,
 		);
 	}
 	expect(icon).not.toBe(await copyButton.locator("svg").innerHTML());
@@ -32,11 +33,12 @@ test("copies token into clipboard and changes into check mark", async ({
 test("regenerates token", async ({ authedPage: page }) => {
 	await page.goto("/admin/dashboard/settings/connection");
 
-	const tokenInput = page.base.getByTestId(TEST_ID).locator("input[type='text']");
+	const tokenInput = page.base.getByTestId(TEST_ID).locator("input[type='password']").first();
 	const token = await tokenInput.inputValue();
 
-	const regenerateButton = page.base.getByTestId(TEST_ID).getByRole("button").nth(1);
+	const regenerateButton = page.base.getByTestId(TEST_ID).getByRole("button").nth(2);
 	await regenerateButton.click();
+	await page.base.waitForResponse("**/api/private/auth.generateToken**");
 	await page.base.waitForResponse("**/api/private/auth.getToken**");
 
 	expect(await tokenInput.inputValue()).not.toBe(token);

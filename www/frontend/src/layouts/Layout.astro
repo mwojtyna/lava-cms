@@ -6,7 +6,7 @@ const head = await cms.getHead();
 const page = await cms.getPage(Astro.url.pathname);
 ---
 
-<!DOCTYPE html>
+<!doctype html>
 <html lang={head.language}>
 	<head>
 		<meta charset="UTF-8" />
@@ -29,8 +29,22 @@ const page = await cms.getPage(Astro.url.pathname);
 		font-family: system-ui, sans-serif;
 		background-color: #f6f6f6;
 	}
+	body {
+		display: grid;
+		gap: 1rem;
+	}
 	code {
-		font-family: Menlo, Monaco, Lucida Console, Liberation Mono, DejaVu Sans Mono,
-			Bitstream Vera Sans Mono, Courier New, monospace;
+		font-family:
+			Menlo,
+			Monaco,
+			Lucida Console,
+			Liberation Mono,
+			DejaVu Sans Mono,
+			Bitstream Vera Sans Mono,
+			Courier New,
+			monospace;
+	}
+	p {
+		margin: 0;
 	}
 </style>

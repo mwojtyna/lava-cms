@@ -1,0 +1,36 @@
+---
+import type { CmsComponent } from "@lavacms/types";
+import camelcase from "camelcase";
+import astroComponents from "virtual:lavacms-components";
+import config from "virtual:lavacms-config";
+import FallbackComponent from "./FallbackComponent.astro";
+
+interface Props {
+	component: CmsComponent;
+}
+
+const { component: cmsComponent } = Astro.props;
+
+// If it's null, then it means the component field is empty, which is a valid state
+if (cmsComponent === undefined) {
+	throw new Error("No component data provided to `LavaCmsComponent` Astro component");
+}
+if (typeof cmsComponent.name !== "string") {
+	throw new Error(
+		`The CMS component you passed to \`LavaCmsComponent\` is invalid:\n${JSON.stringify(
+			cmsComponent,
+			null,
+			2,
+		)}`,
+	);
+}
+
+const name = camelcase(cmsComponent.name);
+// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+const Comp = astroComponents[name];
+if (!(name in astroComponents) && !config.enableFallbackComponent) {
+	throw new Error(`No Astro component found for CMS component \`${cmsComponent.name}\``);
+}
+---
+
+{!Comp ? <FallbackComponent component={cmsComponent} /> : <Comp cms={cmsComponent.fields} />}

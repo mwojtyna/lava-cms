@@ -1,5 +1,5 @@
 import * as React from "react";
-import { cn } from "@admin/src/utils/styling";
+import { cn } from "@/src/utils/styling";
 
 interface TypographyH1Props extends React.ComponentPropsWithoutRef<"h1"> {
 	gradient?: boolean;

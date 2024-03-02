@@ -1,7 +1,7 @@
-import { prisma } from "@admin/prisma/client";
-import { publicProcedure } from "@admin/src/trpc";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
+import { prisma } from "@/prisma/client";
+import { publicProcedure } from "@/src/trpc";
 
 export const getPaths = publicProcedure
 	.input(
@@ -34,5 +34,5 @@ export const getPaths = publicProcedure
 			throw new TRPCError({ code: "NOT_FOUND" });
 		}
 
-		return group.children.map((child) => child.url.split("/").pop()!);
+		return group.children.map((child) => child.url.split("/").at(-1)!);
 	});

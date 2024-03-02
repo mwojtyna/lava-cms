@@ -4,8 +4,9 @@ module.exports = {
 		"eslint:recommended",
 		"plugin:@typescript-eslint/recommended-type-checked",
 		"plugin:@typescript-eslint/stylistic-type-checked",
+		"plugin:import/recommended",
+		"plugin:import/typescript",
 	],
-	plugins: ["@typescript-eslint"],
 	parser: "@typescript-eslint/parser",
 	ignorePatterns: ["dist", ".eslintrc.cjs"],
 	rules: {
@@ -16,6 +17,34 @@ module.exports = {
 			{ ignoreRestSiblings: true, argsIgnorePattern: "^_$" },
 		],
 		"@typescript-eslint/consistent-type-imports": ["warn", { disallowTypeAnnotations: false }],
-		"@typescript-eslint/no-namespace": "off",
+		"@typescript-eslint/no-misused-promises": ["error", { checksVoidReturn: false }],
+		"@typescript-eslint/consistent-type-definitions": "off",
+		"@typescript-eslint/array-type": "off",
+		"@typescript-eslint/prefer-nullish-coalescing": ["error", { ignoreConditionalTests: true }],
+		"import/order": [
+			"warn",
+			{
+				groups: [
+					"type",
+					"builtin",
+					"external",
+					"internal",
+					"parent",
+					"sibling",
+					"index",
+					"object",
+				],
+				pathGroups: [
+					{
+						pattern: "@/**",
+						group: "internal",
+					},
+				],
+				alphabetize: {
+					order: "asc",
+					caseInsensitive: true,
+				},
+			},
+		],
 	},
 };

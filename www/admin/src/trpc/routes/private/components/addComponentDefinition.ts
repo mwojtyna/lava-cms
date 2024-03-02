@@ -1,15 +1,16 @@
-import { z } from "zod";
-import { privateProcedure } from "@admin/src/trpc";
-import { ComponentFieldDefinitionSchema } from "@admin/prisma/generated/zod";
-import { prisma } from "@admin/prisma/client";
 import { TRPCError } from "@trpc/server";
+import { z } from "zod";
+import { prisma } from "@/prisma/client";
+import { privateProcedure } from "@/src/trpc";
+import { displayNameRegex } from "@/src/utils/regex";
+import { fieldDefSchema } from "./types";
 
 export const addComponentDefinition = privateProcedure
 	.input(
 		z.object({
-			name: z.string(),
+			name: z.string().regex(displayNameRegex),
 			groupId: z.string().cuid(),
-			fields: z.array(ComponentFieldDefinitionSchema.pick({ name: true, type: true })),
+			fields: z.array(fieldDefSchema),
 		}),
 	)
 	.mutation(async ({ input }) => {
@@ -37,12 +38,14 @@ export const addComponentDefinition = privateProcedure
 				group_id: input.groupId,
 			},
 		});
-		await prisma.componentFieldDefinition.createMany({
+		await prisma.componentDefinitionField.createMany({
 			data: input.fields.map((field, i) => ({
 				name: field.name,
+				display_name: field.displayName,
 				type: field.type,
 				order: i,
 				component_definition_id: componentDefinitionId,
+				array_item_type: field.arrayItemType,
 			})),
 		});
 	});

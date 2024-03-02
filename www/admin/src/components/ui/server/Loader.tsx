@@ -1,4 +1,4 @@
-import { cn } from "@admin/src/utils/styling";
+import { cn } from "@/src/utils/styling";
 
 export function Loader({ className }: { className?: string }) {
 	return (
@@ -10,7 +10,7 @@ export function Loader({ className }: { className?: string }) {
 			strokeWidth={2}
 			strokeLinecap="round"
 			strokeLinejoin="round"
-			className={cn("w-5 animate-spin", className)}
+			className={cn("inline w-5 animate-spin", className)}
 		>
 			<path d="M21 12a9 9 0 1 1-6.219-8.56" />
 		</svg>

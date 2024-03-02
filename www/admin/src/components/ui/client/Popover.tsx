@@ -1,8 +1,8 @@
 "use client";
 
-import * as React from "react";
 import * as PopoverPrimitive from "@radix-ui/react-popover";
 import { type VariantProps, cva } from "class-variance-authority";
+import * as React from "react";
 
 const Popover = PopoverPrimitive.Root;
 const PopoverTrigger = PopoverPrimitive.Trigger;
@@ -19,7 +19,7 @@ const popoverVariants = cva(
 		defaultVariants: {
 			variant: "default",
 		},
-	}
+	},
 );
 
 const PopoverContent = React.forwardRef<
@@ -40,4 +40,6 @@ const PopoverContent = React.forwardRef<
 ));
 PopoverContent.displayName = PopoverPrimitive.Content.displayName;
 
-export { Popover, PopoverTrigger, PopoverContent };
+const PopoverAnchor = PopoverPrimitive.Anchor;
+
+export { Popover, PopoverTrigger, PopoverContent, PopoverAnchor, popoverVariants };

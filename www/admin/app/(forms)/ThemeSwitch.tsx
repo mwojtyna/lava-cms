@@ -1,24 +1,27 @@
 "use client";
 
-import * as React from "react";
 import { MoonIcon, SunIcon } from "@heroicons/react/24/outline";
-import { Switch } from "../../src/components/ui/client";
-import { useColorThemeStore } from "@admin/src/data/stores/dashboard";
-import { cn } from "../../src/utils/styling";
+import * as React from "react";
+import { Switch } from "@/src/components/ui/client/Switch";
+import { useColorThemeStore } from "@/src/data/stores/colorTheme";
+import { cn } from "@/src/utils/styling";
 
 export const ThemeSwitch = React.forwardRef<
 	HTMLButtonElement,
 	React.ComponentPropsWithRef<typeof Switch>
 >(({ className, ...props }, ref) => {
-	const store = useColorThemeStore();
+	const { colorTheme, setColorTheme } = useColorThemeStore((state) => ({
+		colorTheme: state.colorTheme,
+		setColorTheme: state.setColorTheme,
+	}));
 
 	return (
 		<Switch
 			ref={ref}
 			size="lg"
 			className={cn("!bg-input", className)}
-			checked={store.colorTheme === "dark"}
-			onCheckedChange={(checked) => store.set(checked ? "dark" : "light")}
+			checked={colorTheme === "dark"}
+			onCheckedChange={(checked) => setColorTheme(checked ? "dark" : "light")}
 			iconOn={<MoonIcon className="text-primary" />}
 			iconOff={<SunIcon className="text-primary" />}
 			data-testid="theme-switch"

@@ -75,7 +75,9 @@
 
 	body {
 		@apply bg-background font-sans text-foreground;
-		font-feature-settings: "rlig" 1, "calt" 1;
+		font-feature-settings:
+			"rlig" 1,
+			"calt" 1;
 	}
 
 	/* Remove password reveal in Edge */
@@ -96,5 +98,15 @@
 		border: 1px solid hsl(var(--muted));
 		-webkit-text-fill-color: hsl(var(--foreground));
 		-webkit-box-shadow: 0 0 0px 1000px hsl(var(--muted)) inset;
+	}
+
+	/* Remove arrow in number input */
+	input[type="number"] {
+		-moz-appearance: textfield;
+	}
+
+	input[type="number"]::-webkit-outer-spin-button,
+	input[type="number"]::-webkit-inner-spin-button {
+		display: none;
 	}
 }

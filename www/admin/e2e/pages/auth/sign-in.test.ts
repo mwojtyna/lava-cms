@@ -1,10 +1,10 @@
 import { expect, test } from "@playwright/test";
-import { prisma } from "@admin/prisma/client";
-import { createMockUser, deleteMockUser, userMock, userPasswordDecrypted } from "@admin/e2e/mocks";
+import { createMockUser, deleteMockUser, userMock, userPasswordDecrypted } from "@/e2e/mocks";
+import { prisma } from "@/prisma/client";
 
 test.beforeAll(async () => {
 	await createMockUser();
-	await prisma.config.create({
+	await prisma.settingsSeo.create({
 		data: {
 			title: "My website",
 			description: "My website description",
@@ -14,7 +14,7 @@ test.beforeAll(async () => {
 });
 test.afterAll(async () => {
 	await deleteMockUser();
-	await prisma.config.deleteMany();
+	await prisma.settingsSeo.deleteMany();
 });
 
 test("light theme visual comparison", async ({ page }) => {

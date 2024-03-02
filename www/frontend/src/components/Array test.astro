@@ -1,0 +1,23 @@
+---
+interface Props {
+	cms: {
+		header: string;
+		articles: string[];
+	};
+}
+
+const { cms } = Astro.props;
+---
+
+<div>
+	<h1>{cms.header}</h1>
+	<div class="articles">
+		{cms.articles.map((article) => <p>{article}</p>)}
+	</div>
+</div>
+
+<style>
+	.articles {
+		border: 1px solid black;
+	}
+</style>

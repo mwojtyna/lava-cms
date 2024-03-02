@@ -1,14 +1,14 @@
-import type { Metadata } from "next";
 import type { inferAsyncReturnType } from "@trpc/server";
+import type { Metadata } from "next";
 import { ArrowRightIcon } from "@heroicons/react/20/solid";
-import { Stepper } from "@admin/src/components/ui/server";
-import { SignUpForm } from "./SignUpForm";
-import { SetupForm } from "./SetupForm";
-import { caller } from "@admin/src/trpc/routes/private/_private";
 import { redirect } from "next/navigation";
+import { Stepper } from "@/src/components/ui/server/Stepper";
+import { caller } from "@/src/trpc/routes/private/_private";
+import { SetupForm } from "./SetupForm";
+import { SignUpForm } from "./SignUpForm";
 
 export const metadata: Metadata = {
-	title: "Lava CMS - Setup",
+	title: "Setup - Lava CMS",
 };
 export const dynamic = "force-dynamic";
 

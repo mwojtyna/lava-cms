@@ -1,12 +1,14 @@
 import type { Metadata } from "next";
 import { Inter, Poppins } from "next/font/google";
 import { cookies } from "next/headers";
-import { TrpcProvider } from "@admin/src/components/providers";
-import { Body } from "@admin/src/components";
-import { ZustandProvider } from "@admin/src/components/providers";
-import { Toaster, TooltipProvider } from "@admin/src/components/ui/client";
-import { colorThemeSchema, type CookieName } from "@admin/src/utils/cookies";
-import "@admin/src/styles/globals.css";
+import { Body } from "@/src/components/Body";
+import { AlertDialogProvider } from "@/src/components/providers/AlertDialogProvider";
+import { ColorThemeStoreProvider } from "@/src/components/providers/ColorThemeStoreProvider";
+import { TrpcProvider } from "@/src/components/providers/TrpcProvider";
+import { Toaster } from "@/src/components/ui/client/Toaster";
+import { TooltipProvider } from "@/src/components/ui/client/Tooltip";
+import { colorThemeSchema, type CookieName } from "@/src/utils/cookies";
+import "@/src/styles/globals.css";
 
 export const metadata: Metadata = {
 	icons: ["/admin/favicon.ico"],
@@ -29,20 +31,22 @@ const headerFont = Poppins({
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
 	const colorTheme = await colorThemeSchema
-		.optional()
-		.parseAsync(cookies().get("color-theme" satisfies CookieName)?.value);
+		.nullable()
+		.parseAsync(cookies().get("color-theme" satisfies CookieName)?.value ?? null);
 
 	return (
 		<html lang="en-US">
-			<ZustandProvider colorTheme={colorTheme}>
-				<Body fonts={[regularFont, headerFont]}>
-					<TooltipProvider delayDuration={400}>
-						<TrpcProvider>{children}</TrpcProvider>
-					</TooltipProvider>
+			<ColorThemeStoreProvider colorTheme={colorTheme}>
+				<AlertDialogProvider>
+					<Body fonts={[regularFont, headerFont]}>
+						<TooltipProvider delayDuration={0}>
+							<TrpcProvider>{children}</TrpcProvider>
+						</TooltipProvider>
 
-					<Toaster />
-				</Body>
-			</ZustandProvider>
+						<Toaster />
+					</Body>
+				</AlertDialogProvider>
+			</ColorThemeStoreProvider>
 		</html>
 	);
 }

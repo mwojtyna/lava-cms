@@ -1,6 +1,6 @@
 generator client {
     provider        = "prisma-client-js"
-    previewFeatures = ["multiSchema"]
+    previewFeatures = ["relationJoins"]
 }
 
 generator zod {
@@ -9,68 +9,55 @@ generator zod {
     writeNullishInModelTypes = true
 }
 
+generator erd {
+    provider = "prisma-erd-generator"
+}
+
 datasource db {
     provider = "postgresql"
     url      = env("DATABASE_URL")
-    schemas  = ["admin", "frontend"]
 }
 
-// Admin schema
-model User {
-    id        String @id @unique
+model AdminUser {
+    id        String @id @default(cuid())
     name      String
     last_name String
     email     String @unique
+    password  String
 
-    auth_session Session[]
-    auth_key     Key[]
+    adminSessions AdminSession[]
 
-    @@map("user")
-    @@schema("admin")
+    @@map("admin_user")
 }
 
-model Session {
-    id             String @id @unique
-    user_id        String
-    active_expires BigInt
-    idle_expires   BigInt
+model AdminSession {
+    // Names have to be like this because of lucia-auth
+    id        String   @id
+    userId    String   @map("user_id")
+    expiresAt DateTime @map("expires_at")
 
-    user User @relation(references: [id], fields: [user_id], onDelete: Cascade)
+    // Has to be this name https://github.com/lucia-auth/lucia/issues/1411
+    adminUser AdminUser @relation(references: [id], fields: [userId], onDelete: Cascade)
 
-    @@index([user_id])
-    @@map("session")
-    @@schema("admin")
+    @@index([userId])
+    @@map("admin_session")
 }
 
-model Key {
-    id              String  @id @unique
-    hashed_password String?
-    user_id         String
-
-    user User @relation(references: [id], fields: [user_id], onDelete: Cascade)
-
-    @@index([user_id])
-    @@map("key")
-    @@schema("admin")
-}
-
-// Frontend schema
-model Config {
+model SettingsSeo {
     id          String @id @default(cuid())
     title       String
     description String
     language    String
 
-    @@map("config")
-    @@schema("frontend")
+    @@map("settings_seo")
 }
 
-model Token {
-    id    String @id @default(cuid())
-    token String
+model SettingsConnection {
+    id              String @id @default(cuid())
+    token           String
+    development_url String
 
-    @@map("token")
-    @@schema("frontend")
+    @@map("settings_connection")
 }
 
 model Page {
@@ -87,7 +74,6 @@ model Page {
 
     @@index([parent_id])
     @@map("page")
-    @@schema("frontend")
 }
 
 model ComponentDefinitionGroup {
@@ -101,7 +87,6 @@ model ComponentDefinitionGroup {
     component_definitions ComponentDefinition[]
 
     @@map("component_definition_group")
-    @@schema("frontend")
 }
 
 model ComponentDefinition {
@@ -111,64 +96,97 @@ model ComponentDefinition {
     last_update DateTime @default(now())
 
     group             ComponentDefinitionGroup   @relation(fields: [group_id], references: [id], onDelete: Cascade)
-    field_definitions ComponentFieldDefinition[]
-    components        ComponentInstance[]
+    field_definitions ComponentDefinitionField[]
+    instances         ComponentInstance[]
 
     @@index([group_id])
     @@map("component_definition")
-    @@schema("frontend")
 }
 
-model ComponentFieldDefinition {
+model ComponentDefinitionField {
     id                      String             @id @default(cuid())
     name                    String
+    display_name            String
     type                    ComponentFieldType
+    array_item_type         ArrayItemType?
     order                   Int
     component_definition_id String
 
-    component_definition ComponentDefinition @relation(fields: [component_definition_id], references: [id], onDelete: Cascade)
+    component_definition ComponentDefinition      @relation(fields: [component_definition_id], references: [id], onDelete: Cascade)
+    instances            ComponentInstanceField[]
 
     @@index([component_definition_id])
-    @@map("component_field_definition")
-    @@schema("frontend")
-}
-
-model ComponentInstanceField {
-    id           String @id @default(cuid())
-    component_id String
-    /// If type is a primitive type, then data is a string
-    /// If type is a complex type, then data is a JSON object
-    /// If type is a component, then data is that component's id
-    data         String
-
-    component ComponentInstance @relation(fields: [component_id], references: [id])
-
-    @@index([component_id])
-    @@map("component_instance_field")
-    @@schema("frontend")
+    @@map("component_definition_field")
 }
 
 model ComponentInstance {
-    id            String @id @default(cuid())
-    name          String
-    page_id       String
-    definition_id String
+    id                   String  @id @default(cuid())
+    page_id              String
+    parent_field_id      String? @unique
+    parent_array_item_id String? @unique
+    definition_id        String
+    order                Int
 
-    page       Page                     @relation(fields: [page_id], references: [id])
-    definition ComponentDefinition      @relation(fields: [definition_id], references: [id])
-    fields     ComponentInstanceField[]
+    page              Page                     @relation(fields: [page_id], references: [id], onDelete: Cascade)
+    parent_field      ComponentInstanceField?  @relation("parent_field", fields: [parent_field_id], references: [id], onDelete: Cascade)
+    parent_array_item ArrayItem?               @relation(fields: [parent_array_item_id], references: [id], onDelete: Cascade)
+    definition        ComponentDefinition      @relation(fields: [definition_id], references: [id], onDelete: Cascade)
+    fields            ComponentInstanceField[]
 
-    @@index([page_id])
+    @@index([page_id, parent_field_id, parent_array_item_id])
     @@map("component_instance")
-    @@schema("frontend")
+}
+
+model ComponentInstanceField {
+    id                   String  @id @default(cuid())
+    component_id         String
+    field_definition_id  String
+    /// If type is a primitive type, then data is a string
+    /// If type is an array, then data is empty, and array items reference this field's id in their `parent_field_id`
+    /// If type is a component, then data is empty
+    /// If type is RICH_TEXT, then data is Slate JSON
+    data                 String
+    serialized_rich_text String?
+
+    component         ComponentInstance        @relation(fields: [component_id], references: [id], onDelete: Cascade)
+    definition        ComponentDefinitionField @relation(fields: [field_definition_id], references: [id], onDelete: Cascade)
+    nested_components ComponentInstance[]      @relation("parent_field")
+    array_items       ArrayItem[]
+
+    @@index([component_id])
+    @@map("component_instance_field")
+}
+
+model ArrayItem {
+    id              String @id @default(cuid())
+    /// Same as `ComponentInstanceField.data`
+    data            String
+    order           Int
+    parent_field_id String
+
+    parent_field     ComponentInstanceField @relation(fields: [parent_field_id], references: [id], onDelete: Cascade)
+    nested_component ComponentInstance?
+
+    @@index([parent_field_id])
+    @@map("array_item")
 }
 
 enum ComponentFieldType {
+    TEXT
+    RICH_TEXT
+    NUMBER
+    SWITCH
+    COMPONENT
+    COLLECTION
+
+    @@map("component_field_type")
+}
+
+enum ArrayItemType {
     TEXT
     NUMBER
     SWITCH
     COMPONENT
 
-    @@map("component_field_type")
-    @@schema("frontend")
+    @@map("array_item_type")
 }

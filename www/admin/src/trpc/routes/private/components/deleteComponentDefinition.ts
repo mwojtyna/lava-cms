@@ -1,6 +1,6 @@
 import { z } from "zod";
-import { privateProcedure } from "@admin/src/trpc";
-import { prisma } from "@admin/prisma/client";
+import { prisma } from "@/prisma/client";
+import { privateProcedure } from "@/src/trpc";
 
 export const deleteComponentDefinition = privateProcedure
 	.input(

@@ -1,41 +1,40 @@
 "use client";
 
-import * as React from "react";
 import type { NextFontWithVariable } from "next/dist/compiled/@next/font";
-import { cn } from "@admin/src/utils/styling";
-import { useColorThemeStore } from "../data/stores/dashboard";
+import * as React from "react";
+import { useColorThemeStore } from "@/src/data/stores/colorTheme";
+import { cn } from "@/src/utils/styling";
 
 interface Props extends React.ComponentPropsWithRef<"body"> {
 	fonts: NextFontWithVariable[];
 }
 export function Body({ children, fonts, ...props }: Props) {
-	const store = useColorThemeStore();
+	const { colorTheme, setColorTheme } = useColorThemeStore((state) => ({
+		colorTheme: state.colorTheme,
+		setColorTheme: state.setColorTheme,
+	}));
 
 	React.useEffect(() => {
-		const matchMedia = window.matchMedia("(prefers-color-scheme: dark)");
-
-		if (!store.colorTheme) {
-			store.set(matchMedia.matches ? "dark" : "light");
+		const prefersDark = window.matchMedia("(prefers-color-scheme: dark)");
+		if (!colorTheme) {
+			setColorTheme(prefersDark.matches ? "dark" : "light");
 		}
 
 		const onPreferenceChanged: (e: MediaQueryListEvent) => void = (e) => {
-			store.set(e.matches ? "dark" : "light");
+			setColorTheme(e.matches ? "dark" : "light");
 		};
-		matchMedia.addEventListener("change", onPreferenceChanged);
+		prefersDark.addEventListener("change", onPreferenceChanged);
 
-		return () => matchMedia.removeEventListener("change", onPreferenceChanged);
-
-		// Disable because we only want it to run when component mounts first
+		return () => prefersDark.removeEventListener("change", onPreferenceChanged);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
 	return (
 		<body
 			className={cn(
-				store.colorTheme,
+				colorTheme,
 				fonts.map((font) => font.variable),
-				"antialiased",
-				"selection:bg-orange-500 selection:text-background dark:selection:bg-orange-600",
+				"antialiased selection:bg-brand selection:text-background",
 			)}
 			{...props}
 		>
