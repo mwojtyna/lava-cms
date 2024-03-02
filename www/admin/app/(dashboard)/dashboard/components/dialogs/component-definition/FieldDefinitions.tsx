@@ -33,14 +33,9 @@ import { Card } from "@/src/components/ui/server/Card";
 import { TypographyMuted } from "@/src/components/ui/server/typography";
 import { useComponentsTableDialogsStore } from "@/src/data/stores/componentDefinitions";
 import { cn } from "@/src/utils/styling";
-import {
-	FieldTypePicker,
-	fieldTypeMap,
-	type FieldDefinitionUI,
-	type DialogType,
-	snakeCaseToTitleCase,
-	fieldDefinitionUISchema,
-} from "./shared";
+import { FieldTypePicker } from "./shared";
+import { fieldDefinitionUISchema, type DialogType, type FieldDefinitionUI } from "./types";
+import { snakeCaseToTitleCase, fieldTypeMap } from "./utils";
 
 const addFieldDefsSchema = fieldDefinitionUISchema.pick({
 	name: true,
@@ -199,7 +194,7 @@ export const FieldDefs = React.forwardRef<React.ComponentRef<"div">, FieldDefsPr
 				? {
 						...original,
 						reordered: field.reordered,
-				  }
+					}
 				: field,
 		);
 		setFields(restored);
@@ -227,7 +222,7 @@ export const FieldDefs = React.forwardRef<React.ComponentRef<"div">, FieldDefsPr
 				? {
 						...field,
 						diff: "none",
-				  }
+					}
 				: field,
 		);
 		setFields(newFields);

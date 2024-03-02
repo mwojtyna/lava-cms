@@ -1,5 +1,6 @@
 "use client";
 
+import type { DialogType, Step } from "./types";
 import React from "react";
 import { useFormContext } from "react-hook-form";
 import { z } from "zod";
@@ -14,10 +15,12 @@ import { Input, getRestorableInputProps } from "@/src/components/ui/client/Input
 import { SheetHeader, SheetTitle } from "@/src/components/ui/client/Sheet";
 import { TypographyMuted } from "@/src/components/ui/server/typography";
 import { AddFieldDefs, FieldDefs } from "./FieldDefinitions";
-import { type DialogType, type Step } from "./shared";
 
 export const componentDefEditorInputsSchema = z.object({
-	name: z.string().min(1, { message: " " }),
+	name: z
+		.string()
+		.min(1, { message: " " })
+		.refine((name) => name.trim() !== "", { message: " " }),
 });
 export type ComponentDefEditorInputs = z.infer<typeof componentDefEditorInputsSchema>;
 
@@ -33,7 +36,7 @@ interface ComponentDefEditorProps {
 	title: string;
 }
 export function ComponentDefEditor(props: ComponentDefEditorProps) {
-	const form = useFormContext();
+	const form = useFormContext<ComponentDefEditorInputs>();
 
 	return (
 		<>

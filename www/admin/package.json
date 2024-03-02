@@ -108,7 +108,7 @@
 		"zustand": "^4.5.1"
 	},
 	"devDependencies": {
-		"@playwright/test": "^1.40.0",
+		"@playwright/test": "1.40.0",
 		"@types/bcrypt": "^5.0.2",
 		"@types/js-cookie": "^3.0.6",
 		"@types/language-tags": "^1.0.4",

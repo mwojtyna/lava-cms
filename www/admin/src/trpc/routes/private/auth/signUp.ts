@@ -15,7 +15,7 @@ export const signUp = privateProcedure
 		}),
 	)
 	.mutation(async ({ input }) => {
-		const hashedPassword = await argon2.hash(input.password, {
+		const hashedPassword = await argon2.hash(input.password.normalize("NFKC"), {
 			type: argon2.argon2id,
 			memoryCost: 19 * 1024, // 19MiB
 			timeCost: 2,

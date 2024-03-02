@@ -1,5 +1,6 @@
 "use client";
 
+import type { Step } from "./types";
 import type { ComponentsTableComponentDef } from "../../ComponentsTable";
 import type { inferRouterInputs } from "@trpc/server";
 import { DocumentDuplicateIcon } from "@heroicons/react/24/outline";
@@ -20,7 +21,7 @@ import {
 	type ComponentDefEditorInputs,
 } from "./ComponentDefEditor";
 import { FieldDefEditor } from "./FieldDefEditor";
-import { ComponentDefinitionNameError, type Step } from "./shared";
+import { ComponentDefinitionNameError } from "./shared";
 
 interface Props {
 	open: boolean;

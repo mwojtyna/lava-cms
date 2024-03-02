@@ -1,15 +1,17 @@
 import { expect } from "@playwright/test";
-import { prisma } from "@/prisma/client";
 import { test } from "./fixtures";
-import { DEFAULT_SESSION_COOKIE_NAME, connectionSettingsMock, seoSettingsMock } from "./mocks";
+import {
+	DEFAULT_SESSION_COOKIE_NAME,
+	connectionSettingsMock,
+	createMockUser,
+	deleteMockUser,
+} from "./mocks";
 
 test.beforeAll(async () => {
-	await prisma.settingsSeo.create({
-		data: seoSettingsMock,
-	});
+	await createMockUser();
 });
 test.afterAll(async () => {
-	await prisma.settingsSeo.deleteMany();
+	await deleteMockUser();
 });
 
 test.describe("private API", () => {

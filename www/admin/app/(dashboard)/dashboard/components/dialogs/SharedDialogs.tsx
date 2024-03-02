@@ -16,7 +16,7 @@ import {
 } from "@/src/components/ui/client/Dialog";
 import { FormField, FormItem, FormControl } from "@/src/components/ui/client/Form";
 import { trpc } from "@/src/utils/trpc";
-import { groupsToComboboxEntries } from "./component-definition/shared";
+import { groupsToComboboxEntries } from "./component-definition/utils";
 
 interface Props {
 	item: ComponentsTableItem;

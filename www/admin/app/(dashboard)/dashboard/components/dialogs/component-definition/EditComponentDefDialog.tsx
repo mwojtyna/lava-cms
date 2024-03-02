@@ -1,5 +1,6 @@
 "use client";
 
+import type { FieldDefinitionUI, Step } from "./types";
 import type { ComponentsTableComponentDef } from "../../ComponentsTable";
 import type { inferRouterInputs } from "@trpc/server";
 import { ExclamationTriangleIcon, PencilSquareIcon } from "@heroicons/react/24/outline";
@@ -23,7 +24,7 @@ import {
 	type ComponentDefEditorInputs,
 } from "./ComponentDefEditor";
 import { FieldDefEditor } from "./FieldDefEditor";
-import { ComponentDefinitionNameError, type FieldDefinitionUI, type Step } from "./shared";
+import { ComponentDefinitionNameError } from "./shared";
 
 function isEdited(field: FieldDefinitionUI) {
 	return field.diff === "edited" || (field.reordered && field.diff === "none");
@@ -136,7 +137,7 @@ export function EditComponentDefDialog(props: Props) {
 												...step.fieldDef,
 												id: fidToBid[step.fieldDef.id] ?? step.fieldDef.id,
 											},
-									  }
+										}
 									: step,
 							),
 						);

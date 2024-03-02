@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import type { ComponentsTableItem } from "@/app/(dashboard)/dashboard/components/ComponentsTable";
-import type { FieldDefinitionUI } from "@/app/(dashboard)/dashboard/components/dialogs/component-definition/shared";
+import type { FieldDefinitionUI } from "@/app/(dashboard)/dashboard/components/dialogs/component-definition/types";
 import { unwrapSetStateAction } from "./utils";
 import "client-only";
 
@@ -40,7 +40,7 @@ const useComponentsTableDialogsStore = create<ComponentsTableDialogsState>((set)
 						order: fd.order,
 						diff: "none",
 						reordered: false,
-				  }))
+					}))
 				: [];
 
 			return {

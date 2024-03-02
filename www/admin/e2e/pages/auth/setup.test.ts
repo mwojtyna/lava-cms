@@ -126,13 +126,19 @@ test.describe("setup website step", () => {
 		await expect(page).toHaveScreenshot();
 	});
 
-	test("shows error when language code invalid", async ({ page }) => {
-		await page.goto("/admin/setup");
-		await page.locator("input[type='text']").first().type(seoSettingsMock.title);
+	test("shows error when language code invalid", async ({ authedPage: page }) => {
+		// authedPage fixture automatically creates a config and a Root page
+		// we don't want that for this test because if it exists
+		// then it will redirect to /dashboard
+		await prisma.settingsSeo.deleteMany();
+		await prisma.page.deleteMany();
 
-		const languageInput = page.locator("input[type='text']").nth(1);
+		await page.goto("/admin/setup");
+		await page.base.locator("input[type='text']").first().type(seoSettingsMock.title);
+
+		const languageInput = page.base.locator("input[type='text']").nth(1);
 		await languageInput.type("invalid");
-		await page.locator("button[type='submit']").click();
+		await page.base.locator("button[type='submit']").click();
 
 		await expect(languageInput).toHaveAttribute("aria-invalid", "true");
 	});

@@ -1,6 +1,5 @@
 "use client";
 
-import type { DialogType, Step } from "./shared";
 import type { z } from "zod";
 import { ArrowLeftIcon } from "@heroicons/react/24/outline";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -20,7 +19,8 @@ import { Input, getRestorableInputProps } from "@/src/components/ui/client/Input
 import { SheetHeader, SheetTitle } from "@/src/components/ui/client/Sheet";
 import { useComponentsTableDialogsStore } from "@/src/data/stores/componentDefinitions";
 import { cn } from "@/src/utils/styling";
-import { fieldDefinitionUISchema, FieldTypePicker } from "./shared";
+import { FieldTypePicker } from "./shared";
+import { fieldDefinitionUISchema, type DialogType, type Step } from "./types";
 
 const fieldDefDialogSchema = fieldDefinitionUISchema.pick({
 	name: true,
@@ -80,7 +80,7 @@ export function FieldDefEditor(props: FieldDefEditorProps) {
 									...step.fieldDef,
 									name: data.name,
 								},
-						  }
+							}
 						: step,
 				),
 			);
@@ -98,7 +98,7 @@ export function FieldDefEditor(props: FieldDefEditorProps) {
 								order: f.order,
 								diff: props.step.fieldDef.diff !== "added" ? "edited" : "added",
 								reordered: false,
-						  }
+							}
 						: f,
 				),
 			);

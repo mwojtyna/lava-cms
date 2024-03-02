@@ -8,7 +8,8 @@ export const userMock: AdminUser = {
 	name: "John",
 	last_name: "Doe",
 	email: "johndoe@domain.com",
-	password: "$2b$10$ZVGT1G/c.WqZHa9UpSBTEeDRuL6sd/.k.RgPGE0YaZuPDdaV3Oe1G",
+	password:
+		"$argon2id$v=19$m=19456,t=2,p=1$GjBaRth7cLqIlfbacMIRMg$66ix1L+bMvh1CLNGG/QEMKR3B6llsf/TFblQsrjkKiE",
 };
 export const userPasswordDecrypted = "Zaq1@wsx";
 
