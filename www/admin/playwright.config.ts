@@ -68,7 +68,6 @@ const config: PlaywrightTestConfig = {
 			use: {
 				...devices["Desktop Safari"],
 			},
-			timeout: 45000,
 			retries: 2,
 		},
 
@@ -107,7 +106,7 @@ const config: PlaywrightTestConfig = {
 	/* Run your local dev server before starting the tests */
 	webServer: {
 		// Run only the admin server
-		command: "pnpm start",
+		command: process.env.CI ? "pnpm start" : "pnpm dev",
 		url: "http://localhost:3001/admin/api/health",
 		reuseExistingServer: false,
 	},
