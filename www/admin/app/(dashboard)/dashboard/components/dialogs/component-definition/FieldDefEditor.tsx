@@ -133,6 +133,7 @@ export function FieldDefEditor(props: FieldDefEditorProps) {
 					<ActionIcon
 						variant={"simple"}
 						onClick={() => props.setSteps((steps) => steps.slice(0, steps.length - 1))}
+						data-testid="back-btn"
 					>
 						<ArrowLeftIcon className="w-6" />
 					</ActionIcon>

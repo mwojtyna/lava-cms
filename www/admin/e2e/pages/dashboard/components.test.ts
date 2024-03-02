@@ -91,7 +91,7 @@ async function checkFieldDefs(page: Page, fieldDefs: FieldDefinition[]) {
 	}
 }
 
-function getFieldDef(page: Page, nth: number): Locator {
+function getFieldDefCard(page: Page, nth: number): Locator {
 	return page.getByTestId("component-fields").locator("> div").nth(nth);
 }
 async function editFieldDef(
@@ -101,21 +101,34 @@ async function editFieldDef(
 	newType?: FieldDefinition["type"],
 	save?: boolean,
 ): Promise<Locator> {
-	const fieldDef = getFieldDef(page, nth);
-	await fieldDef.getByTestId("edit-field-btn").click();
+	const fieldDefCard = getFieldDefCard(page, nth);
+	await fieldDefCard.click();
+
+	const editFieldDefStep = page.getByRole("dialog");
 
 	if (newName) {
-		await fieldDef.locator("input[name='name']").fill(newName);
+		await editFieldDefStep.locator("input[name='name']").nth(2).fill(newName);
 	}
 	if (newType) {
-		await fieldDef.getByRole("combobox").click();
-		await page.getByRole("group").locator(`div[data-value='${newType.toLowerCase()}']`).click();
+		await editFieldDefStep.getByRole("combobox").click();
+		await editFieldDefStep
+			.getByRole("listbox")
+			.locator(`div[data-value='${newType.toLowerCase().replaceAll(" ", "_")}']`)
+			.click();
 	}
 
-	if (save === undefined || save) {
-		await fieldDef.getByTestId("save-field-btn").click();
+	if (save === undefined || save === true) {
+		await editFieldDefStep.locator("button[type='submit']").click();
+		// If type changed warning dialog appears, confirm it
+		if ((await page.getByRole("dialog").count()) > 1) {
+			await page.locator("button[type='submit']").nth(1).click();
+			await page.getByRole("dialog").nth(1).waitFor({ state: "hidden" });
+		}
 	}
-	return fieldDef;
+
+	await editFieldDefStep.getByTestId("back-btn").click();
+
+	return fieldDefCard;
 }
 
 test.afterEach(async () => {
@@ -255,7 +268,9 @@ test.describe("component definition", () => {
 		await expect(page.base.locator("text=No results.")).toBeInViewport();
 	});
 
-	test("edits component definition (name & fields)", async ({ authedPage: page }) => {
+	test("edits component definition (name & fields), shows field type changed warning", async ({
+		authedPage: page,
+	}) => {
 		const rootGroup = await prisma.componentDefinitionGroup.findFirst();
 		const originalComp = await prisma.componentDefinition.create({
 			data: {
@@ -291,10 +306,12 @@ test.describe("component definition", () => {
 		await checkFieldDefs(page.base, originalComp.field_definitions);
 
 		await dialog.locator("input[name='name']").first().fill("Edited name");
-		const fieldDef = await editFieldDef(page.base, 0, "Switch", "SWITCH");
-		await expect(fieldDef).toHaveAttribute("data-test-diff", "edited");
+		const fieldDefCard = await editFieldDef(page.base, 0, "Switch", "SWITCH", false);
+		await expect(fieldDefCard).toHaveAttribute("data-test-diff", "edited");
 		await dialog.locator("button[type='submit']").click();
-		await dialog.waitFor({ state: "hidden" });
+		await page.base.getByRole("dialog").nth(1).locator("button[type='submit']").click();
+		await dialog.nth(1).waitFor({ state: "hidden" });
+		await dialog.getByTestId("close-btn").click();
 
 		const editedCompDef = await prisma.componentDefinition.findFirst({
 			include: {
@@ -404,19 +421,13 @@ test.describe("component definition", () => {
 				group_id: (await prisma.componentDefinitionGroup.findFirst())!.id,
 			},
 		});
-		const destination = await prisma.componentDefinitionGroup.create({
-			data: {
-				name: "Group 1",
-				parent_group_id: (await prisma.componentDefinitionGroup.findFirst())!.id,
-			},
-		});
 
 		await page.goto(URL);
-		await selectAction(page.base, 1, "Duplicate");
+		await selectAction(page.base, 0, "Duplicate");
 		const dialog = await fillAddCompDefDialog(page.base, existingComp.name, [
 			{ name: "Label", type: "TEXT" },
 		]);
-		await expect(getFieldDef(page.base, 0)).not.toHaveAttribute("data-test-diff", "added");
+		await expect(getFieldDefCard(page.base, 0)).not.toHaveAttribute("data-test-diff", "added");
 		await expect(dialog.locator("input[name='name']").first()).toHaveAttribute(
 			"aria-invalid",
 			"true",
@@ -424,8 +435,6 @@ test.describe("component definition", () => {
 		await expect(dialog.locator("strong")).toHaveText(existingComp.name);
 
 		await fillAddCompDefDialog(page.base, "Test 2", undefined, false);
-		await dialog.getByRole("combobox").nth(1).click();
-		await dialog.getByRole("option", { name: destination.name }).click();
 
 		await dialog.locator("button[type='submit']").click();
 		await dialog.waitFor({ state: "hidden" });
@@ -445,8 +454,7 @@ test.describe("component definition", () => {
 			} satisfies FieldDefinition,
 		]);
 
-		await getRow(page.base, 0).locator("td a").first().click();
-		await checkRow(page.base, 0, "Test 2", "Component Definition");
+		await checkRow(page.base, 1, "Test 2", "Component Definition");
 	});
 });
 
@@ -566,7 +574,7 @@ test.describe("field definition", () => {
 			{ name: "Label", type: "TEXT" },
 		]);
 
-		const fieldDef = getFieldDef(page.base, 0);
+		const fieldDef = getFieldDefCard(page.base, 0);
 		await expect(fieldDef).toHaveAttribute("data-test-diff", "added");
 
 		await dialog.locator("button[type='submit']").click();
@@ -600,7 +608,7 @@ test.describe("field definition", () => {
 		await selectAction(page.base, 0, "Edit");
 
 		await fillEditCompDefDialog(page.base, undefined, [{ name: "Label", type: "TEXT" }]);
-		const fieldDef = getFieldDef(page.base, 0);
+		const fieldDef = getFieldDefCard(page.base, 0);
 
 		// After edit its diff state doesn't change
 		await editFieldDef(page.base, 0, "Edited", "NUMBER");
@@ -642,7 +650,7 @@ test.describe("field definition", () => {
 		await page.goto(URL);
 
 		await selectAction(page.base, 0, "Edit");
-		const fieldDef = getFieldDef(page.base, 0);
+		const fieldDef = getFieldDefCard(page.base, 0);
 		await fieldDef.getByTestId("delete-field-btn").click();
 		await expect(fieldDef).toHaveAttribute("data-test-diff", "deleted");
 
@@ -698,7 +706,7 @@ test.describe("field definition", () => {
 		await page.goto(URL);
 		await selectAction(page.base, 0, "Edit");
 
-		const fieldDef = getFieldDef(page.base, 0);
+		const fieldDef = getFieldDefCard(page.base, 0);
 		await fieldDef.getByTestId("delete-field-btn").click();
 		await expect(fieldDef).toHaveAttribute("data-test-diff", "deleted");
 		await fieldDef.getByTestId("restore-field-btn").click();
@@ -796,10 +804,10 @@ test.describe("field definition", () => {
 		await page.goto(URL);
 
 		await selectAction(page.base, 0, "Edit");
-		const handle = getFieldDef(page.base, 2).locator("> div").first().getByRole("button");
+		const handle = getFieldDefCard(page.base, 2).locator("> div").first().getByRole("button");
 		await handle.hover();
 		await page.base.mouse.down();
-		await getFieldDef(page.base, 1).locator("> div").first().hover();
+		await getFieldDefCard(page.base, 1).locator("> div").first().hover();
 		await page.base.mouse.up();
 
 		await checkFieldDefs(page.base, [
