@@ -3,7 +3,6 @@ import { headers } from "next/headers";
 import { SuperJSON } from "superjson";
 import { prisma } from "@/prisma/client";
 import { auth, validateRequest } from "@/src/auth";
-import { env } from "../env/server.mjs";
 
 export interface ServerMeta {
 	noAuth: boolean;
@@ -21,7 +20,7 @@ export const privateAuth = t.middleware(async (opts) => {
 		}
 
 		const origin = new URL(headers().get("Origin") ?? headers().get("Referer")!).host;
-		if (env.VERCEL_URL !== origin) {
+		if (origin !== headers().get("Host")) {
 			throw new TRPCError({ code: "FORBIDDEN" });
 		}
 	}
