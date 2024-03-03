@@ -106,14 +106,17 @@ export function Inspector(props: Props) {
 		void animation.start(animationOpen);
 	}, [animation]);
 
+	const [addingComponent, setAddingComponent] = useState(false);
 	async function addComponent(id: string) {
 		const lastComponent = components.at(-1);
+		setAddingComponent(true);
 		const newComponent = await createComponentInstance(id, {
 			pageId: props.page.id,
 			parentFieldId: null,
 			parentArrayItemId: null,
 			order: lastComponent ? lastComponent.order + 1 : 0,
 		});
+		setAddingComponent(false);
 
 		setComponents((components) => [...components, newComponent]);
 	}
@@ -207,6 +210,7 @@ export function Inspector(props: Props) {
 									}))
 						}
 						openAddComponentDialog={() => setOpenAdd(true)}
+						addingComponent={addingComponent}
 						getComponent={getComponent}
 						getNestedComponent={getNestedComponent}
 					/>
@@ -224,6 +228,7 @@ interface StepProps {
 	getComponent: (id: string) => ComponentUI;
 	getNestedComponent: (id: string) => ComponentUI;
 	openAddComponentDialog: () => void;
+	addingComponent: boolean;
 }
 
 function Step(props: StepProps) {
@@ -267,6 +272,7 @@ function Step(props: StepProps) {
 						variant={"outline"}
 						icon={<PlusIcon className="w-5" />}
 						onClick={props.openAddComponentDialog}
+						loading={props.addingComponent}
 					>
 						Add component
 					</Button>
