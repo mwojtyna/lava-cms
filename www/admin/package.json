@@ -7,6 +7,7 @@
 		"dev": "next dev -p 3001 --turbo",
 		"build": "next build",
 		"lint": "tsc && next lint",
+		"deploy": "DISABLE_ERD=true prisma generate && pnpm build",
 		"db:push": "prisma db push && dotenv -e .env.test -- prisma db push",
 		"e2e": "playwright test",
 		"e2e:ui": "playwright test --ui",
