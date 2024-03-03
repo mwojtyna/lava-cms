@@ -125,11 +125,11 @@ function groupItems(group: GroupWithIncludes): GroupItem[] {
 						? {
 								...current,
 								count: current.count + 1,
-						  }
+							}
 						: {
 								pageName: instance.page.name,
 								count: 1,
-						  };
+							};
 					return acc;
 				},
 				{},

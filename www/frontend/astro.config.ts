@@ -2,7 +2,7 @@ import { defineConfig } from "astro/config";
 import { loadEnv } from "vite";
 import { lavaCmsAstro } from "@lavacms/astro";
 
-const { CMS_TOKEN } = loadEnv(import.meta.env.MODE, process.cwd(), "") as ImportMetaEnv;
+const { CMS_URL, CMS_TOKEN } = loadEnv(import.meta.env.MODE, process.cwd(), "") as ImportMetaEnv;
 
 export default defineConfig({
 	server: {
@@ -10,7 +10,7 @@ export default defineConfig({
 	},
 	integrations: [
 		lavaCmsAstro({
-			url: "http://localhost:8080/admin",
+			url: CMS_URL,
 			token: CMS_TOKEN,
 			log: import.meta.env.DEV,
 			components: {
