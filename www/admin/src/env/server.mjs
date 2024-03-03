@@ -5,7 +5,7 @@ import { z } from "zod";
 export const env = createEnv({
 	server: {
 		NODE_ENV: z.enum(["development", "production", "test"]),
-		DATABASE_URL: z.string(),
+		DB_URL: z.string(),
 	},
 	experimental__runtimeEnv: process.env,
 });

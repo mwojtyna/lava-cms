@@ -15,7 +15,7 @@ generator erd {
 
 datasource db {
     provider = "postgresql"
-    url      = env("DATABASE_URL")
+    url      = env("DB_URL")
 }
 
 model AdminUser {
