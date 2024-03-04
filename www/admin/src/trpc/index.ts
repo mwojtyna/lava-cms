@@ -3,6 +3,7 @@ import { headers } from "next/headers";
 import { SuperJSON } from "superjson";
 import { prisma } from "@/prisma/client";
 import { auth, validateRequest } from "@/src/auth";
+import { env } from "../env/server.mjs";
 
 export interface ServerMeta {
 	noAuth: boolean;
@@ -20,7 +21,11 @@ export const privateAuth = t.middleware(async (opts) => {
 		}
 
 		const origin = new URL(headers().get("Origin") ?? headers().get("Referer")!).host;
-		if (origin !== headers().get("Host")) {
+		const allowedOrigins = env.ALLOWED_ORIGINS?.split(",").map(
+			(origin) => new URL(origin).host,
+		);
+
+		if (origin !== headers().get("Host") && !allowedOrigins?.includes(origin)) {
 			throw new TRPCError({ code: "FORBIDDEN" });
 		}
 	}
