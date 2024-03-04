@@ -1,6 +1,7 @@
 import { defineConfig } from "astro/config";
 import { loadEnv } from "vite";
 import { lavaCmsAstro } from "@lavacms/astro";
+import vercel from "@astrojs/vercel/serverless";
 
 const { CMS_URL, CMS_TOKEN } = loadEnv(import.meta.env.MODE, process.cwd(), "") as ImportMetaEnv;
 
@@ -8,6 +9,9 @@ export default defineConfig({
 	server: {
 		host: true,
 	},
+	// Only for demo purposes
+	output: "server",
+	adapter: vercel(),
 	integrations: [
 		lavaCmsAstro({
 			url: CMS_URL,

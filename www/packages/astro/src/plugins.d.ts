@@ -4,6 +4,6 @@ declare module "virtual:lavacms-components" {
 }
 
 declare module "virtual:lavacms-config" {
-	const config: import("./adapter").ClientConfigAstro;
+	const config: import("./integration").ClientConfigAstro;
 	export default config;
 }

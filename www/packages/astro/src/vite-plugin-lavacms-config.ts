@@ -1,4 +1,4 @@
-import type { ClientConfigAstro } from "./adapter";
+import type { ClientConfigAstro } from "./integration";
 import type { Plugin } from "vite";
 
 export function vitePluginLavaCmsConfig(config: ClientConfigAstro): Plugin {

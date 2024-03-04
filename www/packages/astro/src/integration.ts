@@ -44,7 +44,10 @@ export function lavaCmsAstro(config: ClientConfigAstro): AstroIntegration {
 					`,
 				);
 
-				if (process.env.NODE_ENV !== "production") {
+				if (
+					process.env.NODE_ENV !== "production" ||
+					(process.env.NODE_ENV === "production" && process.env.BRIDGE_IN_PROD)
+				) {
 					injectScript("page", bridgeScript);
 				}
 
@@ -54,22 +57,6 @@ export function lavaCmsAstro(config: ClientConfigAstro): AstroIntegration {
 							vitePluginLavaCmsConfig(config),
 							vitePluginLavaCmsComponents(config.components),
 						],
-					},
-				});
-			},
-			"astro:config:done": ({ setAdapter }) => {
-				setAdapter({
-					name: "@lavacms/astro",
-					supportedAstroFeatures: {
-						staticOutput: "stable",
-						serverOutput: "unsupported",
-						hybridOutput: "unsupported",
-						assets: {
-							supportKind: "stable",
-							isSharpCompatible: true,
-							isSquooshCompatible: true,
-						},
-						i18nDomains: "stable",
 					},
 				});
 			},
