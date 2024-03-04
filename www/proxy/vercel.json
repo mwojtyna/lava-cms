@@ -1,0 +1,12 @@
+{
+	"rewrites": [
+		{
+			"source": "/admin(.*)",
+			"destination": "https://lava-cms-demo-admin.vercel.app/admin$1"
+		},
+		{
+			"source": "/(.*)",
+			"destination": "https://lava-cms-demo-frontend.vercel.app/$1"
+		}
+	]
+}
