@@ -35,14 +35,15 @@ interface Props {
 	cookie: TableCookie | null;
 }
 export function ComponentsTable(props: Props) {
-	const data = trpc.components.getGroup.useQuery(
-		props.data.breadcrumbs.length > 0 ? { id: props.data.group.id } : null,
-		{ initialData: props.data },
-	).data;
+	// For some reason we can't use react-query's `initialData` option here,
+	// because even if the initialData is not undefined, the resulting data will be undefined
+	const data =
+		trpc.components.getGroup.useQuery(
+			props.data.breadcrumbs.length > 0 ? { id: props.data.group.id } : null,
+		).data ?? props.data;
 
-	const tableData = data.items ?? []; // Somehow `data` this is sometimes undefined
 	const { table, searchElement } = useDataTable({
-		data: tableData,
+		data: data.items,
 		columns,
 		cookie: {
 			name: "components-table",
