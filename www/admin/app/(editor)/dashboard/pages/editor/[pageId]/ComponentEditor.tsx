@@ -21,7 +21,7 @@ import { cn } from "@/src/utils/styling";
 import { ArrayField } from "./fields/ArrayField";
 import { NestedComponentField } from "./fields/NestedComponentField";
 
-type Input = Record<string, string>; // fieldId: data
+type Input = Record<string, string>; // fieldId -> data
 
 interface ComponentEditorProps {
 	component: ComponentUI;
@@ -37,7 +37,7 @@ export function ComponentEditor(props: ComponentEditorProps) {
 	);
 	const originalComponent = useMemo(
 		() =>
-			(props.component.parentFieldId === null
+			(props.component.parentFieldId === null && props.component.parentArrayItemId === null
 				? originalComponents
 				: originalNestedComponents
 			).find((comp) => comp.id === props.component.id),
