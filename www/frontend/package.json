@@ -6,7 +6,7 @@
 		"dev": "astro dev --port 3000",
 		"build": "pnpm lint && astro build",
 		"lint": "tsc && eslint . && astro check",
-		"deploy": "cd ../admin && DISABLE_ERD=true pnpm prisma generate && cd ../packages/types && pnpm build && cd ../astro && pnpm build && cd ../core && pnpm build && cd ../../frontend && pnpm build",
+		"deploy": "cd ../admin && DISABLE_ERD=true pnpm prisma generate && cd ../../packages/types && pnpm build && cd ../astro && pnpm build && cd ../core && pnpm build && cd ../../www/frontend && pnpm build",
 		"preview": "astro preview",
 		"astro": "astro"
 	},

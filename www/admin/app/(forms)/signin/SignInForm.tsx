@@ -4,7 +4,7 @@ import {
 	LockClosedIcon,
 	EnvelopeIcon,
 	ExclamationCircleIcon,
-	ArrowRightOnRectangleIcon,
+	ArrowRightStartOnRectangleIcon,
 } from "@heroicons/react/24/outline";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
@@ -71,7 +71,7 @@ export function SignInForm() {
 				<Button
 					type="submit"
 					size="lg"
-					icon={<ArrowRightOnRectangleIcon className="w-5" />}
+					icon={<ArrowRightStartOnRectangleIcon className="w-5" />}
 					className="ml-auto shadow-lg shadow-primary/25"
 					loading={mutation.isLoading || mutation.isSuccess}
 				>

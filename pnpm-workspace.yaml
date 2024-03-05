@@ -1,0 +1,4 @@
+packages:
+  - "www/admin"
+  - "www/frontend"
+  - "packages/**/*"
