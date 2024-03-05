@@ -40,7 +40,7 @@ export function ComponentsTable(props: Props) {
 		{ initialData: props.data },
 	).data;
 
-	const tableData = data.items;
+	const tableData = data.items ?? []; // Somehow `data` this is sometimes undefined
 	const { table, searchElement } = useDataTable({
 		data: tableData,
 		columns,

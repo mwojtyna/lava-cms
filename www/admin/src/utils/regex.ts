@@ -9,9 +9,9 @@ export const systemNameRegex = /^[^\d_]\w*$/;
 
 /**
  * Regex for display name
- * Matches when the string starts with a word character and contains only word characters and whitespace
+ * Matches when the string starts doesn't start with a whitespace character and contains any characters afterwards
  */
-export const displayNameRegex = /^\w[\w\s]*$/;
+export const displayNameRegex = /^[^\s].*$/;
 
 /**
  * Regex for `Connection settings -> Development URL`

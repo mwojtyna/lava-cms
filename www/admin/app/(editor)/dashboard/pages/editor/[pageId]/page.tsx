@@ -2,9 +2,9 @@ import type { Metadata } from "next";
 import { prisma } from "@/prisma/client";
 import { UserMenu } from "@/src/components/UserMenu";
 import { caller } from "@/src/trpc/routes/private/_private";
-import { BackButton } from "./fields/BackButton";
-import { ResetButton } from "./fields/ResetButton";
-import { SaveButton } from "./fields/SaveButton";
+import { BackButton } from "./buttons/BackButton";
+import { ResetButton } from "./buttons/ResetButton";
+import { SaveButton } from "./buttons/SaveButton";
 import { Inspector } from "./Inspector";
 import { PagePreview } from "./PagePreview";
 
