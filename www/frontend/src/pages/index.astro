@@ -10,9 +10,20 @@ const page = await cms.getPage(Astro.url.pathname);
 <Layout>
 	<h1>{page.name} {page.url}</h1>
 
+	<strong id="cms-admin-link">
+		<a href="/admin">CMS admin</a>
+	</strong>
+
 	<a href="/products">products</a>
 	<a href="/products/product-1/">product-1</a>
 	<a href="/missing">missing</a>
 
 	<LavaCmsComponents components={page.components} />
 </Layout>
+
+<style>
+	#cms-admin-link {
+		font-size: 2rem;
+		margin-bottom: 1rem;
+	}
+</style>

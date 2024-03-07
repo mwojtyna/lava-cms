@@ -1,6 +1,7 @@
 ---
 import { useLavaCms } from "@lavacms/astro";
 import Layout from "@/layouts/Layout.astro";
+import LavaCmsComponents from "@lavacms/astro/LavaCmsComponents.astro";
 
 const cms = useLavaCms();
 const page = await cms.getPage(Astro.url.pathname);
@@ -17,4 +18,6 @@ const products = await cms.getPaths(page.url);
 			{products.map((product) => <li>{product}</li>)}
 		</ul>
 	</figure>
+
+	<LavaCmsComponents components={page.components} />
 </Layout>
