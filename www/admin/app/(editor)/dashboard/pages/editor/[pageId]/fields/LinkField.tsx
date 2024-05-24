@@ -1,4 +1,8 @@
-import { ArrowTopRightOnSquareIcon, TrashIcon } from "@heroicons/react/24/outline";
+import {
+	ArrowPathRoundedSquareIcon,
+	ArrowTopRightOnSquareIcon,
+	TrashIcon,
+} from "@heroicons/react/24/outline";
 import Link from "next/link";
 import { useState } from "react";
 import { ActionIcon } from "@/src/components/ui/client/ActionIcon";
@@ -34,6 +38,14 @@ export function LinkField(props: FormFieldProps<string>) {
 							<Link href={"/dashboard/pages/editor/" + page.id} target="_blank">
 								<ArrowTopRightOnSquareIcon className="w-5" />
 							</Link>
+						</ActionIcon>
+
+						<ActionIcon
+							variant={"simple"}
+							onClick={() => setOpenDialog(true)}
+							tooltip="Change"
+						>
+							<ArrowPathRoundedSquareIcon className="w-5" />
 						</ActionIcon>
 
 						<ActionIcon
