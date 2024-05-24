@@ -1,6 +1,6 @@
 {
 	"name": "@lavacms/astro",
-	"version": "0.2.0",
+	"version": "0.2.1",
 	"type": "module",
 	"description": "Astro adapter for Lava CMS API",
 	"main": "./dist/index.js",
