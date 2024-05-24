@@ -1,9 +1,8 @@
 "use client";
 
+import type { Page } from "@prisma/client";
 import { ChevronRightIcon, CubeIcon, FolderIcon, HomeIcon } from "@heroicons/react/24/outline";
-import cuid from "cuid";
 import { useEffect, useState } from "react";
-import type { ComponentsTableItem } from "@/app/(dashboard)/dashboard/components/ComponentsTable";
 import { ActionIcon } from "@/src/components/ui/client/ActionIcon";
 import { Button } from "@/src/components/ui/client/Button";
 import {
@@ -17,63 +16,25 @@ import { Separator } from "@/src/components/ui/client/Separator";
 import { Skeleton } from "@/src/components/ui/server/Skeleton";
 import { Stepper } from "@/src/components/ui/server/Stepper";
 import { TypographyMuted } from "@/src/components/ui/server/typography";
-import type { ComponentUI } from "@/src/data/stores/pageEditor";
-import { getInitialValue } from "@/src/data/stores/utils";
 import { cn } from "@/src/utils/styling";
-import { trpc, trpcFetch } from "@/src/utils/trpc";
-
-export async function createComponentInstance(
-	definitionId: string,
-	data: Pick<ComponentUI, "pageId" | "parentFieldId" | "parentArrayItemId" | "order">,
-	currentComponent?: ComponentUI,
-): Promise<ComponentUI> {
-	const definition = await trpcFetch.components.getComponentDefinition.query({
-		id: definitionId,
-	});
-	return {
-		// When replacing component, keep the id
-		id: currentComponent?.id ?? cuid(),
-		definition: {
-			id: definition.id,
-			name: definition.name,
-		},
-		fields: definition.field_definitions.map((fieldDef) => {
-			const data = getInitialValue(fieldDef.type) as string;
-
-			return {
-				id: cuid(),
-				name: fieldDef.name,
-				displayName: fieldDef.display_name,
-				data,
-				serializedRichText: fieldDef.type === "RICH_TEXT" ? "" : null,
-				definitionId: fieldDef.id,
-				order: fieldDef.order,
-				type: fieldDef.type,
-				arrayItemType: fieldDef.array_item_type,
-			};
-		}),
-		order: data.order,
-		pageId: data.pageId,
-		parentFieldId: data.parentFieldId,
-		parentArrayItemId: data.parentArrayItemId,
-		diff: currentComponent ? "replaced" : "added",
-	};
-}
+import { trpc } from "@/src/utils/trpc";
 
 interface Props {
 	open: boolean;
 	setOpen: (value: boolean) => void;
 	onSubmit: (id: string) => void;
 }
-// Consider abstracting this type of a dialog out to a hook or a component if it needs to be copied on more time
-export function AddComponentDialog(props: Props) {
+export function SelectLinkDialog(props: Props) {
 	const [groupId, setGroupId] = useState<string | null>(null);
 	const [search, setSearch] = useState("");
 
-	const { data, refetch } = trpc.components.getGroup.useQuery(groupId ? { id: groupId } : null, {
-		enabled: props.open,
-	});
-	const list = data?.items;
+	const { data, refetch } = trpc.pages.getGroupContents.useQuery(
+		groupId ? { id: groupId } : null,
+		{
+			enabled: props.open,
+		},
+	);
+	const list = data?.pages;
 
 	useEffect(() => {
 		if (props.open) {
@@ -91,7 +52,7 @@ export function AddComponentDialog(props: Props) {
 		<Dialog open={props.open} onOpenChange={props.setOpen}>
 			<DialogContent className="flex max-h-[66vh] flex-col">
 				<DialogHeader>
-					<DialogTitle>Add component</DialogTitle>
+					<DialogTitle>Select page</DialogTitle>
 				</DialogHeader>
 
 				<Input
@@ -108,8 +69,8 @@ export function AddComponentDialog(props: Props) {
 								return;
 							}
 
-							if (!item.isGroup) {
-								props.onSubmit(item.id);
+							if (!item.is_group) {
+								props.onSubmit(item.url);
 								props.setOpen(false);
 							} else {
 								openGroup(item.id);
@@ -166,7 +127,7 @@ export function AddComponentDialog(props: Props) {
 										item={item}
 										groupClick={() => openGroup(item.id)}
 										componentClick={() => {
-											props.onSubmit(item.id);
+											props.onSubmit(item.url);
 											props.setOpen(false);
 										}}
 										isLast={i === list.length - 1}
@@ -190,7 +151,7 @@ export function AddComponentDialog(props: Props) {
 }
 
 interface ListItemProps {
-	item: ComponentsTableItem;
+	item: Page;
 	groupClick: () => void;
 	componentClick: () => void;
 	isLast: boolean;
@@ -203,9 +164,13 @@ function ListItem(props: ListItemProps) {
 				className="w-full justify-start px-3 outline-0"
 				variant={"outline"}
 				size={"lg"}
-				onClick={props.item.isGroup ? props.groupClick : props.componentClick}
+				onClick={props.item.is_group ? props.groupClick : props.componentClick}
 			>
-				{props.item.isGroup ? <FolderIcon className="w-5" /> : <CubeIcon className="w-5" />}
+				{props.item.is_group ? (
+					<FolderIcon className="w-5" />
+				) : (
+					<CubeIcon className="w-5" />
+				)}
 				{props.item.name}
 			</Button>
 			{props.isLast && <Separator className="mt-1" />}
