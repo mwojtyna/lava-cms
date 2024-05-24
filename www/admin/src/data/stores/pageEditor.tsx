@@ -97,11 +97,11 @@ export const usePageEditorStore = create<PageEditorState>((set) => ({
 		set((state) => {
 			const newComponents = unwrapSetStateAction(components, state.components);
 
-			for (let i = 0; i < newComponents.length; i++) {
-				const nc = newComponents[i]!;
-				// Fix for when a component is added, reordered and then deleted
-				// the components which were reordered have wrong order
-				nc.order = i;
+			// Fix for when a component is added, reordered and then deleted
+			// the components which were reordered have wrong order
+			const newComponentsWithoutDeleted = newComponents.filter((nc) => !isDeleted(nc));
+			for (let i = 0; i < newComponentsWithoutDeleted.length; i++) {
+				newComponentsWithoutDeleted[i]!.order = i;
 			}
 
 			return {
@@ -139,11 +139,13 @@ export const usePageEditorStore = create<PageEditorState>((set) => ({
 				state.arrayItems[parentFieldId] ?? [],
 			);
 
-			for (let i = 0; i < changedArrayItems.length; i++) {
-				const ai = changedArrayItems[i]!;
-				// Fix for when an item is added, reordered and then deleted
-				// the items which were reordered still have the wrong order
-				ai.order = i;
+			// Fix for when an item is added, reordered and then deleted
+			// the items which were reordered still have the wrong order
+			const changedArrayItemsWithoutDeleted = changedArrayItems.filter(
+				(ai) => !isDeleted(ai),
+			);
+			for (let i = 0; i < changedArrayItemsWithoutDeleted.length; i++) {
+				changedArrayItemsWithoutDeleted[i]!.order = i;
 			}
 
 			let arrayItemsGrouped: ArrayItemsGrouped = {
@@ -177,9 +179,7 @@ export const usePageEditorStore = create<PageEditorState>((set) => ({
 				isDirty:
 					JSON.stringify(state.originalComponents) !== JSON.stringify(state.components) ||
 					JSON.stringify(state.originalNestedComponents) !==
-						JSON.stringify(
-							state.nestedComponents.filter((nc) => nc.diff !== "deleted"),
-						) ||
+						JSON.stringify(state.nestedComponents.filter((nc) => !isDeleted(nc))) ||
 					JSON.stringify(state.originalArrayItems) !==
 						JSON.stringify(arrayItemsGroupedWithoutDeleted),
 			};
@@ -305,6 +305,18 @@ export const usePageEditorStore = create<PageEditorState>((set) => ({
 				}
 			}
 
+			// Find edited components
+			const editedComponents = [];
+			const originalComponentsSet = new Set(
+				state.originalComponents.concat(state.originalNestedComponents),
+			);
+			for (const comp of state.components.concat(state.nestedComponents)) {
+				// Using `isNotChanged` to only get components which were not added or deleted
+				if (!originalComponentsSet.has(comp) && isNotChanged(comp)) {
+					editedComponents.push(comp);
+				}
+			}
+
 			type AddedComponent =
 				inferRouterInputs<PrivateRouter>["pages"]["editPageComponents"]["addedComponents"][number];
 
@@ -328,9 +340,7 @@ export const usePageEditorStore = create<PageEditorState>((set) => ({
 								definitionId: field.definitionId,
 							})),
 						})),
-					editedComponents: correctedComponents
-						.concat(state.nestedComponents)
-						.filter(isNotChanged),
+					editedComponents: editedComponents,
 					deletedComponentIds: state.components
 						.concat(state.nestedComponents)
 						.filter((comp) => isDeleted(comp) || isReplaced(comp)) // Also delete replaced components
