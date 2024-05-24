@@ -10,8 +10,12 @@ import { animated, useSpring } from "react-spring";
 import { Button } from "@/src/components/ui/client/Button";
 import { Stepper } from "@/src/components/ui/server/Stepper";
 import { TypographyH1, TypographyMuted } from "@/src/components/ui/server/typography";
-import { usePageEditorStore } from "@/src/data/stores/pageEditor";
-import { type Step as StepType, type ComponentUI } from "@/src/data/stores/pageEditor";
+import {
+	usePageEditorStore,
+	type ArrayItemUI,
+	type Step as StepType,
+	type ComponentUI,
+} from "@/src/data/stores/pageEditor";
 import type { PrivateRouter } from "@/src/trpc/routes/private/_private";
 import { cn } from "@/src/utils/styling";
 import { trpc } from "@/src/utils/trpc";
@@ -73,9 +77,9 @@ export function Inspector(props: Props) {
 	);
 	useEffect(() => {
 		init(
-			data.components.map((comp) => ({ ...comp, diff: "none", reordered: false })),
-			data.nestedComponents.map((comp) => ({ ...comp, diff: "none", reordered: false })),
-			data.arrayItems.map((item) => ({ ...item, diff: "none", reordered: false })),
+			data.components.map((comp) => ({ ...comp, diff: "none" }) satisfies ComponentUI),
+			data.nestedComponents.map((comp) => ({ ...comp, diff: "none" }) satisfies ComponentUI),
+			data.arrayItems.map((item) => ({ ...item, diff: "none" }) satisfies ArrayItemUI),
 		);
 	}, [data, init]);
 
@@ -202,11 +206,13 @@ export function Inspector(props: Props) {
 						components={
 							components.length > 0
 								? components
-								: props.serverData.components.map((c) => ({
-										...c,
-										diff: "none",
-										reordered: false,
-									}))
+								: props.serverData.components.map(
+										(c) =>
+											({
+												...c,
+												diff: "none",
+											}) satisfies ComponentUI,
+									)
 						}
 						openAddComponentDialog={() => setOpenAdd(true)}
 						addingComponent={addingComponent}

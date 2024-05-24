@@ -306,14 +306,33 @@ export const usePageEditorStore = create<PageEditorState>((set) => ({
 			}
 
 			// Find edited components
+			const originalComponentsAll = new Map<string, ComponentUI>();
+			for (const comp of state.originalComponents.concat(state.originalNestedComponents)) {
+				originalComponentsAll.set(comp.id, comp);
+			}
+
 			const editedComponents = [];
-			const originalComponentsSet = new Set(
-				state.originalComponents.concat(state.originalNestedComponents),
-			);
 			for (const comp of state.components.concat(state.nestedComponents)) {
+				const original = originalComponentsAll.get(comp.id);
 				// Using `isNotChanged` to only get components which were not added or deleted
-				if (!originalComponentsSet.has(comp) && isNotChanged(comp)) {
+				if (isNotChanged(comp) && JSON.stringify(comp) !== JSON.stringify(original)) {
 					editedComponents.push(comp);
+				}
+			}
+
+			// Find edited array items
+			const originalArrayItemsAll = new Map<string, ArrayItemUI>();
+			for (const item of Object.values(state.originalArrayItems).flat()) {
+				originalArrayItemsAll.set(item.id, item);
+			}
+
+			const flatArrayItems = Object.values(state.arrayItems).flat();
+			const editedArrayItems = [];
+			for (const item of flatArrayItems) {
+				const original = originalArrayItemsAll.get(item.id);
+				// Using `isNotChanged` to only get items which were not added or deleted
+				if (isNotChanged(item) && JSON.stringify(item) !== JSON.stringify(original)) {
+					editedArrayItems.push(item);
 				}
 			}
 
@@ -355,11 +374,8 @@ export const usePageEditorStore = create<PageEditorState>((set) => ({
 							parentFieldId: item.parentFieldId,
 							order: item.order,
 						})),
-					editedArrayItems: Object.values(correctedArrayItems)
-						.flat()
-						.filter(isNotChanged),
-					deletedArrayItemIds: Object.values(state.arrayItems)
-						.flat()
+					editedArrayItems: editedArrayItems,
+					deletedArrayItemIds: flatArrayItems
 						.filter((item) => isDeleted(item))
 						.map((item) => item.id),
 				},
