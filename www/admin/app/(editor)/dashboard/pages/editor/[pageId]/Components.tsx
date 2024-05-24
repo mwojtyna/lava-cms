@@ -34,7 +34,6 @@ interface Props {
 export function Components(props: Props) {
 	const { componentsInit, setComponents, isInitialized } = usePageEditorStore((state) => ({
 		componentsInit: state.components,
-		originalComponents: state.originalComponents,
 		setComponents: state.setComponents,
 		isInitialized: state.isInitialized,
 	}));

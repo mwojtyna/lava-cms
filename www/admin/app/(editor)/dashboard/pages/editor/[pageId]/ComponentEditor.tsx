@@ -1,5 +1,5 @@
 import type { Value } from "@udecode/plate-common";
-import React, { forwardRef, useMemo, useRef } from "react";
+import React, { forwardRef, useRef } from "react";
 import { FormProvider, useForm, type ControllerRenderProps } from "react-hook-form";
 import { RichTextEditor } from "@/src/components/RichTextEditor";
 import { Checkbox } from "@/src/components/ui/client/Checkbox";
@@ -26,21 +26,9 @@ interface ComponentEditorProps {
 	onChange: (data: Input) => void;
 }
 export function ComponentEditor(props: ComponentEditorProps) {
-	const { originalComponents, originalNestedComponents, setIsTyping } = usePageEditorStore(
-		(state) => ({
-			originalComponents: state.originalComponents,
-			originalNestedComponents: state.originalNestedComponents,
-			setIsTyping: state.setIsTyping,
-		}),
-	);
-	const originalComponent = useMemo(
-		() =>
-			(props.component.parentFieldId === null && props.component.parentArrayItemId === null
-				? originalComponents
-				: originalNestedComponents
-			).find((comp) => comp.id === props.component.id),
-		[originalComponents, originalNestedComponents, props.component],
-	);
+	const { setIsTyping } = usePageEditorStore((state) => ({
+		setIsTyping: state.setIsTyping,
+	}));
 
 	const form = useForm<Input>({
 		values: props.component.fields.reduce<Input>((acc, field) => {
@@ -77,50 +65,35 @@ export function ComponentEditor(props: ComponentEditorProps) {
 	return props.component.fields.length > 0 ? (
 		<FormProvider {...form}>
 			<form className="flex flex-col gap-5">
-				{props.component.fields.map((field, i) => {
-					// Is undefined if the component was only added in the page editor and not yet saved
-					const originalField = originalComponent?.fields[i];
-					return (
-						<FormField
-							key={field.id}
-							control={form.control}
-							name={field.id}
-							render={({ field: formField }) => {
-								// I don't know how the hell, but formField.value is an empty string for one render
-								// when the form is first mounted when the field is a rich text field
-								const value =
-									field.type === "RICH_TEXT" ? field.data : formField.value;
-								return (
-									<FormItem
-										className={cn(
-											field.type === "SWITCH" && "flex-row",
-											"gap-3",
-										)}
-									>
-										<FormLabel>{field.displayName}</FormLabel>
-										<FormControl>
-											<Field
-												component={props.component}
-												field={field}
-												originalValue={originalField?.data}
-												onRestore={() => {
-													form.setValue(field.id, originalField!.data);
-													void form.handleSubmit(props.onChange)();
-												}}
-												{...formField}
-												value={value}
-												onChange={(v) =>
-													onFieldChanged(field, formField, v)
-												}
-											/>
-										</FormControl>
-										<FormError />
-									</FormItem>
-								);
-							}}
-						/>
-					);
-				})}
+				{props.component.fields.map((field) => (
+					<FormField
+						key={field.id}
+						control={form.control}
+						name={field.id}
+						render={({ field: formField }) => {
+							// I don't know how the hell, but formField.value is an empty string for one render
+							// when the form is first mounted when the field is a rich text field
+							const value = field.type === "RICH_TEXT" ? field.data : formField.value;
+							return (
+								<FormItem
+									className={cn(field.type === "SWITCH" && "flex-row", "gap-3")}
+								>
+									<FormLabel>{field.displayName}</FormLabel>
+									<FormControl>
+										<Field
+											component={props.component}
+											field={field}
+											{...formField}
+											value={value}
+											onChange={(v) => onFieldChanged(field, formField, v)}
+										/>
+									</FormControl>
+									<FormError />
+								</FormItem>
+							);
+						}}
+					/>
+				))}
 			</form>
 		</FormProvider>
 	) : (
@@ -132,11 +105,9 @@ export interface FieldProps extends FormFieldProps<string> {
 	className?: string;
 	component: ComponentUI;
 	field: Pick<FieldUI, "id" | "type" | "arrayItemType">;
-	originalValue?: string;
-	onRestore: () => void;
 }
 export const Field = forwardRef<HTMLTextAreaElement | HTMLButtonElement, FieldProps>(
-	({ className, component, field, onRestore, value, onChange, originalValue }, ref) => {
+	({ className, component, field, value, onChange }, ref) => {
 		switch (field.type) {
 			case "TEXT": {
 				return (
@@ -154,8 +125,6 @@ export const Field = forwardRef<HTMLTextAreaElement | HTMLButtonElement, FieldPr
 						// Rich text editor's value is an object instead of a string
 						value={value as unknown as Value}
 						onChange={(v) => onChange(v as unknown as string)}
-						originalValue={originalValue as unknown as Value | undefined}
-						onRestore={onRestore}
 						pageId={component.pageId}
 					/>
 				);

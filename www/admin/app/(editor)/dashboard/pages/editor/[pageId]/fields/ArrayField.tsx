@@ -16,7 +16,7 @@ import {
 	useSortable,
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { PlusIcon, TrashIcon, ArrowUturnLeftIcon } from "@heroicons/react/24/outline";
+import { PlusIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { IconGripVertical } from "@tabler/icons-react";
 import cuid from "cuid";
 import { useMemo, useState } from "react";
@@ -231,47 +231,23 @@ function ArrayFieldItem(props: ArrayFieldItemProps) {
 			}),
 		);
 	}
-	function handleRestore() {
-		const original = props.originalItems.find((i) => i.id === props.item.id)!;
-		setArrayItems(
-			props.parentField.id,
-			props.items.map((item) => (item.id === props.item.id ? original : item)),
-		);
-	}
-	function handleUnAdd() {
-		setArrayItems(
-			props.parentField.id,
-			props.items.filter((item) => props.item.id !== item.id),
-		);
-	}
 	function handleRemove() {
 		setArrayItems(
 			props.parentField.id,
-			props.item.diff === "added"
-				? props.items.filter((item) => item.id !== props.item.id)
-				: props.items.map((item) =>
-						item.id === props.item.id ? { ...item, diff: "deleted" } : item,
-					),
-		);
-	}
-	function handleUnRemove() {
-		setArrayItems(
-			props.parentField.id,
 			props.items.map((item) =>
-				item.id === props.item.id ? { ...item, diff: "none" } : item,
+				item.id === props.item.id ? { ...item, diff: "deleted" } : item,
 			),
 		);
+	}
+
+	if (props.item.diff === "deleted") {
+		return null;
 	}
 
 	return (
 		<div ref={setNodeRef} className={cn("flex items-center gap-2")} style={style}>
 			<div {...attributes} {...listeners}>
-				<IconGripVertical
-					className={cn(
-						"w-5 cursor-move text-muted-foreground",
-						props.item.diff === "deleted" && "cursor-auto text-muted-foreground/50",
-					)}
-				/>
+				<IconGripVertical className="w-5 cursor-move text-muted-foreground" />
 			</div>
 
 			<div className="w-full bg-card">
@@ -280,8 +256,6 @@ function ArrayFieldItem(props: ArrayFieldItemProps) {
 						className={cn(
 							"rounded-md",
 							props.parentField.arrayItemType === "SWITCH" && "h-5 w-5",
-							props.item.diff === "added" && "bg-green-400/10",
-							props.item.diff === "deleted" && "bg-red-400/10",
 						)}
 						component={props.parentComponent}
 						field={{
@@ -291,7 +265,6 @@ function ArrayFieldItem(props: ArrayFieldItemProps) {
 						}}
 						value={props.item.data}
 						onChange={handleChange}
-						onRestore={handleRestore}
 					/>
 				) : (
 					// If the array item is a component, on top of setting the component's diff, we also mirror that diff to the array item's diff
@@ -300,24 +273,16 @@ function ArrayFieldItem(props: ArrayFieldItemProps) {
 						parentFieldId={null}
 						parentArrayItemId={props.item.id}
 						pageId={props.parentComponent.pageId}
-						onRestore={handleRestore}
-						onUnAdd={handleUnAdd}
 						onRemove={handleRemove}
-						onUnRemove={handleUnRemove}
 					/>
 				)}
 			</div>
 
-			{props.parentField.arrayItemType !== "COMPONENT" &&
-				(props.item.diff !== "deleted" ? (
-					<ActionIcon variant={"simple"} tooltip="Delete" onClick={handleRemove}>
-						<TrashIcon className="w-5 text-destructive" />
-					</ActionIcon>
-				) : (
-					<ActionIcon variant={"simple"} tooltip="Restore" onClick={handleUnRemove}>
-						<ArrowUturnLeftIcon className="w-5" />
-					</ActionIcon>
-				))}
+			{props.parentField.arrayItemType !== "COMPONENT" && (
+				<ActionIcon variant={"simple"} tooltip="Delete" onClick={handleRemove}>
+					<TrashIcon className="w-5 text-destructive" />
+				</ActionIcon>
+			)}
 		</div>
 	);
 }

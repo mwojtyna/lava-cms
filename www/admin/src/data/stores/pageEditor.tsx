@@ -26,7 +26,7 @@ interface Editable {
 export type ComponentUI = Component & Editable;
 export type FieldUI = ComponentUI["fields"][number];
 export type ArrayItemUI = ArrayItem & Editable;
-type ArrayItemGroups = Record<string, ArrayItemUI[]>;
+type ArrayItemsGrouped = Record<string, ArrayItemUI[]>;
 
 export type Step =
 	| {
@@ -59,8 +59,8 @@ interface PageEditorState {
 	nestedComponents: ComponentUI[];
 	setNestedComponents: (newComponents: React.SetStateAction<ComponentUI[]>) => void;
 
-	originalArrayItems: ArrayItemGroups;
-	arrayItems: ArrayItemGroups;
+	originalArrayItems: ArrayItemsGrouped;
+	arrayItems: ArrayItemsGrouped;
 	setArrayItems: (parentFieldId: string, arrayItems: React.SetStateAction<ArrayItemUI[]>) => void;
 
 	steps: Step[];
@@ -109,7 +109,7 @@ export const usePageEditorStore = create<PageEditorState>((set) => ({
 				components: newComponents,
 				isDirty:
 					JSON.stringify(state.originalComponents) !==
-						JSON.stringify(newComponents.filter((nc) => nc.diff !== "deleted")) ||
+						JSON.stringify(newComponents.filter((nc) => !isDeleted(nc))) ||
 					JSON.stringify(state.originalNestedComponents) !==
 						JSON.stringify(state.nestedComponents) ||
 					JSON.stringify(state.originalArrayItems) !== JSON.stringify(state.arrayItems),
@@ -126,7 +126,7 @@ export const usePageEditorStore = create<PageEditorState>((set) => ({
 				isDirty:
 					JSON.stringify(state.originalComponents) !== JSON.stringify(state.components) ||
 					JSON.stringify(state.originalNestedComponents) !==
-						JSON.stringify(newNestedComponents.filter((nc) => nc.diff !== "deleted")) ||
+						JSON.stringify(newNestedComponents.filter((nc) => !isDeleted(nc))) ||
 					JSON.stringify(state.originalArrayItems) !== JSON.stringify(state.arrayItems),
 			};
 		}),
@@ -147,7 +147,7 @@ export const usePageEditorStore = create<PageEditorState>((set) => ({
 				ai.order = i;
 			}
 
-			let arrayItemsGrouped: ArrayItemGroups = {
+			let arrayItemsGrouped: ArrayItemsGrouped = {
 				...state.arrayItems,
 				[parentFieldId]: changedArrayItems,
 			};
@@ -162,13 +162,27 @@ export const usePageEditorStore = create<PageEditorState>((set) => ({
 				}
 			}
 
+			// For comparison only
+			const arrayItemsGroupedWithoutDeleted: ArrayItemsGrouped = {};
+			for (const [k, v] of Object.entries(arrayItemsGrouped)) {
+				arrayItemsGroupedWithoutDeleted[k] = [];
+				for (const item of v) {
+					if (!isDeleted(item)) {
+						arrayItemsGroupedWithoutDeleted[k]!.push(item);
+					}
+				}
+			}
+
 			return {
 				arrayItems: arrayItemsGrouped,
 				isDirty:
 					JSON.stringify(state.originalComponents) !== JSON.stringify(state.components) ||
 					JSON.stringify(state.originalNestedComponents) !==
-						JSON.stringify(state.nestedComponents) ||
-					JSON.stringify(state.originalArrayItems) !== JSON.stringify(arrayItemsGrouped),
+						JSON.stringify(
+							state.nestedComponents.filter((nc) => nc.diff !== "deleted"),
+						) ||
+					JSON.stringify(state.originalArrayItems) !==
+						JSON.stringify(arrayItemsGroupedWithoutDeleted),
 			};
 		}),
 
@@ -181,7 +195,7 @@ export const usePageEditorStore = create<PageEditorState>((set) => ({
 
 	init: (components, nestedComponents, arrayItems) => {
 		// Group array items by parent
-		const arrayItemsGrouped: ArrayItemGroups = {};
+		const arrayItemsGrouped: ArrayItemsGrouped = {};
 		for (const item of arrayItems) {
 			const items = arrayItemsGrouped[item.parentFieldId] ?? [];
 			if (!isDeleted(item)) {

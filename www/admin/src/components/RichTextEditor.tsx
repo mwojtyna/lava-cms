@@ -309,8 +309,6 @@ export const plugins = createPlugins(
 );
 
 interface Props extends FormFieldProps<Value> {
-	originalValue: Value | undefined;
-	onRestore: () => void;
 	pageId: string;
 }
 
