@@ -108,7 +108,8 @@ export const usePageEditorStore = create<PageEditorState>((set) => ({
 			return {
 				components: newComponents,
 				isDirty:
-					JSON.stringify(state.originalComponents) !== JSON.stringify(newComponents) ||
+					JSON.stringify(state.originalComponents) !==
+						JSON.stringify(newComponents.filter((nc) => nc.diff !== "deleted")) ||
 					JSON.stringify(state.originalNestedComponents) !==
 						JSON.stringify(state.nestedComponents) ||
 					JSON.stringify(state.originalArrayItems) !== JSON.stringify(state.arrayItems),
@@ -125,7 +126,7 @@ export const usePageEditorStore = create<PageEditorState>((set) => ({
 				isDirty:
 					JSON.stringify(state.originalComponents) !== JSON.stringify(state.components) ||
 					JSON.stringify(state.originalNestedComponents) !==
-						JSON.stringify(newNestedComponents) ||
+						JSON.stringify(newNestedComponents.filter((nc) => nc.diff !== "deleted")) ||
 					JSON.stringify(state.originalArrayItems) !== JSON.stringify(state.arrayItems),
 			};
 		}),

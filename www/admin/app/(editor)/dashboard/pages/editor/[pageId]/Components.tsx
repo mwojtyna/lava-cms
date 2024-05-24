@@ -118,7 +118,6 @@ interface ComponentCardProps {
 		diff: Diff;
 	};
 	noDrag?: boolean;
-	extraActions?: React.ReactNode;
 
 	onClick: (id: string) => void;
 	onRemove: () => void;
@@ -152,11 +151,7 @@ export function ComponentCard(props: ComponentCardProps) {
 			<div className="flex items-center gap-2">
 				{!props.noDrag && (
 					<IconGripVertical
-						className={cn(
-							"w-5 cursor-move text-muted-foreground",
-							props.component.diff === "deleted" &&
-								"cursor-auto text-muted-foreground/50",
-						)}
+						className={cn("w-5 cursor-move text-muted-foreground")}
 						onClick={(e) => e.stopPropagation()}
 						{...attributes}
 						{...listeners}
@@ -166,7 +161,6 @@ export function ComponentCard(props: ComponentCardProps) {
 			</div>
 
 			<div className="ml-auto flex items-center justify-center gap-1">
-				{props.extraActions}
 				<Actions diff={props.component.diff} deleteComponent={props.onRemove} />
 			</div>
 		</Card>
@@ -183,21 +177,16 @@ function Actions(props: ActionsProps) {
 		cb();
 	}
 
-	switch (props.diff) {
-		case "added":
-		case "none": {
-			return (
-				<ActionIcon
-					variant={"simple"}
-					onClick={(e) => handleClick(e, props.deleteComponent)}
-					tooltip="Delete"
-				>
-					<TrashIcon
-						className="w-5 text-destructive/75 hover:text-destructive"
-						data-testid="delete-component-btn"
-					/>
-				</ActionIcon>
-			);
-		}
-	}
+	return (
+		<ActionIcon
+			variant={"simple"}
+			onClick={(e) => handleClick(e, props.deleteComponent)}
+			tooltip="Delete"
+		>
+			<TrashIcon
+				className="w-5 text-destructive/75 hover:text-destructive"
+				data-testid="delete-component-btn"
+			/>
+		</ActionIcon>
+	);
 }
