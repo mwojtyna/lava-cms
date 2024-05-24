@@ -18,10 +18,9 @@ import type { trpc } from "@/src/utils/trpc";
 import { unwrapSetStateAction } from "./utils";
 import "client-only";
 
-export type Diff = "added" | "edited" | "deleted" | "replaced" | "none";
+export type Diff = "added" | "deleted" | "replaced" | "none";
 interface Editable {
 	diff: Diff;
-	reordered: boolean;
 }
 
 export type ComponentUI = Component & Editable;
@@ -104,16 +103,6 @@ export const usePageEditorStore = create<PageEditorState>((set) => ({
 				// The components which were reordered still have the 'reordered' diff
 				// but they are not reordered, because the added component was deleted
 				nc.order = i;
-
-				if (isEdited(nc)) {
-					const original = state.originalComponents.find((oc) => oc.id === nc.id)!;
-					if (areSame(original, nc)) {
-						nc.diff = "none";
-					}
-					if (original.order === nc.order) {
-						nc.reordered = false;
-					}
-				}
 			}
 
 			return {
@@ -131,16 +120,6 @@ export const usePageEditorStore = create<PageEditorState>((set) => ({
 	setNestedComponents: (components) =>
 		set((state) => {
 			const newNestedComponents = unwrapSetStateAction(components, state.nestedComponents);
-
-			for (const nc of newNestedComponents) {
-				if (isEdited(nc)) {
-					const original = state.originalNestedComponents.find((oc) => oc.id === nc.id)!;
-					if (areSame(original, nc)) {
-						nc.diff = "none";
-					}
-				}
-			}
-
 			return {
 				nestedComponents: newNestedComponents,
 				isDirty:
@@ -163,22 +142,8 @@ export const usePageEditorStore = create<PageEditorState>((set) => ({
 			for (let i = 0; i < changedArrayItems.length; i++) {
 				const ai = changedArrayItems[i]!;
 				// Fix for when an item is added, reordered and then deleted
-				// The items which were reordered still have the 'reordered' diff
-				// but they are not reordered, because the added item was deleted
+				// the items which were reordered still have the wrong order
 				ai.order = i;
-
-				if (isEdited(ai)) {
-					const original = state.originalArrayItems[parentFieldId]!.find(
-						(oc) => oc.id === ai.id,
-					)!;
-
-					if (areSame(original, ai)) {
-						ai.diff = "none";
-					}
-					if (original.order === ai.order) {
-						ai.reordered = false;
-					}
-				}
 			}
 
 			let arrayItemsGrouped: ArrayItemGroups = {
@@ -283,23 +248,16 @@ export const usePageEditorStore = create<PageEditorState>((set) => ({
 				return state;
 			}
 
-			type AddedComponent =
-				inferRouterInputs<PrivateRouter>["pages"]["editPageComponents"]["addedComponents"][number];
-
 			// Fix component order
 			const correctedComponents = state.components
 				.filter((comp) => !isDeleted(comp))
-				.map<ComponentUI>((comp, i) => {
-					const original = state.originalComponents.find((oc) => oc.id === comp.id);
-					return {
-						...comp,
-						order: i,
-						reordered: original ? i !== original.order : comp.reordered,
-					};
-				});
+				.map<ComponentUI>((comp, i) => ({
+					...comp,
+					order: i,
+				}));
 
 			// Fix array item order
-			const correctedArrayItems: ArrayItemGroups = structuredClone(state.arrayItems);
+			const correctedArrayItems = structuredClone(state.arrayItems);
 			for (const parentId of Object.keys(correctedArrayItems)) {
 				correctedArrayItems[parentId] = correctedArrayItems[parentId]!.filter(
 					(item) => !isDeleted(item),
@@ -308,7 +266,6 @@ export const usePageEditorStore = create<PageEditorState>((set) => ({
 				let i = 0;
 				for (const item of correctedArrayItems[parentId]!) {
 					if (item.order !== i) {
-						item.reordered = true;
 						item.order = i;
 					}
 					i++;
@@ -334,6 +291,9 @@ export const usePageEditorStore = create<PageEditorState>((set) => ({
 				}
 			}
 
+			type AddedComponent =
+				inferRouterInputs<PrivateRouter>["pages"]["editPageComponents"]["addedComponents"][number];
+
 			mutation.mutate(
 				{
 					pageId,
@@ -354,9 +314,7 @@ export const usePageEditorStore = create<PageEditorState>((set) => ({
 								definitionId: field.definitionId,
 							})),
 						})),
-					editedComponents: correctedComponents
-						.concat(state.nestedComponents)
-						.filter((comp) => isEdited(comp)),
+					editedComponents: correctedComponents.concat(state.nestedComponents),
 					deletedComponentIds: state.components
 						.concat(state.nestedComponents)
 						.filter((comp) => isDeleted(comp) || isReplaced(comp)) // Also delete replaced components
@@ -371,14 +329,7 @@ export const usePageEditorStore = create<PageEditorState>((set) => ({
 							parentFieldId: item.parentFieldId,
 							order: item.order,
 						})),
-					editedArrayItems: Object.values(correctedArrayItems)
-						.flat()
-						.filter(
-							(item) =>
-								isEdited(item) ||
-								// isReplaced is for when the item is of type COMPONENT, see ArrayFieldItem handleChange() function
-								isReplaced(item),
-						),
+					editedArrayItems: Object.values(correctedArrayItems).flat(),
 					deletedArrayItemIds: Object.values(state.arrayItems)
 						.flat()
 						.filter((item) => isDeleted(item))
@@ -436,32 +387,6 @@ export const usePageEditorStore = create<PageEditorState>((set) => ({
 		}),
 }));
 
-function removeId(obj: Record<string, unknown>) {
-	for (const key in obj) {
-		if (key === "id") {
-			delete obj[key];
-		} else if (typeof obj[key] === "object") {
-			removeId(obj[key] as Record<string, unknown>);
-		}
-	}
-}
-function areSame<T extends Editable>(original: T, current: T) {
-	const a: Partial<T> = { ...original, diff: undefined, reordered: undefined };
-	const b: Partial<T> = { ...current, diff: undefined, reordered: undefined };
-
-	// Remove id from rich text data, otherwise restoring doesn't clear diffs
-	if ("fields" in current) {
-		const fields = current.fields as FieldUI[];
-		for (const field of fields) {
-			if (field.type === "RICH_TEXT" && typeof field.data === "object") {
-				removeId(field.data as Record<string, unknown>);
-			}
-		}
-	}
-
-	return JSON.stringify(a) === JSON.stringify(b);
-}
-
 function parseStringifiedRichText(components: ComponentUI[], nestedComponents: ComponentUI[]) {
 	for (const comp of components.concat(nestedComponents)) {
 		for (const field of comp.fields) {
@@ -474,9 +399,6 @@ function parseStringifiedRichText(components: ComponentUI[], nestedComponents: C
 
 function isAdded(editable: Editable) {
 	return editable.diff === "added";
-}
-function isEdited(editable: Editable) {
-	return editable.diff === "edited" || (editable.reordered && editable.diff === "none");
 }
 function isDeleted(editable: Editable) {
 	return editable.diff === "deleted";

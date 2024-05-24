@@ -1,7 +1,6 @@
 "use client";
 
 import type { FormFieldProps } from "./ui/client/Form";
-import { ArrowUturnLeftIcon } from "@heroicons/react/24/outline";
 import { withProps } from "@udecode/cn";
 import { createAlignPlugin } from "@udecode/plate-alignment";
 import { createAutoformatPlugin } from "@udecode/plate-autoformat";
@@ -65,7 +64,7 @@ import {
 	ELEMENT_TR,
 	createTablePlugin,
 } from "@udecode/plate-table";
-import React, { useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 import { Node, Point, Transforms, Editor as SlateEditor } from "slate";
 import { usePageEditorStore } from "../data/stores/pageEditor";
 import { cn } from "../utils/styling";
@@ -87,7 +86,6 @@ import { withPlaceholders } from "./plate-ui/Placeholder";
 import { TableCellElement, TableCellHeaderElement } from "./plate-ui/TableCellElement";
 import { TableElement } from "./plate-ui/TableElement";
 import { TableRowElement } from "./plate-ui/TableRowElement";
-import { ActionIcon } from "./ui/client/ActionIcon";
 
 const resetBlockTypesCommonRule = {
 	types: [
@@ -312,7 +310,6 @@ export const plugins = createPlugins(
 
 interface Props extends FormFieldProps<Value> {
 	originalValue: Value | undefined;
-	edited: boolean;
 	onRestore: () => void;
 	pageId: string;
 }
@@ -378,28 +375,12 @@ export function RichTextEditor(props: Props) {
 					"[&_.slate-start-area-left]:!w-[64px] [&_.slate-start-area-right]:!w-[64px] [&_.slate-start-area-top]:!h-4",
 				)}
 			>
-				<FixedToolbar className={cn(props.edited && "border-brand border-b-border")}>
+				<FixedToolbar className="border-brand border-b-border">
 					<FixedToolbarButtons />
-					{props.edited && (
-						<ActionIcon
-							className="absolute bottom-[5px] right-1 bg-background/50"
-							onClick={() => {
-								// @ts-expect-error - Don't know how to type this
-								resetNodes(editorRef.current!, { nodes: props.originalValue });
-								props.onRestore();
-							}}
-							tooltip={"Restore"}
-						>
-							<ArrowUturnLeftIcon className="w-4" />
-						</ActionIcon>
-					)}
 				</FixedToolbar>
 
 				<Editor
-					className={cn(
-						"rounded-t-none border-t-0 p-4",
-						props.edited && "border-b-brand border-l-brand border-r-brand",
-					)}
+					className={"rounded-t-none border-t-0 p-4"}
 					focusRing={false}
 					pageId={props.pageId}
 				/>

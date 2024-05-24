@@ -80,7 +80,6 @@ export function ArrayField(props: ArrayFieldProps) {
 					parentFieldId: props.parentField.id,
 					order: lastItem ? lastItem.order + 1 : 0,
 					diff: "added",
-					reordered: false,
 				},
 			]);
 		} else {
@@ -97,7 +96,6 @@ export function ArrayField(props: ArrayFieldProps) {
 				const item = reordered[i]!;
 				if (item.order !== i) {
 					item.order = i;
-					item.reordered = true;
 				}
 			}
 
@@ -124,7 +122,6 @@ export function ArrayField(props: ArrayFieldProps) {
 				parentFieldId: props.parentField.id,
 				order: lastItem ? lastItem.order + 1 : 0,
 				diff: "added",
-				reordered: true,
 			},
 		]);
 	}
@@ -214,16 +211,7 @@ function ArrayFieldItem(props: ArrayFieldItemProps) {
 			props.parentField.id,
 			props.items.map((item) => {
 				if (item.id === props.item.id) {
-					let diff = item.diff;
-					if (item.diff !== "added") {
-						// HACK: Setting to 'replaced' is a hack to force the item to not be reset to 'none',
-						// because a replaced nested component has the same id as the original,
-						// which means the array item will differ only by the diff property,
-						// so it will reset to 'none' (if diff is 'edited').
-						diff =
-							props.parentField.arrayItemType !== "COMPONENT" ? "edited" : "replaced";
-					}
-
+					const diff = item.diff;
 					if (props.parentField.arrayItemType === "COMPONENT") {
 						return {
 							...item,
@@ -247,14 +235,7 @@ function ArrayFieldItem(props: ArrayFieldItemProps) {
 		const original = props.originalItems.find((i) => i.id === props.item.id)!;
 		setArrayItems(
 			props.parentField.id,
-			props.items.map((item) =>
-				item.id === props.item.id
-					? {
-							...original,
-							reordered: props.item.reordered,
-						}
-					: item,
-			),
+			props.items.map((item) => (item.id === props.item.id ? original : item)),
 		);
 	}
 	function handleUnAdd() {
@@ -310,7 +291,6 @@ function ArrayFieldItem(props: ArrayFieldItemProps) {
 						}}
 						value={props.item.data}
 						onChange={handleChange}
-						edited={props.item.diff === "edited" || props.item.diff === "replaced"}
 						onRestore={handleRestore}
 					/>
 				) : (
@@ -320,7 +300,6 @@ function ArrayFieldItem(props: ArrayFieldItemProps) {
 						parentFieldId={null}
 						parentArrayItemId={props.item.id}
 						pageId={props.parentComponent.pageId}
-						edited={props.item.diff === "edited" || props.item.diff === "replaced"}
 						onRestore={handleRestore}
 						onUnAdd={handleUnAdd}
 						onRemove={handleRemove}

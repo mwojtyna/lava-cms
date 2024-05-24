@@ -13,7 +13,6 @@ interface NestedComponentFieldProps {
 	parentFieldId: string | null;
 	parentArrayItemId: string | null;
 	pageId: string;
-	edited: boolean;
 
 	onRestore?: () => void;
 	onUnAdd?: () => void;

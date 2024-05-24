@@ -59,7 +59,6 @@ export function Components(props: Props) {
 				const item = reordered[i]!;
 				if (item.order !== i) {
 					item.order = i;
-					item.reordered = true;
 				}
 			}
 
@@ -69,14 +68,7 @@ export function Components(props: Props) {
 
 	function restore(component: ComponentUI) {
 		const original = originalComponents.find((comp) => comp.id === component.id)!;
-		const newComponents = components.map((c) =>
-			c.id === component.id
-				? {
-						...original,
-						reordered: component.reordered,
-				  }
-				: c,
-		);
+		const newComponents = components.map((c) => (c.id === component.id ? original : c));
 		setComponents(newComponents);
 	}
 	function remove(component: ComponentUI) {
@@ -165,7 +157,6 @@ export function ComponentCard(props: ComponentCardProps) {
 
 	const diffStyle: Record<Exclude<Diff, "none">, string> = {
 		added: "border-l-green-500",
-		edited: "border-l-brand",
 		replaced: "border-l-brand",
 		deleted: "border-l-red-500",
 	};
@@ -235,17 +226,6 @@ function Actions(props: ActionsProps) {
 
 	switch (props.diff) {
 		case "replaced":
-		case "edited": {
-			return (
-				<ActionIcon
-					variant={"simple"}
-					onClick={(e) => handleClick(e, props.restoreComponent)}
-					tooltip="Restore"
-				>
-					<ArrowUturnLeftIcon className="w-5" data-testid="restore-component-btn" />
-				</ActionIcon>
-			);
-		}
 		case "deleted": {
 			return (
 				<ActionIcon
