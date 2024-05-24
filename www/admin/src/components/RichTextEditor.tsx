@@ -310,6 +310,7 @@ export const plugins = createPlugins(
 
 interface Props extends FormFieldProps<Value> {
 	pageId: string;
+	originalValue: Value;
 }
 
 function resetNodes(
