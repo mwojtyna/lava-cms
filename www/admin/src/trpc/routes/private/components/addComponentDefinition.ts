@@ -32,20 +32,22 @@ export const addComponentDefinition = privateProcedure
 			});
 		}
 
-		const { id: componentDefinitionId } = await prisma.componentDefinition.create({
-			data: {
-				name: input.name,
-				group_id: input.groupId,
-			},
-		});
-		await prisma.componentDefinitionField.createMany({
-			data: input.fields.map((field, i) => ({
-				name: field.name,
-				display_name: field.displayName,
-				type: field.type,
-				order: i,
-				component_definition_id: componentDefinitionId,
-				array_item_type: field.arrayItemType,
-			})),
+		await prisma.$transaction(async (tx) => {
+			const { id: componentDefinitionId } = await tx.componentDefinition.create({
+				data: {
+					name: input.name,
+					group_id: input.groupId,
+				},
+			});
+			await tx.componentDefinitionField.createMany({
+				data: input.fields.map((field, i) => ({
+					name: field.name,
+					display_name: field.displayName,
+					type: field.type,
+					order: i,
+					component_definition_id: componentDefinitionId,
+					array_item_type: field.arrayItemType,
+				})),
+			});
 		});
 	});

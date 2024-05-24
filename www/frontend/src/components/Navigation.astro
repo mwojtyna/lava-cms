@@ -1,0 +1,13 @@
+---
+import type { CmsComponent } from "@lavacms/astro";
+import LavaCmsComponents from "@lavacms/astro/LavaCmsComponents.astro";
+
+interface Props {
+	cms: {
+		links: CmsComponent[];
+	};
+}
+const { cms } = Astro.props;
+---
+
+<LavaCmsComponents components={cms.links} />

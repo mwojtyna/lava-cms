@@ -1,3 +1,4 @@
+import type { ComponentFieldType } from "@prisma/client";
 import type { Value } from "@udecode/plate-common";
 import React, { forwardRef, useMemo, useRef } from "react";
 import { FormProvider, useForm, type ControllerRenderProps } from "react-hook-form";
@@ -17,11 +18,13 @@ import { TypographyMuted } from "@/src/components/ui/server/typography";
 import { usePageEditorStore, type ComponentUI, type FieldUI } from "@/src/data/stores/pageEditor";
 import { cn } from "@/src/utils/styling";
 import { ArrayField } from "./fields/ArrayField";
+import { LinkField } from "./fields/LinkField";
 import { NestedComponentField } from "./fields/NestedComponentField";
 
 type Input = Record<string, string>; // fieldId -> data
 
 const DEBOUNCE_TIME = 250;
+const DONT_DEBOUNCE_TYPES: ComponentFieldType[] = ["SWITCH", "LINK"];
 
 interface ComponentEditorProps {
 	component: ComponentUI;
@@ -64,7 +67,7 @@ export function ComponentEditor(props: ComponentEditorProps) {
 			clearTimeout(debounceTimeoutRef.current);
 		}
 
-		if (field.type !== "SWITCH") {
+		if (!DONT_DEBOUNCE_TYPES.includes(field.type)) {
 			setIsTyping(true);
 			debounceTimeoutRef.current = setTimeout(() => {
 				props.onChange(form.getValues());
@@ -175,6 +178,9 @@ export const Field = forwardRef<HTMLTextAreaElement | HTMLButtonElement, FieldPr
 						onCheckedChange={(checked) => onChange(checked ? "true" : "false")}
 					/>
 				);
+			}
+			case "LINK": {
+				return <LinkField value={value} onChange={onChange} />;
 			}
 			case "COMPONENT": {
 				return (

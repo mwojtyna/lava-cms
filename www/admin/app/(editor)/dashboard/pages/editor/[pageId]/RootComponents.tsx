@@ -31,7 +31,7 @@ interface Props {
 	components: ComponentUI[];
 	onComponentClicked: (id: string) => void;
 }
-export function Components(props: Props) {
+export function RootComponents(props: Props) {
 	const { componentsInit, setComponents, isInitialized } = usePageEditorStore((state) => ({
 		componentsInit: state.components,
 		setComponents: state.setComponents,
