@@ -314,7 +314,9 @@ export const usePageEditorStore = create<PageEditorState>((set) => ({
 								definitionId: field.definitionId,
 							})),
 						})),
-					editedComponents: correctedComponents.concat(state.nestedComponents),
+					editedComponents: correctedComponents
+						.concat(state.nestedComponents)
+						.filter(isNotChanged),
 					deletedComponentIds: state.components
 						.concat(state.nestedComponents)
 						.filter((comp) => isDeleted(comp) || isReplaced(comp)) // Also delete replaced components
@@ -329,7 +331,9 @@ export const usePageEditorStore = create<PageEditorState>((set) => ({
 							parentFieldId: item.parentFieldId,
 							order: item.order,
 						})),
-					editedArrayItems: Object.values(correctedArrayItems).flat(),
+					editedArrayItems: Object.values(correctedArrayItems)
+						.flat()
+						.filter(isNotChanged),
 					deletedArrayItemIds: Object.values(state.arrayItems)
 						.flat()
 						.filter((item) => isDeleted(item))
@@ -405,4 +409,7 @@ function isDeleted(editable: Editable) {
 }
 function isReplaced(editable: Editable) {
 	return editable.diff === "replaced";
+}
+function isNotChanged(editable: Editable) {
+	return editable.diff === "none";
 }

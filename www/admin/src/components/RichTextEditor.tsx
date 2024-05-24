@@ -375,7 +375,7 @@ export function RichTextEditor(props: Props) {
 					"[&_.slate-start-area-left]:!w-[64px] [&_.slate-start-area-right]:!w-[64px] [&_.slate-start-area-top]:!h-4",
 				)}
 			>
-				<FixedToolbar className="border-brand border-b-border">
+				<FixedToolbar>
 					<FixedToolbarButtons />
 				</FixedToolbar>
 
