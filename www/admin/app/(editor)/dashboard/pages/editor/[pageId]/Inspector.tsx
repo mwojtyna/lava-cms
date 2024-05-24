@@ -36,7 +36,6 @@ const COMPONENT_PLACEHOLDER: ComponentUI = {
 	parentFieldId: null,
 	parentArrayItemId: null,
 	diff: "none",
-	reordered: false,
 };
 
 const animationOpen: Parameters<typeof useSpring>[0] = {
@@ -294,10 +293,7 @@ function Step(props: StepProps) {
 												...field,
 												data: data[field.id]!,
 											})),
-											diff:
-												component.diff === "added"
-													? component.diff
-													: "edited",
+											diff: component.diff,
 										};
 									} else {
 										return component;
@@ -329,11 +325,7 @@ function Step(props: StepProps) {
 												...field,
 												data: data[field.id]!,
 											})),
-											diff:
-												component.diff === "added" ||
-												component.diff === "replaced"
-													? component.diff
-													: "edited",
+											diff: component.diff,
 										};
 									} else {
 										return component;

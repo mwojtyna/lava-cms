@@ -57,7 +57,6 @@ export async function createComponentInstance(
 		parentFieldId: data.parentFieldId,
 		parentArrayItemId: data.parentArrayItemId,
 		diff: currentComponent ? "replaced" : "added",
-		reordered: false,
 	};
 }
 

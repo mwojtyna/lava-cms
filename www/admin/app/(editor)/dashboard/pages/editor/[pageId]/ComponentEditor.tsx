@@ -1,9 +1,7 @@
 import type { Value } from "@udecode/plate-common";
-import { ArrowUturnLeftIcon } from "@heroicons/react/24/outline";
 import React, { forwardRef, useMemo, useRef } from "react";
 import { FormProvider, useForm, type ControllerRenderProps } from "react-hook-form";
 import { RichTextEditor } from "@/src/components/RichTextEditor";
-import { ActionIcon } from "@/src/components/ui/client/ActionIcon";
 import { Checkbox } from "@/src/components/ui/client/Checkbox";
 import {
 	FormField,
@@ -13,8 +11,8 @@ import {
 	FormError,
 	type FormFieldProps,
 } from "@/src/components/ui/client/Form";
-import { getRestorableNumberInputProps, NumberInput } from "@/src/components/ui/client/NumberInput";
-import { getRestorableTextareaProps, Textarea } from "@/src/components/ui/client/Textarea";
+import { NumberInput } from "@/src/components/ui/client/NumberInput";
+import { Textarea } from "@/src/components/ui/client/Textarea";
 import { TypographyMuted } from "@/src/components/ui/server/typography";
 import { usePageEditorStore, type ComponentUI, type FieldUI } from "@/src/data/stores/pageEditor";
 import { cn } from "@/src/utils/styling";
@@ -82,15 +80,6 @@ export function ComponentEditor(props: ComponentEditorProps) {
 				{props.component.fields.map((field, i) => {
 					// Is undefined if the component was only added in the page editor and not yet saved
 					const originalField = originalComponent?.fields[i];
-
-					let edited = false;
-					if (props.component.diff !== "replaced" && originalField) {
-						edited =
-							field.type === "RICH_TEXT"
-								? JSON.stringify(field.data) !== JSON.stringify(originalField?.data)
-								: field.data !== originalField.data;
-					}
-
 					return (
 						<FormField
 							key={field.id}
@@ -112,13 +101,8 @@ export function ComponentEditor(props: ComponentEditorProps) {
 										<FormControl>
 											<Field
 												component={props.component}
-												edited={edited}
 												field={field}
 												originalValue={originalField?.data}
-												onRestore={() => {
-													form.setValue(field.id, originalField!.data);
-													void form.handleSubmit(props.onChange)();
-												}}
 												{...formField}
 												value={value}
 												onChange={(v) =>
@@ -145,21 +129,17 @@ export interface FieldProps extends FormFieldProps<string> {
 	component: ComponentUI;
 	field: Pick<FieldUI, "id" | "type" | "arrayItemType">;
 	originalValue?: string;
-	edited: boolean;
-	onRestore: () => void;
 }
 export const Field = forwardRef<HTMLTextAreaElement | HTMLButtonElement, FieldProps>(
-	({ className, component, field, edited, onRestore, value, onChange, originalValue }, ref) => {
+	({ className, component, field, value, onChange, originalValue }, ref) => {
 		switch (field.type) {
 			case "TEXT": {
-				const inputProps = getRestorableTextareaProps(edited, onRestore);
 				return (
 					<Textarea
 						ref={ref as React.RefObject<HTMLTextAreaElement>}
-						className={cn(className, edited && "border-b-brand")}
+						className={className}
 						value={value}
 						onChange={(e) => onChange(e.currentTarget.value.replaceAll("\n", ""))}
-						{...inputProps}
 					/>
 				);
 			}
@@ -169,55 +149,35 @@ export const Field = forwardRef<HTMLTextAreaElement | HTMLButtonElement, FieldPr
 						// Rich text editor's value is an object instead of a string
 						value={value as unknown as Value}
 						onChange={(v) => onChange(v as unknown as string)}
-						originalValue={originalValue as unknown as Value | undefined}
-						edited={edited}
-						onRestore={onRestore}
+						originalValue={originalValue as unknown as Value}
 						pageId={component.pageId}
 					/>
 				);
 			}
 			case "NUMBER": {
-				const inputProps = getRestorableNumberInputProps(edited, onRestore);
 				return (
 					<NumberInput
 						getInputRef={ref as React.RefObject<HTMLInputElement>}
-						className={cn(className)}
+						className={className}
 						value={value}
 						onChange={(e) => onChange(e.currentTarget.value)}
-						{...inputProps}
 					/>
 				);
 			}
 			case "SWITCH": {
 				return (
-					<div className="flex items-center gap-3">
-						<div
-							className={cn(
-								edited &&
-									"rounded ring-2 ring-brand ring-offset-2 ring-offset-black",
-							)}
-						>
-							<Checkbox
-								ref={ref as React.RefObject<HTMLButtonElement>}
-								className={className}
-								checked={value === "true"}
-								onCheckedChange={(checked) => onChange(checked ? "true" : "false")}
-							/>
-						</div>
-
-						{edited && (
-							<ActionIcon variant={"simple"} onClick={onRestore} tooltip="Restore">
-								<ArrowUturnLeftIcon className="w-4" />
-							</ActionIcon>
-						)}
-					</div>
+					<Checkbox
+						ref={ref as React.RefObject<HTMLButtonElement>}
+						className={className}
+						checked={value === "true"}
+						onCheckedChange={(checked) => onChange(checked ? "true" : "false")}
+					/>
 				);
 			}
 			case "COMPONENT": {
 				return (
 					<NestedComponentField
 						className={className}
-						edited={edited}
 						parentFieldId={field.id}
 						parentArrayItemId={null}
 						pageId={component.pageId}
