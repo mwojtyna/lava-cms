@@ -21,6 +21,8 @@ import { NestedComponentField } from "./fields/NestedComponentField";
 
 type Input = Record<string, string>; // fieldId -> data
 
+const DEBOUNCE_TIME = 250;
+
 interface ComponentEditorProps {
 	component: ComponentUI;
 	onChange: (data: Input) => void;
@@ -68,7 +70,7 @@ export function ComponentEditor(props: ComponentEditorProps) {
 				props.onChange(form.getValues());
 				setIsTyping(false);
 				debounceTimeoutRef.current = null;
-			}, 250);
+			}, DEBOUNCE_TIME);
 		} else {
 			props.onChange(form.getValues());
 		}

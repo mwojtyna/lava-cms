@@ -25,7 +25,6 @@ export function getInitialValue(type: ComponentFieldType, stringify?: boolean): 
 }
 
 export function unwrapSetStateAction<T>(changed: React.SetStateAction<T>, state: T): T {
-	// Typescript is dumb
-	const fun = changed as (state: T) => T;
+	const fun = changed as (state: T) => T; // Typescript is dumb
 	return typeof changed === "function" ? fun(state) : changed;
 }

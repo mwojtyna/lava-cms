@@ -100,8 +100,7 @@ export const usePageEditorStore = create<PageEditorState>((set) => ({
 			for (let i = 0; i < newComponents.length; i++) {
 				const nc = newComponents[i]!;
 				// Fix for when a component is added, reordered and then deleted
-				// The components which were reordered still have the 'reordered' diff
-				// but they are not reordered, because the added component was deleted
+				// the components which were reordered have wrong order
 				nc.order = i;
 			}
 
@@ -290,7 +289,7 @@ export const usePageEditorStore = create<PageEditorState>((set) => ({
 			// Serialize rich text
 			const editor = createPlateEditor({
 				plugins: richTextEditorPlugins,
-				components: richTextEditorComponents, // Sometimes there are problems with placeholder plugin
+				components: richTextEditorComponents, // Sometimes there are problems with the placeholder plugin
 			});
 			for (const component of correctedComponents.concat(state.nestedComponents)) {
 				for (const field of component.fields) {
