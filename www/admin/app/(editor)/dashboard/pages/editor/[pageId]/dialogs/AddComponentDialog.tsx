@@ -65,7 +65,6 @@ interface Props {
 	setOpen: (value: boolean) => void;
 	onSubmit: (id: string) => void;
 }
-// Consider abstracting this type of a dialog out to a hook or a component if it needs to be copied on more time
 export function AddComponentDialog(props: Props) {
 	const [groupId, setGroupId] = useState<string | null>(null);
 	const [search, setSearch] = useState("");

@@ -26,17 +26,17 @@ const getRestorableComboboxProps = (edited: boolean, restore: () => void) => ({
 	) : null,
 });
 
-type ComboboxData = {
+type ComboboxData = Array<{
 	value: string;
 	label: React.ReactNode;
-	description?: React.ReactNode;
+	description: React.ReactNode;
 	filterValue: string;
-};
+}>;
 type ContentProps = { placeholder?: string } & React.ComponentPropsWithoutRef<
 	typeof PopoverContent
 >;
 interface ComboboxProps extends Omit<React.ComponentPropsWithoutRef<typeof Button>, "onChange"> {
-	data: ComboboxData[];
+	data: ComboboxData;
 	contentProps?: ContentProps;
 	placeholder?: React.ReactNode;
 	notFoundContent: React.ReactNode;

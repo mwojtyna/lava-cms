@@ -1,6 +1,6 @@
 {
 	"name": "@lavacms/types",
-	"version": "0.2.1",
+	"version": "0.2.0",
 	"type": "module",
 	"description": "Types for the Lava CMS API. Used by framework packages such as @lavacms/astro",
 	"types": "dist/index.d.ts",

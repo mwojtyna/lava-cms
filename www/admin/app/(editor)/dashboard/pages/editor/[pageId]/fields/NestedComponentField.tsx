@@ -1,8 +1,8 @@
 import { useState, useMemo } from "react";
 import { Button } from "@/src/components/ui/client/Button";
 import { type ComponentUI, usePageEditorStore } from "@/src/data/stores/pageEditor";
+import { ComponentCard } from "../Components";
 import { AddComponentDialog, createComponentInstance } from "../dialogs/AddComponentDialog";
-import { ComponentCard } from "../RootComponents";
 
 interface NestedComponentFieldProps {
 	onChange?: (id: string) => void;
@@ -25,9 +25,9 @@ export function NestedComponentField(props: NestedComponentFieldProps) {
 	const currentComponent = useMemo(
 		() =>
 			nestedComponents.find((comp) => {
-				if (props.parentFieldId !== null) {
+				if (props.parentFieldId) {
 					return comp.parentFieldId === props.parentFieldId;
-				} else if (props.parentArrayItemId !== null) {
+				} else if (props.parentArrayItemId) {
 					return comp.parentArrayItemId === props.parentArrayItemId;
 				}
 			}),

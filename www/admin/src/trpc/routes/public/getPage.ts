@@ -117,10 +117,6 @@ async function getField(field: Field, parentComponent: Component): Promise<Field
 			data = field.data === "true";
 			break;
 		}
-		case "LINK": {
-			data = field.data;
-			break;
-		}
 		case "COMPONENT": {
 			let nestedComponent = await prisma.componentInstance.findUnique({
 				where: { parent_field_id: field.id },

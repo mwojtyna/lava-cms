@@ -16,8 +16,8 @@ import type { PrivateRouter } from "@/src/trpc/routes/private/_private";
 import { cn } from "@/src/utils/styling";
 import { trpc } from "@/src/utils/trpc";
 import { ComponentEditor } from "./ComponentEditor";
+import { Components } from "./Components";
 import { AddComponentDialog, createComponentInstance } from "./dialogs/AddComponentDialog";
-import { RootComponents } from "./RootComponents";
 
 export const MIN_WIDTH = 300;
 const DEFAULT_WIDTH = MIN_WIDTH * 1.75;
@@ -257,7 +257,7 @@ function Step(props: StepProps) {
 		case "components": {
 			return (
 				<div className="flex flex-col gap-5">
-					<RootComponents
+					<Components
 						components={props.components}
 						onComponentClicked={(id) =>
 							setSteps((steps) => [

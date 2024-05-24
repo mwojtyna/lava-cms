@@ -1,6 +1,6 @@
 {
 	"name": "@lavacms/core",
-	"version": "0.2.1",
+	"version": "0.2.0",
 	"type": "module",
 	"description": "Core methods for Lava CMS API clients",
 	"main": "dist/index.js",

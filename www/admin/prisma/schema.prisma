@@ -176,7 +176,6 @@ enum ComponentFieldType {
     RICH_TEXT
     NUMBER
     SWITCH
-    LINK
     COMPONENT
     COLLECTION
 
