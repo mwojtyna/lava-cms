@@ -146,8 +146,8 @@ const FormError = React.forwardRef<
 	if (
 		error === undefined ||
 		(error.message !== undefined &&
-			typeof error.message.trim === "function" &&
-			error.message.trim() === "")
+			typeof (error.message as string).trim === "function" &&
+			(error.message as string).trim() === "")
 	) {
 		return null;
 	}
@@ -159,7 +159,7 @@ const FormError = React.forwardRef<
 			className={cn("text-sm text-destructive", className)}
 			{...props}
 		>
-			{error.message}
+			{error.message as React.ReactNode}
 		</span>
 	);
 });

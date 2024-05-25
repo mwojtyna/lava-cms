@@ -7,6 +7,7 @@ import { NumericFormat, type NumericFormatProps } from "react-number-format";
 import { cn } from "@/src/utils/styling";
 import { ActionIcon } from "./ActionIcon";
 import { inputVariants } from "./Input";
+import type { ClassValue } from "clsx";
 
 const getRestorableNumberInputProps = (edited: boolean, restore: () => void): NumberInputProps => ({
 	inputClassName: cn("transition-colors", edited && "border-b-brand"),
@@ -58,7 +59,7 @@ function NumberInput({
 				className={cn(
 					inputVariants({ className: inputClassName, size }),
 					"pr-10",
-					icon && "pl-10",
+					!!icon && "pl-10",
 					// Fix for red borders not showing up when form is invalid
 					className?.includes("border-destructive") && "border-destructive",
 				)}

@@ -2,10 +2,11 @@ import { prisma } from "@/prisma/client";
 import { privateProcedure } from "@/src/trpc";
 
 export const getConnectionSettings = privateProcedure.query(async () => {
-	const settings = await prisma.settingsConnection.findFirstOrThrow();
-	const { id, token, ...rest } = settings;
+	const { development_url } = await prisma.settingsConnection.findFirstOrThrow({
+		select: { development_url: true },
+	});
 
 	return {
-		developmentUrl: rest.development_url,
+		developmentUrl: development_url,
 	};
 });
