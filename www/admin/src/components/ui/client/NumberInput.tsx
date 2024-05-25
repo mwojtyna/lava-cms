@@ -7,7 +7,6 @@ import { NumericFormat, type NumericFormatProps } from "react-number-format";
 import { cn } from "@/src/utils/styling";
 import { ActionIcon } from "./ActionIcon";
 import { inputVariants } from "./Input";
-import type { ClassValue } from "clsx";
 
 const getRestorableNumberInputProps = (edited: boolean, restore: () => void): NumberInputProps => ({
 	inputClassName: cn("transition-colors", edited && "border-b-brand"),
