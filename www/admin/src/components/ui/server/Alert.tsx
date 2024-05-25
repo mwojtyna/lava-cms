@@ -15,7 +15,7 @@ const alertVariants = cva(
 		defaultVariants: {
 			variant: "default",
 		},
-	}
+	},
 );
 
 interface AlertProps
@@ -35,7 +35,7 @@ const Alert = React.forwardRef<HTMLDivElement, AlertProps>(
 			{icon}
 			{children}
 		</div>
-	)
+	),
 );
 Alert.displayName = "Alert";
 
@@ -46,7 +46,7 @@ const AlertTitle = React.forwardRef<HTMLParagraphElement, React.HTMLAttributes<H
 			className={cn("mb-1 font-medium leading-none tracking-tight", className)}
 			{...props}
 		/>
-	)
+	),
 );
 AlertTitle.displayName = "AlertTitle";
 

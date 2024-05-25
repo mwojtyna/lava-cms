@@ -22,10 +22,7 @@ async function fillAddCompDefDialog(
 	for (const field of fields ?? []) {
 		await dialog.locator("input[name='name']").nth(1).fill(field.name);
 		await dialog.getByRole("combobox").first().click();
-		await page
-			.getByRole("listbox")
-			.locator(`div[data-value='${field.type.toLowerCase().replaceAll(" ", "_")}']`)
-			.click();
+		await page.getByRole("listbox").locator(`div[data-value='${field.type}']`).click();
 		await dialog.locator("button[type='button']", { hasText: "Add" }).click();
 	}
 	if (submit) {
@@ -52,10 +49,7 @@ async function fillEditCompDefDialog(page: Page, name?: string, fields?: FieldDe
 	for (const field of fields ?? []) {
 		await dialog.locator("input[name='name']").nth(1).fill(field.name);
 		await dialog.getByRole("combobox").click();
-		await page
-			.getByRole("listbox")
-			.locator(`div[data-value='${field.type.toLowerCase().replaceAll(" ", "_")}']`)
-			.click();
+		await page.getByRole("listbox").locator(`div[data-value='${field.type}']`).click();
 		await dialog.locator("button[type='button']", { hasText: "Add" }).click();
 	}
 	// await dialog.locator("button[type='submit']").click();
@@ -111,10 +105,7 @@ async function editFieldDef(
 	}
 	if (newType) {
 		await editFieldDefStep.getByRole("combobox").click();
-		await editFieldDefStep
-			.getByRole("listbox")
-			.locator(`div[data-value='${newType.toLowerCase().replaceAll(" ", "_")}']`)
-			.click();
+		await editFieldDefStep.getByRole("listbox").locator(`div[data-value='${newType}']`).click();
 	}
 
 	if (save) {
@@ -602,12 +593,13 @@ test.describe("field definition", () => {
 
 		await selectAction(page.base, 0, "Edit");
 		const fieldDef = getFieldDefCard(page.base, 0);
-		await fieldDef.getByTestId("delete-field-btn").click();
+		await fieldDef.getByTestId("delete-field-btn").click({ clickCount: 2 });
 		await expect(fieldDef).toHaveAttribute("data-test-diff", "deleted");
 
 		const dialog = page.base.getByRole("dialog");
 		await dialog.locator("button[type='submit']").click();
 		await page.base.waitForResponse("**/api/private/components.editComponentDefinition**");
+		await page.base.waitForTimeout(100);
 		await dialog.getByTestId("close-btn").click();
 
 		const editedCompDef = await prisma.componentDefinition.findFirst({
@@ -659,7 +651,7 @@ test.describe("field definition", () => {
 		await selectAction(page.base, 0, "Edit");
 
 		const fieldDef = getFieldDefCard(page.base, 0);
-		await fieldDef.getByTestId("delete-field-btn").click();
+		await fieldDef.getByTestId("delete-field-btn").click({ clickCount: 2 });
 		await expect(fieldDef).toHaveAttribute("data-test-diff", "deleted");
 		await fieldDef.getByTestId("restore-field-btn").click();
 		await expect(fieldDef).not.toHaveAttribute("data-test-diff", "deleted");
