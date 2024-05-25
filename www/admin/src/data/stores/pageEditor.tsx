@@ -286,25 +286,6 @@ export const usePageEditorStore = create<PageEditorState>((set) => ({
 				}
 			}
 
-			// Serialize rich text
-			const editor = createPlateEditor({
-				plugins: richTextEditorPlugins,
-				components: richTextEditorComponents, // Sometimes there are problems with the placeholder plugin
-			});
-			for (const component of correctedComponents.concat(state.nestedComponents)) {
-				for (const field of component.fields) {
-					if (field.type === "RICH_TEXT") {
-						field.serializedRichText = serializeHtml(editor, {
-							nodes: field.data as unknown as Value,
-							dndWrapper: (props) => (
-								<DndProvider backend={HTML5Backend} {...props} />
-							),
-						});
-						field.data = JSON.stringify(field.data);
-					}
-				}
-			}
-
 			// Find edited components
 			const originalComponentsAll = new Map<string, ComponentUI>();
 			for (const comp of state.originalComponents.concat(state.originalNestedComponents)) {
@@ -317,6 +298,25 @@ export const usePageEditorStore = create<PageEditorState>((set) => ({
 				// Using `isNotChanged` to only get components which were not added or deleted
 				if (isNotChanged(comp) && JSON.stringify(comp) !== JSON.stringify(original)) {
 					editedComponents.push(comp);
+				}
+			}
+
+			// Serialize rich text only for edited components
+			const editor = createPlateEditor({
+				plugins: richTextEditorPlugins,
+				components: richTextEditorComponents, // Sometimes there are problems with the placeholder plugin
+			});
+			for (const component of editedComponents) {
+				for (const field of component.fields) {
+					if (field.type === "RICH_TEXT") {
+						field.serializedRichText = serializeHtml(editor, {
+							nodes: field.data as unknown as Value,
+							dndWrapper: (props) => (
+								<DndProvider backend={HTML5Backend} {...props} />
+							),
+						});
+						field.data = JSON.stringify(field.data);
+					}
 				}
 			}
 
