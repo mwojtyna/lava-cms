@@ -29,8 +29,8 @@ export const editComponentDefinition = privateProcedure
 			deletedFieldIds: z.array(z.string().cuid()).optional(),
 		}),
 	)
-	.mutation(async ({ input }): Promise<Record<string, string>> => {
-		const addedCompDefIds: Record<string, string> = {};
+	.mutation(async ({ input }) => {
+		const addedFieldDefIds: Record<string, string> = {};
 
 		// If editing, not moving the component definition
 		if (input.newName) {
@@ -55,7 +55,7 @@ export const editComponentDefinition = privateProcedure
 			}
 		}
 
-		await prisma.$transaction(async (tx) => {
+		const updatedCompDef = await prisma.$transaction(async (tx) => {
 			// Add new fields to all instances of the component definition
 			if (input.addedFields) {
 				const addInstanceFields = [];
@@ -71,7 +71,7 @@ export const editComponentDefinition = privateProcedure
 							component_definition_id: input.id,
 						},
 					});
-					addedCompDefIds[addedField.id] = added.id;
+					addedFieldDefIds[addedField.id] = added.id;
 
 					const promise = new Promise<Promise<unknown>>(async (res) => {
 						const instances = await tx.componentInstance.findMany({
@@ -160,7 +160,7 @@ export const editComponentDefinition = privateProcedure
 				});
 			}
 
-			await tx.componentDefinition.update({
+			return await tx.componentDefinition.update({
 				where: { id: input.id },
 				data: {
 					name: input.newName,
@@ -179,8 +179,19 @@ export const editComponentDefinition = privateProcedure
 					},
 					last_update: new Date(),
 				},
+				include: {
+					field_definitions: true,
+					instances: {
+						include: {
+							_count: true,
+						},
+					},
+				},
 			});
 		});
 
-		return addedCompDefIds;
+		return {
+			fieldDefFidToBid: addedFieldDefIds,
+			updatedCompDef,
+		};
 	});

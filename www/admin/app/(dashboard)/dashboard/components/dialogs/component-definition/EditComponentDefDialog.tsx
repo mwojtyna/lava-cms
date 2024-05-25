@@ -17,7 +17,7 @@ import { toast } from "@/src/hooks/useToast";
 import type { PrivateRouter } from "@/src/trpc/routes/private/_private";
 import type { EditComponentDefinitionErrorMessage } from "@/src/trpc/routes/private/components/editComponentDefinition";
 import { cn } from "@/src/utils/styling";
-import { trpc, trpcFetch } from "@/src/utils/trpc";
+import { trpc } from "@/src/utils/trpc";
 import {
 	ComponentDefEditor,
 	componentDefEditorInputsSchema,
@@ -127,7 +127,7 @@ export function EditComponentDefDialog(props: Props) {
 				},
 				{
 					// `fidToBid` is a map of frontend ids to backend ids
-					onSuccess: async (fidToBid) => {
+					onSuccess: ({ fieldDefFidToBid: fidToBid, updatedCompDef }) => {
 						setSteps((steps) =>
 							steps.map((step) =>
 								step.name === "field-definition"
@@ -142,16 +142,13 @@ export function EditComponentDefDialog(props: Props) {
 							),
 						);
 
-						const updated = await trpcFetch.components.getComponentDefinition.query({
-							id: props.componentDef.id,
-						});
 						setItem({
-							id: updated.id,
-							name: updated.name,
+							id: updatedCompDef.id,
+							name: updatedCompDef.name,
 							instances: props.componentDef.instances,
-							fieldDefinitions: updated.field_definitions,
-							lastUpdate: updated.last_update,
-							parentGroupId: updated.group_id,
+							fieldDefinitions: updatedCompDef.field_definitions,
+							lastUpdate: updatedCompDef.last_update,
+							parentGroupId: updatedCompDef.group_id,
 							isGroup: false,
 						});
 						form.reset(form.getValues());

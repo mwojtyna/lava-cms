@@ -357,8 +357,9 @@ function Actions(props: ActionsProps) {
 			className="text-destructive/75 hover:text-destructive"
 			onClick={(e) => handleClick(e, props.onDelete)}
 			tooltip="Delete"
+			data-testid="delete-field-btn"
 		>
-			<TrashIcon className="w-5" data-testid="delete-field-btn" />
+			<TrashIcon className="w-5" />
 		</ActionIcon>
 	);
 
