@@ -59,7 +59,7 @@ function NumberInput({
 				className={cn(
 					inputVariants({ className: inputClassName, size }),
 					"pr-10",
-					!!icon && "pl-10",
+					icon && "pl-10",
 					// Fix for red borders not showing up when form is invalid
 					className?.includes("border-destructive") && "border-destructive",
 				)}

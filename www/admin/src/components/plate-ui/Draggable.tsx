@@ -116,7 +116,6 @@ export const Draggable = withRef<"div", DraggableProps>(
 								classNames.blockToolbar,
 							)}
 						>
-							{/* @ts-expect-error Weird type error after updating react types to 18.3 */}
 							<div ref={handleRef} className="h-4 w-4">
 								{isHovered && dragHandle}
 							</div>
