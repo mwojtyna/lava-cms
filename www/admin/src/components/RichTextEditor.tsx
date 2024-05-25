@@ -15,7 +15,7 @@ import {
 	createBasicMarksPlugin,
 } from "@udecode/plate-basic-marks";
 import { ELEMENT_BLOCKQUOTE, createBlockquotePlugin } from "@udecode/plate-block-quote";
-import { createSoftBreakPlugin } from "@udecode/plate-break";
+import { createExitBreakPlugin, createSoftBreakPlugin } from "@udecode/plate-break";
 import { createCaptionPlugin } from "@udecode/plate-caption";
 import {
 	ELEMENT_CODE_BLOCK,
@@ -44,6 +44,7 @@ import {
 	ELEMENT_H4,
 	ELEMENT_H5,
 	ELEMENT_H6,
+	KEYS_HEADING,
 	createHeadingPlugin,
 } from "@udecode/plate-heading";
 import { ELEMENT_HR, createHorizontalRulePlugin } from "@udecode/plate-horizontal-rule";
@@ -205,6 +206,29 @@ export const plugins = createPlugins(
 						query: {
 							allow: [ELEMENT_CODE_BLOCK, ELEMENT_BLOCKQUOTE, ELEMENT_TD],
 						},
+					},
+				],
+			},
+		}),
+		createExitBreakPlugin({
+			options: {
+				rules: [
+					{
+						hotkey: "mod+enter",
+					},
+					{
+						hotkey: "mod+shift+enter",
+						before: true,
+					},
+					{
+						hotkey: "enter",
+						query: {
+							start: true,
+							end: true,
+							allow: KEYS_HEADING,
+						},
+						relative: true,
+						level: 1,
 					},
 				],
 			},
