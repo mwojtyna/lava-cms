@@ -1,7 +1,7 @@
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import { prisma } from "@/prisma/client";
-import { getInitialValue } from "@/src/data/stores/utils";
+import { getInitialValue } from "@/src/stores/utils";
 import { privateProcedure } from "@/src/trpc";
 import { displayNameRegex } from "@/src/utils/regex";
 import { fieldDefSchema } from "./types";

@@ -15,7 +15,7 @@ import {
 import { NumberInput } from "@/src/components/ui/client/NumberInput";
 import { Textarea } from "@/src/components/ui/client/Textarea";
 import { TypographyMuted } from "@/src/components/ui/server/typography";
-import { usePageEditorStore, type ComponentUI, type FieldUI } from "@/src/data/stores/pageEditor";
+import { usePageEditorStore, type ComponentUI, type FieldUI } from "@/src/stores/pageEditor";
 import { cn } from "@/src/utils/styling";
 import { ArrayField } from "./fields/ArrayField";
 import { LinkField } from "./fields/LinkField";

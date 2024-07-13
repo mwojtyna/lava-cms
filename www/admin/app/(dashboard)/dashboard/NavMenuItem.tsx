@@ -5,9 +5,9 @@ import { usePathname } from "next/navigation";
 import * as React from "react";
 import { Button } from "@/src/components/ui/client/Button";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/src/components/ui/client/Tooltip";
-import type { NavMenuRoute } from "@/src/data/routes/navMenu";
-import { getRoute } from "@/src/data/routes/shared";
-import { useNavMenuStore } from "@/src/data/stores/navMenu";
+import type { NavMenuRoute } from "@/src/routes/navMenu";
+import { getRoute } from "@/src/routes/shared";
+import { useNavMenuStore } from "@/src/stores/navMenu";
 import { cn } from "@/src/utils/styling";
 
 interface Props {

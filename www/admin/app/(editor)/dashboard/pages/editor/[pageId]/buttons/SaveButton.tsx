@@ -3,7 +3,7 @@
 import { ArrowDownTrayIcon } from "@heroicons/react/24/outline";
 import React from "react";
 import { Button } from "@/src/components/ui/client/Button";
-import { usePageEditorStore } from "@/src/data/stores/pageEditor";
+import { usePageEditorStore } from "@/src/stores/pageEditor";
 import { trpc } from "@/src/utils/trpc";
 
 export function SaveButton(props: { pageId: string }) {

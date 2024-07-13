@@ -4,7 +4,7 @@ import { ArrowUturnLeftIcon } from "@heroicons/react/24/outline";
 import { useRouter } from "next/navigation";
 import React from "react";
 import { ActionIcon } from "@/src/components/ui/client/ActionIcon";
-import { usePageEditorStore } from "@/src/data/stores/pageEditor";
+import { usePageEditorStore } from "@/src/stores/pageEditor";
 import { useAlertDialog } from "@/src/hooks/useAlertDialog";
 
 export function BackButton() {

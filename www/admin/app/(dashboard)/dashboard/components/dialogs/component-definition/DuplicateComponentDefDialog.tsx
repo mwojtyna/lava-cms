@@ -10,7 +10,7 @@ import * as React from "react";
 import { useForm, type SubmitHandler, FormProvider } from "react-hook-form";
 import { Button } from "@/src/components/ui/client/Button";
 import { Sheet, SheetContent, SheetFooter } from "@/src/components/ui/client/Sheet";
-import { useComponentsTableDialogsStore } from "@/src/data/stores/componentDefinitions";
+import { useComponentsTableDialogsStore } from "@/src/stores/componentDefinitions";
 import { useAlertDialog } from "@/src/hooks/useAlertDialog";
 import type { PrivateRouter } from "@/src/trpc/routes/private/_private";
 import { cn } from "@/src/utils/styling";

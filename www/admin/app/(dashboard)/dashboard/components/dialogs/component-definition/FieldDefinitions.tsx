@@ -31,7 +31,7 @@ import { FormField, FormItem, FormControl, FormError } from "@/src/components/ui
 import { Input } from "@/src/components/ui/client/Input";
 import { Card } from "@/src/components/ui/server/Card";
 import { TypographyMuted } from "@/src/components/ui/server/typography";
-import { useComponentsTableDialogsStore } from "@/src/data/stores/componentDefinitions";
+import { useComponentsTableDialogsStore } from "@/src/stores/componentDefinitions";
 import { cn } from "@/src/utils/styling";
 import { FieldTypePicker } from "./shared";
 import { fieldDefinitionUISchema, type DialogType, type FieldDefinitionUI } from "./types";

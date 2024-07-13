@@ -23,12 +23,8 @@ import { useMemo, useState } from "react";
 import { ActionIcon } from "@/src/components/ui/client/ActionIcon";
 import { Button } from "@/src/components/ui/client/Button";
 import { Card } from "@/src/components/ui/server/Card";
-import {
-	type ComponentUI,
-	usePageEditorStore,
-	type ArrayItemUI,
-} from "@/src/data/stores/pageEditor";
-import { getInitialValue } from "@/src/data/stores/utils";
+import { type ComponentUI, usePageEditorStore, type ArrayItemUI } from "@/src/stores/pageEditor";
+import { getInitialValue } from "@/src/stores/utils";
 import { cn } from "@/src/utils/styling";
 import { type FieldProps, Field } from "../ComponentEditor";
 import { createComponentInstance, AddComponentDialog } from "../dialogs/AddComponentDialog";

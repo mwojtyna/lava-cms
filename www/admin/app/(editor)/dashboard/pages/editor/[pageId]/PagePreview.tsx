@@ -8,7 +8,7 @@ import { Resizable } from "re-resizable";
 import * as React from "react";
 import { ActionIcon } from "@/src/components/ui/client/ActionIcon";
 import { Card } from "@/src/components/ui/server/Card";
-import { usePageEditorStore } from "@/src/data/stores/pageEditor";
+import { usePageEditorStore } from "@/src/stores/pageEditor";
 import { useAlertDialog } from "@/src/hooks/useAlertDialog";
 import { useSearchParams } from "@/src/hooks/useSearchParams";
 import { trpcFetch } from "@/src/utils/trpc";

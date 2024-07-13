@@ -17,8 +17,8 @@ import { Separator } from "@/src/components/ui/client/Separator";
 import { Skeleton } from "@/src/components/ui/server/Skeleton";
 import { Stepper } from "@/src/components/ui/server/Stepper";
 import { TypographyMuted } from "@/src/components/ui/server/typography";
-import type { ComponentUI } from "@/src/data/stores/pageEditor";
-import { getInitialValue } from "@/src/data/stores/utils";
+import type { ComponentUI } from "@/src/stores/pageEditor";
+import { getInitialValue } from "@/src/stores/utils";
 import { cn } from "@/src/utils/styling";
 import { trpc, trpcFetch } from "@/src/utils/trpc";
 

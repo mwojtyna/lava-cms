@@ -4,7 +4,7 @@ import { ArrowLeftEndOnRectangleIcon, MoonIcon, SunIcon } from "@heroicons/react
 import { useRouter } from "next/navigation";
 import { DropdownMenuItem } from "@/src/components/ui/client/DropdownMenu";
 import { Loader } from "@/src/components/ui/server/Loader";
-import { useColorThemeStore } from "@/src/data/stores/colorTheme";
+import { useColorThemeStore } from "@/src/stores/colorTheme";
 import { trpc, type ClientMeta } from "@/src/utils/trpc";
 
 export const ThemeSwitchItem = () => {

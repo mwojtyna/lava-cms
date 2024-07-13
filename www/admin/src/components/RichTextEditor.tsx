@@ -67,7 +67,7 @@ import {
 } from "@udecode/plate-table";
 import { useEffect, useRef } from "react";
 import { Node, Point, Transforms, Editor as SlateEditor } from "slate";
-import { usePageEditorStore } from "../data/stores/pageEditor";
+import { usePageEditorStore } from "../stores/pageEditor";
 import { cn } from "../utils/styling";
 import { BlockquoteElement } from "./plate-ui/BlockQuoteElement";
 import { CodeBlockElement } from "./plate-ui/CodeBlockElement";

@@ -15,7 +15,7 @@ import {
 	type ArrayItemUI,
 	type Step as StepType,
 	type ComponentUI,
-} from "@/src/data/stores/pageEditor";
+} from "@/src/stores/pageEditor";
 import type { PrivateRouter } from "@/src/trpc/routes/private/_private";
 import { cn } from "@/src/utils/styling";
 import { trpc } from "@/src/utils/trpc";

@@ -7,7 +7,7 @@ import { PlateContent } from "@udecode/plate-common";
 import { cva } from "class-variance-authority";
 
 import React from "react";
-import { usePageEditorStore } from "@/src/data/stores/pageEditor";
+import { usePageEditorStore } from "@/src/stores/pageEditor";
 import { cn } from "@/src/utils/styling";
 import { trpc } from "@/src/utils/trpc";
 

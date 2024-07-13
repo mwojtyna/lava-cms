@@ -17,7 +17,7 @@ import {
 } from "@/src/components/ui/client/Form";
 import { Input, getRestorableInputProps } from "@/src/components/ui/client/Input";
 import { SheetHeader, SheetTitle } from "@/src/components/ui/client/Sheet";
-import { useComponentsTableDialogsStore } from "@/src/data/stores/componentDefinitions";
+import { useComponentsTableDialogsStore } from "@/src/stores/componentDefinitions";
 import { cn } from "@/src/utils/styling";
 import { FieldTypePicker } from "./shared";
 import { fieldDefinitionUISchema, type DialogType, type Step } from "./types";

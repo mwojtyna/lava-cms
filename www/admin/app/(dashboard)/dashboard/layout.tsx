@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 import { validateRequest } from "@/src/auth";
 import { PageTitle } from "@/src/components/PageTitle";
-import { navMenuRoutes } from "@/src/data/routes/navMenu";
+import { navMenuRoutes } from "@/src/routes/navMenu";
 import { NavMenu } from "./NavMenu";
 
 export const dynamic = "force-dynamic";

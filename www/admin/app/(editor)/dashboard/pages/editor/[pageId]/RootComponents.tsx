@@ -23,7 +23,7 @@ import { IconGripVertical } from "@tabler/icons-react";
 import React, { useMemo } from "react";
 import { ActionIcon } from "@/src/components/ui/client/ActionIcon";
 import { Card } from "@/src/components/ui/server/Card";
-import { usePageEditorStore, type ComponentUI, type Diff } from "@/src/data/stores/pageEditor";
+import { usePageEditorStore, type ComponentUI, type Diff } from "@/src/stores/pageEditor";
 import { cn } from "@/src/utils/styling";
 
 interface Props {

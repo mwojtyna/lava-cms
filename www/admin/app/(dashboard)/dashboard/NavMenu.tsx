@@ -5,7 +5,7 @@ import { ActionIcon } from "@/src/components/ui/client/ActionIcon";
 import { Separator } from "@/src/components/ui/client/Separator";
 import { SheetContent, SheetTrigger } from "@/src/components/ui/client/Sheet";
 import { UserMenu } from "@/src/components/UserMenu";
-import { navMenuRoutes } from "@/src/data/routes/navMenu";
+import { navMenuRoutes } from "@/src/routes/navMenu";
 import { cn } from "@/src/utils/styling";
 import { NavMenuItem } from "./NavMenuItem";
 import { NavMenuLogo } from "./NavMenuLogo";

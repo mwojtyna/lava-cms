@@ -6,7 +6,7 @@ import {
 	ColorThemeStoreContext,
 	type ColorThemeState,
 	createColorThemeStore,
-} from "@/src/data/stores/colorTheme";
+} from "@/src/stores/colorTheme";
 import type { ColorTheme } from "@/src/utils/cookies";
 
 export const ColorThemeStoreProvider = ({

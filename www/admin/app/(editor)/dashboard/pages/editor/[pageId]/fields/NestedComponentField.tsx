@@ -1,6 +1,6 @@
 import { useState, useMemo } from "react";
 import { Button } from "@/src/components/ui/client/Button";
-import { type ComponentUI, usePageEditorStore } from "@/src/data/stores/pageEditor";
+import { type ComponentUI, usePageEditorStore } from "@/src/stores/pageEditor";
 import { AddComponentDialog, createComponentInstance } from "../dialogs/AddComponentDialog";
 import { ComponentCard } from "../RootComponents";
 

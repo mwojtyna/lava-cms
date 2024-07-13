@@ -11,7 +11,7 @@ import { useForm, type SubmitHandler, FormProvider } from "react-hook-form";
 import { Button } from "@/src/components/ui/client/Button";
 import { Sheet, SheetContent, SheetFooter } from "@/src/components/ui/client/Sheet";
 import { TypographyMuted } from "@/src/components/ui/server/typography";
-import { useComponentsTableDialogsStore } from "@/src/data/stores/componentDefinitions";
+import { useComponentsTableDialogsStore } from "@/src/stores/componentDefinitions";
 import { useAlertDialog } from "@/src/hooks/useAlertDialog";
 import { toast } from "@/src/hooks/useToast";
 import type { PrivateRouter } from "@/src/trpc/routes/private/_private";

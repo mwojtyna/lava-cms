@@ -3,7 +3,7 @@
 import { MoonIcon, SunIcon } from "@heroicons/react/24/outline";
 import * as React from "react";
 import { Switch } from "@/src/components/ui/client/Switch";
-import { useColorThemeStore } from "@/src/data/stores/colorTheme";
+import { useColorThemeStore } from "@/src/stores/colorTheme";
 import { cn } from "@/src/utils/styling";
 
 export const ThemeSwitch = React.forwardRef<

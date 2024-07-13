@@ -24,7 +24,7 @@ import {
 	DropdownMenuItem,
 } from "@/src/components/ui/client/DropdownMenu";
 import { Popover, PopoverContent, PopoverTrigger } from "@/src/components/ui/client/Popover";
-import { useComponentsTableDialogsStore } from "@/src/data/stores/componentDefinitions";
+import { useComponentsTableDialogsStore } from "@/src/stores/componentDefinitions";
 import { BulkDeleteDialog, BulkMoveDialog } from "./dialogs/BulkDialogs";
 
 export const columns: ColumnDef<ComponentsTableItem>[] = [
