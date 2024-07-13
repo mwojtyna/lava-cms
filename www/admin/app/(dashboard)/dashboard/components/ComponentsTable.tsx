@@ -9,8 +9,8 @@ import {
 	DataTable,
 	DataTablePagination,
 } from "@/src/components/DataTable";
-import { useComponentsTableDialogsStore } from "@/src/stores/componentDefinitions";
 import { useDataTable, type TableSearchParams } from "@/src/hooks/useDataTable";
+import { useComponentsTableDialogsStore } from "@/src/stores/componentDefinitions";
 import type { PrivateRouter } from "@/src/trpc/routes/private/_private";
 import type { GroupItem } from "@/src/trpc/routes/private/components/types";
 import type { TableCookie } from "@/src/utils/cookies";
