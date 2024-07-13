@@ -21,7 +21,7 @@ const useColorThemeStore = <T>(selector: (store: ColorThemeState) => T): T => {
 	const colorThemeStoreContext = useContext(ColorThemeStoreContext);
 
 	if (!colorThemeStoreContext) {
-		throw new Error("useColorThemeStore must be use within ColorThemeStoreProvider");
+		throw new Error("useColorThemeStore must be used within ColorThemeStoreProvider");
 	}
 
 	return useStore(colorThemeStoreContext, selector);
