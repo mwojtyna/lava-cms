@@ -63,14 +63,13 @@ export const duplicatePage = privateProcedure
 		parentArrayItemIdMap.clear();
 	});
 
-// Unfortunately, prisma doesn't support returning from createMany, so we have to do multiple INSERT statements
 async function duplicateComponent(
 	component: ComponentInstance,
 	newPageId: string,
 	tx: TX,
 ): Promise<void> {
 	const { id, ...data } = component;
-	const newComponent = await tx.componentInstance.create({
+	const newComponents = await tx.componentInstance.createManyAndReturn({
 		data: {
 			...data,
 			page_id: newPageId,
@@ -78,10 +77,12 @@ async function duplicateComponent(
 			parent_array_item_id: null,
 		},
 	});
-	kindMap.set(component.id, "component");
-	idMap.set(component.id, newComponent.id);
-	parentFieldIdMap.set(newComponent.id, component.parent_field_id);
-	parentArrayItemIdMap.set(newComponent.id, component.parent_array_item_id);
+	for (const newComponent of newComponents) {
+		kindMap.set(component.id, "component");
+		idMap.set(component.id, newComponent.id);
+		parentFieldIdMap.set(newComponent.id, component.parent_field_id);
+		parentArrayItemIdMap.set(newComponent.id, component.parent_array_item_id);
+	}
 
 	const fields = await tx.componentInstanceField.findMany({
 		where: { component_id: component.id },
