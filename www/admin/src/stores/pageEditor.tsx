@@ -301,12 +301,16 @@ export const usePageEditorStore = create<PageEditorState>((set) => ({
 				}
 			}
 
-			// Serialize rich text only for edited components
+			const addedComponents: ComponentUI[] = correctedComponents
+				.concat(state.nestedComponents)
+				.filter((comp) => isAdded(comp) || isReplaced(comp)); // Also add replacing components
+
+			// Serialize rich text only for added/replacing/edited components
 			const editor = createPlateEditor({
 				plugins: richTextEditorPlugins,
 				components: richTextEditorComponents, // Sometimes there are problems with the placeholder plugin
 			});
-			for (const component of editedComponents) {
+			for (const component of editedComponents.concat(addedComponents)) {
 				for (const field of component.fields) {
 					if (field.type === "RICH_TEXT") {
 						field.serializedRichText = serializeHtml(editor, {
@@ -342,23 +346,20 @@ export const usePageEditorStore = create<PageEditorState>((set) => ({
 			mutation.mutate(
 				{
 					pageId,
-					addedComponents: correctedComponents
-						.concat(state.nestedComponents)
-						.filter((comp) => isAdded(comp) || isReplaced(comp)) // Also add replacing components
-						.map<AddedComponent>((comp) => ({
-							pageId,
-							parentFieldId: comp.parentFieldId,
-							parentArrayItemId: comp.parentArrayItemId,
-							frontendId: comp.id,
-							definition: comp.definition,
-							order: comp.order,
-							fields: comp.fields.map((field) => ({
-								frontendId: field.id,
-								data: field.data,
-								serializedRichText: field.serializedRichText,
-								definitionId: field.definitionId,
-							})),
+					addedComponents: addedComponents.map<AddedComponent>((comp) => ({
+						pageId,
+						parentFieldId: comp.parentFieldId,
+						parentArrayItemId: comp.parentArrayItemId,
+						frontendId: comp.id,
+						definition: comp.definition,
+						order: comp.order,
+						fields: comp.fields.map((field) => ({
+							frontendId: field.id,
+							data: field.data,
+							serializedRichText: field.serializedRichText,
+							definitionId: field.definitionId,
 						})),
+					})),
 					editedComponents: editedComponents,
 					deletedComponentIds: state.components
 						.concat(state.nestedComponents)
