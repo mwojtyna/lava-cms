@@ -180,7 +180,11 @@ export const editComponentDefinition = privateProcedure
 					last_update: new Date(),
 				},
 				include: {
-					field_definitions: true,
+					field_definitions: {
+						orderBy: {
+							order: "asc",
+						},
+					},
 					instances: {
 						include: {
 							_count: true,
