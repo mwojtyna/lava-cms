@@ -2,8 +2,8 @@
 
 import { useInterval } from "@mantine/hooks";
 import { useEffect } from "react";
+import { env } from "@/src/env/client.mjs";
 import { useAlertDialog } from "@/src/hooks/useAlertDialog";
-import { env } from "../env/client.mjs";
 
 export function DemoReset({ children }: { children: React.ReactNode }) {
 	const alertDialog = useAlertDialog();

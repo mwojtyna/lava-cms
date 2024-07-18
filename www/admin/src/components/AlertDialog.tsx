@@ -36,7 +36,9 @@ export function AlertDialog(props: AlertDialogProps) {
 			>
 				<DialogHeader>
 					<DialogTitle>{props.title}</DialogTitle>
-					<DialogDescription>{props.description}</DialogDescription>
+					<DialogDescription asChild>
+						<div>{props.description}</div>
+					</DialogDescription>
 				</DialogHeader>
 
 				<DialogFooter>

@@ -32,7 +32,7 @@ const defaultOptions: AlertDialogOptions = {
 };
 
 function useAlertDialog(): {
-	open: (options: AlertDialogOptions | undefined, onYes: () => void) => void;
+	open: (options: AlertDialogOptions | undefined, onYes?: () => void) => void;
 } {
 	const context = useContext(AlertDialogContext);
 	const state = context![0];
@@ -47,7 +47,7 @@ function useAlertDialog(): {
 			state.setOnSubmit(() => {
 				return () => {
 					state.setOpen(false);
-					onYes();
+					onYes?.();
 				};
 			});
 		},

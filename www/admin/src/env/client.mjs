@@ -20,9 +20,13 @@ export const env = createEnv({
 	client: {
 		NEXT_PUBLIC_DEV: boolish,
 		NEXT_PUBLIC_DEMO: boolish,
+		NEXT_PUBLIC_DEMO_EMAIL: z.string().optional(),
+		NEXT_PUBLIC_DEMO_PASSWORD: z.string().optional(),
 	},
 	experimental__runtimeEnv: {
 		NEXT_PUBLIC_DEV: process.env.NEXT_PUBLIC_DEV,
 		NEXT_PUBLIC_DEMO: process.env.NEXT_PUBLIC_DEMO,
+		NEXT_PUBLIC_DEMO_EMAIL: process.env.NEXT_PUBLIC_DEMO_EMAIL,
+		NEXT_PUBLIC_DEMO_PASSWORD: process.env.NEXT_PUBLIC_DEMO_PASSWORD,
 	},
 });

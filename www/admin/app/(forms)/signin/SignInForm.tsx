@@ -8,6 +8,7 @@ import {
 } from "@heroicons/react/24/outline";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 import { type SubmitHandler, useForm } from "react-hook-form";
 import { z } from "zod";
 import { Button } from "@/src/components/ui/client/Button";
@@ -20,6 +21,8 @@ import {
 } from "@/src/components/ui/client/Form";
 import { Input } from "@/src/components/ui/client/Input";
 import { Alert, AlertTitle } from "@/src/components/ui/server/Alert";
+import { env } from "@/src/env/client.mjs";
+import { useAlertDialog } from "@/src/hooks/useAlertDialog";
 import { trpc } from "@/src/utils/trpc";
 import { SinglePageForm } from "../SinglePageForm";
 
@@ -52,6 +55,24 @@ export function SignInForm() {
 			},
 		});
 	};
+
+	const demoCredentialsDialog = useAlertDialog();
+	useEffect(() => {
+		if (env.NEXT_PUBLIC_DEMO) {
+			demoCredentialsDialog.open({
+				title: "Demo user credentials",
+				description: (
+					<>
+						<p>e-mail: {env.NEXT_PUBLIC_DEMO_EMAIL}</p>
+						<p>password: {env.NEXT_PUBLIC_DEMO_PASSWORD}</p>
+						<p className="mt-2">Website data resets every UTC hour!</p>
+					</>
+				),
+				yesMessage: "OK",
+			});
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
 
 	return (
 		<SinglePageForm
