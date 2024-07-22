@@ -18,7 +18,7 @@ export const auth = new Lucia(prismaAdapter, {
 		expires: false,
 		attributes: {
 			path: "/admin",
-			sameSite: "strict",
+			sameSite: "lax",
 			secure: env.NODE_ENV === "production",
 		},
 	},

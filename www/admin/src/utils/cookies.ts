@@ -17,7 +17,7 @@ export function getJsonCookie<T>(name: CookieName, fallback: T) {
 }
 export const permanentCookieOptions: Cookies.CookieAttributes = {
 	expires: new Date(2100, 11),
-	sameSite: "strict",
+	sameSite: "lax",
 	path: "/admin",
 };
 
